@@ -13,7 +13,11 @@ const categories = [
   { id: 'eats', label: 'Eats', icon: '🍽️', description: 'Restaurants, cafes, food tours' },
   { id: 'day-activities', label: 'Day Activities', icon: '☀️', description: 'Museums, tours, attractions' },
   { id: 'nightlife', label: 'Nightlife', icon: '🌙', description: 'Bars, clubs, evening events' },
-  { id: 'fitness', label: 'Fitness', icon: '💪', description: 'Gyms, yoga, sports activities' }
+  { id: 'fitness', label: 'Fitness', icon: '💪', description: 'Gyms, yoga, sports activities' },
+  { id: 'reservations', label: 'Reservations', icon: '📅', description: 'Restaurant bookings, confirmations' },
+  { id: 'transportation', label: 'Transportation', icon: '✈️', description: 'Flights, cars, rideshares' },
+  { id: 'essentials', label: 'Essentials', icon: '🎒', description: 'Packing, weather, documents' },
+  { id: 'other', label: 'Other', icon: '📎', description: 'Everything else' }
 ];
 
 export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
@@ -36,9 +40,9 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
         finalCategory = await classifyLink(url, title, description);
       }
       
-      // If still no category, default to 'eats'
+      // If still no category, default to 'other'
       if (!finalCategory) {
-        finalCategory = 'eats';
+        finalCategory = 'other';
       }
 
       console.log('Adding link:', { url, title, description, category: finalCategory });
@@ -55,27 +59,71 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
   };
 
   const classifyLink = async (url: string, title: string, description: string): Promise<string> => {
-    // Simple keyword-based classification for now
+    // Enhanced keyword-based classification for all categories
     const text = `${title} ${description} ${url}`.toLowerCase();
     
-    if (text.includes('airbnb') || text.includes('hotel') || text.includes('hostel') || text.includes('apartment') || text.includes('accommodation')) {
+    // Housing
+    if (text.includes('airbnb') || text.includes('hotel') || text.includes('hostel') || 
+        text.includes('apartment') || text.includes('accommodation') || text.includes('booking.com') ||
+        text.includes('vrbo') || text.includes('stay') || text.includes('lodge')) {
       return 'housing';
     }
-    if (text.includes('restaurant') || text.includes('cafe') || text.includes('food') || text.includes('menu') || text.includes('dining')) {
+    
+    // Transportation
+    if (text.includes('flight') || text.includes('airline') || text.includes('airport') ||
+        text.includes('uber') || text.includes('lyft') || text.includes('rental car') ||
+        text.includes('train') || text.includes('bus') || text.includes('transfer') ||
+        text.includes('expedia') || text.includes('kayak') || text.includes('car rental')) {
+      return 'transportation';
+    }
+    
+    // Reservations
+    if (text.includes('reservation') || text.includes('booking') || text.includes('opentable') ||
+        text.includes('resy') || text.includes('confirmed') || text.includes('table') ||
+        text.includes('tickets') || text.includes('seats') || text.includes('confirmation')) {
+      return 'reservations';
+    }
+    
+    // Essentials
+    if (text.includes('packing') || text.includes('checklist') || text.includes('weather') ||
+        text.includes('passport') || text.includes('visa') || text.includes('insurance') ||
+        text.includes('documents') || text.includes('emergency') || text.includes('essentials') ||
+        text.includes('what to bring') || text.includes('travel tips')) {
+      return 'essentials';
+    }
+    
+    // Eats
+    if (text.includes('restaurant') || text.includes('cafe') || text.includes('food') || 
+        text.includes('menu') || text.includes('dining') || text.includes('michelin') ||
+        text.includes('cuisine') || text.includes('brunch') || text.includes('lunch') ||
+        text.includes('dinner') || text.includes('bakery')) {
       return 'eats';
     }
-    if (text.includes('bar') || text.includes('club') || text.includes('nightlife') || text.includes('cocktail') || text.includes('pub')) {
+    
+    // Nightlife
+    if (text.includes('bar') || text.includes('club') || text.includes('nightlife') || 
+        text.includes('cocktail') || text.includes('pub') || text.includes('lounge') ||
+        text.includes('drinks') || text.includes('party') || text.includes('rooftop')) {
       return 'nightlife';
     }
-    if (text.includes('gym') || text.includes('fitness') || text.includes('yoga') || text.includes('workout') || text.includes('sports')) {
+    
+    // Fitness
+    if (text.includes('gym') || text.includes('fitness') || text.includes('yoga') || 
+        text.includes('workout') || text.includes('sports') || text.includes('running') ||
+        text.includes('hiking') || text.includes('swimming') || text.includes('tennis')) {
       return 'fitness';
     }
-    if (text.includes('museum') || text.includes('tour') || text.includes('attraction') || text.includes('activity') || text.includes('experience')) {
+    
+    // Day Activities
+    if (text.includes('museum') || text.includes('tour') || text.includes('attraction') || 
+        text.includes('activity') || text.includes('experience') || text.includes('sightseeing') ||
+        text.includes('gallery') || text.includes('monument') || text.includes('park') ||
+        text.includes('excursion') || text.includes('adventure')) {
       return 'day-activities';
     }
     
-    // Default to eats if unsure
-    return 'eats';
+    // Default to other if no matches
+    return 'other';
   };
 
   const resetForm = () => {
@@ -172,7 +220,7 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
               <label className="block text-sm font-medium text-slate-300 mb-3">
                 Category (optional)
               </label>
-              <div className="grid grid-cols-1 gap-2">
+              <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
                 {categories.map((category) => (
                   <button
                     key={category.id}

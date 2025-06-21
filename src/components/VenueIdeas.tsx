@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus, MapPin, Clock, User, MessageCircle, ThumbsUp, MoreHorizontal } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
 import { Button } from './ui/button';
 import { AddLinkModal } from './AddLinkModal';
 import { LinkCard } from './LinkCard';
@@ -10,7 +10,7 @@ interface LinkPost {
   title: string;
   url: string;
   description: string;
-  category: 'housing' | 'eats' | 'day-activities' | 'nightlife' | 'fitness';
+  category: 'housing' | 'eats' | 'day-activities' | 'nightlife' | 'fitness' | 'reservations' | 'transportation' | 'essentials' | 'other';
   imageUrl?: string;
   postedBy: string;
   postedAt: string;
@@ -18,7 +18,7 @@ interface LinkPost {
   comments: number;
 }
 
-// Mock data for demonstration
+// Mock data for demonstration with new categories
 const mockLinks: LinkPost[] = [
   {
     id: '1',
@@ -55,6 +55,39 @@ const mockLinks: LinkPost[] = [
     postedAt: '1 day ago',
     upvotes: 6,
     comments: 2
+  },
+  {
+    id: '4',
+    title: 'Le Grand Véfour Reservation',
+    url: 'https://opentable.com/restaurant',
+    description: 'Confirmed reservation for 6 people at 8pm on July 16th',
+    category: 'reservations',
+    postedBy: 'Emma',
+    postedAt: '3 hours ago',
+    upvotes: 4,
+    comments: 1
+  },
+  {
+    id: '5',
+    title: 'Air France Flight CDG-JFK',
+    url: 'https://airfrance.com/booking',
+    description: 'Return flights booked for July 21st departure',
+    category: 'transportation',
+    postedBy: 'Jake',
+    postedAt: '1 day ago',
+    upvotes: 7,
+    comments: 0
+  },
+  {
+    id: '6',
+    title: 'Paris Packing Checklist',
+    url: 'https://example.com/packing',
+    description: 'Essential items to pack for summer in Paris',
+    category: 'essentials',
+    postedBy: 'Sarah',
+    postedAt: '2 days ago',
+    upvotes: 3,
+    comments: 4
   }
 ];
 
@@ -64,13 +97,22 @@ const categories = [
   { id: 'eats', label: 'Eats', icon: '🍽️' },
   { id: 'day-activities', label: 'Day Activities', icon: '☀️' },
   { id: 'nightlife', label: 'Nightlife', icon: '🌙' },
-  { id: 'fitness', label: 'Fitness', icon: '💪' }
+  { id: 'fitness', label: 'Fitness', icon: '💪' },
+  { id: 'reservations', label: 'Reservations', icon: '📅' },
+  { id: 'transportation', label: 'Transportation', icon: '✈️' },
+  { id: 'essentials', label: 'Essentials', icon: '🎒' },
+  { id: 'other', label: 'Other', icon: '📎' }
 ];
 
 export const VenueIdeas = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const getCategoryCount = (categoryId: string) => {
+    if (categoryId === 'all') return mockLinks.length;
+    return mockLinks.filter(link => link.category === categoryId).length;
+  };
 
   const filteredLinks = mockLinks.filter(link => {
     const matchesCategory = activeCategory === 'all' || link.category === activeCategory;
@@ -98,31 +140,46 @@ export const VenueIdeas = () => {
 
       {/* Category Tabs */}
       <div className="flex gap-2 mb-4 overflow-x-auto pb-2">
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => setActiveCategory(category.id)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
-              activeCategory === category.id
-                ? 'bg-blue-600 text-white'
-                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
-            }`}
-          >
-            <span>{category.icon}</span>
-            {category.label}
-          </button>
-        ))}
+        {categories.map((category) => {
+          const count = getCategoryCount(category.id);
+          return (
+            <button
+              key={category.id}
+              onClick={() => setActiveCategory(category.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-all ${
+                activeCategory === category.id
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50'
+              }`}
+            >
+              <span>{category.icon}</span>
+              <span>{category.label}</span>
+              {count > 0 && (
+                <span className={`ml-1 px-2 py-0.5 text-xs rounded-full ${
+                  activeCategory === category.id
+                    ? 'bg-blue-500 text-white'
+                    : 'bg-slate-700 text-slate-300'
+                }`}>
+                  {count}
+                </span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       {/* Search Bar */}
       <div className="mb-6">
-        <input
-          type="text"
-          placeholder="Search ideas..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full bg-slate-800/50 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
-        />
+        <div className="relative">
+          <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search ideas..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-slate-800/50 border border-slate-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+          />
+        </div>
       </div>
 
       {/* Links Feed */}
