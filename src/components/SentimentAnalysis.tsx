@@ -1,11 +1,33 @@
 
 import React, { useState } from 'react';
-import { Brain, Link, Star, TrendingUp, MessageSquare, Award } from 'lucide-react';
+import { Brain, Link, Star, TrendingUp, MessageSquare, Award, Volume2 } from 'lucide-react';
+
+interface PlatformData {
+  count: number;
+  sentiment: number;
+}
+
+interface ResultsData {
+  platforms: {
+    google: PlatformData;
+    yelp: PlatformData;
+    facebook: PlatformData;
+  };
+  themes: {
+    service: number;
+    food: number;
+    atmosphere: number;
+    value: number;
+  };
+  overallScore: number;
+  totalReviews: number;
+}
 
 export const SentimentAnalysis = () => {
   const [url, setUrl] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [results, setResults] = useState(null);
+  const [results, setResults] = useState<ResultsData | null>(null);
+  const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
 
   const handleAnalyze = async () => {
     if (!url.trim()) return;
@@ -32,12 +54,22 @@ export const SentimentAnalysis = () => {
     }, 2000);
   };
 
+  const handleGenerateAudio = async () => {
+    setIsGeneratingAudio(true);
+    // Simulate Google Notebook LM audio generation
+    setTimeout(() => {
+      setIsGeneratingAudio(false);
+      // This would trigger audio playback in real implementation
+      console.log('Audio overview generated');
+    }, 3000);
+  };
+
   return (
     <div className="bg-black border border-red-600/30 rounded-2xl p-6 shadow-xl">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
         <Brain size={24} className="text-red-400" />
-        <h2 className="text-2xl font-bold text-white">AI Sentiment Analysis</h2>
+        <h2 className="text-2xl font-bold text-white">Review Summaries</h2>
         <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black text-xs font-bold px-2 py-1 rounded-full">
           PREMIUM
         </span>
@@ -84,6 +116,39 @@ export const SentimentAnalysis = () => {
       {/* Results */}
       {results && (
         <div className="space-y-6">
+          {/* Audio Overview Premium Feature */}
+          <div className="bg-gradient-to-r from-yellow-900/30 to-yellow-800/30 border border-yellow-600/50 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Volume2 size={18} className="text-yellow-400" />
+                <h3 className="text-lg font-semibold text-yellow-400">Audio Overview</h3>
+                <span className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black text-xs font-bold px-2 py-1 rounded-full">
+                  PREMIUM
+                </span>
+              </div>
+            </div>
+            <p className="text-gray-300 text-sm mb-3">
+              Get an AI-powered audio summary of all reviews using Google Notebook LM
+            </p>
+            <button 
+              onClick={handleGenerateAudio}
+              disabled={isGeneratingAudio}
+              className="bg-yellow-600 hover:bg-yellow-700 disabled:bg-yellow-700/50 text-black font-medium px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2"
+            >
+              {isGeneratingAudio ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
+                  Generating Audio...
+                </>
+              ) : (
+                <>
+                  <Volume2 size={16} />
+                  Generate Audio Summary
+                </>
+              )}
+            </button>
+          </div>
+
           {/* Overall Score */}
           <div className="bg-gray-900/50 border border-gray-700 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
