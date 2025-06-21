@@ -1,11 +1,19 @@
 
 import React, { useState } from 'react';
-import { X, Link as LinkIcon, Sparkles } from 'lucide-react';
+import { X, Link as LinkIcon, Sparkles, AlertTriangle } from 'lucide-react';
 import { Button } from './ui/button';
 
 interface AddLinkModalProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+interface DuplicateMatch {
+  id: string;
+  title: string;
+  url: string;
+  postedBy: string;
+  similarity: number;
 }
 
 const categories = [
@@ -20,6 +28,22 @@ const categories = [
   { id: 'other', label: 'Other', icon: '📎', description: 'Everything else' }
 ];
 
+// Mock existing links for duplicate detection
+const existingLinks = [
+  {
+    id: '1',
+    title: 'Charming 3BR Apartment in Montmartre',
+    url: 'https://airbnb.com/rooms/123',
+    postedBy: 'Emma'
+  },
+  {
+    id: '2',
+    title: "L'Ami Jean - Traditional Bistro",
+    url: 'https://example.com/restaurant',
+    postedBy: 'Jake'
+  }
+];
+
 export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
   const [url, setUrl] = useState('');
   const [title, setTitle] = useState('');
@@ -27,6 +51,74 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [useAiSorting, setUseAiSorting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [duplicateMatches, setDuplicateMatches] = useState<DuplicateMatch[]>([]);
+  const [showDuplicateWarning, setShowDuplicateWarning] = useState(false);
+
+  const checkForDuplicates = (inputUrl: string, inputTitle: string) => {
+    const matches: DuplicateMatch[] = [];
+    
+    existingLinks.forEach(link => {
+      let similarity = 0;
+      
+      // Check URL similarity (exact match or similar domain)
+      if (link.url === inputUrl) {
+        similarity = 1.0;
+      } else if (inputUrl && link.url) {
+        try {
+          const inputDomain = new URL(inputUrl).hostname;
+          const linkDomain = new URL(link.url).hostname;
+          if (inputDomain === linkDomain) {
+            similarity = Math.max(similarity, 0.7);
+          }
+        } catch (e) {
+          // Invalid URL format
+        }
+      }
+      
+      // Check title similarity (simple word matching)
+      if (inputTitle && link.title) {
+        const inputWords = inputTitle.toLowerCase().split(' ');
+        const linkWords = link.title.toLowerCase().split(' ');
+        const commonWords = inputWords.filter(word => 
+          word.length > 3 && linkWords.some(linkWord => 
+            linkWord.includes(word) || word.includes(linkWord)
+          )
+        );
+        const titleSimilarity = commonWords.length / Math.max(inputWords.length, linkWords.length);
+        similarity = Math.max(similarity, titleSimilarity);
+      }
+      
+      if (similarity > 0.6) {
+        matches.push({
+          id: link.id,
+          title: link.title,
+          url: link.url,
+          postedBy: link.postedBy,
+          similarity
+        });
+      }
+    });
+    
+    return matches.sort((a, b) => b.similarity - a.similarity);
+  };
+
+  const handleUrlChange = (newUrl: string) => {
+    setUrl(newUrl);
+    if (newUrl || title) {
+      const matches = checkForDuplicates(newUrl, title);
+      setDuplicateMatches(matches);
+      setShowDuplicateWarning(matches.length > 0);
+    }
+  };
+
+  const handleTitleChange = (newTitle: string) => {
+    setTitle(newTitle);
+    if (url || newTitle) {
+      const matches = checkForDuplicates(url, newTitle);
+      setDuplicateMatches(matches);
+      setShowDuplicateWarning(matches.length > 0);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,20 +127,16 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
     try {
       let finalCategory = selectedCategory;
       
-      // If no category selected and AI sorting is enabled, classify the link
       if (!selectedCategory && useAiSorting) {
         finalCategory = await classifyLink(url, title, description);
       }
       
-      // If still no category, default to 'other'
       if (!finalCategory) {
         finalCategory = 'other';
       }
 
       console.log('Adding link:', { url, title, description, category: finalCategory });
       
-      // Here you would normally save to your database
-      // For now, just close the modal
       onClose();
       resetForm();
     } catch (error) {
@@ -62,14 +150,12 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
     // Enhanced keyword-based classification for all categories
     const text = `${title} ${description} ${url}`.toLowerCase();
     
-    // Housing
     if (text.includes('airbnb') || text.includes('hotel') || text.includes('hostel') || 
         text.includes('apartment') || text.includes('accommodation') || text.includes('booking.com') ||
         text.includes('vrbo') || text.includes('stay') || text.includes('lodge')) {
       return 'housing';
     }
     
-    // Transportation
     if (text.includes('flight') || text.includes('airline') || text.includes('airport') ||
         text.includes('uber') || text.includes('lyft') || text.includes('rental car') ||
         text.includes('train') || text.includes('bus') || text.includes('transfer') ||
@@ -77,14 +163,12 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
       return 'transportation';
     }
     
-    // Reservations
     if (text.includes('reservation') || text.includes('booking') || text.includes('opentable') ||
         text.includes('resy') || text.includes('confirmed') || text.includes('table') ||
         text.includes('tickets') || text.includes('seats') || text.includes('confirmation')) {
       return 'reservations';
     }
     
-    // Essentials
     if (text.includes('packing') || text.includes('checklist') || text.includes('weather') ||
         text.includes('passport') || text.includes('visa') || text.includes('insurance') ||
         text.includes('documents') || text.includes('emergency') || text.includes('essentials') ||
@@ -92,7 +176,6 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
       return 'essentials';
     }
     
-    // Eats
     if (text.includes('restaurant') || text.includes('cafe') || text.includes('food') || 
         text.includes('menu') || text.includes('dining') || text.includes('michelin') ||
         text.includes('cuisine') || text.includes('brunch') || text.includes('lunch') ||
@@ -100,21 +183,18 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
       return 'eats';
     }
     
-    // Nightlife
     if (text.includes('bar') || text.includes('club') || text.includes('nightlife') || 
         text.includes('cocktail') || text.includes('pub') || text.includes('lounge') ||
         text.includes('drinks') || text.includes('party') || text.includes('rooftop')) {
       return 'nightlife';
     }
     
-    // Fitness
     if (text.includes('gym') || text.includes('fitness') || text.includes('yoga') || 
         text.includes('workout') || text.includes('sports') || text.includes('running') ||
         text.includes('hiking') || text.includes('swimming') || text.includes('tennis')) {
       return 'fitness';
     }
     
-    // Day Activities
     if (text.includes('museum') || text.includes('tour') || text.includes('attraction') || 
         text.includes('activity') || text.includes('experience') || text.includes('sightseeing') ||
         text.includes('gallery') || text.includes('monument') || text.includes('park') ||
@@ -122,7 +202,6 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
       return 'day-activities';
     }
     
-    // Default to other if no matches
     return 'other';
   };
 
@@ -132,6 +211,8 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
     setDescription('');
     setSelectedCategory('');
     setUseAiSorting(false);
+    setDuplicateMatches([]);
+    setShowDuplicateWarning(false);
   };
 
   if (!isOpen) return null;
@@ -162,7 +243,7 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
               <input
                 type="url"
                 value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                onChange={(e) => handleUrlChange(e.target.value)}
                 placeholder="https://..."
                 required
                 className="w-full bg-slate-900/50 border border-slate-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
@@ -178,12 +259,30 @@ export const AddLinkModal = ({ isOpen, onClose }: AddLinkModalProps) => {
             <input
               type="text"
               value={title}
-              onChange={(e) => setTitle(e.target.value)}
+              onChange={(e) => handleTitleChange(e.target.value)}
               placeholder="Give this link a title..."
               required
               className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
             />
           </div>
+
+          {/* Duplicate Warning */}
+          {showDuplicateWarning && duplicateMatches.length > 0 && (
+            <div className="p-3 bg-amber-900/20 border border-amber-600/50 rounded-lg">
+              <div className="flex items-center gap-2 mb-2">
+                <AlertTriangle size={16} className="text-amber-400" />
+                <span className="text-sm font-medium text-amber-300">Similar links found</span>
+              </div>
+              {duplicateMatches.slice(0, 2).map((match) => (
+                <div key={match.id} className="text-xs text-amber-200 mb-1">
+                  "{match.title}" by {match.postedBy} {match.similarity > 0.9 ? '(exact match)' : '(similar)'}
+                </div>
+              ))}
+              <div className="text-xs text-amber-300 mt-2">
+                Continue if you're sure this is different
+              </div>
+            </div>
+          )}
 
           {/* Description Input */}
           <div>

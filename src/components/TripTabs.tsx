@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { Search, Send } from 'lucide-react';
 import { TripChat } from './TripChat';
 import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
+import { GroupCalendar } from './GroupCalendar';
 
 interface TripTabsProps {
   activeTab: string;
@@ -16,6 +18,7 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
   const tabs = [
     { id: 'chat', label: 'Trip Chat' },
     { id: 'venues', label: 'Link Wall' },
+    { id: 'calendar', label: 'Calendar' },
     { id: 'wall', label: 'Comments Wall' }
   ];
 
@@ -25,6 +28,8 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
         return <TripChat />;
       case 'venues':
         return <VenueIdeas />;
+      case 'calendar':
+        return <GroupCalendar />;
       case 'wall':
         return <CommentsWall />;
       default:
@@ -51,7 +56,7 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
         ))}
       </div>
 
-      {/* Search Bar (for chat) */}
+      {/* Search Bar (for chat only) */}
       {activeTab === 'chat' && (
         <div className="p-4 bg-slate-900/30 border-b border-slate-700/50">
           <div className="relative">
@@ -72,7 +77,7 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
         {renderTabContent()}
       </div>
 
-      {/* Message Input (for chat) */}
+      {/* Message Input (for chat only) */}
       {activeTab === 'chat' && (
         <div className="p-4 bg-slate-900/30 border-t border-slate-700/50">
           <div className="flex gap-3 items-center">
