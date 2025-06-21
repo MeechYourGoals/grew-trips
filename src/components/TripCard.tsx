@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Calendar, MapPin, Trash, User } from 'lucide-react';
+import { Calendar, MapPin, Trash, User, Plus } from 'lucide-react';
 
 interface Participant {
   id: number;
