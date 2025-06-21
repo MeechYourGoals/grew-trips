@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BarChart3, Plus, X } from 'lucide-react';
 import { Button } from './ui/button';
@@ -98,7 +99,7 @@ export const PollComponent = () => {
       {!showCreatePoll && (
         <Button
           onClick={() => setShowCreatePoll(true)}
-          className="w-full h-12 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 font-semibold shadow-lg shadow-green-500/25"
+          className="w-full h-12 rounded-xl bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 font-semibold shadow-lg shadow-yellow-500/25 border border-yellow-500/50 text-black"
         >
           <BarChart3 size={20} className="mr-2" />
           Create Poll
@@ -107,20 +108,20 @@ export const PollComponent = () => {
 
       {/* Create Poll Form */}
       {showCreatePoll && (
-        <div className="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-lg">
+        <div className="bg-gray-800 border-2 border-gray-700 rounded-2xl p-6 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-gray-900">Create New Poll</h3>
+            <h3 className="text-lg font-bold text-white">Create New Poll</h3>
             <button
               onClick={() => setShowCreatePoll(false)}
-              className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+              className="w-8 h-8 rounded-full bg-gray-700 hover:bg-gray-600 flex items-center justify-center transition-colors"
             >
-              <X size={16} className="text-gray-600" />
+              <X size={16} className="text-gray-400" />
             </button>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
+              <label className="block text-sm font-semibold text-white mb-2">
                 Poll Question
               </label>
               <input
@@ -128,12 +129,12 @@ export const PollComponent = () => {
                 value={pollQuestion}
                 onChange={(e) => setPollQuestion(e.target.value)}
                 placeholder="What would you like to ask the group?"
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100"
+                className="w-full bg-gray-900 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-900 mb-2">
+              <label className="block text-sm font-semibold text-white mb-2">
                 Options
               </label>
               <div className="space-y-2">
@@ -144,12 +145,12 @@ export const PollComponent = () => {
                       value={option}
                       onChange={(e) => updateOption(index, e.target.value)}
                       placeholder={`Option ${index + 1}`}
-                      className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500"
+                      className="flex-1 bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-red-500"
                     />
                     {pollOptions.length > 2 && (
                       <button
                         onClick={() => removeOption(index)}
-                        className="w-8 h-8 rounded-lg bg-red-100 hover:bg-red-200 flex items-center justify-center text-red-600 transition-colors"
+                        className="w-8 h-8 rounded-lg bg-red-600 hover:bg-red-700 flex items-center justify-center text-white transition-colors"
                       >
                         <X size={14} />
                       </button>
@@ -159,7 +160,7 @@ export const PollComponent = () => {
                 {pollOptions.length < 6 && (
                   <button
                     onClick={addOption}
-                    className="w-full h-10 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:border-gray-400 hover:text-gray-600 transition-colors flex items-center justify-center gap-2"
+                    className="w-full h-10 border-2 border-dashed border-gray-600 rounded-lg text-gray-400 hover:border-gray-500 hover:text-gray-300 transition-colors flex items-center justify-center gap-2"
                   >
                     <Plus size={16} />
                     Add Option
@@ -172,14 +173,14 @@ export const PollComponent = () => {
               <Button
                 onClick={() => setShowCreatePoll(false)}
                 variant="outline"
-                className="flex-1 h-10 rounded-lg border-2 border-gray-200 hover:border-gray-300 font-semibold"
+                className="flex-1 h-10 rounded-lg border-2 border-gray-600 hover:border-gray-500 font-semibold bg-gray-800 text-white hover:bg-gray-700"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreatePoll}
                 disabled={!pollQuestion.trim() || pollOptions.filter(opt => opt.trim()).length < 2}
-                className="flex-1 h-10 rounded-lg bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 font-semibold"
+                className="flex-1 h-10 rounded-lg bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 font-semibold text-black border border-yellow-500/50"
               >
                 Create Poll
               </Button>
@@ -190,8 +191,8 @@ export const PollComponent = () => {
 
       {/* Existing Polls */}
       {polls.map((poll) => (
-        <div key={poll.id} className="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-lg">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">{poll.question}</h3>
+        <div key={poll.id} className="bg-gray-800 border-2 border-gray-700 rounded-2xl p-6 shadow-lg">
+          <h3 className="text-lg font-bold text-white mb-4">{poll.question}</h3>
           <div className="space-y-3">
             {poll.options.map((option) => {
               const percentage = poll.totalVotes > 0 ? (option.votes / poll.totalVotes) * 100 : 0;
@@ -205,23 +206,23 @@ export const PollComponent = () => {
                   className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
                     poll.userVote
                       ? isVoted
-                        ? 'border-blue-500 bg-blue-50'
-                        : 'border-gray-200 bg-gray-50'
-                      : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                        ? 'border-red-500 bg-red-900/20'
+                        : 'border-gray-600 bg-gray-700/50'
+                      : 'border-gray-600 hover:border-red-400 hover:bg-red-900/10'
                   } ${!poll.userVote ? 'cursor-pointer' : 'cursor-default'}`}
                 >
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-medium text-gray-900">{option.text}</span>
+                    <span className="font-medium text-white">{option.text}</span>
                     {poll.userVote && (
-                      <span className="text-sm font-semibold text-gray-600">
+                      <span className="text-sm font-semibold text-gray-400">
                         {option.votes} votes ({percentage.toFixed(0)}%)
                       </span>
                     )}
                   </div>
                   {poll.userVote && (
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-gray-600 rounded-full h-2">
                       <div
-                        className="bg-gradient-to-r from-blue-500 to-purple-600 h-2 rounded-full transition-all duration-500"
+                        className="bg-gradient-to-r from-red-500 to-yellow-500 h-2 rounded-full transition-all duration-500"
                         style={{ width: `${percentage}%` }}
                       />
                     </div>
@@ -231,7 +232,7 @@ export const PollComponent = () => {
             })}
           </div>
           {poll.userVote && (
-            <p className="text-sm text-gray-600 mt-4 text-center">
+            <p className="text-sm text-gray-400 mt-4 text-center">
               {poll.totalVotes} total votes
             </p>
           )}

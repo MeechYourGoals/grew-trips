@@ -36,28 +36,28 @@ export const AddPlaceModal = ({ isOpen, onClose }: AddPlaceModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-gray-900 rounded-3xl w-full max-w-md shadow-2xl border border-gray-800">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-100">
+        <div className="flex items-center justify-between p-6 border-b border-gray-800">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-r from-red-600 to-red-700 rounded-xl flex items-center justify-center">
               <MapPin size={20} className="text-white" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900">Add Place</h2>
+            <h2 className="text-xl font-bold text-white">Add Place</h2>
           </div>
           <button 
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+            className="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors border border-gray-700"
           >
-            <X size={16} className="text-gray-600" />
+            <X size={16} className="text-gray-400" />
           </button>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
+            <label className="block text-sm font-semibold text-white mb-2">
               Place URL *
             </label>
             <div className="relative">
@@ -68,13 +68,13 @@ export const AddPlaceModal = ({ isOpen, onClose }: AddPlaceModalProps) => {
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="Paste URL here (Google Maps, TripAdvisor, etc.)"
                 required
-                className="w-full bg-gray-50 border border-gray-200 rounded-xl pl-12 pr-4 py-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl pl-12 pr-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-900 mb-2">
+            <label className="block text-sm font-semibold text-white mb-2">
               Place Name (optional)
             </label>
             <input
@@ -82,7 +82,7 @@ export const AddPlaceModal = ({ isOpen, onClose }: AddPlaceModalProps) => {
               value={placeName}
               onChange={(e) => setPlaceName(e.target.value)}
               placeholder="Give this place a custom name..."
-              className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition-all"
+              className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
             />
           </div>
 
@@ -91,14 +91,14 @@ export const AddPlaceModal = ({ isOpen, onClose }: AddPlaceModalProps) => {
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1 h-12 rounded-xl border-2 border-gray-200 hover:border-gray-300 font-semibold"
+              className="flex-1 h-12 rounded-xl border-2 border-gray-700 hover:border-gray-600 font-semibold bg-gray-800 text-white hover:bg-gray-700"
             >
               Cancel
             </Button>
             <Button
               type="submit"
               disabled={isLoading || !url.trim()}
-              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 font-semibold shadow-lg shadow-blue-500/25"
+              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 font-semibold shadow-lg shadow-red-500/25 border border-red-500/50"
             >
               {isLoading ? 'Adding...' : 'Add Place'}
             </Button>

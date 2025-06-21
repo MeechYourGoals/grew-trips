@@ -26,14 +26,14 @@ const TripDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+    <div className="min-h-screen bg-black">
       <div className="container mx-auto px-6 py-8 max-w-7xl">
         {/* Back Navigation */}
         <button 
           onClick={() => navigate('/')}
-          className="flex items-center gap-3 text-gray-600 hover:text-gray-900 mb-8 transition-colors group"
+          className="flex items-center gap-3 text-gray-300 hover:text-white mb-8 transition-colors group"
         >
-          <div className="bg-white p-2 rounded-lg shadow-md group-hover:shadow-lg transition-shadow border border-gray-200">
+          <div className="bg-gray-800 p-2 rounded-lg shadow-lg group-hover:shadow-red-500/20 transition-all border border-gray-700 hover:border-red-500/50">
             <ArrowLeft size={20} />
           </div>
           <span className="font-medium">Back to My Places</span>
