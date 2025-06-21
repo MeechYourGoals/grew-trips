@@ -1,13 +1,10 @@
-
 import React, { useState } from 'react';
 import { TripCard } from '../components/TripCard';
 import { CreateTripModal } from '../components/CreateTripModal';
-import { VibeSection } from '../components/VibeSection';
-import { NavigationTabs } from '../components/NavigationTabs';
+import { SentimentAnalysis } from '../components/SentimentAnalysis';
 import { Plus } from 'lucide-react';
 
 const Index = () => {
-  const [activeTab, setActiveTab] = useState('trips');
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
   // Sample trip data with rich mock content
@@ -116,20 +113,17 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-950 to-slate-900 text-white">
+    <div className="min-h-screen bg-black text-white">
       <div className="container mx-auto px-4 py-6 max-w-7xl">
-        {/* Navigation */}
-        <NavigationTabs activeTab={activeTab} onTabChange={setActiveTab} />
-
         {/* Main Content */}
-        <div className="grid lg:grid-cols-3 gap-8 mt-8">
+        <div className="grid lg:grid-cols-3 gap-8">
           {/* Trips Section */}
           <div className="lg:col-span-2">
             <div className="flex items-center justify-between mb-6">
-              <h1 className="text-3xl font-bold">My Trips</h1>
+              <h1 className="text-3xl font-bold text-white">My Trips</h1>
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-200 hover:scale-105 shadow-lg"
+                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-200 hover:scale-105 shadow-lg border border-red-500/30"
               >
                 <Plus size={20} />
                 Create New Trip
@@ -144,9 +138,9 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Vibe Section */}
+          {/* AI Sentiment Analysis Section */}
           <div className="lg:col-span-1">
-            <VibeSection />
+            <SentimentAnalysis />
           </div>
         </div>
       </div>
