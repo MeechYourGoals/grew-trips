@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Send } from 'lucide-react';
 import { TripChat } from './TripChat';
@@ -16,7 +15,7 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
 
   const tabs = [
     { id: 'chat', label: 'Trip Chat' },
-    { id: 'venues', label: 'Venue Ideas' },
+    { id: 'venues', label: 'Link Wall' },
     { id: 'wall', label: 'Comments Wall' }
   ];
 
