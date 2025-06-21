@@ -5,6 +5,7 @@ import { TripChat } from './TripChat';
 import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
 import { GroupCalendar } from './GroupCalendar';
+import { Broadcasts } from './Broadcasts';
 
 interface TripTabsProps {
   activeTab: string;
@@ -19,6 +20,7 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
     { id: 'chat', label: 'Trip Chat' },
     { id: 'venues', label: 'Link Wall' },
     { id: 'calendar', label: 'Calendar' },
+    { id: 'broadcasts', label: 'Broadcasts' },
     { id: 'wall', label: 'Comments Wall' }
   ];
 
@@ -30,6 +32,8 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
         return <VenueIdeas />;
       case 'calendar':
         return <GroupCalendar />;
+      case 'broadcasts':
+        return <Broadcasts />;
       case 'wall':
         return <CommentsWall />;
       default:
