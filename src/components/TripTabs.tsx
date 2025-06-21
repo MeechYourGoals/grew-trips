@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Send } from 'lucide-react';
 import { TripChat } from './TripChat';
@@ -6,6 +5,7 @@ import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
 import { GroupCalendar } from './GroupCalendar';
 import { Broadcasts } from './Broadcasts';
+import { PhotoAlbum } from './PhotoAlbum';
 
 interface TripTabsProps {
   activeTab: string;
@@ -21,7 +21,8 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
     { id: 'venues', label: 'Link Wall' },
     { id: 'calendar', label: 'Calendar' },
     { id: 'broadcasts', label: 'Broadcasts' },
-    { id: 'wall', label: 'Comments Wall' }
+    { id: 'wall', label: 'Comments Wall' },
+    { id: 'photos', label: 'Photo Album' }
   ];
 
   const renderTabContent = () => {
@@ -36,6 +37,8 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
         return <Broadcasts />;
       case 'wall':
         return <CommentsWall />;
+      case 'photos':
+        return <PhotoAlbum />;
       default:
         return <TripChat />;
     }
@@ -44,12 +47,12 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
   return (
     <div className="bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 rounded-2xl overflow-hidden">
       {/* Tab Navigation */}
-      <div className="flex bg-slate-900/50">
+      <div className="flex bg-slate-900/50 overflow-x-auto">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
-            className={`flex-1 px-6 py-4 text-center font-medium transition-all duration-200 ${
+            className={`flex-shrink-0 px-4 py-4 text-center font-medium transition-all duration-200 ${
               activeTab === tab.id
                 ? 'bg-blue-600 text-white'
                 : 'text-slate-400 hover:text-white hover:bg-slate-800/50'

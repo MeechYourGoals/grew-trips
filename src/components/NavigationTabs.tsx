@@ -17,7 +17,7 @@ export const NavigationTabs = ({ activeTab, onTabChange }: NavigationTabsProps) 
             : 'bg-slate-800/50 text-slate-300 hover:bg-slate-800 hover:text-white'
         }`}
       >
-        Places
+        Completed Trips
       </button>
       <button
         onClick={() => onTabChange('trips')}
@@ -27,7 +27,7 @@ export const NavigationTabs = ({ activeTab, onTabChange }: NavigationTabsProps) 
             : 'bg-slate-800/50 text-slate-300 hover:bg-slate-800 hover:text-white'
         }`}
       >
-        Trips
+        Current & Upcoming Trips
       </button>
     </div>
   );
