@@ -23,40 +23,51 @@ interface TripHeaderProps {
 
 export const TripHeader = ({ trip }: TripHeaderProps) => {
   return (
-    <div className="mb-8">
+    <div className="mb-12 bg-white rounded-3xl p-8 shadow-lg shadow-gray-200/50 border border-gray-200">
       {/* Title and Collaborators */}
-      <div className="flex justify-between items-start mb-4">
-        <h1 className="text-4xl font-bold text-white">{trip.title}</h1>
-        <div className="flex items-center gap-3">
-          <span className="text-slate-300 text-sm">Trip Collaborators:</span>
+      <div className="flex justify-between items-start mb-6">
+        <h1 className="text-4xl font-bold text-gray-900 leading-tight">{trip.title}</h1>
+        <div className="flex items-center gap-4">
+          <span className="text-gray-600 text-sm font-medium">Trip Collaborators:</span>
           <div className="flex -space-x-3">
             {trip.collaborators.map((collaborator, index) => (
-              <img
+              <div
                 key={collaborator.id}
-                src={collaborator.avatar}
-                alt={collaborator.name}
-                className="w-10 h-10 rounded-full border-2 border-slate-800 hover:scale-110 transition-transform duration-200"
+                className="relative group"
                 style={{ zIndex: trip.collaborators.length - index }}
-              />
+              >
+                <img
+                  src={collaborator.avatar}
+                  alt={collaborator.name}
+                  className="w-12 h-12 rounded-full border-3 border-white hover:scale-110 transition-transform duration-200 shadow-lg"
+                />
+                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                  {collaborator.name}
+                </div>
+              </div>
             ))}
           </div>
         </div>
       </div>
 
       {/* Location */}
-      <div className="flex items-center gap-2 text-slate-300 mb-2">
-        <MapPin size={18} />
-        <span className="text-lg">{trip.location}</span>
+      <div className="flex items-center gap-3 text-gray-700 mb-3">
+        <div className="bg-blue-100 p-2 rounded-lg">
+          <MapPin size={20} className="text-blue-600" />
+        </div>
+        <span className="text-lg font-medium">{trip.location}</span>
       </div>
 
       {/* Date Range */}
-      <div className="flex items-center gap-2 text-slate-300 mb-4">
-        <Calendar size={18} />
-        <span className="text-lg">{trip.dateRange}</span>
+      <div className="flex items-center gap-3 text-gray-700 mb-6">
+        <div className="bg-purple-100 p-2 rounded-lg">
+          <Calendar size={20} className="text-purple-600" />
+        </div>
+        <span className="text-lg font-medium">{trip.dateRange}</span>
       </div>
 
       {/* Description */}
-      <p className="text-slate-400 text-lg">{trip.description}</p>
+      <p className="text-gray-600 text-lg leading-relaxed">{trip.description}</p>
     </div>
   );
 };

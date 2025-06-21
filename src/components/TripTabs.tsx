@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Search, Send } from 'lucide-react';
 import { TripChat } from './TripChat';
@@ -45,17 +46,17 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
   };
 
   return (
-    <div className="bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 rounded-2xl overflow-hidden">
+    <div className="bg-white border border-gray-200 rounded-3xl overflow-hidden shadow-lg">
       {/* Tab Navigation */}
-      <div className="flex bg-slate-900/50 overflow-x-auto">
+      <div className="flex bg-gray-50/80 overflow-x-auto border-b border-gray-200">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
-            className={`flex-shrink-0 px-4 py-4 text-center font-medium transition-all duration-200 ${
+            className={`flex-shrink-0 px-6 py-4 text-center font-medium text-sm transition-all duration-200 border-b-2 ${
               activeTab === tab.id
-                ? 'bg-blue-600 text-white'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                ? 'bg-white text-blue-600 border-blue-600'
+                : 'text-gray-600 hover:text-gray-900 border-transparent hover:bg-white/50'
             }`}
           >
             {tab.label}
@@ -65,15 +66,15 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
 
       {/* Search Bar (for chat only) */}
       {activeTab === 'chat' && (
-        <div className="p-4 bg-slate-900/30 border-b border-slate-700/50">
+        <div className="p-6 bg-gray-50/50 border-b border-gray-200">
           <div className="relative">
-            <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+            <Search size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <input
               type="text"
               placeholder="Search messages..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-slate-800/50 border border-slate-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+              className="w-full bg-white border border-gray-300 rounded-2xl pl-12 pr-4 py-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
             />
           </div>
         </div>
@@ -86,10 +87,10 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
 
       {/* Message Input (for chat only) */}
       {activeTab === 'chat' && (
-        <div className="p-4 bg-slate-900/30 border-t border-slate-700/50">
-          <div className="flex gap-3 items-center">
-            <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-              <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+        <div className="p-6 bg-gray-50/50 border-t border-gray-200">
+          <div className="flex gap-4 items-center">
+            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+              <div className="w-3 h-3 bg-green-400 rounded-full"></div>
             </div>
             <div className="flex-1 relative">
               <input
@@ -97,10 +98,10 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
                 placeholder="Type your message..."
                 value={message}
                 onChange={(e) => setMessage(e.target.value)}
-                className="w-full bg-slate-800/50 border border-slate-600 rounded-lg px-4 py-3 pr-12 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
+                className="w-full bg-white border border-gray-300 rounded-2xl px-6 py-4 pr-14 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
               />
-              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-lg transition-colors">
-                <Send size={16} />
+              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white p-3 rounded-xl transition-colors shadow-lg">
+                <Send size={18} />
               </button>
             </div>
           </div>
