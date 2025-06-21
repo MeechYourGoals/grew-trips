@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Trash, User, Plus } from 'lucide-react';
 
 interface Participant {
@@ -20,6 +22,12 @@ interface TripCardProps {
 }
 
 export const TripCard = ({ trip }: TripCardProps) => {
+  const navigate = useNavigate();
+
+  const handleViewTrip = () => {
+    navigate(`/trip/${trip.id}`);
+  };
+
   return (
     <div className="bg-slate-800/40 backdrop-blur-sm border border-slate-700/50 rounded-2xl p-6 hover:bg-slate-800/60 transition-all duration-300 hover:scale-105 hover:shadow-xl group">
       {/* Header with delete button */}
@@ -70,7 +78,10 @@ export const TripCard = ({ trip }: TripCardProps) => {
       </div>
 
       {/* View Trip Button */}
-      <button className="w-full bg-slate-700/50 hover:bg-blue-600/20 border border-slate-600 hover:border-blue-500/50 text-slate-300 hover:text-blue-400 py-3 rounded-xl transition-all duration-200 font-medium">
+      <button 
+        onClick={handleViewTrip}
+        className="w-full bg-slate-700/50 hover:bg-blue-600/20 border border-slate-600 hover:border-blue-500/50 text-slate-300 hover:text-blue-400 py-3 rounded-xl transition-all duration-200 font-medium"
+      >
         View Trip
       </button>
     </div>
