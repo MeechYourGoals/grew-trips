@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,7 +19,18 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				'outfit': ['Outfit', 'sans-serif'],
+			},
 			colors: {
+				// Apple-inspired liquid glass colors from your reference
+				glass: {
+					orange: '#FB6E1D',
+					yellow: '#F8DE6F',
+					green: '#62D621',
+					dark: '#040A06',
+					light: '#FFFFFF',
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
@@ -84,11 +96,19 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0px)' },
+					'50%': { transform: 'translateY(-10px)' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'float': 'float 6s ease-in-out infinite'
+			},
+			backdropBlur: {
+				xs: '2px',
 			}
 		}
 	},

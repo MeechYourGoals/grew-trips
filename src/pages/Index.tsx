@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { TripCard } from '../components/TripCard';
 import { CreateTripModal } from '../components/CreateTripModal';
@@ -113,17 +114,24 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <div className="container mx-auto px-4 py-6 max-w-7xl">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 font-outfit">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-glass-orange/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-glass-yellow/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-glass-green/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
+      </div>
+
+      <div className="container mx-auto px-4 py-6 max-w-7xl relative z-10">
         {/* Main Content */}
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Trips Section */}
           <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-6">
-              <h1 className="text-3xl font-bold text-white">My Trips</h1>
+            <div className="flex items-center justify-between mb-8">
+              <h1 className="text-4xl font-semibold text-white tracking-tight">My Trips</h1>
               <button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl flex items-center gap-2 transition-all duration-200 hover:scale-105 shadow-lg border border-red-500/30"
+                className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
               >
                 <Plus size={20} />
                 Create New Trip
