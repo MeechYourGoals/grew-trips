@@ -1,24 +1,36 @@
 
 import React, { useState } from 'react';
-import { Search, Send } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { TripChat } from './TripChat';
+import { TourChat } from './TourChat';
 import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
 import { GroupCalendar } from './GroupCalendar';
 import { Broadcasts } from './Broadcasts';
 import { PhotoAlbum } from './PhotoAlbum';
+import { useParams } from 'react-router-dom';
 
 interface TripTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  isProTour?: boolean;
 }
 
-export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
+export const TripTabs = ({ activeTab, onTabChange, isProTour = false }: TripTabsProps) => {
+  const { tourId } = useParams();
   const [searchQuery, setSearchQuery] = useState('');
-  const [message, setMessage] = useState('');
 
-  const tabs = [
+  const baseTabs = [
     { id: 'chat', label: 'Trip Chat' },
+    { id: 'venues', label: 'Link Wall' },
+    { id: 'calendar', label: 'Calendar' },
+    { id: 'wall', label: 'Comments Wall' },
+    { id: 'photos', label: 'Photo Album' }
+  ];
+
+  const proTabs = [
+    { id: 'chat', label: 'Trip Chat' },
+    { id: 'tour-chat', label: 'Tour Chat' },
     { id: 'venues', label: 'Link Wall' },
     { id: 'calendar', label: 'Calendar' },
     { id: 'broadcasts', label: 'Broadcasts' },
@@ -26,10 +38,14 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
     { id: 'photos', label: 'Photo Album' }
   ];
 
+  const tabs = isProTour ? proTabs : baseTabs;
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'chat':
         return <TripChat />;
+      case 'tour-chat':
+        return <TourChat />;
       case 'venues':
         return <VenueIdeas />;
       case 'calendar':
@@ -60,53 +76,33 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
             }`}
           >
             {tab.label}
+            {tab.id === 'tour-chat' && isProTour && (
+              <span className="ml-2 text-xs bg-glass-orange/20 text-glass-orange px-2 py-1 rounded">
+                PRO
+              </span>
+            )}
           </button>
         ))}
       </div>
 
-      {/* Search Bar (for chat only) */}
-      {activeTab === 'chat' && (
-        <div className="p-6 bg-gray-800/30 border-b border-gray-800">
-          <div className="relative">
-            <Search size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search messages..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 rounded-2xl pl-12 pr-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-            />
-          </div>
+      {/* Global Search Bar */}
+      <div className="p-6 bg-gray-800/30 border-b border-gray-800">
+        <div className="relative">
+          <Search size={20} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+          <input
+            type="text"
+            placeholder="Search across all trips and messages..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full bg-gray-800 border border-gray-700 rounded-2xl pl-12 pr-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
+          />
         </div>
-      )}
+      </div>
 
       {/* Tab Content */}
       <div className="min-h-[400px]">
         {renderTabContent()}
       </div>
-
-      {/* Message Input (for chat only) */}
-      {activeTab === 'chat' && (
-        <div className="p-6 bg-gray-800/30 border-t border-gray-800">
-          <div className="flex gap-4 items-center">
-            <div className="w-12 h-12 bg-gradient-to-r from-red-600 to-red-700 rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-            </div>
-            <div className="flex-1 relative">
-              <input
-                type="text"
-                placeholder="Type your message..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                className="w-full bg-gray-800 border border-gray-700 rounded-2xl px-6 py-4 pr-14 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
-              />
-              <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-red-600 hover:bg-red-700 text-white p-3 rounded-xl transition-colors shadow-lg">
-                <Send size={18} />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

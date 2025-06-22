@@ -1,15 +1,17 @@
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MapPin, Calendar, Plus } from 'lucide-react';
+import { ArrowLeft, MessageCircle } from 'lucide-react';
 import { TripTabs } from '../components/TripTabs';
 import { TripHeader } from '../components/TripHeader';
 import { PlacesSection } from '../components/PlacesSection';
+import { MessageInbox } from '../components/MessageInbox';
 
 const TripDetail = () => {
   const { tripId } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('chat');
+  const [showInbox, setShowInbox] = useState(false);
 
   // Sample trip data - this would come from your database
   const trip = {
@@ -29,15 +31,32 @@ const TripDetail = () => {
     <div className="min-h-screen bg-black">
       <div className="container mx-auto px-6 py-8 max-w-7xl">
         {/* Back Navigation */}
-        <button 
-          onClick={() => navigate('/')}
-          className="flex items-center gap-3 text-gray-300 hover:text-white mb-8 transition-colors group"
-        >
-          <div className="bg-gray-800 p-2 rounded-lg shadow-lg group-hover:shadow-red-500/20 transition-all border border-gray-700 hover:border-red-500/50">
-            <ArrowLeft size={20} />
+        <div className="flex items-center justify-between mb-8">
+          <button 
+            onClick={() => navigate('/')}
+            className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors group"
+          >
+            <div className="bg-gray-800 p-2 rounded-lg shadow-lg group-hover:shadow-red-500/20 transition-all border border-gray-700 hover:border-red-500/50">
+              <ArrowLeft size={20} />
+            </div>
+            <span className="font-medium">Back to My Places</span>
+          </button>
+
+          <button
+            onClick={() => setShowInbox(!showInbox)}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
+          >
+            <MessageCircle size={16} />
+            {showInbox ? 'Hide Inbox' : 'Message Inbox'}
+          </button>
+        </div>
+
+        {/* Message Inbox */}
+        {showInbox && (
+          <div className="mb-8">
+            <MessageInbox />
           </div>
-          <span className="font-medium">Back to My Places</span>
-        </button>
+        )}
 
         {/* Trip Header */}
         <TripHeader trip={trip} />
