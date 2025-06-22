@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, MessageCircle, Clock, User } from 'lucide-react';
 import { useMessages } from '../hooks/useMessages';
@@ -32,6 +31,25 @@ export const MessageInbox = () => {
     if (diffMinutes < 60) return `${diffMinutes}m ago`;
     if (diffMinutes < 1440) return `${Math.floor(diffMinutes / 60)}h ago`;
     return date.toLocaleDateString();
+  };
+
+  const getTripDisplayName = (message: any) => {
+    if (message.tripName) return message.tripName;
+    if (message.tourName) return message.tourName;
+    if (message.tripId) return 'Trip';
+    if (message.tourId) return 'Tour';
+    return null;
+  };
+
+  const getTripBadgeColor = (message: any) => {
+    if (message.tripId && message.tourId) {
+      return 'bg-purple-500/20 text-purple-400 border-purple-500/30';
+    } else if (message.tripId) {
+      return 'bg-blue-500/20 text-blue-400 border-blue-500/30';
+    } else if (message.tourId) {
+      return 'bg-glass-orange/20 text-glass-orange border-glass-orange/30';
+    }
+    return 'bg-gray-500/20 text-gray-400 border-gray-500/30';
   };
 
   return (
@@ -77,56 +95,56 @@ export const MessageInbox = () => {
 
       {/* Messages */}
       <div className="space-y-3 max-h-96 overflow-y-auto">
-        {filteredMessages.map((message) => (
-          <div
-            key={message.id}
-            onClick={() => handleMessageClick(message)}
-            className={`p-4 rounded-xl cursor-pointer transition-all hover:bg-white/10 ${
-              !message.isRead ? 'bg-white/5 border-l-4 border-glass-orange' : 'bg-white/2'
-            }`}
-          >
-            <div className="flex items-start gap-3">
-              <img
-                src={message.senderAvatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'}
-                alt={message.senderName}
-                className="w-10 h-10 rounded-full"
-              />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between mb-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-white font-medium">{message.senderName}</span>
-                    {message.tripId && (
-                      <span className="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">
-                        Trip
-                      </span>
-                    )}
-                    {message.tourId && !message.tripId && (
-                      <span className="text-xs bg-glass-orange/20 text-glass-orange px-2 py-1 rounded">
-                        Tour
-                      </span>
-                    )}
+        {filteredMessages.map((message) => {
+          const tripDisplayName = getTripDisplayName(message);
+          const badgeColor = getTripBadgeColor(message);
+          
+          return (
+            <div
+              key={message.id}
+              onClick={() => handleMessageClick(message)}
+              className={`p-4 rounded-xl cursor-pointer transition-all hover:bg-white/10 ${
+                !message.isRead ? 'bg-white/5 border-l-4 border-glass-orange' : 'bg-white/2'
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <img
+                  src={message.senderAvatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'}
+                  alt={message.senderName}
+                  className="w-10 h-10 rounded-full"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-white font-medium">{message.senderName}</span>
+                      {tripDisplayName && (
+                        <span className={`text-xs px-2 py-1 rounded-full border backdrop-blur-sm truncate max-w-32 ${badgeColor}`}>
+                          {tripDisplayName}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 text-gray-400 text-xs">
+                      <Clock size={12} />
+                      {formatTime(message.timestamp)}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2 text-gray-400 text-xs">
-                    <Clock size={12} />
-                    {formatTime(message.timestamp)}
-                  </div>
+                  <p className="text-gray-300 text-sm truncate">{message.content}</p>
+                  {message.mentions && message.mentions.includes('everyone') && (
+                    <div className="mt-2">
+                      <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded flex items-center gap-1 w-fit">
+                        <User size={10} />
+                        @everyone
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <p className="text-gray-300 text-sm truncate">{message.content}</p>
-                {message.mentions && message.mentions.includes('everyone') && (
-                  <div className="mt-2">
-                    <span className="text-xs bg-red-500/20 text-red-400 px-2 py-1 rounded flex items-center gap-1 w-fit">
-                      <User size={10} />
-                      @everyone
-                    </span>
-                  </div>
+                {!message.isRead && (
+                  <div className="w-2 h-2 bg-glass-orange rounded-full"></div>
                 )}
               </div>
-              {!message.isRead && (
-                <div className="w-2 h-2 bg-glass-orange rounded-full"></div>
-              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {filteredMessages.length === 0 && (

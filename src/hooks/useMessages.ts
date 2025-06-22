@@ -12,6 +12,8 @@ const mockMessages: Message[] = [
     senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
     tripId: 'sydney-show',
     tourId: '1',
+    tripName: 'Sydney Comedy Show',
+    tourName: 'Australian Comedy Tour',
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
     isRead: false
   },
@@ -23,6 +25,8 @@ const mockMessages: Message[] = [
     senderAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
     tripId: 'sydney-show',
     tourId: '1',
+    tripName: 'Sydney Comedy Show',
+    tourName: 'Australian Comedy Tour',
     timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
     isRead: false,
     mentions: ['everyone']
@@ -35,6 +39,8 @@ const mockMessages: Message[] = [
     senderAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face',
     tripId: 'melbourne-show',
     tourId: '1',
+    tripName: 'Melbourne Comedy Show',
+    tourName: 'Australian Comedy Tour',
     timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
     isRead: true
   },
@@ -45,6 +51,7 @@ const mockMessages: Message[] = [
     senderName: 'Tour Manager',
     senderAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
     tourId: '1',
+    tourName: 'Australian Comedy Tour',
     timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
     isRead: false
   }
@@ -54,7 +61,7 @@ export const useMessages = () => {
   const [messages, setMessages] = useState<Message[]>(mockMessages);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const addMessage = (content: string, tripId?: string, tourId?: string) => {
+  const addMessage = (content: string, tripId?: string, tourId?: string, tripName?: string, tourName?: string) => {
     const newMessage: Message = {
       id: Date.now().toString(),
       content,
@@ -62,6 +69,8 @@ export const useMessages = () => {
       senderName: 'You',
       tripId,
       tourId,
+      tripName,
+      tourName,
       timestamp: new Date().toISOString(),
       isRead: true
     };

@@ -7,6 +7,8 @@ export interface Message {
   senderAvatar?: string;
   tripId?: string;
   tourId?: string;
+  tripName?: string;
+  tourName?: string;
   timestamp: string;
   isRead: boolean;
   mentions?: string[];
