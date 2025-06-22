@@ -1,12 +1,15 @@
-
 import React, { useState } from 'react';
 import { TripCard } from '../components/TripCard';
 import { CreateTripModal } from '../components/CreateTripModal';
 import { SentimentAnalysis } from '../components/SentimentAnalysis';
-import { Plus } from 'lucide-react';
+import { ProUpgradeModal } from '../components/ProUpgradeModal';
+import { Plus, Crown } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const Index = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isProModalOpen, setIsProModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   // Sample trip data with rich mock content
   const trips = [
@@ -123,21 +126,42 @@ const Index = () => {
       </div>
 
       <div className="container mx-auto px-4 py-6 max-w-7xl relative z-10">
+        {/* Header with Pro Features */}
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-4xl font-semibold text-white tracking-tight">My Trips</h1>
+          <div className="flex items-center gap-4">
+            {/* Pro Tour Dashboard Button */}
+            <button
+              onClick={() => navigate('/tour/1')}
+              className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-md border border-white/20 hover:border-white/40 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
+            >
+              <Crown size={20} />
+              Tour Dashboard
+            </button>
+            
+            {/* Upgrade to Pro */}
+            <button
+              onClick={() => setIsProModalOpen(true)}
+              className="bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg font-medium"
+            >
+              <Crown size={20} />
+              Upgrade to Pro
+            </button>
+            
+            <button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
+            >
+              <Plus size={20} />
+              Create New Trip
+            </button>
+          </div>
+        </div>
+
         {/* Main Content */}
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Trips Section */}
           <div className="lg:col-span-2">
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-4xl font-semibold text-white tracking-tight">My Trips</h1>
-              <button
-                onClick={() => setIsCreateModalOpen(true)}
-                className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
-              >
-                <Plus size={20} />
-                Create New Trip
-              </button>
-            </div>
-
             {/* Trip Cards Grid */}
             <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
               {trips.map((trip) => (
@@ -157,6 +181,12 @@ const Index = () => {
       <CreateTripModal 
         isOpen={isCreateModalOpen} 
         onClose={() => setIsCreateModalOpen(false)} 
+      />
+
+      {/* Pro Upgrade Modal */}
+      <ProUpgradeModal 
+        isOpen={isProModalOpen} 
+        onClose={() => setIsProModalOpen(false)} 
       />
     </div>
   );
