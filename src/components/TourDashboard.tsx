@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Users, Plus, Mic, Music, Trophy, Briefcase, Hotel, Plane } from 'lucide-react';
@@ -186,7 +185,7 @@ export const TourDashboard = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
             <h2 className="text-xl md:text-2xl font-semibold text-white">Tour Schedule</h2>
             <button className="bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium px-4 md:px-6 py-3 rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg flex items-center gap-2">
-              <Plus size={16} md:size={20} />
+              <Plus size={20} />
               Add Event
             </button>
           </div>
