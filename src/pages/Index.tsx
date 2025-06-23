@@ -241,12 +241,12 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 font-outfit">
+    <div className="min-h-screen bg-black font-outfit">
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-glass-orange/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-glass-yellow/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-glass-green/10 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-yellow-500/5 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute top-3/4 right-1/4 w-80 h-80 bg-yellow-400/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-amber-500/5 rounded-full blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
       </div>
 
       <div className="container mx-auto px-4 py-6 max-w-7xl relative z-10">
@@ -259,16 +259,16 @@ const Index = () => {
             {/* Pro Dashboard Button */}
             <button
               onClick={() => navigate('/tour/1')}
-              className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-md border border-white/20 hover:border-white/40 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
+              className="bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:border-yellow-500/50 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium hover:bg-gray-800/80"
             >
-              <Crown size={20} />
+              <Crown size={20} className="text-yellow-500" />
               Pro Dashboard
             </button>
             
             {/* Upgrade to Pro */}
             <button
               onClick={() => setIsProModalOpen(true)}
-              className="bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg font-medium"
+              className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg font-medium"
             >
               <Crown size={20} />
               Upgrade to Pro
@@ -276,7 +276,7 @@ const Index = () => {
             
             <button
               onClick={() => setIsCreateModalOpen(true)}
-              className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
+              className="bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:bg-gray-800/80 hover:border-gray-600 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
             >
               <Plus size={20} />
               Create New Trip
@@ -285,26 +285,26 @@ const Index = () => {
             {/* Settings Dropdown Menu */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white p-3 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
+                <button className="bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:bg-gray-800/80 hover:border-gray-600 text-white p-3 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
                   <Settings size={20} />
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent 
                 align="end" 
-                className="bg-white/10 backdrop-blur-md border border-white/20 text-white min-w-[200px] z-50"
+                className="bg-gray-900/95 backdrop-blur-md border border-gray-700 text-white min-w-[200px] z-50"
               >
                 <DropdownMenuItem 
                   onClick={() => setIsSettingsOpen(true)}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-white/20 cursor-pointer"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
                 >
                   <User size={16} />
                   Account Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem 
                   onClick={() => setIsProModalOpen(true)}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-white/20 cursor-pointer"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
                 >
-                  <Crown size={16} />
+                  <Crown size={16} className="text-yellow-500" />
                   Upgrade to Pro
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -318,17 +318,17 @@ const Index = () => {
             type="single" 
             value={viewMode} 
             onValueChange={(value) => value && setViewMode(value)}
-            className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-1"
+            className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-1"
           >
             <ToggleGroupItem 
               value="myTrips" 
-              className="px-6 py-3 rounded-xl text-white data-[state=on]:bg-white/20 data-[state=on]:text-glass-yellow transition-all"
+              className="px-6 py-3 rounded-xl text-white data-[state=on]:bg-gray-800/80 data-[state=on]:text-yellow-500 transition-all"
             >
               My Trips
             </ToggleGroupItem>
             <ToggleGroupItem 
               value="tripsPro" 
-              className="px-6 py-3 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-glass-orange/30 data-[state=on]:to-glass-yellow/30 data-[state=on]:text-glass-yellow transition-all flex items-center gap-2"
+              className="px-6 py-3 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-yellow-600/30 data-[state=on]:to-yellow-500/30 data-[state=on]:text-yellow-400 transition-all flex items-center gap-2"
             >
               <Crown size={16} />
               Trips Pro

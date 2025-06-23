@@ -23,12 +23,12 @@ export default {
 				'outfit': ['Outfit', 'sans-serif'],
 			},
 			colors: {
-				// Apple-inspired liquid glass colors from your reference
+				// Dark theme with gold accents
 				glass: {
-					orange: '#FB6E1D',
-					yellow: '#F8DE6F',
+					orange: '#FFD700', // Gold
+					yellow: '#FFC107', // Amber Gold
 					green: '#62D621',
-					dark: '#040A06',
+					dark: '#000000',
 					light: '#FFFFFF',
 				},
 				border: 'hsl(var(--border))',
