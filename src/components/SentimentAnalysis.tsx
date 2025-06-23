@@ -5,7 +5,7 @@ import { AudioOverviews } from './AudioOverviews';
 
 export const SentimentAnalysis = () => {
   return (
-    <div className="grid md:grid-cols-2 gap-6">
+    <div className="grid md:grid-cols-2 gap-6 w-full">
       {/* Universal Review Summaries - Left Side */}
       <UniversalReviewSummaries />
 

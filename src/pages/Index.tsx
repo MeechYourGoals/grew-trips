@@ -336,28 +336,25 @@ const Index = () => {
           </ToggleGroup>
         </div>
 
-        {/* Main Content */}
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Trips Section */}
-          <div className="lg:col-span-2">
-            {/* Trip Cards Grid */}
-            <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
-              {viewMode === 'myTrips' ? (
-                trips.map((trip) => (
-                  <TripCard key={trip.id} trip={trip} />
-                ))
-              ) : (
-                proMockTrips.map((trip) => (
-                  <ProTripCard key={trip.id} trip={trip} />
-                ))
-              )}
-            </div>
+        {/* Main Content - Trip Cards */}
+        <div className="mb-8">
+          {/* Trip Cards Grid */}
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {viewMode === 'myTrips' ? (
+              trips.map((trip) => (
+                <TripCard key={trip.id} trip={trip} />
+              ))
+            ) : (
+              proMockTrips.map((trip) => (
+                <ProTripCard key={trip.id} trip={trip} />
+              ))
+            )}
           </div>
+        </div>
 
-          {/* AI Sentiment Analysis Section */}
-          <div className="lg:col-span-1">
-            <SentimentAnalysis />
-          </div>
+        {/* AI Sentiment Analysis Section - Now at bottom */}
+        <div className="mt-12">
+          <SentimentAnalysis />
         </div>
       </div>
 
