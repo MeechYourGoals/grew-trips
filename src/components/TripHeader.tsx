@@ -1,73 +1,92 @@
 
-import React from 'react';
-import { MapPin, Calendar } from 'lucide-react';
-
-interface Collaborator {
-  id: number;
-  name: string;
-  avatar: string;
-}
-
-interface Trip {
-  id: number;
-  title: string;
-  location: string;
-  dateRange: string;
-  description: string;
-  collaborators: Collaborator[];
-}
+import React, { useState } from 'react';
+import { Calendar, MapPin, Users, Plus } from 'lucide-react';
+import { InviteModal } from './InviteModal';
+import { useAuth } from '../hooks/useAuth';
 
 interface TripHeaderProps {
-  trip: Trip;
+  trip: {
+    id: number;
+    title: string;
+    location: string;
+    dateRange: string;
+    description: string;
+    collaborators: Array<{
+      id: number;
+      name: string;
+      avatar: string;
+    }>;
+  };
 }
 
 export const TripHeader = ({ trip }: TripHeaderProps) => {
+  const { user } = useAuth();
+  const [showInvite, setShowInvite] = useState(false);
+
   return (
-    <div className="mb-12 bg-gray-900 rounded-3xl p-8 shadow-2xl shadow-black/50 border border-gray-800">
-      {/* Title and Collaborators */}
-      <div className="flex justify-between items-start mb-6">
-        <h1 className="text-4xl font-bold text-white leading-tight">{trip.title}</h1>
-        <div className="flex items-center gap-4">
-          <span className="text-gray-400 text-sm font-medium">Trip Collaborators:</span>
-          <div className="flex -space-x-3">
-            {trip.collaborators.map((collaborator, index) => (
-              <div
-                key={collaborator.id}
-                className="relative group"
-                style={{ zIndex: trip.collaborators.length - index }}
-              >
-                <img
-                  src={collaborator.avatar}
-                  alt={collaborator.name}
-                  className="w-12 h-12 rounded-full border-3 border-gray-800 hover:scale-110 transition-transform duration-200 shadow-lg hover:border-red-500"
-                />
-                <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap border border-gray-700">
-                  {collaborator.name}
-                </div>
+    <>
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 mb-8">
+        <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
+          {/* Trip Info */}
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold text-white mb-4">{trip.title}</h1>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+              <div className="flex items-center gap-2 text-gray-300">
+                <MapPin size={18} className="text-glass-orange" />
+                <span>{trip.location}</span>
               </div>
-            ))}
+              <div className="flex items-center gap-2 text-gray-300">
+                <Calendar size={18} className="text-glass-orange" />
+                <span>{trip.dateRange}</span>
+              </div>
+            </div>
+            <p className="text-gray-300 text-lg leading-relaxed">
+              {trip.description}
+            </p>
+          </div>
+
+          {/* Collaborators */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 min-w-[280px]">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Users size={20} className="text-glass-orange" />
+                <h3 className="text-white font-semibold">Trip Collaborators</h3>
+              </div>
+              <span className="text-gray-400 text-sm">{trip.collaborators.length}</span>
+            </div>
+            
+            <div className="space-y-3 mb-4">
+              {trip.collaborators.map((collaborator) => (
+                <div key={collaborator.id} className="flex items-center gap-3">
+                  <img
+                    src={collaborator.avatar}
+                    alt={collaborator.name}
+                    className="w-10 h-10 rounded-full border-2 border-white/20"
+                  />
+                  <span className="text-white font-medium">{collaborator.name}</span>
+                </div>
+              ))}
+            </div>
+
+            {user && (
+              <button
+                onClick={() => setShowInvite(true)}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium py-3 rounded-xl transition-all duration-200 hover:scale-105"
+              >
+                <Plus size={16} />
+                Invite to Trip
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Location */}
-      <div className="flex items-center gap-3 text-gray-300 mb-3">
-        <div className="bg-red-900/30 p-2 rounded-lg border border-red-500/30">
-          <MapPin size={20} className="text-red-400" />
-        </div>
-        <span className="text-lg font-medium">{trip.location}</span>
-      </div>
-
-      {/* Date Range */}
-      <div className="flex items-center gap-3 text-gray-300 mb-6">
-        <div className="bg-yellow-900/30 p-2 rounded-lg border border-yellow-500/30">
-          <Calendar size={20} className="text-yellow-400" />
-        </div>
-        <span className="text-lg font-medium">{trip.dateRange}</span>
-      </div>
-
-      {/* Description */}
-      <p className="text-gray-400 text-lg leading-relaxed">{trip.description}</p>
-    </div>
+      <InviteModal 
+        isOpen={showInvite} 
+        onClose={() => setShowInvite(false)}
+        tripName={trip.title}
+        tripId={trip.id.toString()}
+      />
+    </>
   );
 };

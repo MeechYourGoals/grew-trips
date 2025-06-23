@@ -1,17 +1,25 @@
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageCircle } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Settings, UserPlus } from 'lucide-react';
 import { TripTabs } from '../components/TripTabs';
 import { TripHeader } from '../components/TripHeader';
 import { PlacesSection } from '../components/PlacesSection';
 import { MessageInbox } from '../components/MessageInbox';
+import { SettingsMenu } from '../components/SettingsMenu';
+import { InviteModal } from '../components/InviteModal';
+import { AuthModal } from '../components/AuthModal';
+import { useAuth } from '../hooks/useAuth';
 
 const TripDetail = () => {
   const { tripId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('chat');
   const [showInbox, setShowInbox] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showInvite, setShowInvite] = useState(false);
+  const [showAuth, setShowAuth] = useState(false);
 
   // Sample trip data - this would come from your database
   const trip = {
@@ -30,7 +38,7 @@ const TripDetail = () => {
   return (
     <div className="min-h-screen bg-black">
       <div className="container mx-auto px-6 py-8 max-w-7xl">
-        {/* Back Navigation */}
+        {/* Top Navigation */}
         <div className="flex items-center justify-between mb-8">
           <button 
             onClick={() => navigate('/')}
@@ -42,17 +50,45 @@ const TripDetail = () => {
             <span className="font-medium">Back to My Places</span>
           </button>
 
-          <button
-            onClick={() => setShowInbox(!showInbox)}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
-          >
-            <MessageCircle size={16} />
-            {showInbox ? 'Hide Inbox' : 'Message Inbox'}
-          </button>
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                <button
+                  onClick={() => setShowInvite(true)}
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
+                >
+                  <UserPlus size={16} />
+                  <span className="hidden sm:inline">Invite</span>
+                </button>
+                
+                <button
+                  onClick={() => setShowInbox(!showInbox)}
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
+                >
+                  <MessageCircle size={16} />
+                  <span className="hidden sm:inline">{showInbox ? 'Hide Inbox' : 'Messages'}</span>
+                </button>
+
+                <button
+                  onClick={() => setShowSettings(true)}
+                  className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-xl transition-colors"
+                >
+                  <Settings size={20} />
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setShowAuth(true)}
+                className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-2 rounded-xl transition-colors font-medium"
+              >
+                Sign In
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Message Inbox */}
-        {showInbox && (
+        {showInbox && user && (
           <div className="mb-8">
             <MessageInbox />
           </div>
@@ -67,6 +103,16 @@ const TripDetail = () => {
         {/* Trip Tabs */}
         <TripTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
+
+      {/* Modals */}
+      <SettingsMenu isOpen={showSettings} onClose={() => setShowSettings(false)} />
+      <InviteModal 
+        isOpen={showInvite} 
+        onClose={() => setShowInvite(false)}
+        tripName={trip.title}
+        tripId={tripId || '1'}
+      />
+      <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
     </div>
   );
 };
