@@ -4,15 +4,25 @@ import { ProTripCard } from '../components/ProTripCard';
 import { CreateTripModal } from '../components/CreateTripModal';
 import { SentimentAnalysis } from '../components/SentimentAnalysis';
 import { ProUpgradeModal } from '../components/ProUpgradeModal';
+import { SettingsMenu } from '../components/SettingsMenu';
 import { ToggleGroup, ToggleGroupItem } from '../components/ui/toggle-group';
-import { Plus, Crown } from 'lucide-react';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../components/ui/dropdown-menu';
+import { Plus, Crown, Settings, User } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const Index = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isProModalOpen, setIsProModalOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [viewMode, setViewMode] = useState('myTrips');
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   // Sample trip data with rich mock content
   const trips = [
@@ -246,13 +256,13 @@ const Index = () => {
             {viewMode === 'myTrips' ? 'My Trips' : 'Trips Pro'}
           </h1>
           <div className="flex items-center gap-4">
-            {/* Pro Tour Dashboard Button */}
+            {/* Pro Dashboard Button */}
             <button
               onClick={() => navigate('/tour/1')}
               className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-md border border-white/20 hover:border-white/40 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
             >
               <Crown size={20} />
-              Tour Dashboard
+              Pro Dashboard
             </button>
             
             {/* Upgrade to Pro */}
@@ -271,6 +281,34 @@ const Index = () => {
               <Plus size={20} />
               Create New Trip
             </button>
+
+            {/* Settings Dropdown Menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white p-3 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
+                  <Settings size={20} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                className="bg-white/10 backdrop-blur-md border border-white/20 text-white min-w-[200px] z-50"
+              >
+                <DropdownMenuItem 
+                  onClick={() => setIsSettingsOpen(true)}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-white/20 cursor-pointer"
+                >
+                  <User size={16} />
+                  Account Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setIsProModalOpen(true)}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-white/20 cursor-pointer"
+                >
+                  <Crown size={16} />
+                  Upgrade to Pro
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -333,6 +371,12 @@ const Index = () => {
       <ProUpgradeModal 
         isOpen={isProModalOpen} 
         onClose={() => setIsProModalOpen(false)} 
+      />
+
+      {/* Settings Menu */}
+      <SettingsMenu 
+        isOpen={isSettingsOpen} 
+        onClose={() => setIsSettingsOpen(false)} 
       />
     </div>
   );
