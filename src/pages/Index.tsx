@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
-import { Plus, Crown, Settings, User } from 'lucide-react';
+import { Plus, Crown, Settings, User, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
@@ -250,16 +250,25 @@ const Index = () => {
       </div>
 
       <div className="container mx-auto px-4 py-6 max-w-7xl relative z-10">
-        {/* Header with Pro Features */}
+        {/* Enhanced Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-semibold text-white tracking-tight">
-            {viewMode === 'myTrips' ? 'My Trips' : 'Trips Pro'}
-          </h1>
+          <div>
+            <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
+              {viewMode === 'myTrips' ? 'My Trips' : 'Trips Pro'}
+            </h1>
+            <p className="text-gray-400">
+              {viewMode === 'myTrips' 
+                ? 'Plan, organize, and share your perfect trips' 
+                : 'Professional trip management with advanced features'
+              }
+            </p>
+          </div>
+          
           <div className="flex items-center gap-4">
             {/* Pro Dashboard Button */}
             <button
               onClick={() => navigate('/tour/1')}
-              className="bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:border-yellow-500/50 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium hover:bg-gray-800/80"
+              className="bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:border-yellow-500/50 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
             >
               <Crown size={20} className="text-yellow-500" />
               Pro Dashboard
@@ -312,34 +321,59 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Toggle Between My Trips and Trips Pro */}
+        {/* Enhanced Toggle */}
         <div className="flex justify-center mb-8">
           <ToggleGroup 
             type="single" 
             value={viewMode} 
             onValueChange={(value) => value && setViewMode(value)}
-            className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-1"
+            className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-2"
           >
             <ToggleGroupItem 
               value="myTrips" 
-              className="px-6 py-3 rounded-xl text-white data-[state=on]:bg-gray-800/80 data-[state=on]:text-yellow-500 transition-all"
+              className="px-8 py-4 rounded-xl text-white data-[state=on]:bg-yellow-500 data-[state=on]:text-black transition-all font-medium"
             >
-              My Trips
+              <div className="flex items-center gap-2">
+                <MapPin size={18} />
+                My Trips
+              </div>
             </ToggleGroupItem>
             <ToggleGroupItem 
               value="tripsPro" 
-              className="px-6 py-3 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-yellow-600/30 data-[state=on]:to-yellow-500/30 data-[state=on]:text-yellow-400 transition-all flex items-center gap-2"
+              className="px-8 py-4 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-yellow-500 data-[state=on]:to-yellow-600 data-[state=on]:text-black transition-all font-medium flex items-center gap-2"
             >
-              <Crown size={16} />
+              <Crown size={18} />
               Trips Pro
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
 
+        {/* Trip Stats Overview */}
+        {viewMode === 'myTrips' && (
+          <div className="grid md:grid-cols-4 gap-6 mb-8">
+            <div className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-6 text-center">
+              <div className="text-3xl font-bold text-white mb-2">{trips.length}</div>
+              <div className="text-gray-400">Total Trips</div>
+            </div>
+            <div className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-6 text-center">
+              <div className="text-3xl font-bold text-yellow-500 mb-2">3</div>
+              <div className="text-gray-400">Upcoming</div>
+            </div>
+            <div className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-6 text-center">
+              <div className="text-3xl font-bold text-green-500 mb-2">2</div>
+              <div className="text-gray-400">Completed</div>
+            </div>
+            <div className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-6 text-center">
+              <div className="text-3xl font-bold text-blue-500 mb-2">1</div>
+              <div className="text-gray-400">In Planning</div>
+            </div>
+          </div>
+        )}
+
         {/* Main Content - Trip Cards */}
         <div className="mb-8">
           {/* Trip Cards Grid */}
-          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-3">
             {viewMode === 'myTrips' ? (
               trips.map((trip) => (
                 <TripCard key={trip.id} trip={trip} />
@@ -350,6 +384,30 @@ const Index = () => {
               ))
             )}
           </div>
+
+          {/* Empty State for new users */}
+          {((viewMode === 'myTrips' && trips.length === 0) || (viewMode === 'tripsPro' && proMockTrips.length === 0)) && (
+            <div className="text-center py-16">
+              <div className="w-24 h-24 bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <MapPin size={40} className="text-yellow-500" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                {viewMode === 'myTrips' ? 'No trips yet' : 'No professional trips yet'}
+              </h3>
+              <p className="text-gray-400 mb-8 max-w-md mx-auto">
+                {viewMode === 'myTrips' 
+                  ? 'Start planning your next adventure! Create your first trip and invite friends to join.'
+                  : 'Manage professional trips, tours, and events with advanced collaboration tools.'
+                }
+              </p>
+              <button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
+              >
+                Create Your First Trip
+              </button>
+            </div>
+          )}
         </div>
 
         {/* AI Sentiment Analysis Section - Now at bottom */}
