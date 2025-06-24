@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Trash, User, Plus, MoreHorizontal } from 'lucide-react';
@@ -26,6 +25,10 @@ export const TripCard = ({ trip }: TripCardProps) => {
 
   const handleViewTrip = () => {
     navigate(`/trip/${trip.id}`);
+  };
+
+  const handleEditItinerary = () => {
+    navigate(`/trip/${trip.id}/edit-itinerary`);
   };
 
   return (
@@ -119,7 +122,10 @@ export const TripCard = ({ trip }: TripCardProps) => {
           </button>
           
           <div className="grid grid-cols-2 gap-3">
-            <button className="bg-gray-800/50 hover:bg-gray-700/50 text-white py-3 rounded-xl transition-all duration-200 font-medium border border-gray-700 hover:border-gray-600">
+            <button 
+              onClick={handleEditItinerary}
+              className="bg-gray-800/50 hover:bg-gray-700/50 text-white py-3 rounded-xl transition-all duration-200 font-medium border border-gray-700 hover:border-gray-600"
+            >
               Edit Itinerary
             </button>
             <button className="bg-gray-800/50 hover:bg-gray-700/50 text-white py-3 rounded-xl transition-all duration-200 font-medium border border-gray-700 hover:border-gray-600">

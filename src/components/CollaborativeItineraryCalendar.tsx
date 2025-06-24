@@ -1,0 +1,295 @@
+
+import React, { useState } from 'react';
+import { Calendar } from './ui/calendar';
+import { Button } from './ui/button';
+import { Plus, Clock, MapPin, User, Crown, Filter } from 'lucide-react';
+import { format } from 'date-fns';
+import { TripMember, CategoryAssignment } from '../pages/ItineraryAssignmentPage';
+import { CategoryEventForms } from './CategoryEventForms';
+
+interface ItineraryEvent {
+  id: string;
+  title: string;
+  categoryId: string;
+  date: Date;
+  time: string;
+  location?: string;
+  description?: string;
+  createdBy: string;
+  assignedCategory: string;
+}
+
+const categories = [
+  { id: 'accommodations', name: 'Accommodations', icon: '🏨', color: 'bg-blue-500' },
+  { id: 'food', name: 'Food & Dining', icon: '🍽️', color: 'bg-red-500' },
+  { id: 'transportation', name: 'Transportation', icon: '🚗', color: 'bg-green-500' },
+  { id: 'fitness', name: 'Fitness & Activities', icon: '💪', color: 'bg-purple-500' },
+  { id: 'nightlife', name: 'Nightlife & Entertainment', icon: '🌙', color: 'bg-indigo-500' },
+  { id: 'attractions', name: 'Attractions & Sightseeing', icon: '🎯', color: 'bg-yellow-500' },
+  { id: 'budget', name: 'Budget & Expenses', icon: '💰', color: 'bg-emerald-500' }
+];
+
+// Mock events
+const mockEvents: ItineraryEvent[] = [
+  {
+    id: '1',
+    title: 'Hotel Check-in',
+    categoryId: 'accommodations',
+    date: new Date(2025, 6, 16),
+    time: '3:00 PM',
+    location: 'Hotel du Louvre',
+    createdBy: 'Joe',
+    assignedCategory: 'accommodations'
+  },
+  {
+    id: '2',
+    title: 'Dinner Reservation',
+    categoryId: 'food',
+    date: new Date(2025, 6, 16),
+    time: '8:00 PM',
+    location: 'L\'Ami Jean',
+    createdBy: 'Phil',
+    assignedCategory: 'food'
+  },
+  {
+    id: '3',
+    title: 'Louvre Museum',
+    categoryId: 'attractions',
+    date: new Date(2025, 6, 17),
+    time: '10:00 AM',
+    location: 'Louvre Museum',
+    createdBy: 'Stephanie',
+    assignedCategory: 'attractions'
+  }
+];
+
+interface CollaborativeItineraryCalendarProps {
+  tripMembers: TripMember[];
+  assignments: CategoryAssignment[];
+}
+
+export const CollaborativeItineraryCalendar = ({ tripMembers, assignments }: CollaborativeItineraryCalendarProps) => {
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [events, setEvents] = useState<ItineraryEvent[]>(mockEvents);
+  const [showAddEvent, setShowAddEvent] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [filterCategory, setFilterCategory] = useState<string | null>(null);
+
+  const getEventsForDate = (date: Date) => {
+    let filteredEvents = events.filter(event => 
+      event.date.toDateString() === date.toDateString()
+    );
+    
+    if (filterCategory) {
+      filteredEvents = filteredEvents.filter(event => event.categoryId === filterCategory);
+    }
+    
+    return filteredEvents;
+  };
+
+  const selectedDateEvents = selectedDate ? getEventsForDate(selectedDate) : [];
+
+  const handleAddEvent = (eventData: any) => {
+    if (!selectedDate || !selectedCategory) return;
+
+    const event: ItineraryEvent = {
+      id: Date.now().toString(),
+      title: eventData.title,
+      categoryId: selectedCategory,
+      date: selectedDate,
+      time: eventData.time,
+      location: eventData.location,
+      description: eventData.description,
+      createdBy: 'You',
+      assignedCategory: selectedCategory
+    };
+
+    setEvents([...events, event]);
+    setShowAddEvent(false);
+    setSelectedCategory(null);
+  };
+
+  const getCategoryInfo = (categoryId: string) => {
+    return categories.find(c => c.id === categoryId);
+  };
+
+  const getUserAssignedCategories = (userId: string) => {
+    return assignments
+      .filter(a => a.assignedUsers.some(u => u.id === userId))
+      .map(a => a.categoryId);
+  };
+
+  const isUserLeadForCategory = (userId: string, categoryId: string) => {
+    const assignment = assignments.find(a => a.categoryId === categoryId);
+    return assignment?.leadUserId === userId;
+  };
+
+  const datesWithEvents = events.map(event => event.date);
+
+  return (
+    <div className="space-y-6">
+      {/* Category Filters */}
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <Filter size={20} className="text-yellow-500" />
+          <h3 className="text-lg font-semibold text-white">Filter by Category</h3>
+        </div>
+        
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setFilterCategory(null)}
+            className={`px-3 py-2 rounded-lg text-sm transition-colors ${
+              filterCategory === null
+                ? 'bg-yellow-500 text-black'
+                : 'bg-white/10 text-gray-300 hover:bg-white/20'
+            }`}
+          >
+            All Categories
+          </button>
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              onClick={() => setFilterCategory(category.id)}
+              className={`flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
+                filterCategory === category.id
+                  ? 'bg-yellow-500 text-black'
+                  : 'bg-white/10 text-gray-300 hover:bg-white/20'
+              }`}
+            >
+              <span>{category.icon}</span>
+              {category.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Calendar */}
+        <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+          <Calendar
+            mode="single"
+            selected={selectedDate}
+            onSelect={setSelectedDate}
+            className="w-full"
+            modifiers={{
+              hasEvents: datesWithEvents
+            }}
+            modifiersStyles={{
+              hasEvents: {
+                backgroundColor: 'rgb(59 130 246 / 0.3)',
+                color: 'white',
+                fontWeight: 'bold'
+              }
+            }}
+          />
+        </div>
+
+        {/* Events and Add Event */}
+        <div className="space-y-4">
+          {/* Quick Add Buttons */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">Quick Add Event</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {categories.slice(0, 6).map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => {
+                    setSelectedCategory(category.id);
+                    setShowAddEvent(true);
+                  }}
+                  className="flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-3 py-2 rounded-lg transition-colors text-sm"
+                >
+                  <span>{category.icon}</span>
+                  {category.name}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Events List */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">
+              {selectedDate 
+                ? `Events for ${format(selectedDate, 'EEEE, MMM d')}`
+                : 'Select a date to view events'
+              }
+            </h3>
+            
+            {selectedDateEvents.length > 0 ? (
+              <div className="space-y-3">
+                {selectedDateEvents.map((event) => {
+                  const categoryInfo = getCategoryInfo(event.categoryId);
+                  const assignment = assignments.find(a => a.categoryId === event.categoryId);
+                  const creator = tripMembers.find(m => m.name === event.createdBy);
+                  
+                  return (
+                    <div key={event.id} className="bg-white/5 border border-white/10 rounded-lg p-4">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="text-lg">{categoryInfo?.icon}</span>
+                            <h4 className="font-medium text-white">{event.title}</h4>
+                            <span className={`text-xs px-2 py-1 rounded ${categoryInfo?.color} text-white`}>
+                              {categoryInfo?.name}
+                            </span>
+                          </div>
+                          
+                          <div className="space-y-1 text-sm text-gray-400">
+                            <div className="flex items-center gap-2">
+                              <Clock size={14} />
+                              {event.time}
+                            </div>
+                            {event.location && (
+                              <div className="flex items-center gap-2">
+                                <MapPin size={14} />
+                                {event.location}
+                              </div>
+                            )}
+                            <div className="flex items-center gap-2">
+                              <User size={14} />
+                              Added by {event.createdBy}
+                              {assignment && creator && isUserLeadForCategory(creator.id, event.categoryId) && (
+                                <Crown size={12} className="text-yellow-500" />
+                              )}
+                            </div>
+                          </div>
+                          
+                          {event.description && (
+                            <p className="text-sm text-gray-300 mt-2">{event.description}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <div className="text-gray-400 text-sm">
+                  {selectedDate 
+                    ? 'No events scheduled for this day'
+                    : 'Select a date to view events'
+                  }
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Add Event Modal */}
+      {showAddEvent && selectedCategory && (
+        <CategoryEventForms
+          category={categories.find(c => c.id === selectedCategory)!}
+          isOpen={showAddEvent}
+          onClose={() => {
+            setShowAddEvent(false);
+            setSelectedCategory(null);
+          }}
+          onSubmit={handleAddEvent}
+          selectedDate={selectedDate}
+        />
+      )}
+    </div>
+  );
+};
