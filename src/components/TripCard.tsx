@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Trash, User, Plus, MoreHorizontal } from 'lucide-react';
@@ -132,17 +133,6 @@ export const TripCard = ({ trip }: TripCardProps) => {
               Share Trip
             </button>
           </div>
-        </div>
-      </div>
-
-      {/* Progress Bar */}
-      <div className="px-6 pb-6">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-gray-400">Planning Progress</span>
-          <span className="text-sm text-yellow-400 font-medium">75%</span>
-        </div>
-        <div className="w-full bg-gray-800 rounded-full h-2">
-          <div className="bg-gradient-to-r from-yellow-500 to-yellow-600 h-2 rounded-full transition-all duration-300" style={{ width: '75%' }}></div>
         </div>
       </div>
     </div>
