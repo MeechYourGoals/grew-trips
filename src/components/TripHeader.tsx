@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Calendar, MapPin, Users, Plus } from 'lucide-react';
+import { Calendar, MapPin, Users, Plus, Settings } from 'lucide-react';
 import { InviteModal } from './InviteModal';
 import { useAuth } from '../hooks/useAuth';
 
@@ -17,9 +17,10 @@ interface TripHeaderProps {
       avatar: string;
     }>;
   };
+  onManageUsers?: () => void;
 }
 
-export const TripHeader = ({ trip }: TripHeaderProps) => {
+export const TripHeader = ({ trip, onManageUsers }: TripHeaderProps) => {
   const { user } = useAuth();
   const [showInvite, setShowInvite] = useState(false);
 
@@ -52,7 +53,18 @@ export const TripHeader = ({ trip }: TripHeaderProps) => {
                 <Users size={20} className="text-glass-orange" />
                 <h3 className="text-white font-semibold">Trip Collaborators</h3>
               </div>
-              <span className="text-gray-400 text-sm">{trip.collaborators.length}</span>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-400 text-sm">{trip.collaborators.length}</span>
+                {onManageUsers && (
+                  <button
+                    onClick={onManageUsers}
+                    className="text-gray-400 hover:text-glass-orange transition-colors p-1 rounded-lg hover:bg-white/10"
+                    title="Manage users"
+                  >
+                    <Settings size={16} />
+                  </button>
+                )}
+              </div>
             </div>
             
             <div className="space-y-3 mb-4">

@@ -9,6 +9,7 @@ import { MessageInbox } from '../components/MessageInbox';
 import { SettingsMenu } from '../components/SettingsMenu';
 import { InviteModal } from '../components/InviteModal';
 import { AuthModal } from '../components/AuthModal';
+import { TripSettings } from '../components/TripSettings';
 import { useAuth } from '../hooks/useAuth';
 
 const TripDetail = () => {
@@ -20,6 +21,7 @@ const TripDetail = () => {
   const [showSettings, setShowSettings] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
+  const [showTripSettings, setShowTripSettings] = useState(false);
 
   // Sample trip data - this would come from your database
   const trip = {
@@ -70,7 +72,7 @@ const TripDetail = () => {
                 </button>
 
                 <button
-                  onClick={() => setShowSettings(true)}
+                  onClick={() => setShowTripSettings(true)}
                   className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-xl transition-colors"
                 >
                   <Settings size={20} />
@@ -113,6 +115,13 @@ const TripDetail = () => {
         tripId={tripId || '1'}
       />
       <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
+      <TripSettings
+        isOpen={showTripSettings}
+        onClose={() => setShowTripSettings(false)}
+        tripId={tripId || '1'}
+        tripName={trip.title}
+        currentUserId={user?.id || '4'}
+      />
     </div>
   );
 };
