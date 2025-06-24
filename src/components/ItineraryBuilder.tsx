@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Calendar, Clock, MapPin, Plus, GripVertical, Star, DollarSign } from 'lucide-react';
 import { MapView } from './MapView';
@@ -35,7 +34,21 @@ export const ItineraryBuilder = ({ tripId, days, onUpdateItinerary }: ItineraryB
   const [draggedItem, setDraggedItem] = useState<string | null>(null);
 
   const currentDay = days[selectedDay];
-  const allPlaces = days.flatMap(day => day.items);
+  
+  // Convert ItineraryItem[] to Place[] format for MapView
+  const convertToMapPlaces = (items: ItineraryItem[]) => {
+    return items.map(item => ({
+      id: item.id,
+      name: item.name,
+      type: item.type,
+      position: [item.lat, item.lng] as [number, number],
+      rating: item.rating,
+      visitTime: item.startTime
+    }));
+  };
+
+  const allPlaces = convertToMapPlaces(days.flatMap(day => day.items));
+  const currentDayPlaces = convertToMapPlaces(currentDay?.items || []);
 
   const handleDragStart = (e: React.DragEvent, itemId: string) => {
     setDraggedItem(itemId);
@@ -217,9 +230,8 @@ export const ItineraryBuilder = ({ tripId, days, onUpdateItinerary }: ItineraryB
         {showMap && (
           <div className="lg:sticky lg:top-6">
             <MapView
-              places={currentDay?.items || []}
+              places={currentDayPlaces}
               showRoute={true}
-              onPlaceSelect={(place) => console.log('Selected place:', place)}
             />
           </div>
         )}
