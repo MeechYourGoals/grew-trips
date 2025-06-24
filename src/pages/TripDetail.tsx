@@ -102,7 +102,7 @@ const TripDetail = () => {
         {/* Places to Visit Section */}
         <PlacesSection />
 
-        {/* Trip Tabs */}
+        {/* Trip Tabs - NOW INCLUDING BROADCASTS */}
         <TripTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
 
