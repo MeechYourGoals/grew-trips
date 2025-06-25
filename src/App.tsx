@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import TripDetail from "./pages/TripDetail";
 import TourDetail from "./pages/TourDetail";
 import ItineraryAssignmentPage from "./pages/ItineraryAssignmentPage";
+import ProTripDetail from "./pages/ProTripDetail";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,6 +26,7 @@ const App = () => (
             <Route path="/trip/:tripId" element={<TripDetail />} />
             <Route path="/trip/:tripId/edit-itinerary" element={<ItineraryAssignmentPage />} />
             <Route path="/tour/:tourId" element={<TourDetail />} />
+            <Route path="/tour/pro-:proTripId" element={<ProTripDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

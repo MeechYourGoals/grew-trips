@@ -129,14 +129,14 @@ const Index = () => {
     }
   ];
 
-  // Mock Pro trips data
+  // Mock Pro trips data with proper categories
   const proMockTrips = [
     {
-      id: 'pro-1',
+      id: '1',
       title: "Kevin Hart – Australia Comedy Tour",
       location: "Australia",
       dateRange: "Mar 10 - Mar 25, 2025",
-      category: 'comedy',
+      category: 'Touring',
       tags: ["Comedy", "Touring", "Rotating Team"],
       participants: [
         { id: 1, name: "Kevin Hart", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "artist" },
@@ -146,11 +146,11 @@ const Index = () => {
       ]
     },
     {
-      id: 'pro-2',
+      id: '2',
       title: "Morgan Wallen – North America Tour",
       location: "Various Cities",
       dateRange: "Apr 5 - Jun 20, 2025",
-      category: 'music',
+      category: 'Touring',
       tags: ["Music", "Multi-City Tour"],
       participants: [
         { id: 5, name: "Morgan Wallen", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face", role: "artist" },
@@ -160,11 +160,11 @@ const Index = () => {
       ]
     },
     {
-      id: 'pro-3',
+      id: '3',
       title: "Scarlett Knights – AAU Volleyball Tourney",
       location: "Orlando, FL",
       dateRange: "Jul 12 - Jul 16, 2025",
-      category: 'sports',
+      category: 'Sports – Team Trip',
       tags: ["Youth Sports", "Multi-Family"],
       participants: [
         { id: 9, name: "Coach Sarah", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "manager" },
@@ -173,11 +173,11 @@ const Index = () => {
       ]
     },
     {
-      id: 'pro-4',
+      id: '4',
       title: "Los Angeles Dodgers – Playoffs 2025",
       location: "Various Stadiums",
       dateRange: "Oct 1 - Oct 30, 2025",
-      category: 'sports',
+      category: 'Sports – Team Trip',
       tags: ["Pro Sports", "Championship"],
       participants: [
         { id: 12, name: "Team Manager", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "manager" },
@@ -186,11 +186,11 @@ const Index = () => {
       ]
     },
     {
-      id: 'pro-5',
+      id: '5',
       title: "Content House – Passes Retreat",
       location: "Bahamas",
       dateRange: "Aug 15 - Aug 22, 2025",
-      category: 'influencer',
+      category: 'Business Travel',
       tags: ["Influencer", "Retreat", "Team Coordination"],
       participants: [
         { id: 15, name: "Lead Creator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "artist" },
@@ -199,11 +199,11 @@ const Index = () => {
       ]
     },
     {
-      id: 'pro-6',
+      id: '6',
       title: "InvestFest – Panelists",
       location: "Atlanta, GA",
       dateRange: "Sep 8 - Sep 10, 2025",
-      category: 'conference',
+      category: 'Conference',
       tags: ["Speaker", "Event Production"],
       participants: [
         { id: 18, name: "Event Producer", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "manager" },
@@ -212,11 +212,11 @@ const Index = () => {
       ]
     },
     {
-      id: 'pro-7',
+      id: '7',
       title: "The Chainsmokers – Vegas Residency 2025",
       location: "Las Vegas, NV",
       dateRange: "Jan 1 - Dec 31, 2025",
-      category: 'music',
+      category: 'Touring',
       tags: ["DJ", "Residency", "Recurring"],
       participants: [
         { id: 21, name: "Drew Taggart", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "artist" },
@@ -226,11 +226,11 @@ const Index = () => {
       ]
     },
     {
-      id: 'pro-8',
+      id: '8',
       title: "Esports Team – Valorant Spring Championship",
       location: "Chicago, IL",
       dateRange: "May 20 - May 25, 2025",
-      category: 'esports',
+      category: 'Sports – Team Trip',
       tags: ["Esports", "Championship"],
       participants: [
         { id: 25, name: "Head Coach", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "manager" },

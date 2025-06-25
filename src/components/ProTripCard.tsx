@@ -30,8 +30,8 @@ interface ProTripCardProps {
 export const ProTripCard = ({ trip }: ProTripCardProps) => {
   const navigate = useNavigate();
 
-  const handleViewDemo = () => {
-    navigate(`/tour/1`);
+  const handleViewTrip = () => {
+    navigate(`/tour/pro-${trip.id}`);
   };
 
   const handleDuplicateTrip = () => {
@@ -41,12 +41,13 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'comedy': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-      case 'music': return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
-      case 'sports': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      case 'influencer': return 'bg-pink-500/20 text-pink-300 border-pink-500/30';
-      case 'conference': return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'esports': return 'bg-red-500/20 text-red-300 border-red-500/30';
+      case 'Sports – Team Trip': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+      case 'Conference': return 'bg-green-500/20 text-green-300 border-green-500/30';
+      case 'Touring': return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
+      case 'Business Travel': return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
+      case 'School Trips': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
+      case 'Public Relations': return 'bg-pink-500/20 text-pink-300 border-pink-500/30';
+      case 'Client Pursuits': return 'bg-red-500/20 text-red-300 border-red-500/30';
       default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
     }
   };
@@ -73,14 +74,11 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
           {trip.title}
         </h3>
         <div className="flex flex-wrap gap-2">
-          {trip.tags.map((tag, index) => (
-            <Badge 
-              key={index} 
-              className={`text-xs ${getCategoryColor(trip.category)} border`}
-            >
-              {tag}
-            </Badge>
-          ))}
+          <Badge 
+            className={`text-xs ${getCategoryColor(trip.category)} border`}
+          >
+            {trip.category}
+          </Badge>
         </div>
       </div>
 
@@ -132,12 +130,12 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
       {/* Action Buttons */}
       <div className="flex gap-2">
         <Button 
-          onClick={handleViewDemo}
+          onClick={handleViewTrip}
           className="flex-1 bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-white/20 hover:border-white/40 text-white hover:text-glass-yellow transition-all duration-300 font-medium hover:shadow-lg"
           variant="ghost"
         >
           <Eye size={16} className="mr-2" />
-          View Demo
+          View Trip
         </Button>
         
         <Tooltip>

@@ -19,8 +19,22 @@ interface TripSettingsProps {
   currentUserId: string;
 }
 
+const TRIP_CATEGORIES = [
+  'Business Travel',
+  'Sports – Team Trip',
+  'Conference',
+  'Touring',
+  'School Trips',
+  'Public Relations',
+  'Client Pursuits',
+  'Other'
+];
+
 export const TripSettings = ({ isOpen, onClose, tripId, tripName, currentUserId }: TripSettingsProps) => {
   const [activeTab, setActiveTab] = useState<'users' | 'general' | 'danger'>('users');
+  const [tripCategory, setTripCategory] = useState('Business Travel');
+  const [customCategory, setCustomCategory] = useState('');
+  const [showCustomInput, setShowCustomInput] = useState(false);
 
   // Mock users data - this would come from your backend
   const [users, setUsers] = useState<TripUser[]>([
@@ -65,6 +79,23 @@ export const TripSettings = ({ isOpen, onClose, tripId, tripName, currentUserId 
     console.log(`Current user left trip ${tripId}`);
     onClose();
     // Navigate back to trips list or show confirmation
+  };
+
+  const handleCategoryChange = (category: string) => {
+    if (category === 'Other') {
+      setShowCustomInput(true);
+      setTripCategory('');
+    } else {
+      setShowCustomInput(false);
+      setTripCategory(category);
+      setCustomCategory('');
+    }
+  };
+
+  const handleSaveCategory = () => {
+    const finalCategory = showCustomInput ? customCategory : tripCategory;
+    console.log(`Trip category updated to: ${finalCategory}`);
+    // This would save to your backend
   };
 
   const tabs = [
@@ -125,8 +156,68 @@ export const TripSettings = ({ isOpen, onClose, tripId, tripName, currentUserId 
 
             {activeTab === 'general' && (
               <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
-                <h3 className="text-lg font-semibold text-white mb-4">General Settings</h3>
-                <p className="text-gray-400">General trip settings will be implemented here.</p>
+                <h3 className="text-lg font-semibold text-white mb-6">General Settings</h3>
+                
+                {/* Trip Category Selection */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                    Trip Category
+                  </label>
+                  <select
+                    value={showCustomInput ? 'Other' : tripCategory}
+                    onChange={(e) => handleCategoryChange(e.target.value)}
+                    className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
+                  >
+                    {TRIP_CATEGORIES.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                  
+                  {showCustomInput && (
+                    <div className="mt-3">
+                      <input
+                        type="text"
+                        value={customCategory}
+                        onChange={(e) => setCustomCategory(e.target.value)}
+                        placeholder="Enter custom category..."
+                        className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
+                      />
+                    </div>
+                  )}
+                  
+                  <button
+                    onClick={handleSaveCategory}
+                    className="mt-3 bg-glass-orange hover:bg-glass-orange/80 text-white px-6 py-2 rounded-xl transition-colors font-medium"
+                  >
+                    Save Category
+                  </button>
+                </div>
+
+                {/* Trip Name */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                    Trip Name
+                  </label>
+                  <input
+                    type="text"
+                    defaultValue={tripName}
+                    className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
+                  />
+                </div>
+
+                {/* Description */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-gray-300 mb-3">
+                    Description
+                  </label>
+                  <textarea
+                    rows={4}
+                    placeholder="Describe your trip..."
+                    className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50 resize-none"
+                  />
+                </div>
               </div>
             )}
 
