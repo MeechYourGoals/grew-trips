@@ -25,8 +25,8 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/trip/:tripId" element={<TripDetail />} />
             <Route path="/trip/:tripId/edit-itinerary" element={<ItineraryAssignmentPage />} />
-            <Route path="/tour/:tourId" element={<TourDetail />} />
             <Route path="/tour/pro-:proTripId" element={<ProTripDetail />} />
+            <Route path="/tour/:tourId" element={<TourDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
