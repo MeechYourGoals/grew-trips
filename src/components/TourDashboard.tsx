@@ -5,7 +5,7 @@ import { Tour, TourTrip } from '../types/pro';
 
 const mockTour: Tour = {
   id: '1',
-  name: 'Comedy World Tour 2025',
+  name: 'Kevin Hart – Australia Comedy Tour',
   description: 'International comedy tour across 15 cities',
   artistName: 'Alex Thompson',
   startDate: '2025-07-01',
