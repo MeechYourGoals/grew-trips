@@ -1,4 +1,3 @@
-
 export interface ProTripData {
   id: string;
   title: string;
@@ -35,51 +34,52 @@ export interface ProTripData {
 export const proTripMockData: Record<string, ProTripData> = {
   '1': {
     id: '1',
-    title: "Kevin Hart – Australia Comedy Tour",
-    location: "Australia",
-    dateRange: "Mar 10 - Mar 25, 2025",
-    category: 'Touring',
-    description: "Multi-city comedy tour across Australia with venue coordination, transportation logistics, and team management.",
+    title: "Eli Lilly C-Suite Retreat 2026",
+    location: "Terranea, CA",
+    dateRange: "Jan 15 - Jan 18, 2026",
+    category: 'Business Travel',
+    description: "Executive leadership retreat for pharmaceutical company C-Suite with strategic planning sessions, team building, and board presentations at luxury coastal resort.",
     participants: [
-      { id: '1', name: "Kevin Hart", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Comedian" },
-      { id: '2', name: "Sarah Mitchell", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Tour Manager" },
-      { id: '3', name: "Marcus Chen", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Sound Engineer" },
-      { id: '4', name: "Lisa Rodriguez", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Security Lead" }
+      { id: '1', name: "CEO David Ricks", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Chief Executive Officer" },
+      { id: '2', name: "CFO Anat Ashkenazi", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Chief Financial Officer" },
+      { id: '3', name: "Strategy Director", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Strategic Planning Lead" },
+      { id: '4', name: "Executive Assistant", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Executive Support" }
     ],
     itinerary: [
       {
-        date: "Mar 10, 2025",
+        date: "Jan 15, 2026",
         events: [
-          { time: "2:00 PM", title: "Venue Sound Check", location: "Qudos Bank Arena, Sydney", type: "technical" },
-          { time: "6:00 PM", title: "Meet & Greet", location: "Green Room", type: "event" },
-          { time: "8:00 PM", title: "Show Performance", location: "Main Stage", type: "performance" }
+          { time: "2:00 PM", title: "Executive Check-in", location: "Terranea Resort", type: "accommodation" },
+          { time: "4:00 PM", title: "Welcome Reception", location: "Ocean Terrace", type: "networking" },
+          { time: "7:00 PM", title: "Private Dinner", location: "Private Dining Room", type: "meal" }
         ]
       },
       {
-        date: "Mar 15, 2025",
+        date: "Jan 16, 2026",
         events: [
-          { time: "10:00 AM", title: "Travel to Melbourne", location: "Sydney Airport", type: "transport" },
-          { time: "3:00 PM", title: "Hotel Check-in", location: "Crown Towers Melbourne", type: "accommodation" },
-          { time: "7:00 PM", title: "Show Performance", location: "Rod Laver Arena", type: "performance" }
+          { time: "8:00 AM", title: "Strategic Planning Session", location: "Boardroom", type: "meeting" },
+          { time: "12:00 PM", title: "Working Lunch", location: "Executive Lounge", type: "meal" },
+          { time: "2:00 PM", title: "Financial Review", location: "Conference Room A", type: "presentation" },
+          { time: "6:00 PM", title: "Team Building Activity", location: "Golf Course", type: "activity" }
         ]
       },
       {
-        date: "Mar 20, 2025",
+        date: "Jan 17, 2026",
         events: [
-          { time: "11:00 AM", title: "Travel to Perth", location: "Melbourne Airport", type: "transport" },
-          { time: "4:00 PM", title: "Final Show Setup", location: "RAC Arena", type: "technical" },
-          { time: "8:00 PM", title: "Final Show", location: "RAC Arena", type: "performance" }
+          { time: "9:00 AM", title: "Board Presentation Prep", location: "Business Center", type: "meeting" },
+          { time: "1:00 PM", title: "Stakeholder Lunch", location: "Catalina Room", type: "meal" },
+          { time: "3:00 PM", title: "Innovation Workshop", location: "Innovation Lab", type: "workshop" }
         ]
       }
     ],
     budget: {
-      total: 500000,
-      spent: 275000,
+      total: 150000,
+      spent: 85000,
       categories: [
-        { name: "Venue Costs", budgeted: 200000, spent: 120000 },
-        { name: "Transportation", budgeted: 150000, spent: 85000 },
-        { name: "Accommodation", budgeted: 100000, spent: 45000 },
-        { name: "Catering", budgeted: 50000, spent: 25000 }
+        { name: "Accommodation", budgeted: 60000, spent: 35000 },
+        { name: "Catering", budgeted: 40000, spent: 25000 },
+        { name: "Transportation", budgeted: 30000, spent: 15000 },
+        { name: "Activities", budgeted: 20000, spent: 10000 }
       ]
     }
   },
@@ -284,94 +284,103 @@ export const proTripMockData: Record<string, ProTripData> = {
   },
   '6': {
     id: '6',
-    title: "InvestFest – Panelists",
-    location: "Atlanta, GA",
-    dateRange: "Sep 8 - Sep 10, 2025",
+    title: "Davos in Switzerland",
+    location: "Davos, Switzerland",
+    dateRange: "Jan 20 - Jan 24, 2025",
     category: 'Conference',
-    description: "Financial conference with speaker coordination, venue management, and networking events at Georgia's premier conference facility.",
+    description: "World Economic Forum with global leaders, business executives, and policy makers discussing economic and social issues at premier Alpine conference facility.",
     participants: [
-      { id: '1', name: "Robert Johnson", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Keynote Speaker" },
-      { id: '2', name: "Jennifer Lee", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "AV Lead" },
-      { id: '3', name: "Michael Torres", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Vendor Coordinator" },
-      { id: '4', name: "Sarah Williams", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Registration Manager" }
+      { id: '1', name: "Klaus Schwab", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Forum Founder & Executive Chairman" },
+      { id: '2', name: "Jennifer Morgan", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Forum Director" },
+      { id: '3', name: "Protocol Manager", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Protocol & Logistics" },
+      { id: '4', name: "Security Coordinator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Security Lead" }
     ],
     itinerary: [
       {
-        date: "Sep 8, 2025",
+        date: "Jan 20, 2025",
         events: [
-          { time: "8:00 AM", title: "Speaker Briefing", location: "Georgia World Congress Center - Hall A", type: "meeting" },
-          { time: "10:00 AM", title: "Opening Keynote", location: "Main Auditorium", type: "presentation" },
-          { time: "2:00 PM", title: "Panel: Future of Investing", location: "Conference Room B", type: "panel" },
-          { time: "6:00 PM", title: "Networking Reception", location: "Exhibit Hall", type: "networking" }
+          { time: "8:00 AM", title: "Executive Briefing", location: "Davos Congress Centre", type: "meeting" },
+          { time: "10:00 AM", title: "Opening Ceremony", location: "Main Auditorium", type: "ceremony" },
+          { time: "2:00 PM", title: "Global Economic Outlook", location: "Plenary Hall", type: "presentation" },
+          { time: "6:00 PM", title: "Welcome Reception", location: "Mountain View Terrace", type: "networking" }
         ]
       },
       {
-        date: "Sep 9, 2025",
+        date: "Jan 22, 2025",
         events: [
-          { time: "9:00 AM", title: "Workshop: Portfolio Management", location: "Conference Room C", type: "workshop" },
-          { time: "1:00 PM", title: "Lunch & Learn Session", location: "Ballroom", type: "presentation" },
-          { time: "4:00 PM", title: "Panel: Market Trends", location: "Conference Room A", type: "panel" }
+          { time: "9:00 AM", title: "Technology & Innovation Panel", location: "Conference Room A", type: "panel" },
+          { time: "1:00 PM", title: "Leaders Lunch", location: "Private Dining Room", type: "meal" },
+          { time: "4:00 PM", title: "Climate Action Summit", location: "Main Hall", type: "presentation" }
         ]
       },
       {
-        date: "Sep 10, 2025",
+        date: "Jan 24, 2025",
         events: [
-          { time: "9:00 AM", title: "Final Presentations", location: "Main Auditorium", type: "presentation" },
-          { time: "12:00 PM", title: "Closing Remarks", location: "Main Auditorium", type: "ceremony" },
-          { time: "1:00 PM", title: "Conference Wrap-up", location: "Exhibit Hall", type: "networking" }
+          { time: "9:00 AM", title: "Closing Presentations", location: "Main Auditorium", type: "presentation" },
+          { time: "12:00 PM", title: "Final Statements", location: "Press Center", type: "ceremony" },
+          { time: "2:00 PM", title: "Departure Logistics", location: "Transport Hub", type: "transport" }
         ]
       }
     ],
     budget: {
-      total: 300000,
-      spent: 180000,
+      total: 800000,
+      spent: 450000,
       categories: [
-        { name: "Venue Rental", budgeted: 120000, spent: 80000 },
-        { name: "Speaker Fees", budgeted: 100000, spent: 60000 },
-        { name: "Catering", budgeted: 50000, spent: 25000 },
-        { name: "AV Equipment", budgeted: 30000, spent: 15000 }
+        { name: "Venue & Facilities", budgeted: 350000, spent: 200000 },
+        { name: "Security & Protocol", budgeted: 200000, spent: 120000 },
+        { name: "Catering & Hospitality", budgeted: 150000, spent: 80000 },
+        { name: "Technology & AV", budgeted: 100000, spent: 50000 }
       ]
     }
   },
   '7': {
     id: '7',
-    title: "Content House – Creative Retreat",
-    location: "Malibu, CA",
-    dateRange: "Aug 15 - Aug 22, 2025",
-    category: 'Business Travel',
-    description: "Creative retreat for content creators with brand collaboration planning, filming coordination, and team building activities.",
+    title: "TikTok Creators Accelerator Conference",
+    location: "Los Angeles, CA",
+    dateRange: "Sep 12 - Sep 15, 2025",
+    category: 'Conference',
+    description: "TikTok's official creator conference featuring top content creators, brand partnerships, and platform innovation workshops at cutting-edge LA venue.",
     participants: [
-      { id: '1', name: "Alex Rivera", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Creative Director" },
-      { id: '2', name: "Emma Johnson", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Brand Manager" },
-      { id: '3', name: "Tyler Brooks", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Video Editor" },
-      { id: '4', name: "Sophia Chen", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Social Media Lead" }
+      { id: '1', name: "Shou Zi Chew", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "TikTok CEO" },
+      { id: '2', name: "Creator Program Manager", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Program Lead" },
+      { id: '3', name: "Brand Partnership Lead", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Partnerships" },
+      { id: '4', name: "Content Strategy Director", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Strategy" }
     ],
     itinerary: [
       {
-        date: "Aug 15, 2025",
+        date: "Sep 12, 2025",
         events: [
-          { time: "11:00 AM", title: "House Check-in", location: "Malibu Beach House", type: "accommodation" },
-          { time: "2:00 PM", title: "Creative Brainstorm", location: "Main Lounge", type: "meeting" },
-          { time: "6:00 PM", title: "Welcome Dinner", location: "Oceanview Deck", type: "meal" }
+          { time: "9:00 AM", title: "Creator Check-in", location: "YouTube Space LA", type: "registration" },
+          { time: "11:00 AM", title: "Platform Updates Keynote", location: "Main Stage", type: "presentation" },
+          { time: "2:00 PM", title: "Content Creation Workshop", location: "Studio A", type: "workshop" },
+          { time: "6:00 PM", title: "Creator Mixer", location: "Rooftop Lounge", type: "networking" }
         ]
       },
       {
-        date: "Aug 18, 2025",
+        date: "Sep 13, 2025",
         events: [
-          { time: "9:00 AM", title: "Brand Collab Filming", location: "Beach Location", type: "filming" },
-          { time: "1:00 PM", title: "Content Review", location: "Edit Suite", type: "meeting" },
-          { time: "7:00 PM", title: "Team Building Activity", location: "Pool Area", type: "activity" }
+          { time: "10:00 AM", title: "Monetization Strategies", location: "Conference Room B", type: "presentation" },
+          { time: "1:00 PM", title: "Brand Collaboration Lunch", location: "Partnership Pavilion", type: "meal" },
+          { time: "4:00 PM", title: "Viral Content Lab", location: "Creation Studio", type: "workshop" }
+        ]
+      },
+      {
+        date: "Sep 15, 2025",
+        events: [
+          { time: "10:00 AM", title: "Future of Social Media", location: "Innovation Theater", type: "panel" },
+          { time: "1:00 PM", title: "Closing Ceremony", location: "Main Stage", type: "ceremony" },
+          { time: "3:00 PM", title: "Creator Showcase", location: "Gallery Space", type: "showcase" }
         ]
       }
     ],
     budget: {
-      total: 75000,
-      spent: 35000,
+      total: 400000,
+      spent: 240000,
       categories: [
-        { name: "Accommodation", budgeted: 35000, spent: 20000 },
-        { name: "Catering", budgeted: 20000, spent: 8000 },
-        { name: "Equipment Rental", budgeted: 15000, spent: 5000 },
-        { name: "Activities", budgeted: 5000, spent: 2000 }
+        { name: "Venue & Production", budgeted: 180000, spent: 110000 },
+        { name: "Creator Fees", budgeted: 120000, spent: 80000 },
+        { name: "Catering & Events", budgeted: 70000, spent: 35000 },
+        { name: "Marketing & Swag", budgeted: 30000, spent: 15000 }
       ]
     }
   },
@@ -421,6 +430,110 @@ export const proTripMockData: Record<string, ProTripData> = {
         { name: "Equipment", budgeted: 20000, spent: 8000 },
         { name: "Travel & Lodging", budgeted: 10000, spent: 4000 },
         { name: "Team Support", budgeted: 5000, spent: 1000 }
+      ]
+    }
+  },
+  '9': {
+    id: '9',
+    title: "YCombinator Winter 2025 Cohort",
+    location: "San Francisco, CA",
+    dateRange: "Jan 2025 - Mar 2025",
+    category: 'Business Travel',
+    description: "Startup accelerator program for Winter 2025 cohort with weekly sessions, mentor meetings, and Demo Day preparation in Silicon Valley.",
+    participants: [
+      { id: '1', name: "Paul Graham", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "YC Co-founder" },
+      { id: '2', name: "Jessica Livingston", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "YC Partner" },
+      { id: '3', name: "Startup Founder #1", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Founder" },
+      { id: '4', name: "Tech Mentor", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Mentor" }
+    ],
+    itinerary: [
+      {
+        date: "Jan 8, 2025",
+        events: [
+          { time: "9:00 AM", title: "Cohort Kickoff", location: "YC Office, Mountain View", type: "meeting" },
+          { time: "11:00 AM", title: "Founder Introductions", location: "Main Conference Room", type: "networking" },
+          { time: "2:00 PM", title: "YC Workshop: Fundraising", location: "Workshop Room A", type: "workshop" },
+          { time: "5:00 PM", title: "Welcome Dinner", location: "Tech Cafeteria", type: "meal" }
+        ]
+      },
+      {
+        date: "Feb 12, 2025",
+        events: [
+          { time: "10:00 AM", title: "Investor Office Hours", location: "Partner Offices", type: "meeting" },
+          { time: "1:00 PM", title: "Pitch Practice Session", location: "Demo Room", type: "workshop" },
+          { time: "3:00 PM", title: "1-on-1 Mentor Meetings", location: "Meeting Rooms", type: "meeting" }
+        ]
+      },
+      {
+        date: "Mar 25, 2025",
+        events: [
+          { time: "2:00 PM", title: "Demo Day Rehearsal", location: "Presentation Theater", type: "workshop" },
+          { time: "6:00 PM", title: "Demo Day Presentations", location: "Main Auditorium", type: "presentation" },
+          { time: "8:00 PM", title: "Investor Reception", location: "Networking Hall", type: "networking" }
+        ]
+      }
+    ],
+    budget: {
+      total: 100000,
+      spent: 45000,
+      categories: [
+        { name: "Program Operations", budgeted: 40000, spent: 20000 },
+        { name: "Mentor Fees", budgeted: 30000, spent: 15000 },
+        { name: "Demo Day Event", budgeted: 20000, spent: 8000 },
+        { name: "Founder Support", budgeted: 10000, spent: 2000 }
+      ]
+    }
+  },
+  '10': {
+    id: '10',
+    title: "Cast and Crew Wrap Party",
+    location: "Auckland, New Zealand",
+    dateRange: "Mar 22 - Mar 26, 2025",
+    category: 'Business Travel',
+    description: "Film production wrap celebration with cast, crew, and production team featuring location tours, celebration events, and team appreciation activities.",
+    participants: [
+      { id: '1', name: "Director Sam Hughes", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Film Director" },
+      { id: '2', name: "Emma Watson", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Lead Actor" },
+      { id: '3', name: "Jake Anderson", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Co-star" },
+      { id: '4', name: "Producer Lisa Chen", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face", role: "Executive Producer" },
+      { id: '5', name: "Chris Thompson", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face", role: "Director of Photography" },
+      { id: '6', name: "Stunt Coordinator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Stunt Coordinator" }
+    ],
+    itinerary: [
+      {
+        date: "Mar 22, 2025",
+        events: [
+          { time: "10:00 AM", title: "Airport Arrival", location: "Auckland International Airport", type: "transport" },
+          { time: "2:00 PM", title: "Hotel Check-in", location: "SkyCity Grand Auckland", type: "accommodation" },
+          { time: "6:00 PM", title: "Welcome Reception", location: "Hotel Rooftop Bar", type: "networking" },
+          { time: "8:00 PM", title: "Cast Dinner", location: "Harbourside Restaurant", type: "meal" }
+        ]
+      },
+      {
+        date: "Mar 24, 2025",
+        events: [
+          { time: "9:00 AM", title: "Location Tour", location: "Film Set Locations", type: "activity" },
+          { time: "1:00 PM", title: "Crew Appreciation Lunch", location: "Vineyard Restaurant", type: "meal" },
+          { time: "7:00 PM", title: "Wrap Party Celebration", location: "Auckland Event Center", type: "celebration" }
+        ]
+      },
+      {
+        date: "Mar 26, 2025",
+        events: [
+          { time: "10:00 AM", title: "Final Breakfast", location: "Hotel Restaurant", type: "meal" },
+          { time: "12:00 PM", title: "Farewell Ceremony", location: "Hotel Conference Room", type: "ceremony" },
+          { time: "3:00 PM", title: "Departure Transport", location: "Auckland Airport", type: "transport" }
+        ]
+      }
+    ],
+    budget: {
+      total: 180000,
+      spent: 95000,
+      categories: [
+        { name: "Accommodation", budgeted: 70000, spent: 40000 },
+        { name: "Catering & Events", budgeted: 60000, spent: 30000 },
+        { name: "Transportation", budgeted: 30000, spent: 15000 },
+        { name: "Activities & Tours", budgeted: 20000, spent: 10000 }
       ]
     }
   }

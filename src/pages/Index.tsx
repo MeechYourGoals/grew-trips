@@ -29,17 +29,19 @@ const Index = () => {
   const { user } = useAuth();
   const isMobile = useIsMobile();
 
-  // Sample trip data with rich mock content
+  // Sample trip data with updated examples
   const trips = [
     {
       id: 1,
-      title: "Summer in Paris",
-      location: "Paris, France",
-      dateRange: "Jul 15 - Jul 22, 2025",
+      title: "Spring Break Cancun 2026 Kappa Alpha Psi Trip",
+      location: "Cancun, Mexico",
+      dateRange: "Mar 15 - Mar 22, 2026",
       participants: [
-        { id: 1, name: "Emma", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
-        { id: 2, name: "Jake", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
-        { id: 3, name: "Sarah", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face" }
+        { id: 1, name: "Marcus", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
+        { id: 2, name: "Jamal", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
+        { id: 3, name: "Darius", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face" },
+        { id: 4, name: "Terrell", avatar: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=40&h=40&fit=crop&crop=face" },
+        { id: 5, name: "Jerome", avatar: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=40&h=40&fit=crop&crop=face" }
       ]
     },
     {
@@ -106,48 +108,47 @@ const Index = () => {
     },
     {
       id: 7,
-      title: "Target Minneapolis HQ Retreat",
-      location: "Las Vegas, NV",
-      dateRange: "Sep 15 - Sep 18, 2025",
+      title: "Fantasy Football Chat's Annual Golf Outing",
+      location: "Phoenix, Arizona",
+      dateRange: "Feb 20 - Feb 23, 2025",
       participants: [
-        { id: 26, name: "Rebecca (VP)", avatar: "https://images.unsplash.com/photo-1506634572416-48cdfe530110?w=40&h=40&fit=crop&crop=face" },
-        { id: 27, name: "Marcus", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
-        { id: 28, name: "Priya", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
-        { id: 29, name: "Carlos", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
-        { id: 30, name: "Jennifer", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face" },
-        { id: 31, name: "Derek", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face" }
+        { id: 26, name: "Commissioner Mike", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
+        { id: 27, name: "Big Rob", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
+        { id: 28, name: "Tony", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face" },
+        { id: 29, name: "Dave", avatar: "https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=40&h=40&fit=crop&crop=face" },
+        { id: 30, name: "Chris", avatar: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=40&h=40&fit=crop&crop=face" },
+        { id: 31, name: "Steve", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" }
       ]
     },
     {
       id: 8,
-      title: "Cast and Crew Wrap Party",
-      location: "Auckland, New Zealand",
-      dateRange: "Mar 22 - Mar 26, 2025",
+      title: "Harris Middle School's 8th Grade Field Trip to Washington DC",
+      location: "Washington, DC",
+      dateRange: "Apr 15 - Apr 18, 2025",
       participants: [
-        { id: 32, name: "Director Sam", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
-        { id: 33, name: "Emma (Lead)", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
-        { id: 34, name: "Jake (Co-star)", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
-        { id: 35, name: "Producer Lisa", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face" },
-        { id: 36, name: "DP Chris", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face" },
-        { id: 37, name: "Stunt Coord", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face" }
+        { id: 32, name: "Ms. Johnson", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
+        { id: 33, name: "Mr. Davis", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
+        { id: 34, name: "Mrs. Garcia", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face" },
+        { id: 35, name: "Mr. Thompson", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
+        { id: 36, name: "Principal Adams", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face" }
       ]
     }
   ];
 
-  // Updated Pro trips data to match proTripMockData keys exactly
+  // Updated Pro trips data to match new examples
   const proMockTrips = [
     {
       id: '1',
-      title: "Kevin Hart – Australia Comedy Tour",
-      location: "Australia",
-      dateRange: "Mar 10 - Mar 25, 2025",
-      category: 'Touring',
-      tags: ["Comedy", "Touring", "Rotating Team"],
+      title: "Eli Lilly C-Suite Retreat 2026",
+      location: "Terranea, CA",
+      dateRange: "Jan 15 - Jan 18, 2026",
+      category: 'Business Travel',
+      tags: ["Executive", "Pharmaceutical", "Strategic Planning"],
       participants: [
-        { id: 1, name: "Kevin Hart", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "artist" },
-        { id: 2, name: "Tour Manager", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 3, name: "Assistant", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "assistant" },
-        { id: 4, name: "Security", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "security" }
+        { id: 1, name: "CEO David Ricks", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "executive" },
+        { id: 2, name: "CFO Anat Ashkenazi", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "executive" },
+        { id: 3, name: "Strategy Director", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "manager" },
+        { id: 4, name: "Executive Assistant", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "assistant" }
       ]
     },
     {
@@ -206,28 +207,28 @@ const Index = () => {
     },
     {
       id: '6',
-      title: "InvestFest – Panelists",
-      location: "Atlanta, GA",
-      dateRange: "Sep 8 - Sep 10, 2025",
+      title: "Davos in Switzerland",
+      location: "Davos, Switzerland",
+      dateRange: "Jan 20 - Jan 24, 2025",
       category: 'Conference',
-      tags: ["Speaker", "Event Production"],
+      tags: ["Economic Forum", "Global Leaders"],
       participants: [
-        { id: 18, name: "Event Producer", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 19, name: "PR Manager", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face", role: "crew" },
-        { id: 20, name: "Media Contact", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "crew" }
+        { id: 18, name: "Forum Director", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "manager" },
+        { id: 19, name: "Protocol Manager", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face", role: "crew" },
+        { id: 20, name: "Media Coordinator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "crew" }
       ]
     },
     {
       id: '7',
-      title: "Content House – Creative Retreat",
-      location: "Malibu, CA",
-      dateRange: "Aug 15 - Aug 22, 2025",
-      category: 'Business Travel',
-      tags: ["Influencer", "Retreat", "Team Coordination"],
+      title: "TikTok Creators Accelerator Conference",
+      location: "Los Angeles, CA",
+      dateRange: "Sep 12 - Sep 15, 2025",
+      category: 'Conference',
+      tags: ["Social Media", "Creator Economy"],
       participants: [
-        { id: 15, name: "Lead Creator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "artist" },
-        { id: 16, name: "Photographer", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "photographer" },
-        { id: 17, name: "Videographer", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "videographer" }
+        { id: 15, name: "Program Manager", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "manager" },
+        { id: 16, name: "Content Creator", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "artist" },
+        { id: 17, name: "Video Producer", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "videographer" }
       ]
     },
     {
@@ -241,6 +242,32 @@ const Index = () => {
         { id: 25, name: "Head Coach", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "manager" },
         { id: 26, name: "Analyst", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "crew" },
         { id: 27, name: "Social Media", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "crew" }
+      ]
+    },
+    {
+      id: '9',
+      title: "YCombinator Winter 2025 Cohort",
+      location: "San Francisco, CA",
+      dateRange: "Jan 2025 - Mar 2025",
+      category: 'Business Travel',
+      tags: ["Startup", "Accelerator", "Tech"],
+      participants: [
+        { id: 28, name: "YC Partner", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "manager" },
+        { id: 29, name: "Startup Founder", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "executive" },
+        { id: 30, name: "Tech Mentor", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "crew" }
+      ]
+    },
+    {
+      id: '10',
+      title: "Cast and Crew Wrap Party",
+      location: "Auckland, New Zealand",
+      dateRange: "Mar 22 - Mar 26, 2025",
+      category: 'Business Travel',
+      tags: ["Film Production", "Celebration"],
+      participants: [
+        { id: 31, name: "Director Sam", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "manager" },
+        { id: 32, name: "Lead Actor", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "artist" },
+        { id: 33, name: "Producer", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face", role: "manager" }
       ]
     }
   ];
