@@ -15,17 +15,10 @@ const ProTripDetail = () => {
   const navigate = useNavigate();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  console.log('Route param proTripId:', proTripId);
-  console.log('Available mock data keys:', Object.keys(proTripMockData));
-
   // Extract the numeric ID from the route parameter (e.g., "2" from "pro-2")
   const tripId = proTripId || '1';
-  console.log('Using trip ID:', tripId);
-
   // Get trip data from mock data
   const tripData = proTripMockData[tripId];
-  console.log('Trip data found:', !!tripData);
-  console.log('Trip data:', tripData);
 
   if (!tripData) {
     return (
