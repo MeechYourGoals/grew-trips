@@ -146,7 +146,7 @@ const Index = () => {
       ]
     },
     {
-      id: '2',
+      id: '3',
       title: "Morgan Wallen North America Tour",
       location: "Multi-City Tour",
       dateRange: "Apr 5 - May 30, 2025",
@@ -160,7 +160,7 @@ const Index = () => {
       ]
     },
     {
-      id: '3',
+      id: '2',
       title: "Scarlet Knights AAU Volleyball Tourney",
       location: "Multi-State Tournament",
       dateRange: "Jun 15 - Jun 22, 2025",
@@ -186,7 +186,7 @@ const Index = () => {
       ]
     },
     {
-      id: '5',
+      id: '7',
       title: "Content House – Creative Retreat",
       location: "Malibu, CA",
       dateRange: "Aug 15 - Aug 22, 2025",
@@ -212,11 +212,11 @@ const Index = () => {
       ]
     },
     {
-      id: '7',
+      id: '5',
       title: "Chainsmokers – Vegas Residency",
       location: "Las Vegas, NV",
       dateRange: "Jan 2025 - Mar 2025",
-      category: 'Touring',
+      category: 'Residency',
       tags: ["DJ", "Residency", "Recurring"],
       participants: [
         { id: 21, name: "Drew Taggart", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "artist" },
@@ -230,7 +230,7 @@ const Index = () => {
       title: "Esports Team Lawrence Spring Championship",
       location: "Arlington, TX",
       dateRange: "May 10 - May 15, 2025",
-      category: 'Sports – Team Trip',
+      category: 'Tournament',
       tags: ["Esports", "Championship"],
       participants: [
         { id: 25, name: "Head Coach", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "manager" },
