@@ -7,9 +7,10 @@ import ProTripDetail from '../ProTripDetail';
 import { proTripMockData } from '../../data/proTripMockData';
 import { getTripLabels } from '../../utils/tripLabels';
 
-const renderWithRouter = (id: string) => {
+const renderWithRouter = (id?: string) => {
+  const path = id === undefined ? '/tour/pro-' : `/tour/pro-${id}`;
   render(
-    <MemoryRouter initialEntries={[`/tour/pro-${id}`]}>
+    <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route path="/tour/pro-:proTripId" element={<ProTripDetail />} />
       </Routes>
@@ -32,6 +33,12 @@ describe('ProTripDetail', () => {
 
   it('renders error message for invalid trip ID', () => {
     renderWithRouter('999');
+    expect(screen.getByText('Trip Not Found')).toBeInTheDocument();
+    expect(screen.getByText('The requested trip could not be found.')).toBeInTheDocument();
+  });
+
+  it('renders error message when trip ID is missing', () => {
+    renderWithRouter();
     expect(screen.getByText('Trip Not Found')).toBeInTheDocument();
     expect(screen.getByText('The requested trip could not be found.')).toBeInTheDocument();
   });
