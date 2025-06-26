@@ -1,3 +1,4 @@
+
 import { describe, it, expect } from 'vitest';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
@@ -26,5 +27,11 @@ describe('ProTripDetail', () => {
       expect(screen.getByRole('heading', { name: labels.schedule })).toBeInTheDocument();
       expect(screen.getByRole('heading', { name: labels.team })).toBeInTheDocument();
     });
+  });
+
+  it('renders error message for invalid trip ID', () => {
+    renderWithRouter('999');
+    expect(screen.getByText('Trip Not Found')).toBeInTheDocument();
+    expect(screen.getByText('The requested trip could not be found.')).toBeInTheDocument();
   });
 });

@@ -15,8 +15,35 @@ const ProTripDetail = () => {
   const navigate = useNavigate();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
+  console.log('Route param proTripId:', proTripId);
+  console.log('Available mock data keys:', Object.keys(proTripMockData));
+
+  // Extract the numeric ID from the route parameter (e.g., "2" from "pro-2")
+  const tripId = proTripId || '1';
+  console.log('Using trip ID:', tripId);
+
   // Get trip data from mock data
-  const tripData = proTripMockData[proTripId || '1'] || proTripMockData['1'];
+  const tripData = proTripMockData[tripId];
+  console.log('Trip data found:', !!tripData);
+  console.log('Trip data:', tripData);
+
+  if (!tripData) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white mb-4">Trip Not Found</h1>
+          <p className="text-gray-400 mb-6">The requested trip could not be found.</p>
+          <button 
+            onClick={() => navigate('/')}
+            className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-3 rounded-xl"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const labels = getTripLabels(tripData.category);
 
   return (
