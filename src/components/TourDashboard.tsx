@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Calendar, MapPin, Users, Plus, Mic, Music, Trophy, Briefcase, Hotel, Plane } from 'lucide-react';
@@ -58,10 +57,11 @@ const convertProTripToTour = (proTripData: any): Tour => {
 export const TourDashboard = () => {
   const navigate = useNavigate();
   const { proTripId } = useParams();
-  const tripId = proTripId?.replace(/^pro-/, '') || '1';
+  const tripId = proTripId?.replace(/^pro-/, '');
   
-  // Get the correct pro trip data
-  const proTripData = proTripMockData[tripId];
+  // Get the correct pro trip data - REMOVED the || '1' fallback that was causing the issue
+  const proTripData = tripId ? proTripMockData[tripId] : null;
+  
   if (!proTripData) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">

@@ -78,7 +78,8 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   return (
     <>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50">
-        <div className="h-full bg-white/10 backdrop-blur-md border-r border-white/20 w-full max-w-md">
+        {/* REMOVED max-w-md constraint to fix the settings width issue */}
+        <div className="h-full bg-white/10 backdrop-blur-md border-r border-white/20 w-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-white/20">
             <h2 className="text-xl font-semibold text-white">Settings</h2>
