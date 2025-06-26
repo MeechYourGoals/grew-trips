@@ -11,33 +11,19 @@ import { proTripMockData } from '../data/proTripMockData';
 import { getTripLabels } from '../utils/tripLabels';
 
 const ProTripDetail = () => {
-  const { proTripId } = useParams();
+  const { proTripId } = useParams<{ proTripId?: string }>();
   const navigate = useNavigate();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  // CRITICAL FIX: Extract numeric ID from 'pro-X' format
-  console.log('ProTripDetail - Raw proTripId from URL:', proTripId);
-  const tripId = proTripId?.replace('pro-', '') || '1';
-  console.log('ProTripDetail - Extracted tripId after replace:', tripId);
-  console.log('ProTripDetail - Available mock data keys:', Object.keys(proTripMockData));
-  
-  // Get trip data from mock data
-  const tripData = proTripMockData[tripId];
-  console.log('ProTripDetail - Found tripData for ID', tripId, ':', tripData ? tripData.title : 'NOT FOUND');
-  console.log('ProTripDetail - Full tripData object:', tripData);
+  const tripId = proTripId?.replace(/^pro-/, '');
 
-  if (!tripData) {
-    console.error('ProTripDetail - No trip data found for ID:', tripId);
-    console.error('ProTripDetail - Available IDs in mock data:', Object.keys(proTripMockData));
+  if (!tripId || !(tripId in proTripMockData)) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Trip Not Found</h1>
           <p className="text-gray-400 mb-2">The requested trip could not be found.</p>
-          <p className="text-gray-500 text-sm mb-2">URL Parameter: {proTripId}</p>
-          <p className="text-gray-500 text-sm mb-2">Extracted ID: {tripId}</p>
-          <p className="text-gray-500 text-sm mb-6">Available IDs: {Object.keys(proTripMockData).join(', ')}</p>
-          <button 
+          <button
             onClick={() => navigate('/')}
             className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-3 rounded-xl"
           >
@@ -47,6 +33,8 @@ const ProTripDetail = () => {
       </div>
     );
   }
+
+  const tripData = proTripMockData[tripId];
 
   const labels = getTripLabels(tripData.category);
 
