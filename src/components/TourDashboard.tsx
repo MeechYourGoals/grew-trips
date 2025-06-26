@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Calendar, MapPin, Users, Plus, Mic, Music, Trophy, Briefcase, Hotel, Plane } from 'lucide-react';
@@ -57,10 +58,13 @@ const convertProTripToTour = (proTripData: any): Tour => {
 export const TourDashboard = () => {
   const navigate = useNavigate();
   const { proTripId } = useParams();
-  const tripId = proTripId?.replace(/^pro-/, '');
   
-  // Get the correct pro trip data - REMOVED the || '1' fallback that was causing the issue
-  const proTripData = tripId ? proTripMockData[tripId] : null;
+  // Fix: The proTripId from the URL is like "1", "2", etc. (not "pro-1", "pro-2")  
+  // because the route is /tour/pro-:proTripId where :proTripId captures just the number
+  console.log('proTripId from URL:', proTripId);
+  console.log('Available mock data keys:', Object.keys(proTripMockData));
+  
+  const proTripData = proTripId ? proTripMockData[proTripId] : null;
   
   if (!proTripData) {
     return (
@@ -68,6 +72,7 @@ export const TourDashboard = () => {
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Trip Not Found</h1>
           <p className="text-gray-400 mb-2">The requested trip could not be found.</p>
+          <p className="text-gray-400 mb-4">Trip ID: {proTripId}</p>
           <button
             onClick={() => navigate('/')}
             className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-3 rounded-xl"
