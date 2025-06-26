@@ -147,9 +147,9 @@ const Index = () => {
     },
     {
       id: '2',
-      title: "Morgan Wallen – North America Tour",
-      location: "Various Cities",
-      dateRange: "Apr 5 - Jun 20, 2025",
+      title: "Morgan Wallen North America Tour",
+      location: "Multi-City Tour",
+      dateRange: "Apr 5 - May 30, 2025",
       category: 'Touring',
       tags: ["Music", "Multi-City Tour"],
       participants: [
@@ -161,9 +161,9 @@ const Index = () => {
     },
     {
       id: '3',
-      title: "Scarlett Knights – AAU Volleyball Tourney",
-      location: "Orlando, FL",
-      dateRange: "Jul 12 - Jul 16, 2025",
+      title: "Scarlet Knights AAU Volleyball Tourney",
+      location: "Multi-State Tournament",
+      dateRange: "Jun 15 - Jun 22, 2025",
       category: 'Sports – Team Trip',
       tags: ["Youth Sports", "Multi-Family"],
       participants: [
@@ -175,8 +175,8 @@ const Index = () => {
     {
       id: '4',
       title: "Los Angeles Dodgers – Playoffs 2025",
-      location: "Various Stadiums",
-      dateRange: "Oct 1 - Oct 30, 2025",
+      location: "Los Angeles & San Francisco",
+      dateRange: "Oct 1 - Oct 15, 2025",
       category: 'Sports – Team Trip',
       tags: ["Pro Sports", "Championship"],
       participants: [
@@ -187,8 +187,8 @@ const Index = () => {
     },
     {
       id: '5',
-      title: "Content House – Passes Retreat",
-      location: "Bahamas",
+      title: "Content House – Creative Retreat",
+      location: "Malibu, CA",
       dateRange: "Aug 15 - Aug 22, 2025",
       category: 'Business Travel',
       tags: ["Influencer", "Retreat", "Team Coordination"],
@@ -213,9 +213,9 @@ const Index = () => {
     },
     {
       id: '7',
-      title: "The Chainsmokers – Vegas Residency 2025",
+      title: "Chainsmokers – Vegas Residency",
       location: "Las Vegas, NV",
-      dateRange: "Jan 1 - Dec 31, 2025",
+      dateRange: "Jan 2025 - Mar 2025",
       category: 'Touring',
       tags: ["DJ", "Residency", "Recurring"],
       participants: [
@@ -227,9 +227,9 @@ const Index = () => {
     },
     {
       id: '8',
-      title: "Esports Team – Valorant Spring Championship",
-      location: "Chicago, IL",
-      dateRange: "May 20 - May 25, 2025",
+      title: "Esports Team Lawrence Spring Championship",
+      location: "Arlington, TX",
+      dateRange: "May 10 - May 15, 2025",
       category: 'Sports – Team Trip',
       tags: ["Esports", "Championship"],
       participants: [
