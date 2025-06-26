@@ -4,6 +4,7 @@ import { X, User, Bell, Crown, LogOut, Mail, Phone, Building } from 'lucide-reac
 import { useAuth } from '../hooks/useAuth';
 import { ProUpgradeModal } from './ProUpgradeModal';
 import { EnterpriseSettings } from './EnterpriseSettings';
+import { ConsumerSettings } from './ConsumerSettings';
 
 interface SettingsMenuProps {
   isOpen: boolean;
@@ -14,6 +15,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   const { user, updateProfile, signOut } = useAuth();
   const [showProModal, setShowProModal] = useState(false);
   const [activeSection, setActiveSection] = useState('profile');
+  const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise'>('consumer');
 
   if (!isOpen || !user) return null;
 
@@ -186,44 +188,58 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
             </button>
           </div>
 
-          {/* Navigation Tabs */}
-          <div className="flex border-b border-white/20">
-            {sections.map((section) => {
-              const Icon = section.icon;
-              return (
-                <button
-                  key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  className={`flex-1 flex items-center justify-center gap-2 p-4 text-sm font-medium transition-colors ${
-                    activeSection === section.id
-                      ? 'text-glass-orange border-b-2 border-glass-orange bg-white/5'
-                      : 'text-gray-400 hover:text-white'
-                  }`}
-                >
-                  <Icon size={16} />
-                  <span className="hidden sm:inline">{section.label}</span>
-                </button>
-              );
-            })}
+          {/* Settings Type Toggle */}
+          <div className="p-6 border-b border-white/20">
+            <div className="bg-white/10 rounded-xl p-1 flex">
+              <button
+                onClick={() => setSettingsType('consumer')}
+                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                  settingsType === 'consumer'
+                    ? 'bg-glass-orange text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Consumer
+              </button>
+              <button
+                onClick={() => setSettingsType('enterprise')}
+                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                  settingsType === 'enterprise'
+                    ? 'bg-glass-orange text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Enterprise
+              </button>
+            </div>
           </div>
 
-          {/* Content */}
-          <div className="p-6 h-full overflow-y-auto pb-24">
-            {activeSection === 'profile' && renderProfileSection()}
-            {activeSection === 'notifications' && renderNotificationsSection()}
-            {activeSection === 'subscription' && renderSubscriptionSection()}
-          </div>
+          {/* Render appropriate settings based on toggle */}
+          {settingsType === 'consumer' ? (
+            <div className="h-full">
+              <ConsumerSettings currentUserId={user.id} />
+            </div>
+          ) : (
+            <div className="h-full">
+              <EnterpriseSettings 
+                organizationId={userOrganization?.id || 'default-org'} 
+                currentUserId={user.id} 
+              />
+            </div>
+          )}
 
-          {/* Sign Out Button */}
-          <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/5 border-t border-white/20">
-            <button
-              onClick={signOut}
-              className="w-full flex items-center justify-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium py-3 rounded-xl transition-colors"
-            >
-              <LogOut size={16} />
-              Sign Out
-            </button>
-          </div>
+          {/* Sign Out Button - Only show for consumer settings */}
+          {settingsType === 'consumer' && (
+            <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/5 border-t border-white/20">
+              <button
+                onClick={signOut}
+                className="w-full flex items-center justify-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium py-3 rounded-xl transition-colors"
+              >
+                <LogOut size={16} />
+                Sign Out
+              </button>
+            </div>
+          )}
         </div>
       </div>
 

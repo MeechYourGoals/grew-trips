@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
-import { Building, Users, CreditCard, Shield, Settings, Bell, User, Crown, Wallet, Plane } from 'lucide-react';
+import { Building, Users, CreditCard, Shield, Settings, Bell, User, Crown, Wallet, Plane, Camera, Upload } from 'lucide-react';
 import { SUBSCRIPTION_TIERS } from '../types/pro';
 import { TravelWallet } from './TravelWallet';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
 
 interface EnterpriseSettingsProps {
   organizationId: string;
@@ -11,6 +11,7 @@ interface EnterpriseSettingsProps {
 
 export const EnterpriseSettings = ({ organizationId, currentUserId }: EnterpriseSettingsProps) => {
   const [activeSection, setActiveSection] = useState('organization');
+  const [expandedPlan, setExpandedPlan] = useState<string | null>('growing');
 
   // Mock organization data
   const organization = {
@@ -46,6 +47,28 @@ export const EnterpriseSettings = ({ organizationId, currentUserId }: Enterprise
         <div>
           <h3 className="text-2xl font-bold text-white">Organization Settings</h3>
           <p className="text-gray-400">Manage your organization profile and details</p>
+        </div>
+      </div>
+
+      {/* Organization Logo */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Organization Logo</h4>
+        <div className="flex items-center gap-6">
+          <div className="relative">
+            <div className="w-24 h-24 bg-gradient-to-r from-glass-orange to-glass-yellow rounded-xl flex items-center justify-center">
+              <Building size={32} className="text-white" />
+            </div>
+            <button className="absolute -bottom-2 -right-2 bg-glass-orange hover:bg-glass-orange/80 text-white p-2 rounded-full transition-colors">
+              <Camera size={16} />
+            </button>
+          </div>
+          <div>
+            <button className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-lg transition-colors">
+              <Upload size={16} />
+              Upload Logo
+            </button>
+            <p className="text-sm text-gray-400 mt-2">PNG, SVG or JPG. Max size 2MB.</p>
+          </div>
         </div>
       </div>
 
@@ -86,6 +109,16 @@ export const EnterpriseSettings = ({ organizationId, currentUserId }: Enterprise
             />
           </div>
         </div>
+        
+        <div className="mt-6">
+          <label className="block text-sm text-gray-300 mb-2">Organization Description</label>
+          <textarea
+            placeholder="Describe your organization's mission and focus..."
+            className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 resize-none"
+            rows={3}
+          />
+        </div>
+        
         <button className="mt-6 bg-glass-orange hover:bg-glass-orange/80 text-white px-6 py-3 rounded-lg font-medium transition-colors">
           Save Changes
         </button>
@@ -157,28 +190,307 @@ export const EnterpriseSettings = ({ organizationId, currentUserId }: Enterprise
         </div>
       </div>
 
-      {/* Plan Comparison */}
+      {/* Plan Comparison - Now Expandable */}
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
         <h4 className="text-lg font-semibold text-white mb-4">Available Plans</h4>
-        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-4">
+        <div className="space-y-4">
           {Object.entries(SUBSCRIPTION_TIERS).map(([key, tier]) => (
-            <div
-              key={key}
-              className={`border rounded-lg p-4 ${
-                key === organization.subscriptionTier
-                  ? 'border-green-500/50 bg-green-500/10'
-                  : 'border-white/10 bg-white/5'
-              }`}
-            >
-              <h5 className="font-semibold text-white mb-2">{tier.name}</h5>
-              <div className="text-xl font-bold text-white mb-1">${tier.price}/month</div>
-              <div className="text-sm text-gray-400 mb-3">Up to {tier.seatLimit} seats</div>
-              {key === organization.subscriptionTier && (
-                <div className="text-sm text-green-400 font-medium">Current Plan</div>
-              )}
-            </div>
+            <Collapsible key={key} open={expandedPlan === key} onOpenChange={() => setExpandedPlan(expandedPlan === key ? null : key)}>
+              <CollapsibleTrigger className="w-full">
+                <div className={`border rounded-lg p-4 transition-colors hover:bg-white/5 ${
+                  key === organization.subscriptionTier
+                    ? 'border-green-500/50 bg-green-500/10'
+                    : 'border-white/10 bg-white/5'
+                }`}>
+                  <div className="flex items-center justify-between">
+                    <div className="text-left">
+                      <h5 className="font-semibold text-white">{tier.name}</h5>
+                      <div className="text-xl font-bold text-white">${tier.price}/month</div>
+                      <div className="text-sm text-gray-400">Up to {tier.seatLimit} seats</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {key === organization.subscriptionTier && (
+                        <div className="text-sm text-green-400 font-medium">Current Plan</div>
+                      )}
+                      <div className="text-gray-400">
+                        {expandedPlan === key ? '−' : '+'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-2">
+                <div className="bg-white/5 rounded-lg p-4 ml-4">
+                  <h6 className="font-medium text-white mb-3">Features Included:</h6>
+                  <ul className="space-y-2 text-sm text-gray-300">
+                    {tier.features.map((feature, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <div className="w-1.5 h-1.5 bg-glass-orange rounded-full mt-2 flex-shrink-0"></div>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                  {key !== organization.subscriptionTier && (
+                    <button className="mt-4 bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+                      Upgrade to {tier.name}
+                    </button>
+                  )}
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
           ))}
         </div>
+      </div>
+    </div>
+  );
+
+  const renderProfileSection = () => (
+    <div className="space-y-6">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-12 h-12 bg-gradient-to-r from-glass-orange to-glass-yellow rounded-xl flex items-center justify-center">
+          <User size={24} className="text-white" />
+        </div>
+        <div>
+          <h3 className="text-2xl font-bold text-white">Profile Settings</h3>
+          <p className="text-gray-400">Manage your personal profile within the organization</p>
+        </div>
+      </div>
+
+      {/* Profile Photo */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Profile Photo</h4>
+        <div className="flex items-center gap-6">
+          <div className="relative">
+            <div className="w-24 h-24 bg-gradient-to-r from-glass-orange to-glass-yellow rounded-full flex items-center justify-center">
+              <User size={32} className="text-white" />
+            </div>
+            <button className="absolute -bottom-2 -right-2 bg-glass-orange hover:bg-glass-orange/80 text-white p-2 rounded-full transition-colors">
+              <Camera size={16} />
+            </button>
+          </div>
+          <div>
+            <button className="flex items-center gap-2 bg-white/10 hover:bg-white/20 border border-white/20 text-white px-4 py-2 rounded-lg transition-colors">
+              <Upload size={16} />
+              Upload Photo
+            </button>
+            <p className="text-sm text-gray-400 mt-2">JPG, PNG or GIF. Max size 5MB.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Personal Information */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Personal Information</h4>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm text-gray-300 mb-2">Display Name</label>
+            <input
+              type="text"
+              defaultValue="John Smith"
+              className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-300 mb-2">Job Title</label>
+            <input
+              type="text"
+              placeholder="e.g., Marketing Director"
+              className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-300 mb-2">Department</label>
+            <input
+              type="text"
+              placeholder="e.g., Marketing & Communications"
+              className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50"
+            />
+          </div>
+          <div>
+            <label className="block text-sm text-gray-300 mb-2">Location</label>
+            <input
+              type="text"
+              placeholder="e.g., New York, NY"
+              className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50"
+            />
+          </div>
+        </div>
+        
+        <div className="mt-6">
+          <label className="block text-sm text-gray-300 mb-2">Bio</label>
+          <textarea
+            placeholder="Tell your colleagues about your role and expertise..."
+            className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 resize-none"
+            rows={3}
+          />
+        </div>
+        
+        <button className="mt-6 bg-glass-orange hover:bg-glass-orange/80 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+          Save Changes
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderPrivacySection = () => (
+    <div className="space-y-6">
+      <h3 className="text-2xl font-bold text-white">Privacy & Security</h3>
+      
+      {/* Display Name Privacy */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Display Name Settings</h4>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Use Real Name</div>
+              <div className="text-sm text-gray-400">Show your real name to organization members</div>
+            </div>
+            <button className="relative w-12 h-6 bg-glass-orange rounded-full transition-colors">
+              <div className="absolute w-5 h-5 bg-white rounded-full top-0.5 translate-x-6 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Show Job Title</div>
+              <div className="text-sm text-gray-400">Display your job title in organization directory</div>
+            </div>
+            <button className="relative w-12 h-6 bg-glass-orange rounded-full transition-colors">
+              <div className="absolute w-5 h-5 bg-white rounded-full top-0.5 translate-x-6 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Information Privacy */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Contact Information</h4>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Share Phone Number</div>
+              <div className="text-sm text-gray-400">Allow organization members to see your phone number</div>
+            </div>
+            <button className="relative w-12 h-6 bg-gray-600 rounded-full transition-colors">
+              <div className="absolute w-5 h-5 bg-white rounded-full top-0.5 translate-x-0.5 transition-transform" />
+            </button>
+          </div>
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Allow Direct Messages</div>
+              <div className="text-sm text-gray-400">Let organization members send you direct messages</div>
+            </div>
+            <button className="relative w-12 h-6 bg-glass-orange rounded-full transition-colors">
+              <div className="absolute w-5 h-5 bg-white rounded-full top-0.5 translate-x-6 transition-transform" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Account Security */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Account Security</h4>
+        <div className="space-y-4">
+          <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+            <div className="text-left">
+              <div className="text-white font-medium">Change Password</div>
+              <div className="text-sm text-gray-400">Update your account password</div>
+            </div>
+            <div className="text-glass-orange">→</div>
+          </button>
+          <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+            <div className="text-left">
+              <div className="text-white font-medium">Two-Factor Authentication</div>
+              <div className="text-sm text-gray-400">Add an extra layer of security to your account</div>
+            </div>
+            <div className="text-glass-orange">Set Up</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderGeneralSettings = () => (
+    <div className="space-y-6">
+      <h3 className="text-2xl font-bold text-white">General Settings</h3>
+      
+      {/* Organization Preferences */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Organization Preferences</h4>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm text-gray-300 mb-2">Default Trip Visibility</label>
+            <select className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50">
+              <option>Organization Members Only</option>
+              <option>Public</option>
+              <option>Private</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm text-gray-300 mb-2">Time Zone</label>
+            <select className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50">
+              <option>Pacific Time (PT)</option>
+              <option>Mountain Time (MT)</option>
+              <option>Central Time (CT)</option>
+              <option>Eastern Time (ET)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      {/* Data Management */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Data Management</h4>
+        <div className="space-y-4">
+          <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+            <div className="text-left">
+              <div className="text-white font-medium">Export Organization Data</div>
+              <div className="text-sm text-gray-400">Download all organization trip data and settings</div>
+            </div>
+            <div className="text-glass-orange">Export</div>
+          </button>
+          <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+            <div className="text-left">
+              <div className="text-white font-medium">Data Retention Policy</div>
+              <div className="text-sm text-gray-400">Configure how long data is stored</div>
+            </div>
+            <div className="text-glass-orange">Configure</div>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderTravelWalletSection = () => (
+    <div>
+      <TravelWallet userId={currentUserId} />
+    </div>
+  );
+
+  const renderNotificationsSection = () => (
+    <div className="space-y-6">
+      <h3 className="text-2xl font-bold text-white">Notification Preferences</h3>
+      
+      <div className="space-y-4">
+        {[
+          { key: 'orgAnnouncements', label: 'Organization Announcements', desc: 'Important updates from organization administrators' },
+          { key: 'tripInvites', label: 'Trip Invitations', desc: 'When you are invited to join a trip' },
+          { key: 'teamUpdates', label: 'Team Updates', desc: 'Changes to team members and permissions' },
+          { key: 'billingAlerts', label: 'Billing Alerts', desc: 'Subscription and payment notifications' },
+          { key: 'emailDigest', label: 'Weekly Email Digest', desc: 'Summary of activity across all your trips' }
+        ].map((setting) => (
+          <div key={setting.key} className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
+            <div className="flex items-center gap-3">
+              <Bell size={16} className="text-gray-400" />
+              <div>
+                <span className="text-white font-medium">{setting.label}</span>
+                <p className="text-sm text-gray-400">{setting.desc}</p>
+              </div>
+            </div>
+            <button className="relative w-12 h-6 bg-glass-orange rounded-full transition-colors">
+              <div className="absolute w-5 h-5 bg-white rounded-full top-0.5 translate-x-6 transition-transform" />
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -248,24 +560,17 @@ export const EnterpriseSettings = ({ organizationId, currentUserId }: Enterprise
     </div>
   );
 
-  const renderTravelWalletSection = () => (
-    <div>
-      <TravelWallet userId={currentUserId} />
-    </div>
-  );
-
   const renderSection = () => {
     switch (activeSection) {
       case 'organization': return renderOrganizationSection();
       case 'billing': return renderBillingSection();
       case 'seats': return renderSeatManagementSection();
+      case 'profile': return renderProfileSection();
       case 'travel-wallet': return renderTravelWalletSection();
-      default: return (
-        <div className="text-center py-12">
-          <div className="text-gray-400 mb-4">Section under development</div>
-          <p className="text-sm text-gray-500">This feature will be available soon.</p>
-        </div>
-      );
+      case 'notifications': return renderNotificationsSection();
+      case 'privacy': return renderPrivacySection();
+      case 'settings': return renderGeneralSettings();
+      default: return renderOrganizationSection();
     }
   };
 
