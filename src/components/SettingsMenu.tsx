@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { X, User, Bell, Crown, LogOut, Mail, Phone, Eye, EyeOff } from 'lucide-react';
+import { X, User, Bell, Crown, LogOut, Mail, Phone, Building } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { ProUpgradeModal } from './ProUpgradeModal';
+import { EnterpriseSettings } from './EnterpriseSettings';
 
 interface SettingsMenuProps {
   isOpen: boolean;
@@ -15,6 +16,14 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   const [activeSection, setActiveSection] = useState('profile');
 
   if (!isOpen || !user) return null;
+
+  // Mock organization data - would come from your auth context
+  const userOrganization = {
+    id: 'org-123',
+    name: 'Acme Entertainment Group',
+    role: 'owner',
+    hasProAccess: true
+  };
 
   const handleNotificationToggle = (setting: string) => {
     updateProfile({
@@ -37,6 +46,14 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
         </div>
         <h3 className="text-xl font-semibold text-white mb-2">{user.displayName}</h3>
         <p className="text-gray-400 text-sm">{user.email || user.phone}</p>
+        {userOrganization && (
+          <div className="mt-2">
+            <div className="inline-flex items-center gap-2 bg-glass-orange/20 px-3 py-1 rounded-full">
+              <Building size={14} className="text-glass-orange" />
+              <span className="text-glass-orange text-sm font-medium">{userOrganization.name}</span>
+            </div>
+          </div>
+        )}
       </div>
 
       <div className="space-y-4">
@@ -92,40 +109,64 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Subscription</h3>
-        {user.isPro && (
+        {userOrganization?.hasProAccess && (
           <div className="flex items-center gap-2 bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 px-3 py-1 rounded-full">
             <Crown size={14} className="text-glass-orange" />
-            <span className="text-glass-orange text-sm font-medium">PRO</span>
+            <span className="text-glass-orange text-sm font-medium">ENTERPRISE</span>
           </div>
         )}
       </div>
 
-      {user.isPro ? (
+      {userOrganization?.hasProAccess ? (
         <div className="bg-gradient-to-r from-glass-orange/10 to-glass-yellow/10 border border-glass-orange/20 rounded-xl p-6">
-          <h4 className="text-white font-semibold mb-2">Trips Pro Active</h4>
-          <p className="text-gray-300 text-sm mb-4">You have access to all premium features</p>
-          <ul className="space-y-2 text-sm text-gray-300">
-            <li>• Tour Dashboard & Multi-city Management</li>
-            <li>• Team Management & Role Permissions</li>
-            <li>• Broadcast System for Announcements</li>
-            <li>• Advanced Analytics & Insights</li>
-            <li>• Priority Support</li>
-          </ul>
+          <h4 className="text-white font-semibold mb-2">Enterprise Access Active</h4>
+          <p className="text-gray-300 text-sm mb-4">
+            You have access to all Enterprise features through {userOrganization.name}
+          </p>
+          <div className="text-sm text-gray-400 mb-4">
+            Role: <span className="text-glass-orange capitalize">{userOrganization.role}</span>
+          </div>
+          <button
+            onClick={() => setActiveSection('enterprise')}
+            className="bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+          >
+            Manage Organization
+          </button>
         </div>
       ) : (
         <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-          <h4 className="text-white font-semibold mb-2">Free Plan</h4>
+          <h4 className="text-white font-semibold mb-2">Individual Plan</h4>
           <p className="text-gray-300 text-sm mb-4">Perfect for personal trips and small groups</p>
           <button
             onClick={() => setShowProModal(true)}
             className="w-full bg-gradient-to-r from-glass-orange to-glass-yellow text-white font-medium py-3 rounded-xl hover:scale-105 transition-transform"
           >
-            Upgrade to Pro - $99/month
+            Upgrade to Enterprise
           </button>
         </div>
       )}
     </div>
   );
+
+  // If enterprise section is active and user has pro access, show full enterprise settings
+  if (activeSection === 'enterprise' && userOrganization?.hasProAccess) {
+    return (
+      <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50">
+        <div className="h-full bg-white/10 backdrop-blur-md border-r border-white/20 w-full">
+          <div className="flex items-center justify-between p-6 border-b border-white/20">
+            <h2 className="text-xl font-semibold text-white">Enterprise Settings</h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-white">
+              <X size={24} />
+            </button>
+          </div>
+          <EnterpriseSettings 
+            organizationId={userOrganization.id} 
+            currentUserId={user.id} 
+          />
+        </div>
+      </div>
+    );
+  }
 
   const sections = [
     { id: 'profile', label: 'Profile', icon: User },

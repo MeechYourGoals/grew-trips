@@ -1,6 +1,7 @@
 
-import React from 'react';
-import { X, Crown, Mic, Users, Calendar, Shield } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Crown, Users, Shield, Zap, TrendingUp, Building, Star } from 'lucide-react';
+import { SUBSCRIPTION_TIERS } from '../types/pro';
 
 interface ProUpgradeModalProps {
   isOpen: boolean;
@@ -8,42 +9,41 @@ interface ProUpgradeModalProps {
 }
 
 export const ProUpgradeModal = ({ isOpen, onClose }: ProUpgradeModalProps) => {
+  const [selectedTier, setSelectedTier] = useState<'starter' | 'growing' | 'enterprise' | 'enterprise-plus'>('growing');
+
   if (!isOpen) return null;
 
-  const proFeatures = [
-    {
-      icon: <Mic size={20} className="text-glass-orange" />,
-      title: 'Tour Dashboard',
-      description: 'Manage entire tours with multi-city overview'
-    },
-    {
-      icon: <Users size={20} className="text-glass-yellow" />,
-      title: 'Team Management',
-      description: 'Role-based permissions and rotating team members'
-    },
-    {
-      icon: <Calendar size={20} className="text-glass-green" />,
-      title: 'Per-City Chats',
-      description: 'Isolated group chats for each tour stop'
-    },
-    {
-      icon: <Shield size={20} className="text-purple-400" />,
-      title: 'Advanced Permissions',
-      description: 'Manager-only notes and controlled access'
-    }
-  ];
+  const handleStartFreeTrial = (tier: string) => {
+    console.log(`Starting free trial for ${tier} tier`);
+    // This would integrate with your Stripe checkout for Enterprise subscriptions
+    onClose();
+  };
+
+  const tierIcons = {
+    starter: <Zap size={24} className="text-blue-400" />,
+    growing: <TrendingUp size={24} className="text-green-400" />,
+    enterprise: <Building size={24} className="text-purple-400" />,
+    'enterprise-plus': <Star size={24} className="text-yellow-400" />
+  };
+
+  const tierColors = {
+    starter: 'from-blue-500/20 to-blue-600/20 border-blue-500/30',
+    growing: 'from-green-500/20 to-green-600/20 border-green-500/30',
+    enterprise: 'from-purple-500/20 to-purple-600/20 border-purple-500/30',
+    'enterprise-plus': 'from-yellow-500/20 to-yellow-600/20 border-yellow-500/30'
+  };
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 max-w-2xl w-full shadow-2xl">
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 max-w-6xl w-full shadow-2xl max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 bg-gradient-to-r from-glass-orange to-glass-yellow rounded-2xl flex items-center justify-center">
               <Crown size={24} className="text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">Upgrade to Trips Pro</h2>
-              <p className="text-gray-400">Perfect for touring professionals</p>
+              <h2 className="text-3xl font-bold text-white">Upgrade to Trips Pro</h2>
+              <p className="text-gray-400">Enterprise software for professional trip management</p>
             </div>
           </div>
           <button
@@ -54,40 +54,102 @@ export const ProUpgradeModal = ({ isOpen, onClose }: ProUpgradeModalProps) => {
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          {proFeatures.map((feature, index) => (
-            <div key={index} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 bg-white/10 backdrop-blur-sm rounded-xl flex items-center justify-center">
-                  {feature.icon}
-                </div>
-                <div>
-                  <h3 className="text-white font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-gray-400 text-sm">{feature.description}</p>
-                </div>
+        {/* Enterprise SaaS Benefits */}
+        <div className="bg-gradient-to-r from-glass-orange/10 to-glass-yellow/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-8">
+          <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <Building size={24} className="text-glass-orange" />
+            Enterprise Software as a Service
+          </h3>
+          <div className="grid md:grid-cols-2 gap-6 text-gray-300">
+            <div>
+              <h4 className="font-semibold text-white mb-2">Organization-Based Subscriptions</h4>
+              <p className="text-sm">Your organization pays once and invites team members to seats. Individual users don't need separate subscriptions.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-2">Seat-Based Pricing</h4>
+              <p className="text-sm">Pay only for the seats you need. Easily invite drivers, crew, players, or staff without additional per-user costs.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-2">Flexible Team Management</h4>
+              <p className="text-sm">Add or remove team members as needed. Perfect for tours, sports teams, conferences, and corporate travel.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-white mb-2">Enterprise Features</h4>
+              <p className="text-sm">Advanced permissions, travel wallet integration, broadcast messaging, and dedicated support.</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Subscription Tiers */}
+        <div className="grid md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+          {Object.entries(SUBSCRIPTION_TIERS).map(([key, tier]) => (
+            <div
+              key={key}
+              className={`relative bg-gradient-to-br ${tierColors[key as keyof typeof tierColors]} backdrop-blur-sm border rounded-2xl p-6 cursor-pointer transition-all hover:scale-105 ${
+                selectedTier === key ? 'ring-2 ring-white/40' : ''
+              }`}
+              onClick={() => setSelectedTier(key as any)}
+            >
+              <div className="flex items-center justify-between mb-4">
+                {tierIcons[key as keyof typeof tierIcons]}
+                {selectedTier === key && (
+                  <div className="w-3 h-3 bg-white rounded-full"></div>
+                )}
               </div>
+              <h3 className="text-lg font-bold text-white mb-2">{tier.name}</h3>
+              <div className="text-2xl font-bold text-white mb-1">${tier.price}/month</div>
+              <div className="text-sm text-gray-400 mb-4">Up to {tier.seatLimit} seats</div>
+              <ul className="space-y-2 text-sm text-gray-300">
+                {tier.features.slice(0, 4).map((feature, index) => (
+                  <li key={index} className="flex items-start gap-2">
+                    <div className="w-1.5 h-1.5 bg-glass-orange rounded-full mt-2 flex-shrink-0"></div>
+                    {feature}
+                  </li>
+                ))}
+                {tier.features.length > 4 && (
+                  <li className="text-xs text-gray-400 italic">
+                    +{tier.features.length - 4} more features
+                  </li>
+                )}
+              </ul>
             </div>
           ))}
         </div>
 
-        <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-8">
-          <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2">$99/month</div>
-            <div className="text-gray-400 mb-4">Perfect for touring artists, comedians, musicians</div>
-            <div className="text-sm text-glass-yellow">14-day free trial • Cancel anytime</div>
+        {/* Selected Tier Details */}
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 mb-8">
+          <h3 className="text-xl font-bold text-white mb-4">
+            {SUBSCRIPTION_TIERS[selectedTier].name} - Complete Feature List
+          </h3>
+          <div className="grid md:grid-cols-2 gap-4">
+            {SUBSCRIPTION_TIERS[selectedTier].features.map((feature, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <Shield size={16} className="text-glass-orange mt-0.5 flex-shrink-0" />
+                <span className="text-gray-300 text-sm">{feature}</span>
+              </div>
+            ))}
           </div>
         </div>
 
-        <div className="flex gap-4">
-          <button
-            onClick={onClose}
-            className="flex-1 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white py-3 rounded-2xl transition-all duration-200 font-medium"
-          >
-            Maybe Later
-          </button>
-          <button className="flex-1 bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium py-3 rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg">
-            Start Free Trial
-          </button>
+        {/* CTA Section */}
+        <div className="text-center">
+          <div className="text-sm text-glass-yellow mb-4">
+            14-day free trial • No credit card required • Cancel anytime
+          </div>
+          <div className="flex gap-4 justify-center">
+            <button
+              onClick={onClose}
+              className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white rounded-2xl transition-all duration-200 font-medium"
+            >
+              Maybe Later
+            </button>
+            <button
+              onClick={() => handleStartFreeTrial(selectedTier)}
+              className="px-8 py-3 bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg"
+            >
+              Start Free Trial - {SUBSCRIPTION_TIERS[selectedTier].name}
+            </button>
+          </div>
         </div>
       </div>
     </div>
