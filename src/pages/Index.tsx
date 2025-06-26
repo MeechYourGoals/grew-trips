@@ -129,7 +129,7 @@ const Index = () => {
     }
   ];
 
-  // Mock Pro trips data with proper categories
+  // Updated Pro trips data to match proTripMockData keys exactly
   const proMockTrips = [
     {
       id: '1',
@@ -147,6 +147,19 @@ const Index = () => {
     },
     {
       id: '2',
+      title: "Scarlet Knights AAU Volleyball Tourney",
+      location: "Multi-State Tournament",
+      dateRange: "Jun 15 - Jun 22, 2025",
+      category: 'Sports – Team Trip',
+      tags: ["Youth Sports", "Multi-Family"],
+      participants: [
+        { id: 9, name: "Coach Sarah", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "manager" },
+        { id: 10, name: "Team Mom", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "assistant" },
+        { id: 11, name: "Athletic Dir", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "manager" }
+      ]
+    },
+    {
+      id: '3',
       title: "Morgan Wallen North America Tour",
       location: "Multi-City Tour",
       dateRange: "Apr 5 - May 30, 2025",
@@ -157,19 +170,6 @@ const Index = () => {
         { id: 6, name: "Band Leader", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "crew" },
         { id: 7, name: "Label Rep", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face", role: "label-rep" },
         { id: 8, name: "Road Crew", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "crew" }
-      ]
-    },
-    {
-      id: '3',
-      title: "Scarlet Knights AAU Volleyball Tourney",
-      location: "Multi-State Tournament",
-      dateRange: "Jun 15 - Jun 22, 2025",
-      category: 'Sports – Team Trip',
-      tags: ["Youth Sports", "Multi-Family"],
-      participants: [
-        { id: 9, name: "Coach Sarah", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 10, name: "Team Mom", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "assistant" },
-        { id: 11, name: "Athletic Dir", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "manager" }
       ]
     },
     {
@@ -187,15 +187,16 @@ const Index = () => {
     },
     {
       id: '5',
-      title: "Content House – Creative Retreat",
-      location: "Malibu, CA",
-      dateRange: "Aug 15 - Aug 22, 2025",
-      category: 'Business Travel',
-      tags: ["Influencer", "Retreat", "Team Coordination"],
+      title: "Chainsmokers – Vegas Residency",
+      location: "Las Vegas, NV",
+      dateRange: "Jan 2025 - Mar 2025",
+      category: 'Residency',
+      tags: ["DJ", "Residency", "Recurring"],
       participants: [
-        { id: 15, name: "Lead Creator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "artist" },
-        { id: 16, name: "Photographer", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "photographer" },
-        { id: 17, name: "Videographer", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "videographer" }
+        { id: 21, name: "Drew Taggart", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "artist" },
+        { id: 22, name: "Alex Pall", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "artist" },
+        { id: 23, name: "Lighting Tech", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "crew" },
+        { id: 24, name: "Videographer", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "videographer" }
       ]
     },
     {
@@ -213,16 +214,15 @@ const Index = () => {
     },
     {
       id: '7',
-      title: "Chainsmokers – Vegas Residency",
-      location: "Las Vegas, NV",
-      dateRange: "Jan 2025 - Mar 2025",
-      category: 'Touring',
-      tags: ["DJ", "Residency", "Recurring"],
+      title: "Content House – Creative Retreat",
+      location: "Malibu, CA",
+      dateRange: "Aug 15 - Aug 22, 2025",
+      category: 'Business Travel',
+      tags: ["Influencer", "Retreat", "Team Coordination"],
       participants: [
-        { id: 21, name: "Drew Taggart", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "artist" },
-        { id: 22, name: "Alex Pall", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "artist" },
-        { id: 23, name: "Lighting Tech", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "crew" },
-        { id: 24, name: "Videographer", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "videographer" }
+        { id: 15, name: "Lead Creator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "artist" },
+        { id: 16, name: "Photographer", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "photographer" },
+        { id: 17, name: "Videographer", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "videographer" }
       ]
     },
     {
@@ -230,7 +230,7 @@ const Index = () => {
       title: "Esports Team Lawrence Spring Championship",
       location: "Arlington, TX",
       dateRange: "May 10 - May 15, 2025",
-      category: 'Sports – Team Trip',
+      category: 'Tournament',
       tags: ["Esports", "Championship"],
       participants: [
         { id: 25, name: "Head Coach", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "manager" },
@@ -239,6 +239,8 @@ const Index = () => {
       ]
     }
   ];
+
+  console.log('Index - proMockTrips IDs:', proMockTrips.map(trip => trip.id));
 
   return (
     <div className="min-h-screen bg-black font-outfit">
