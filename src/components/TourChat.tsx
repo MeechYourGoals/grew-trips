@@ -3,18 +3,24 @@ import React, { useState } from 'react';
 import { Send, Radio, Users, MessageCircle } from 'lucide-react';
 import { useMessages } from '../hooks/useMessages';
 import { useParams } from 'react-router-dom';
+import { proTripMockData } from '../data/proTripMockData';
 
 export const TourChat = () => {
-  const { tourId } = useParams();
+  const { proTripId, tourId } = useParams();
+  const finalTourId = proTripId?.replace(/^pro-/, '') || tourId || '1';
   const { getMessagesForTour, addMessage } = useMessages();
   const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
 
-  const tourMessages = getMessagesForTour(tourId || '1');
+  // Get tour data for context
+  const tourData = proTripMockData[finalTourId];
+  const tourName = tourData?.title || 'Tour';
+
+  const tourMessages = getMessagesForTour(finalTourId);
 
   const handleSendMessage = () => {
     if (!message.trim()) return;
-    addMessage(message, undefined, tourId);
+    addMessage(message, undefined, finalTourId);
     setMessage('');
   };
 
@@ -37,7 +43,7 @@ export const TourChat = () => {
         </div>
         <div>
           <h3 className="text-lg font-semibold text-white">Tour-Wide Chat</h3>
-          <p className="text-gray-400 text-sm">Messages across all tour stops</p>
+          <p className="text-gray-400 text-sm">Messages across all {tourName} stops</p>
         </div>
       </div>
 

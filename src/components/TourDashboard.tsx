@@ -1,107 +1,85 @@
+
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Calendar, MapPin, Users, Plus, Mic, Music, Trophy, Briefcase, Hotel, Plane } from 'lucide-react';
 import { Tour, TourTrip } from '../types/pro';
+import { proTripMockData } from '../data/proTripMockData';
 
-const mockTour: Tour = {
-  id: '1',
-  name: 'Kevin Hart – Australia Comedy Tour',
-  description: 'International comedy tour across 15 cities',
-  artistName: 'Alex Thompson',
-  startDate: '2025-07-01',
-  endDate: '2025-09-30',
-  createdAt: '2025-01-01',
-  updatedAt: '2025-01-15',
-  teamMembers: [
-    { id: '1', name: 'Alex Thompson', email: 'alex@comedy.com', role: 'artist', permissions: 'admin', isActive: true },
-    { id: '2', name: 'Sarah Manager', email: 'sarah@management.com', role: 'manager', permissions: 'admin', isActive: true },
-    { id: '3', name: 'Mike Assistant', email: 'mike@team.com', role: 'assistant', permissions: 'editor', isActive: true },
-    { id: '4', name: 'John Driver', email: 'john@transport.com', role: 'crew', permissions: 'viewer', isActive: true },
-    { id: '5', name: 'Lisa Photo', email: 'lisa@photo.com', role: 'photographer', permissions: 'editor', isActive: false },
-    { id: '6', name: 'Mark Security', email: 'mark@security.com', role: 'security', permissions: 'viewer', isActive: true }
-  ],
-  trips: [
-    { 
-      id: '1', 
-      tourId: '1', 
-      city: 'Los Angeles', 
-      venue: 'Comedy Store', 
-      venueAddress: '8433 Sunset Blvd, West Hollywood, CA 90069',
-      date: '2025-07-15', 
-      category: 'headline', 
-      status: 'confirmed', 
-      participants: [],
+// Convert ProTripData to Tour format for compatibility
+const convertProTripToTour = (proTripData: any): Tour => {
+  return {
+    id: proTripData.id,
+    name: proTripData.title,
+    description: proTripData.description,
+    artistName: proTripData.participants[0]?.name || 'Team Lead',
+    startDate: proTripData.dateRange.split(' - ')[0] || '2025-01-01',
+    endDate: proTripData.dateRange.split(' - ')[1] || '2025-12-31',
+    createdAt: '2025-01-01',
+    updatedAt: '2025-01-15',
+    teamMembers: proTripData.participants.map((p: any, index: number) => ({
+      id: p.id,
+      name: p.name,
+      email: `${p.name.toLowerCase().replace(' ', '.')}@${proTripData.category.toLowerCase().replace(/[^a-z]/g, '')}.com`,
+      role: p.role.toLowerCase().replace(/[^a-z]/g, '-'),
+      permissions: index === 0 ? 'admin' : index === 1 ? 'admin' : 'editor',
+      isActive: true
+    })),
+    trips: proTripData.itinerary.map((day: any, dayIndex: number) => ({
+      id: `${proTripData.id}-${dayIndex}`,
+      tourId: proTripData.id,
+      city: proTripData.location.split(',')[0] || proTripData.location,
+      venue: day.events[0]?.location || 'Main Venue',
+      venueAddress: `${day.events[0]?.location}, ${proTripData.location}`,
+      date: day.date,
+      category: proTripData.category.includes('Sports') ? 'private' : 
+                proTripData.category.includes('Business') ? 'corporate' :
+                proTripData.category.includes('Tour') ? 'headline' :
+                proTripData.category.includes('Conference') ? 'college' : 'private',
+      status: dayIndex === 0 ? 'confirmed' : dayIndex === 1 ? 'planned' : 'confirmed',
+      participants: proTripData.participants,
       accommodation: {
         type: 'hotel',
-        name: 'The Sunset Marquis',
-        address: '1200 Alta Loma Rd, West Hollywood, CA 90069',
-        confirmationNumber: 'SM-789123',
-        checkIn: '2025-07-14',
-        checkOut: '2025-07-16'
+        name: `${proTripData.location} Premium Hotel`,
+        address: `Premium Location, ${proTripData.location}`,
+        confirmationNumber: `${proTripData.id.toUpperCase()}-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+        checkIn: day.date,
+        checkOut: day.date
       },
       transportation: {
         type: 'flight',
-        details: 'Delta Flight 1234 - LAX Terminal 3',
-        confirmationNumber: 'DL-ABC123',
-        dateTime: '2025-07-14 14:30'
+        details: `Premium Transport - ${proTripData.location}`,
+        confirmationNumber: `TR-${Math.random().toString(36).substr(2, 6).toUpperCase()}`,
+        dateTime: `${day.date} 14:30`
       }
-    },
-    { 
-      id: '2', 
-      tourId: '1', 
-      city: 'New York', 
-      venue: 'Madison Square Garden', 
-      venueAddress: '4 Pennsylvania Plaza, New York, NY 10001',
-      date: '2025-08-01', 
-      category: 'headline', 
-      status: 'planned', 
-      participants: [],
-      accommodation: {
-        type: 'hotel',
-        name: 'The Plaza Hotel',
-        address: 'Fifth Avenue at Central Park South, New York, NY 10019',
-        confirmationNumber: 'PL-456789',
-        checkIn: '2025-07-31',
-        checkOut: '2025-08-02'
-      },
-      transportation: {
-        type: 'flight',
-        details: 'American Flight 5678 - JFK Terminal 8',
-        confirmationNumber: 'AA-DEF456',
-        dateTime: '2025-07-31 16:45'
-      }
-    },
-    { 
-      id: '3', 
-      tourId: '1', 
-      city: 'Chicago', 
-      venue: 'Second City', 
-      venueAddress: '1616 N Wells St, Chicago, IL 60614',
-      date: '2025-08-15', 
-      category: 'private', 
-      status: 'confirmed', 
-      participants: [],
-      accommodation: {
-        type: 'airbnb',
-        name: 'Downtown Chicago Penthouse',
-        address: '100 E Walton St, Chicago, IL 60611',
-        confirmationNumber: 'AB-GHI789',
-        checkIn: '2025-08-14',
-        checkOut: '2025-08-16'
-      },
-      transportation: {
-        type: 'train',
-        details: 'Amtrak Lake Shore Limited - Car 3, Seat 15A',
-        confirmationNumber: 'AM-JKL012',
-        dateTime: '2025-08-14 09:30'
-      }
-    }
-  ]
+    }))
+  };
 };
 
 export const TourDashboard = () => {
   const navigate = useNavigate();
-  const [tour] = useState<Tour>(mockTour);
+  const { proTripId } = useParams();
+  const tripId = proTripId?.replace(/^pro-/, '') || '1';
+  
+  // Get the correct pro trip data
+  const proTripData = proTripMockData[tripId];
+  if (!proTripData) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white mb-4">Trip Not Found</h1>
+          <p className="text-gray-400 mb-2">The requested trip could not be found.</p>
+          <button
+            onClick={() => navigate('/')}
+            className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-3 rounded-xl"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const [tour] = useState<Tour>(convertProTripToTour(proTripData));
 
   // Calculate upcoming events (current date or future)
   const today = new Date();
@@ -183,7 +161,7 @@ export const TourDashboard = () => {
         {/* Tour Schedule */}
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 md:p-8 mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-            <h2 className="text-xl md:text-2xl font-semibold text-white">Tour Schedule</h2>
+            <h2 className="text-xl md:text-2xl font-semibold text-white">Schedule</h2>
             <button className="bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium px-4 md:px-6 py-3 rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg flex items-center gap-2">
               <Plus size={20} />
               Add Event
@@ -250,7 +228,7 @@ export const TourDashboard = () => {
         {/* Team Members */}
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 md:p-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
-            <h2 className="text-xl md:text-2xl font-semibold text-white">Tour Team</h2>
+            <h2 className="text-xl md:text-2xl font-semibold text-white">Team</h2>
             <button className="bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white px-4 py-2 rounded-xl transition-all duration-200 flex items-center gap-2">
               <Plus size={16} />
               Add Member

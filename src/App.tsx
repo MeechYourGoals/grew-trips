@@ -10,6 +10,7 @@ import TripDetail from "./pages/TripDetail";
 import TourDetail from "./pages/TourDetail";
 import ItineraryAssignmentPage from "./pages/ItineraryAssignmentPage";
 import ProTripDetail from "./pages/ProTripDetail";
+import { TourDashboard } from "./components/TourDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/trip/:tripId" element={<TripDetail />} />
             <Route path="/trip/:tripId/edit-itinerary" element={<ItineraryAssignmentPage />} />
             <Route path="/tour/pro-:proTripId" element={<ProTripDetail />} />
+            <Route path="/tour/pro-:proTripId/dashboard" element={<TourDashboard />} />
             <Route path="/tour/:tourId" element={<TourDetail />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

@@ -1,124 +1,72 @@
 
-import { useState, useEffect } from 'react';
-import { Message, MessageThread, UnifiedInboxData } from '../types/messaging';
-
-// Mock data for demonstration
-const mockMessages: Message[] = [
-  {
-    id: '1',
-    content: 'Hey everyone! Just landed in Sydney. The venue looks amazing!',
-    senderId: 'kevin',
-    senderName: 'Kevin Hart',
-    senderAvatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
-    tripId: 'sydney-show',
-    tourId: '1',
-    tripName: 'Sydney Comedy Show',
-    tourName: 'Australian Comedy Tour',
-    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    isRead: false
-  },
-  {
-    id: '2',
-    content: 'Sound check is at 4 PM. Please confirm attendance @everyone',
-    senderId: 'manager',
-    senderName: 'Tour Manager',
-    senderAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-    tripId: 'sydney-show',
-    tourId: '1',
-    tripName: 'Sydney Comedy Show',
-    tourName: 'Australian Comedy Tour',
-    timestamp: new Date(Date.now() - 1 * 60 * 60 * 1000).toISOString(),
-    isRead: false,
-    mentions: ['everyone']
-  },
-  {
-    id: '3',
-    content: 'Merch booth is all set up! Looking good team 🔥',
-    senderId: 'crew',
-    senderName: 'Crew Chief',
-    senderAvatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face',
-    tripId: 'melbourne-show',
-    tourId: '1',
-    tripName: 'Melbourne Comedy Show',
-    tourName: 'Australian Comedy Tour',
-    timestamp: new Date(Date.now() - 30 * 60 * 1000).toISOString(),
-    isRead: true
-  },
-  {
-    id: '4',
-    content: 'Tour update: Melbourne show sold out! 🎉',
-    senderId: 'manager',
-    senderName: 'Tour Manager',
-    senderAvatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-    tourId: '1',
-    tourName: 'Australian Comedy Tour',
-    timestamp: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
-    isRead: false
-  }
-];
+import { useState } from 'react';
+import { Message } from '../types/messaging';
+import { proTripMockData } from '../data/proTripMockData';
 
 export const useMessages = () => {
-  const [messages, setMessages] = useState<Message[]>(mockMessages);
-  const [searchQuery, setSearchQuery] = useState('');
+  // Generate dynamic mock messages based on trip data
+  const generateMockMessages = (tourId: string): Message[] => {
+    const tripData = proTripMockData[tourId];
+    if (!tripData) return [];
 
-  const addMessage = (content: string, tripId?: string, tourId?: string, tripName?: string, tourName?: string) => {
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      content,
-      senderId: 'current-user',
-      senderName: 'You',
-      tripId,
-      tourId,
-      tripName,
-      tourName,
-      timestamp: new Date().toISOString(),
-      isRead: true
-    };
-    setMessages(prev => [newMessage, ...prev]);
+    const participants = tripData.participants;
+    const baseMessages: Message[] = [
+      {
+        id: '1',
+        content: `Looking forward to ${tripData.title}! This is going to be amazing.`,
+        senderName: participants[0]?.name || 'Team Lead',
+        senderAvatar: participants[0]?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+        timestamp: '2024-01-15T10:30:00Z',
+        tourId: tourId
+      },
+      {
+        id: '2',
+        content: `Just confirmed all arrangements for ${tripData.location}. Everything looks great!`,
+        senderName: participants[1]?.name || 'Coordinator',
+        senderAvatar: participants[1]?.avatar || 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
+        timestamp: '2024-01-15T11:15:00Z',
+        tourId: tourId
+      },
+      {
+        id: '3',
+        content: `Team check-in: Is everyone ready for ${tripData.dateRange}?`,
+        senderName: participants[2]?.name || 'Manager',
+        senderAvatar: participants[2]?.avatar || 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face',
+        timestamp: '2024-01-15T14:22:00Z',
+        tourId: tourId
+      }
+    ];
+
+    return baseMessages;
   };
 
-  const markAsRead = (messageId: string) => {
-    setMessages(prev => 
-      prev.map(msg => 
-        msg.id === messageId ? { ...msg, isRead: true } : msg
-      )
-    );
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  const getMessagesForTour = (tourId: string): Message[] => {
+    return generateMockMessages(tourId);
   };
 
-  const searchMessages = (query: string) => {
-    setSearchQuery(query);
-  };
-
-  const filteredMessages = messages.filter(msg => 
-    msg.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    msg.senderName.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const getMessagesForTrip = (tripId: string) => {
+  const getMessagesForTrip = (tripId: string): Message[] => {
     return messages.filter(msg => msg.tripId === tripId);
   };
 
-  const getMessagesForTour = (tourId: string) => {
-    return messages.filter(msg => msg.tourId === tourId && !msg.tripId);
-  };
+  const addMessage = (content: string, tripId?: string, tourId?: string) => {
+    const newMessage: Message = {
+      id: Date.now().toString(),
+      content,
+      senderName: 'You',
+      senderAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+      timestamp: new Date().toISOString(),
+      tripId,
+      tourId
+    };
 
-  const getTripUnreadCount = (tripId: string) => {
-    return messages.filter(msg => msg.tripId === tripId && !msg.isRead).length;
-  };
-
-  const getTotalUnreadCount = () => {
-    return messages.filter(msg => !msg.isRead).length;
+    setMessages(prev => [...prev, newMessage]);
   };
 
   return {
-    messages: filteredMessages,
-    addMessage,
-    markAsRead,
-    searchMessages,
-    searchQuery,
-    getMessagesForTrip,
     getMessagesForTour,
-    getTripUnreadCount,
-    getTotalUnreadCount
+    getMessagesForTrip,
+    addMessage
   };
 };
