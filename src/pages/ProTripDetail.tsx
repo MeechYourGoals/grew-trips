@@ -4,9 +4,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Settings, Crown, MessageSquare, FileText, Users } from 'lucide-react';
 import { TripSettings } from '../components/TripSettings';
 import { ProTripHeader } from '../components/ProTripHeader';
+import { ProTripOverview } from '../components/ProTripOverview';
 import { ProTripTeam } from '../components/ProTripTeam';
 import { ProTripSchedule } from '../components/ProTripSchedule';
-import { ProTripBudget } from '../components/ProTripBudget';
+import { ProTripItinerary } from '../components/ProTripItinerary';
+import { ProTripBudgetDetailed } from '../components/ProTripBudgetDetailed';
 import { proTripMockData } from '../data/proTripMockData';
 import { getTripLabels } from '../utils/tripLabels';
 
@@ -15,14 +17,16 @@ const ProTripDetail = () => {
   const navigate = useNavigate();
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
-  const tripId = proTripId?.replace(/^pro-/, '');
+  console.log('ProTripDetail - proTripId from URL:', proTripId);
+  console.log('ProTripDetail - Available trip IDs:', Object.keys(proTripMockData));
 
-  if (!tripId || !(tripId in proTripMockData)) {
+  if (!proTripId || !(proTripId in proTripMockData)) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Trip Not Found</h1>
           <p className="text-gray-400 mb-2">The requested trip could not be found.</p>
+          <p className="text-gray-400 mb-4">Trip ID: {proTripId}</p>
           <button
             onClick={() => navigate('/')}
             className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-3 rounded-xl"
@@ -34,8 +38,7 @@ const ProTripDetail = () => {
     );
   }
 
-  const tripData = proTripMockData[tripId];
-
+  const tripData = proTripMockData[proTripId];
   const labels = getTripLabels(tripData.category);
 
   return (
@@ -69,11 +72,22 @@ const ProTripDetail = () => {
         {/* Trip Header */}
         <ProTripHeader tripData={tripData} />
 
-        {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Overview Stats */}
+        <ProTripOverview tripData={tripData} />
+
+        {/* Main Content Sections */}
+        <div className="space-y-8">
+          {/* Team Section */}
           <ProTripTeam tripData={tripData} teamLabel={labels.team} />
+
+          {/* Complete Itinerary */}
+          <ProTripItinerary tripData={tripData} />
+
+          {/* Detailed Budget */}
+          <ProTripBudgetDetailed tripData={tripData} />
+
+          {/* Quick Schedule Overview */}
           <ProTripSchedule tripData={tripData} scheduleLabel={labels.schedule} />
-          <ProTripBudget tripData={tripData} />
         </div>
 
         {/* Quick Actions */}

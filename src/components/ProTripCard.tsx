@@ -31,6 +31,7 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
   const navigate = useNavigate();
 
   const handleViewTrip = () => {
+    console.log('Navigating to trip ID:', trip.id);
     navigate(`/tour/pro-${trip.id}`);
   };
 
@@ -48,6 +49,8 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
       case 'School Trips': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
       case 'Public Relations': return 'bg-pink-500/20 text-pink-300 border-pink-500/30';
       case 'Client Pursuits': return 'bg-red-500/20 text-red-300 border-red-500/30';
+      case 'Residency': return 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30';
+      case 'Tournament': return 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
       default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
     }
   };
