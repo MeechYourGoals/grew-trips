@@ -5,26 +5,10 @@ import { Calendar, MapPin, Crown, Copy, Eye } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-
-interface ProParticipant {
-  id: number;
-  name: string;
-  avatar: string;
-  role: string;
-}
-
-interface ProTrip {
-  id: string;
-  title: string;
-  location: string;
-  dateRange: string;
-  category: string;
-  tags: string[];
-  participants: ProParticipant[];
-}
+import { ProTripData } from '../data/proTripMockData';
 
 interface ProTripCardProps {
-  trip: ProTrip;
+  trip: ProTripData;
 }
 
 export const ProTripCard = ({ trip }: ProTripCardProps) => {

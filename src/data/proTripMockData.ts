@@ -5,6 +5,7 @@ export interface ProTripData {
   dateRange: string;
   category: string;
   description: string;
+  tags: string[];
   participants: Array<{
     id: string;
     name: string;
@@ -39,6 +40,7 @@ export const proTripMockData: Record<string, ProTripData> = {
     dateRange: "Jan 15 - Jan 18, 2026",
     category: 'Business Travel',
     description: "Executive leadership retreat for pharmaceutical company C-Suite with strategic planning sessions, team building, and board presentations at luxury coastal resort.",
+    tags: ["executive", "strategy", "pharma", "leadership"],
     participants: [
       { id: '1', name: "CEO David Ricks", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Chief Executive Officer" },
       { id: '2', name: "CFO Anat Ashkenazi", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Chief Financial Officer" },
@@ -90,6 +92,7 @@ export const proTripMockData: Record<string, ProTripData> = {
     dateRange: "Jun 15 - Jun 22, 2025",
     category: 'Sports – Team Trip',
     description: "AAU volleyball tournament featuring multiple matches across premier athletic facilities with team coordination and family logistics.",
+    tags: ["volleyball", "tournament", "aau", "sports"],
     participants: [
       { id: '1', name: "Coach Williams", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Head Coach" },
       { id: '2', name: "Emma Johnson", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Setter" },
@@ -139,6 +142,7 @@ export const proTripMockData: Record<string, ProTripData> = {
     dateRange: "Apr 5 - May 30, 2025",
     category: 'Touring',
     description: "Country music tour across major North American venues with full production crew and merchandise coordination.",
+    tags: ["music", "tour", "country", "concerts"],
     participants: [
       { id: '1', name: "Jake Morrison", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Tour Manager" },
       { id: '2', name: "Alex Rivera", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Guitar Tech" },
@@ -189,6 +193,7 @@ export const proTripMockData: Record<string, ProTripData> = {
     dateRange: "Oct 1 - Oct 15, 2025",
     category: 'Sports – Team Trip',
     description: "Professional baseball playoff series with team logistics, medical support, and media coordination across California venues.",
+    tags: ["baseball", "playoffs", "mlb", "dodgers"],
     participants: [
       { id: '1', name: "Dr. Martinez", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Team Physio" },
       { id: '2', name: "Coach Thompson", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Pitching Coach" },
@@ -239,6 +244,7 @@ export const proTripMockData: Record<string, ProTripData> = {
     dateRange: "Jan 2025 - Mar 2025",
     category: 'Residency',
     description: "Electronic music residency at premier Las Vegas venue with recurring show production and VIP coordination.",
+    tags: ["edm", "residency", "vegas", "nightclub"],
     participants: [
       { id: '1', name: "David Kim", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Show Director" },
       { id: '2', name: "Maria Santos", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Pyro Tech" },
@@ -289,6 +295,7 @@ export const proTripMockData: Record<string, ProTripData> = {
     dateRange: "Jan 20 - Jan 24, 2025",
     category: 'Conference',
     description: "World Economic Forum with global leaders, business executives, and policy makers discussing economic and social issues at premier Alpine conference facility.",
+    tags: ["wef", "economics", "conference", "davos"],
     participants: [
       { id: '1', name: "Klaus Schwab", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Forum Founder & Executive Chairman" },
       { id: '2', name: "Jennifer Morgan", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Forum Director" },
@@ -340,6 +347,7 @@ export const proTripMockData: Record<string, ProTripData> = {
     dateRange: "Sep 12 - Sep 15, 2025",
     category: 'Conference',
     description: "TikTok's official creator conference featuring top content creators, brand partnerships, and platform innovation workshops at cutting-edge LA venue.",
+    tags: ["tiktok", "creators", "social media", "conference"],
     participants: [
       { id: '1', name: "Shou Zi Chew", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "TikTok CEO" },
       { id: '2', name: "Creator Program Manager", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Program Lead" },
@@ -391,6 +399,7 @@ export const proTripMockData: Record<string, ProTripData> = {
     dateRange: "May 10 - May 15, 2025",
     category: 'Tournament',
     description: "Professional esports tournament with team coordination, equipment management, and broadcast logistics at premier gaming venue.",
+    tags: ["esports", "gaming", "tournament", "competition"],
     participants: [
       { id: '1', name: "Coach Martinez", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Head Coach" },
       { id: '2', name: "Danny Kim", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Analyst" },
@@ -440,6 +449,7 @@ export const proTripMockData: Record<string, ProTripData> = {
     dateRange: "Jan 2025 - Mar 2025",
     category: 'Business Travel',
     description: "Startup accelerator program for Winter 2025 cohort with weekly sessions, mentor meetings, and Demo Day preparation in Silicon Valley.",
+    tags: ["startup", "accelerator", "silicon valley", "venture capital"],
     participants: [
       { id: '1', name: "Paul Graham", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "YC Co-founder" },
       { id: '2', name: "Jessica Livingston", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "YC Partner" },
@@ -491,6 +501,7 @@ export const proTripMockData: Record<string, ProTripData> = {
     dateRange: "Mar 22 - Mar 26, 2025",
     category: 'Business Travel',
     description: "Film production wrap celebration with cast, crew, and production team featuring location tours, celebration events, and team appreciation activities.",
+    tags: ["film", "production", "wrap party", "entertainment"],
     participants: [
       { id: '1', name: "Director Sam Hughes", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Film Director" },
       { id: '2', name: "Emma Watson", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Lead Actor" },
