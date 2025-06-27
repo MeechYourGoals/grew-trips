@@ -7,7 +7,7 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 
 interface ProParticipant {
-  id: number;
+  id: string;
   name: string;
   avatar: string;
   role: string;

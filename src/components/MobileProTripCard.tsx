@@ -5,7 +5,7 @@ import { Calendar, MapPin, Users, Crown } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 
 interface Participant {
-  id: number;
+  id: string;
   name: string;
   avatar: string;
   role: string;
