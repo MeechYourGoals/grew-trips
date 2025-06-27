@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { DollarSign, TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
+import { DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
 import { ProTripData } from '../data/proTripMockData';
 
 interface ProTripBudgetDetailedProps {
@@ -8,111 +8,120 @@ interface ProTripBudgetDetailedProps {
 }
 
 export const ProTripBudgetDetailed = ({ tripData }: ProTripBudgetDetailedProps) => {
-  const totalBudgeted = tripData.budget.categories.reduce((sum, cat) => sum + cat.budgeted, 0);
-  const totalSpent = tripData.budget.categories.reduce((sum, cat) => sum + cat.spent, 0);
-  const remaining = tripData.budget.total - tripData.budget.spent;
-  const remainingPercentage = (remaining / tripData.budget.total) * 100;
+  const budgetPercentage = (tripData.budget.spent / tripData.budget.total) * 100;
 
   return (
-    <div className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-3xl p-8">
-      <div className="flex items-center gap-3 mb-8">
-        <DollarSign className="text-glass-green" size={28} />
-        <h2 className="text-2xl font-semibold text-white">Budget Breakdown</h2>
+    <div className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-6">
+      <div className="flex items-center gap-3 mb-6">
+        <DollarSign className="text-glass-green" size={24} />
+        <h2 className="text-xl font-semibold text-white">Detailed Budget</h2>
       </div>
-
-      {/* Budget Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-gradient-to-br from-glass-green/20 to-glass-yellow/20 backdrop-blur-sm border border-white/20 rounded-xl p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <DollarSign className="text-glass-green" size={20} />
-            <span className="text-white font-medium">Total Budget</span>
+      
+      {/* Overall Budget Summary */}
+      <div className="bg-gray-800/50 rounded-xl p-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center">
+            <div className="text-2xl font-bold text-white mb-1">
+              ${tripData.budget.total.toLocaleString()}
+            </div>
+            <div className="text-gray-400">Total Budget</div>
           </div>
-          <div className="text-2xl font-bold text-white">${tripData.budget.total.toLocaleString()}</div>
-        </div>
-
-        <div className="bg-gradient-to-br from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-white/20 rounded-xl p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <TrendingUp className="text-glass-orange" size={20} />
-            <span className="text-white font-medium">Total Spent</span>
+          <div className="text-center">
+            <div className="text-2xl font-bold text-glass-orange mb-1">
+              ${tripData.budget.spent.toLocaleString()}
+            </div>
+            <div className="text-gray-400">Spent</div>
           </div>
-          <div className="text-2xl font-bold text-white">${tripData.budget.spent.toLocaleString()}</div>
-          <div className="text-glass-orange/80 text-sm mt-1">
-            {((tripData.budget.spent / tripData.budget.total) * 100).toFixed(1)}% of budget
-          </div>
-        </div>
-
-        <div className="bg-gradient-to-br from-glass-blue/20 to-glass-green/20 backdrop-blur-sm border border-white/20 rounded-xl p-6">
-          <div className="flex items-center gap-3 mb-2">
-            <TrendingDown className="text-glass-blue" size={20} />
-            <span className="text-white font-medium">Remaining</span>
-          </div>
-          <div className="text-2xl font-bold text-white">${remaining.toLocaleString()}</div>
-          <div className="text-glass-blue/80 text-sm mt-1">
-            {remainingPercentage.toFixed(1)}% remaining
+          <div className="text-center">
+            <div className="text-2xl font-bold text-glass-green mb-1">
+              ${(tripData.budget.total - tripData.budget.spent).toLocaleString()}
+            </div>
+            <div className="text-gray-400">Remaining</div>
           </div>
         </div>
-      </div>
-
-      {/* Overall Progress Bar */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-white font-medium">Overall Budget Progress</span>
-          <span className="text-gray-400">{((tripData.budget.spent / tripData.budget.total) * 100).toFixed(1)}%</span>
-        </div>
-        <div className="w-full bg-gray-800 rounded-full h-4">
-          <div 
-            className="bg-gradient-to-r from-glass-orange to-glass-yellow h-4 rounded-full transition-all duration-500"
-            style={{ width: `${(tripData.budget.spent / tripData.budget.total) * 100}%` }}
-          ></div>
+        
+        <div className="mt-6">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-gray-400">Overall Progress</span>
+            <span className="text-white font-medium">{budgetPercentage.toFixed(1)}%</span>
+          </div>
+          <div className="w-full bg-gray-700 rounded-full h-3">
+            <div 
+              className={`h-3 rounded-full transition-all duration-300 ${
+                budgetPercentage > 90 ? 'bg-red-500' : 
+                budgetPercentage > 75 ? 'bg-yellow-500' : 
+                'bg-gradient-to-r from-glass-green to-glass-yellow'
+              }`}
+              style={{ width: `${Math.min(budgetPercentage, 100)}%` }}
+            ></div>
+          </div>
         </div>
       </div>
-
+      
       {/* Category Breakdown */}
-      <div className="space-y-6">
-        <h3 className="text-xl font-semibold text-white mb-4">Category Breakdown</h3>
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-white mb-4">Category Breakdown</h3>
         {tripData.budget.categories.map((category, index) => {
-          const percentage = (category.spent / category.budgeted) * 100;
-          const isOverBudget = category.spent > category.budgeted;
+          const categoryPercentage = (category.spent / category.budgeted) * 100;
+          const isOverBudget = categoryPercentage > 100;
           
           return (
-            <div key={index} className="bg-gray-800/50 border border-gray-600 rounded-xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-3">
-                  <h4 className="text-lg font-semibold text-white">{category.name}</h4>
+            <div key={index} className="bg-gray-800/30 rounded-xl p-4">
+              <div className="flex justify-between items-center mb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-white font-medium">{category.name}</span>
                   {isOverBudget && (
-                    <AlertCircle className="text-red-400" size={20} />
+                    <AlertCircle className="text-red-400" size={16} />
                   )}
                 </div>
                 <div className="text-right">
-                  <div className="text-white font-bold">
+                  <div className="text-white font-medium">
                     ${category.spent.toLocaleString()} / ${category.budgeted.toLocaleString()}
                   </div>
                   <div className={`text-sm ${isOverBudget ? 'text-red-400' : 'text-gray-400'}`}>
-                    {percentage.toFixed(1)}% {isOverBudget ? 'over budget' : 'of budget'}
+                    {categoryPercentage.toFixed(1)}%
                   </div>
                 </div>
               </div>
               
-              <div className="w-full bg-gray-700 rounded-full h-3">
+              <div className="w-full bg-gray-700 rounded-full h-2">
                 <div 
-                  className={`h-3 rounded-full transition-all duration-500 ${
-                    isOverBudget 
-                      ? 'bg-gradient-to-r from-red-500 to-red-600' 
-                      : 'bg-gradient-to-r from-glass-green to-glass-yellow'
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    isOverBudget ? 'bg-red-500' : 
+                    categoryPercentage > 90 ? 'bg-yellow-500' : 
+                    'bg-glass-yellow'
                   }`}
-                  style={{ width: `${Math.min(percentage, 100)}%` }}
+                  style={{ width: `${Math.min(categoryPercentage, 100)}%` }}
                 ></div>
               </div>
               
-              {isOverBudget && (
-                <div className="mt-2 text-red-400 text-sm flex items-center gap-2">
-                  <AlertCircle size={14} />
-                  Over budget by ${(category.spent - category.budgeted).toLocaleString()}
-                </div>
-              )}
+              <div className="mt-2 flex justify-between text-xs text-gray-400">
+                <span>Remaining: ${Math.max(0, category.budgeted - category.spent).toLocaleString()}</span>
+                {isOverBudget && (
+                  <span className="text-red-400">
+                    Over by: ${(category.spent - category.budgeted).toLocaleString()}
+                  </span>
+                )}
+              </div>
             </div>
           );
         })}
+      </div>
+      
+      {/* Budget Insights */}
+      <div className="mt-6 p-4 bg-glass-yellow/10 border border-glass-yellow/30 rounded-xl">
+        <div className="flex items-center gap-2 mb-2">
+          <TrendingUp className="text-glass-yellow" size={16} />
+          <span className="text-glass-yellow font-medium">Budget Insights</span>
+        </div>
+        <div className="text-sm text-gray-300">
+          {budgetPercentage > 90 ? 
+            "You're approaching your budget limit. Consider reviewing expenses." :
+            budgetPercentage > 75 ?
+            "You're on track with your budget. Monitor upcoming expenses." :
+            "Your budget is healthy with room for additional expenses."
+          }
+        </div>
       </div>
     </div>
   );

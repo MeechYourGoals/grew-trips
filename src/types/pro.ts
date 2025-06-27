@@ -1,3 +1,4 @@
+
 export interface Tour {
   id: string;
   name: string;
@@ -153,7 +154,7 @@ export interface Broadcast {
 }
 
 export interface ProTripParticipant {
-  id: number; // Unified as number across all components
+  id: number;
   name: string;
   email?: string;
   avatar: string;
@@ -174,7 +175,7 @@ export interface ProTripData {
     spent: number;
     categories: Array<{
       name: string;
-      allocated: number;
+      budgeted: number;
       spent: number;
     }>;
   };
