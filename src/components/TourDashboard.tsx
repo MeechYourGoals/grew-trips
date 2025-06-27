@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Calendar, MapPin, Users, Plus, Mic, Music, Trophy, Briefcase, Hotel, Plane } from 'lucide-react';
@@ -17,7 +16,7 @@ const convertProTripToTour = (proTripData: any): Tour => {
     createdAt: '2025-01-01',
     updatedAt: '2025-01-15',
     teamMembers: proTripData.participants.map((p: any, index: number) => ({
-      id: p.id,
+      id: p.id, // Keep as number since we fixed the mock data
       name: p.name,
       email: `${p.name.toLowerCase().replace(' ', '.')}@${proTripData.category.toLowerCase().replace(/[^a-z]/g, '')}.com`,
       role: p.role.toLowerCase().replace(/[^a-z]/g, '-'),
@@ -59,12 +58,13 @@ export const TourDashboard = () => {
   const navigate = useNavigate();
   const { proTripId } = useParams();
   
-  // Fix: The proTripId from the URL is like "1", "2", etc. (not "pro-1", "pro-2")
-  // because the route is /tour/pro-:proTripId where :proTripId captures just the number
+  console.log('TourDashboard - proTripId from URL:', proTripId);
+  console.log('TourDashboard - Available trip IDs:', Object.keys(proTripMockData));
   
   const proTripData = proTripId ? proTripMockData[proTripId] : null;
   
   if (!proTripData) {
+    console.log('TourDashboard - Trip data not found for ID:', proTripId);
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
@@ -82,6 +82,7 @@ export const TourDashboard = () => {
     );
   }
 
+  console.log('TourDashboard - Found trip data:', proTripData.title);
   const [tour] = useState<Tour>(convertProTripToTour(proTripData));
 
   // Calculate upcoming events (current date or future)

@@ -7,7 +7,7 @@ export interface ProTripData {
   description: string;
   tags: string[];
   participants: Array<{
-    id: string;
+    id: number;
     name: string;
     avatar: string;
     role: string;
@@ -42,10 +42,10 @@ export const proTripMockData: Record<string, ProTripData> = {
     description: "Executive leadership retreat for pharmaceutical company C-Suite with strategic planning sessions, team building, and board presentations at luxury coastal resort.",
     tags: ["executive", "strategy", "pharma", "leadership"],
     participants: [
-      { id: '1', name: "CEO David Ricks", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Chief Executive Officer" },
-      { id: '2', name: "CFO Anat Ashkenazi", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Chief Financial Officer" },
-      { id: '3', name: "Strategy Director", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Strategic Planning Lead" },
-      { id: '4', name: "Executive Assistant", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Executive Support" }
+      { id: 1, name: "CEO David Ricks", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Chief Executive Officer" },
+      { id: 2, name: "CFO Anat Ashkenazi", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Chief Financial Officer" },
+      { id: 3, name: "Strategy Director", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Strategic Planning Lead" },
+      { id: 4, name: "Executive Assistant", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Executive Support" }
     ],
     itinerary: [
       {
@@ -94,10 +94,10 @@ export const proTripMockData: Record<string, ProTripData> = {
     description: "AAU volleyball tournament featuring multiple matches across premier athletic facilities with team coordination and family logistics.",
     tags: ["volleyball", "tournament", "aau", "sports"],
     participants: [
-      { id: '1', name: "Coach Williams", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Head Coach" },
-      { id: '2', name: "Emma Johnson", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Setter" },
-      { id: '3', name: "Maya Patel", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Libero" },
-      { id: '4', name: "Dr. Smith", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Athletic Trainer" }
+      { id: 1, name: "Coach Williams", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Head Coach" },
+      { id: 2, name: "Emma Johnson", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Setter" },
+      { id: 3, name: "Maya Patel", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Libero" },
+      { id: 4, name: "Dr. Smith", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Athletic Trainer" }
     ],
     itinerary: [
       {
@@ -144,10 +144,10 @@ export const proTripMockData: Record<string, ProTripData> = {
     description: "Country music tour across major North American venues with full production crew and merchandise coordination.",
     tags: ["music", "tour", "country", "concerts"],
     participants: [
-      { id: '1', name: "Jake Morrison", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Tour Manager" },
-      { id: '2', name: "Alex Rivera", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Guitar Tech" },
-      { id: '3', name: "Sam Taylor", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Lighting Director" },
-      { id: '4', name: "Casey Brooks", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Merch Lead" }
+      { id: 1, name: "Jake Morrison", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Tour Manager" },
+      { id: 2, name: "Alex Rivera", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Guitar Tech" },
+      { id: 3, name: "Sam Taylor", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Lighting Director" },
+      { id: 4, name: "Casey Brooks", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Merch Lead" }
     ],
     itinerary: [
       {
@@ -195,10 +195,10 @@ export const proTripMockData: Record<string, ProTripData> = {
     description: "Professional baseball playoff series with team logistics, medical support, and media coordination across California venues.",
     tags: ["baseball", "playoffs", "mlb", "dodgers"],
     participants: [
-      { id: '1', name: "Dr. Martinez", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Team Physio" },
-      { id: '2', name: "Coach Thompson", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Pitching Coach" },
-      { id: '3', name: "Lisa Park", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Travel Coordinator" },
-      { id: '4', name: "Mike Davis", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face", role: "Equipment Manager" }
+      { id: 1, name: "Dr. Martinez", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Team Physio" },
+      { id: 2, name: "Coach Thompson", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Pitching Coach" },
+      { id: 3, name: "Lisa Park", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Travel Coordinator" },
+      { id: 4, name: "Mike Davis", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face", role: "Equipment Manager" }
     ],
     itinerary: [
       {
@@ -246,10 +246,10 @@ export const proTripMockData: Record<string, ProTripData> = {
     description: "Electronic music residency at premier Las Vegas venue with recurring show production and VIP coordination.",
     tags: ["edm", "residency", "vegas", "nightclub"],
     participants: [
-      { id: '1', name: "David Kim", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Show Director" },
-      { id: '2', name: "Maria Santos", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Pyro Tech" },
-      { id: '3', name: "Ryan Mitchell", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Stage Manager" },
-      { id: '4', name: "Ashley Chen", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "VIP Coordinator" }
+      { id: 1, name: "David Kim", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Show Director" },
+      { id: 2, name: "Maria Santos", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Pyro Tech" },
+      { id: 3, name: "Ryan Mitchell", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Stage Manager" },
+      { id: 4, name: "Ashley Chen", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "VIP Coordinator" }
     ],
     itinerary: [
       {
@@ -297,10 +297,10 @@ export const proTripMockData: Record<string, ProTripData> = {
     description: "World Economic Forum with global leaders, business executives, and policy makers discussing economic and social issues at premier Alpine conference facility.",
     tags: ["wef", "economics", "conference", "davos"],
     participants: [
-      { id: '1', name: "Klaus Schwab", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Forum Founder & Executive Chairman" },
-      { id: '2', name: "Jennifer Morgan", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Forum Director" },
-      { id: '3', name: "Protocol Manager", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Protocol & Logistics" },
-      { id: '4', name: "Security Coordinator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Security Lead" }
+      { id: 1, name: "Klaus Schwab", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Forum Founder & Executive Chairman" },
+      { id: 2, name: "Jennifer Morgan", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Forum Director" },
+      { id: 3, name: "Protocol Manager", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Protocol & Logistics" },
+      { id: 4, name: "Security Coordinator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Security Lead" }
     ],
     itinerary: [
       {
@@ -349,10 +349,10 @@ export const proTripMockData: Record<string, ProTripData> = {
     description: "TikTok's official creator conference featuring top content creators, brand partnerships, and platform innovation workshops at cutting-edge LA venue.",
     tags: ["tiktok", "creators", "social media", "conference"],
     participants: [
-      { id: '1', name: "Shou Zi Chew", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "TikTok CEO" },
-      { id: '2', name: "Creator Program Manager", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Program Lead" },
-      { id: '3', name: "Brand Partnership Lead", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Partnerships" },
-      { id: '4', name: "Content Strategy Director", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Strategy" }
+      { id: 1, name: "Shou Zi Chew", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "TikTok CEO" },
+      { id: 2, name: "Creator Program Manager", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Program Lead" },
+      { id: 3, name: "Brand Partnership Lead", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Partnerships" },
+      { id: 4, name: "Content Strategy Director", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Strategy" }
     ],
     itinerary: [
       {
@@ -401,10 +401,10 @@ export const proTripMockData: Record<string, ProTripData> = {
     description: "Professional esports tournament with team coordination, equipment management, and broadcast logistics at premier gaming venue.",
     tags: ["esports", "gaming", "tournament", "competition"],
     participants: [
-      { id: '1', name: "Coach Martinez", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Head Coach" },
-      { id: '2', name: "Danny Kim", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Analyst" },
-      { id: '3', name: "Jordan Taylor", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Team Captain" },
-      { id: '4', name: "Alex Wong", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Equipment Manager" }
+      { id: 1, name: "Coach Martinez", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Head Coach" },
+      { id: 2, name: "Danny Kim", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Analyst" },
+      { id: 3, name: "Jordan Taylor", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Team Captain" },
+      { id: 4, name: "Alex Wong", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Equipment Manager" }
     ],
     itinerary: [
       {
@@ -451,10 +451,10 @@ export const proTripMockData: Record<string, ProTripData> = {
     description: "Startup accelerator program for Winter 2025 cohort with weekly sessions, mentor meetings, and Demo Day preparation in Silicon Valley.",
     tags: ["startup", "accelerator", "silicon valley", "venture capital"],
     participants: [
-      { id: '1', name: "Paul Graham", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "YC Co-founder" },
-      { id: '2', name: "Jessica Livingston", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "YC Partner" },
-      { id: '3', name: "Startup Founder #1", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Founder" },
-      { id: '4', name: "Tech Mentor", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Mentor" }
+      { id: 1, name: "Paul Graham", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "YC Co-founder" },
+      { id: 2, name: "Jessica Livingston", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "YC Partner" },
+      { id: 3, name: "Startup Founder #1", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Founder" },
+      { id: 4, name: "Tech Mentor", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Mentor" }
     ],
     itinerary: [
       {
@@ -503,12 +503,12 @@ export const proTripMockData: Record<string, ProTripData> = {
     description: "Film production wrap celebration with cast, crew, and production team featuring location tours, celebration events, and team appreciation activities.",
     tags: ["film", "production", "wrap party", "entertainment"],
     participants: [
-      { id: '1', name: "Director Sam Hughes", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Film Director" },
-      { id: '2', name: "Emma Watson", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Lead Actor" },
-      { id: '3', name: "Jake Anderson", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Co-star" },
-      { id: '4', name: "Producer Lisa Chen", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face", role: "Executive Producer" },
-      { id: '5', name: "Chris Thompson", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face", role: "Director of Photography" },
-      { id: '6', name: "Stunt Coordinator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Stunt Coordinator" }
+      { id: 1, name: "Director Sam Hughes", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "Film Director" },
+      { id: 2, name: "Emma Watson", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "Lead Actor" },
+      { id: 3, name: "Jake Anderson", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "Co-star" },
+      { id: 4, name: "Producer Lisa Chen", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face", role: "Executive Producer" },
+      { id: 5, name: "Chris Thompson", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face", role: "Director of Photography" },
+      { id: 6, name: "Stunt Coordinator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "Stunt Coordinator" }
     ],
     itinerary: [
       {

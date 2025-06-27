@@ -19,14 +19,35 @@ const ProTripDetail = () => {
 
   console.log('ProTripDetail - proTripId from URL:', proTripId);
   console.log('ProTripDetail - Available trip IDs:', Object.keys(proTripMockData));
+  console.log('ProTripDetail - Mock data keys:', Object.keys(proTripMockData));
 
-  if (!proTripId || !(proTripId in proTripMockData)) {
+  if (!proTripId) {
+    console.log('ProTripDetail - No proTripId provided');
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white mb-4">Trip Not Found</h1>
+          <p className="text-gray-400 mb-2">No trip ID provided.</p>
+          <button
+            onClick={() => navigate('/')}
+            className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-3 rounded-xl"
+          >
+            Back to Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!(proTripId in proTripMockData)) {
+    console.log('ProTripDetail - Trip ID not found in mock data:', proTripId);
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Trip Not Found</h1>
           <p className="text-gray-400 mb-2">The requested trip could not be found.</p>
           <p className="text-gray-400 mb-4">Trip ID: {proTripId}</p>
+          <p className="text-gray-400 mb-4">Available IDs: {Object.keys(proTripMockData).join(', ')}</p>
           <button
             onClick={() => navigate('/')}
             className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-3 rounded-xl"
@@ -39,6 +60,8 @@ const ProTripDetail = () => {
   }
 
   const tripData = proTripMockData[proTripId];
+  console.log('ProTripDetail - Found trip data:', tripData?.title);
+  
   const labels = getTripLabels(tripData.category);
 
   return (
