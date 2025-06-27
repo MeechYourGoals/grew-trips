@@ -2,15 +2,20 @@
 import React, { useState } from 'react';
 import { X, MapPin, Link, Plus } from 'lucide-react';
 import { Button } from './ui/button';
+import { BasecampLocation, PlaceWithDistance } from '../types/basecamp';
 
 interface AddPlaceModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onPlaceAdded?: (place: PlaceWithDistance) => void;
+  basecamp?: BasecampLocation;
 }
 
-export const AddPlaceModal = ({ isOpen, onClose }: AddPlaceModalProps) => {
+export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPlaceModalProps) => {
   const [url, setUrl] = useState('');
   const [placeName, setPlaceName] = useState('');
+  const [calculateDistance, setCalculateDistance] = useState(!!basecamp);
+  const [category, setCategory] = useState<'restaurant' | 'attraction' | 'hotel' | 'activity' | 'fitness' | 'nightlife' | 'transportation'>('attraction');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -19,12 +24,29 @@ export const AddPlaceModal = ({ isOpen, onClose }: AddPlaceModalProps) => {
     
     setIsLoading(true);
     try {
-      // Here you would normally save to your backend
-      console.log('Adding place:', { url, placeName });
+      const newPlace: PlaceWithDistance = {
+        id: Date.now().toString(),
+        name: placeName.trim() || 'New Place',
+        url: url.trim(),
+        category,
+        calculatedAt: new Date().toISOString()
+      };
+
+      console.log('Adding place:', { 
+        place: newPlace, 
+        calculateDistance, 
+        hasBasecamp: !!basecamp 
+      });
+      
+      if (onPlaceAdded) {
+        onPlaceAdded(newPlace);
+      }
       
       // Reset form and close modal
       setUrl('');
       setPlaceName('');
+      setCalculateDistance(!!basecamp);
+      setCategory('attraction');
       onClose();
     } catch (error) {
       console.error('Error adding place:', error);
@@ -85,6 +107,46 @@ export const AddPlaceModal = ({ isOpen, onClose }: AddPlaceModalProps) => {
               className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
             />
           </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-white mb-2">
+              Category
+            </label>
+            <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value as any)}
+              className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
+            >
+              <option value="restaurant">Restaurant / Eats</option>
+              <option value="attraction">Attraction / Sightseeing</option>
+              <option value="activity">Activity</option>
+              <option value="fitness">Fitness / Gym</option>
+              <option value="nightlife">Nightlife</option>
+              <option value="transportation">Transportation</option>
+              <option value="hotel">Hotel / Lodging</option>
+            </select>
+          </div>
+
+          {/* Distance Calculation Toggle */}
+          {basecamp && (
+            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-semibold text-white">Calculate distance from Basecamp</span>
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={calculateDistance}
+                    onChange={(e) => setCalculateDistance(e.target.checked)}
+                    className="sr-only peer"
+                  />
+                  <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-green-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                </label>
+              </div>
+              <p className="text-xs text-green-300">
+                See how far your options are from your base
+              </p>
+            </div>
+          )}
 
           <div className="flex gap-3 pt-4">
             <Button
