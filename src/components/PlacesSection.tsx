@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { MapPin, Plus } from 'lucide-react';
 import { AddPlaceModal } from './AddPlaceModal';
+import { GoogleMapsEmbed } from './GoogleMapsEmbed';
 
 export const PlacesSection = () => {
   const [isAddPlaceModalOpen, setIsAddPlaceModalOpen] = useState(false);
@@ -19,21 +20,29 @@ export const PlacesSection = () => {
         </button>
       </div>
 
-      {/* Empty State */}
-      <div className="bg-gray-900 border border-gray-800 rounded-3xl p-16 text-center shadow-2xl shadow-black/50">
-        <div className="flex justify-center mb-6">
-          <div className="w-20 h-20 bg-gradient-to-r from-red-900/50 to-yellow-900/50 rounded-full flex items-center justify-center border border-red-500/30">
-            <MapPin size={40} className="text-red-400" />
+      {/* Two Equal-Sized Squares */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-96">
+        {/* Left Square - Add Place Section */}
+        <div className="bg-gray-900 border border-gray-800 rounded-3xl p-8 flex flex-col justify-center items-center text-center shadow-2xl shadow-black/50">
+          <div className="flex justify-center mb-6">
+            <div className="w-20 h-20 bg-gradient-to-r from-red-900/50 to-yellow-900/50 rounded-full flex items-center justify-center border border-red-500/30">
+              <MapPin size={40} className="text-red-400" />
+            </div>
           </div>
+          <h3 className="text-2xl font-bold text-white mb-3">No places added yet</h3>
+          <p className="text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">Start adding places to visit during your trip! Create your perfect itinerary.</p>
+          <button 
+            onClick={() => setIsAddPlaceModalOpen(true)}
+            className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl transition-all duration-200 shadow-lg border border-gray-700 hover:border-red-500/50 font-medium"
+          >
+            Add Place
+          </button>
         </div>
-        <h3 className="text-2xl font-bold text-white mb-3">No places added yet</h3>
-        <p className="text-gray-400 mb-8 max-w-md mx-auto leading-relaxed">Start adding places to visit during your trip! Create your perfect itinerary.</p>
-        <button 
-          onClick={() => setIsAddPlaceModalOpen(true)}
-          className="bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-2xl transition-all duration-200 shadow-lg border border-gray-700 hover:border-red-500/50 font-medium"
-        >
-          Add Place
-        </button>
+
+        {/* Right Square - Google Maps */}
+        <div className="bg-gray-900 border border-gray-800 rounded-3xl p-4 shadow-2xl shadow-black/50">
+          <GoogleMapsEmbed className="w-full h-full" />
+        </div>
       </div>
 
       <AddPlaceModal 
