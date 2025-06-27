@@ -19,6 +19,7 @@ import { Plus, Crown, Settings, User, MapPin } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useIsMobile } from '../hooks/use-mobile';
+import { proTripMockData } from '../data/proTripMockData';
 
 const Index = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -135,144 +136,7 @@ const Index = () => {
     }
   ];
 
-  // Updated Pro trips data to match new examples
-  const proMockTrips = [
-    {
-      id: '1',
-      title: "Eli Lilly C-Suite Retreat 2026",
-      location: "Terranea, CA",
-      dateRange: "Jan 15 - Jan 18, 2026",
-      category: 'Business Travel',
-      tags: ["Executive", "Pharmaceutical", "Strategic Planning"],
-      participants: [
-        { id: 1, name: "CEO David Ricks", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "executive" },
-        { id: 2, name: "CFO Anat Ashkenazi", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "executive" },
-        { id: 3, name: "Strategy Director", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 4, name: "Executive Assistant", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "assistant" }
-      ]
-    },
-    {
-      id: '2',
-      title: "Scarlet Knights AAU Volleyball Tourney",
-      location: "Multi-State Tournament",
-      dateRange: "Jun 15 - Jun 22, 2025",
-      category: 'Sports – Team Trip',
-      tags: ["Youth Sports", "Multi-Family"],
-      participants: [
-        { id: 9, name: "Coach Sarah", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 10, name: "Team Mom", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "assistant" },
-        { id: 11, name: "Athletic Dir", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "manager" }
-      ]
-    },
-    {
-      id: '3',
-      title: "Morgan Wallen North America Tour",
-      location: "Multi-City Tour",
-      dateRange: "Apr 5 - May 30, 2025",
-      category: 'Touring',
-      tags: ["Music", "Multi-City Tour"],
-      participants: [
-        { id: 5, name: "Morgan Wallen", avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face", role: "artist" },
-        { id: 6, name: "Band Leader", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "crew" },
-        { id: 7, name: "Label Rep", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face", role: "label-rep" },
-        { id: 8, name: "Road Crew", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "crew" }
-      ]
-    },
-    {
-      id: '4',
-      title: "Los Angeles Dodgers – Playoffs 2025",
-      location: "Los Angeles & San Francisco",
-      dateRange: "Oct 1 - Oct 15, 2025",
-      category: 'Sports – Team Trip',
-      tags: ["Pro Sports", "Championship"],
-      participants: [
-        { id: 12, name: "Team Manager", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 13, name: "Medical Team", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "crew" },
-        { id: 14, name: "Media Relations", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face", role: "crew" }
-      ]
-    },
-    {
-      id: '5',
-      title: "Chainsmokers – Vegas Residency",
-      location: "Las Vegas, NV",
-      dateRange: "Jan 2025 - Mar 2025",
-      category: 'Residency',
-      tags: ["DJ", "Residency", "Recurring"],
-      participants: [
-        { id: 21, name: "Drew Taggart", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "artist" },
-        { id: 22, name: "Alex Pall", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "artist" },
-        { id: 23, name: "Lighting Tech", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "crew" },
-        { id: 24, name: "Videographer", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "videographer" }
-      ]
-    },
-    {
-      id: '6',
-      title: "Davos in Switzerland",
-      location: "Davos, Switzerland",
-      dateRange: "Jan 20 - Jan 24, 2025",
-      category: 'Conference',
-      tags: ["Economic Forum", "Global Leaders"],
-      participants: [
-        { id: 18, name: "Forum Director", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 19, name: "Protocol Manager", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face", role: "crew" },
-        { id: 20, name: "Media Coordinator", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "crew" }
-      ]
-    },
-    {
-      id: '7',
-      title: "TikTok Creators Accelerator Conference",
-      location: "Los Angeles, CA",
-      dateRange: "Sep 12 - Sep 15, 2025",
-      category: 'Conference',
-      tags: ["Social Media", "Creator Economy"],
-      participants: [
-        { id: 15, name: "Program Manager", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 16, name: "Content Creator", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "artist" },
-        { id: 17, name: "Video Producer", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "videographer" }
-      ]
-    },
-    {
-      id: '8',
-      title: "Esports Team Lawrence Spring Championship",
-      location: "Arlington, TX",
-      dateRange: "May 10 - May 15, 2025",
-      category: 'Tournament',
-      tags: ["Esports", "Championship"],
-      participants: [
-        { id: 25, name: "Head Coach", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 26, name: "Analyst", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "crew" },
-        { id: 27, name: "Social Media", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "crew" }
-      ]
-    },
-    {
-      id: '9',
-      title: "YCombinator Winter 2025 Cohort",
-      location: "San Francisco, CA",
-      dateRange: "Jan 2025 - Mar 2025",
-      category: 'Business Travel',
-      tags: ["Startup", "Accelerator", "Tech"],
-      participants: [
-        { id: 28, name: "YC Partner", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 29, name: "Startup Founder", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "executive" },
-        { id: 30, name: "Tech Mentor", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "crew" }
-      ]
-    },
-    {
-      id: '10',
-      title: "Cast and Crew Wrap Party",
-      location: "Auckland, New Zealand",
-      dateRange: "Mar 22 - Mar 26, 2025",
-      category: 'Business Travel',
-      tags: ["Film Production", "Celebration"],
-      participants: [
-        { id: 31, name: "Director Sam", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face", role: "manager" },
-        { id: 32, name: "Lead Actor", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face", role: "artist" },
-        { id: 33, name: "Producer", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face", role: "manager" }
-      ]
-    }
-  ];
-
-  console.log('Index - proMockTrips IDs:', proMockTrips.map(trip => trip.id));
+  console.log('Index - proTripMockData IDs:', Object.keys(proTripMockData));
 
   return (
     <div className="min-h-screen bg-black font-outfit">
@@ -426,7 +290,7 @@ const Index = () => {
                 </React.Fragment>
               ))
             ) : (
-              proMockTrips.map((trip) => (
+              Object.values(proTripMockData).map((trip) => (
                 <React.Fragment key={trip.id}>
                   {isMobile ? (
                     <MobileProTripCard trip={trip} />
@@ -439,7 +303,8 @@ const Index = () => {
           </div>
 
           {/* Empty State for new users */}
-          {((viewMode === 'myTrips' && trips.length === 0) || (viewMode === 'tripsPro' && proMockTrips.length === 0)) && (
+          {((viewMode === 'myTrips' && trips.length === 0) ||
+            (viewMode === 'tripsPro' && Object.keys(proTripMockData).length === 0)) && (
             <div className="text-center py-16">
               <div className="w-24 h-24 bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
                 <MapPin size={40} className="text-yellow-500" />
