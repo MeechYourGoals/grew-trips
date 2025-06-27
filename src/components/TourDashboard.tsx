@@ -59,10 +59,8 @@ export const TourDashboard = () => {
   const navigate = useNavigate();
   const { proTripId } = useParams();
   
-  // Fix: The proTripId from the URL is like "1", "2", etc. (not "pro-1", "pro-2")  
+  // Fix: The proTripId from the URL is like "1", "2", etc. (not "pro-1", "pro-2")
   // because the route is /tour/pro-:proTripId where :proTripId captures just the number
-  console.log('proTripId from URL:', proTripId);
-  console.log('Available mock data keys:', Object.keys(proTripMockData));
   
   const proTripData = proTripId ? proTripMockData[proTripId] : null;
   
