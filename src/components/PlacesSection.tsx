@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MapPin, Plus, Home, Settings } from 'lucide-react';
+import { MapPin, Plus, Home } from 'lucide-react';
 import { AddPlaceModal } from './AddPlaceModal';
 import { GoogleMapsEmbed } from './GoogleMapsEmbed';
 import { BasecampSelector } from './BasecampSelector';
@@ -112,7 +112,7 @@ export const PlacesSection = () => {
         </div>
       )}
 
-      {/* Two Equal-Sized Squares */}
+      {/* Two Equal-Sized Squares Side by Side */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-96">
         {/* Left Square - Add Place Section or Places List */}
         <div className="bg-gray-900 border border-gray-800 rounded-3xl p-8 flex flex-col shadow-2xl shadow-black/50">

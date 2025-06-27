@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, MapPin, Link, Plus } from 'lucide-react';
+import { X, Link, Sparkles } from 'lucide-react';
 import { Button } from './ui/button';
 import { BasecampLocation, PlaceWithDistance } from '../types/basecamp';
 
@@ -11,12 +11,59 @@ interface AddPlaceModalProps {
   basecamp?: BasecampLocation;
 }
 
+const categories = [
+  { id: 'restaurant', label: 'Eats', icon: '🍽️', description: 'Restaurants, cafes, food tours' },
+  { id: 'attraction', label: 'Attraction / Sightseeing', icon: '🎯', description: 'Museums, tours, attractions' },
+  { id: 'activity', label: 'Day Activities', icon: '☀️', description: 'Activities and experiences' },
+  { id: 'fitness', label: 'Fitness', icon: '💪', description: 'Gyms, yoga, sports activities' },
+  { id: 'nightlife', label: 'Nightlife', icon: '🌙', description: 'Bars, clubs, evening events' },
+  { id: 'transportation', label: 'Transportation', icon: '✈️', description: 'Flights, cars, rideshares' },
+  { id: 'hotel', label: 'Housing', icon: '🏠', description: 'Hotels, Airbnbs, hostels' }
+];
+
 export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPlaceModalProps) => {
   const [url, setUrl] = useState('');
   const [placeName, setPlaceName] = useState('');
   const [calculateDistance, setCalculateDistance] = useState(!!basecamp);
-  const [category, setCategory] = useState<'restaurant' | 'attraction' | 'hotel' | 'activity' | 'fitness' | 'nightlife' | 'transportation'>('attraction');
+  const [category, setCategory] = useState<string>('');
+  const [useAiSorting, setUseAiSorting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const classifyPlace = async (url: string, title: string): Promise<string> => {
+    const text = `${title} ${url}`.toLowerCase();
+    
+    if (text.includes('airbnb') || text.includes('hotel') || text.includes('hostel') || 
+        text.includes('apartment') || text.includes('accommodation') || text.includes('booking.com')) {
+      return 'hotel';
+    }
+    
+    if (text.includes('flight') || text.includes('airline') || text.includes('airport') ||
+        text.includes('uber') || text.includes('lyft') || text.includes('rental car')) {
+      return 'transportation';
+    }
+    
+    if (text.includes('restaurant') || text.includes('cafe') || text.includes('food') || 
+        text.includes('dining') || text.includes('michelin')) {
+      return 'restaurant';
+    }
+    
+    if (text.includes('bar') || text.includes('club') || text.includes('nightlife') || 
+        text.includes('cocktail') || text.includes('pub')) {
+      return 'nightlife';
+    }
+    
+    if (text.includes('gym') || text.includes('fitness') || text.includes('yoga') || 
+        text.includes('workout') || text.includes('sports')) {
+      return 'fitness';
+    }
+    
+    if (text.includes('museum') || text.includes('tour') || text.includes('attraction') || 
+        text.includes('activity') || text.includes('experience')) {
+      return 'attraction';
+    }
+    
+    return 'attraction';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +71,21 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
     
     setIsLoading(true);
     try {
+      let finalCategory = category;
+      
+      if (!category && useAiSorting) {
+        finalCategory = await classifyPlace(url, placeName);
+      }
+      
+      if (!finalCategory) {
+        finalCategory = 'attraction';
+      }
+
       const newPlace: PlaceWithDistance = {
         id: Date.now().toString(),
         name: placeName.trim() || 'New Place',
         url: url.trim(),
-        category,
+        category: finalCategory as any,
         calculatedAt: new Date().toISOString()
       };
 
@@ -46,7 +103,8 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
       setUrl('');
       setPlaceName('');
       setCalculateDistance(!!basecamp);
-      setCategory('attraction');
+      setCategory('');
+      setUseAiSorting(false);
       onClose();
     } catch (error) {
       console.error('Error adding place:', error);
@@ -58,78 +116,101 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-900 rounded-3xl w-full max-w-md shadow-2xl border border-gray-800">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-slate-800 border border-slate-700 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-800">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-red-600 to-red-700 rounded-xl flex items-center justify-center">
-              <MapPin size={20} className="text-white" />
-            </div>
-            <h2 className="text-xl font-bold text-white">Add Place</h2>
-          </div>
+        <div className="flex items-center justify-between p-6 border-b border-slate-700">
+          <h2 className="text-lg font-semibold text-white">Add Place</h2>
           <button 
             onClick={onClose}
-            className="w-8 h-8 rounded-full bg-gray-800 hover:bg-gray-700 flex items-center justify-center transition-colors border border-gray-700"
+            className="text-slate-400 hover:text-white"
           >
-            <X size={16} className="text-gray-400" />
+            <X size={20} />
           </button>
         </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* URL Input */}
           <div>
-            <label className="block text-sm font-semibold text-white mb-2">
+            <label className="block text-sm font-medium text-slate-300 mb-2">
               Place URL *
             </label>
             <div className="relative">
-              <Link size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Link size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
               <input
                 type="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="Paste URL here (Google Maps, TripAdvisor, etc.)"
+                placeholder="https://..."
                 required
-                className="w-full bg-gray-800 border border-gray-700 rounded-xl pl-12 pr-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
+                className="w-full bg-slate-900/50 border border-slate-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
               />
             </div>
           </div>
 
+          {/* Title Input */}
           <div>
-            <label className="block text-sm font-semibold text-white mb-2">
-              Place Name (optional)
+            <label className="block text-sm font-medium text-slate-300 mb-2">
+              Place Name *
             </label>
             <input
               type="text"
               value={placeName}
               onChange={(e) => setPlaceName(e.target.value)}
-              placeholder="Give this place a custom name..."
-              className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
+              placeholder="Give this place a name..."
+              required
+              className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-white mb-2">
-              Category
+          {/* AI Sorting Toggle */}
+          <div className="flex items-center gap-3 p-3 bg-slate-900/30 rounded-lg border border-slate-700/50">
+            <input
+              type="checkbox"
+              id="ai-sorting"
+              checked={useAiSorting}
+              onChange={(e) => setUseAiSorting(e.target.checked)}
+              className="w-4 h-4 text-blue-600 bg-slate-800 border-slate-600 rounded focus:ring-blue-500"
+            />
+            <label htmlFor="ai-sorting" className="flex items-center gap-2 text-sm text-slate-300">
+              <Sparkles size={16} className="text-blue-400" />
+              Let AI categorize this place automatically
             </label>
-            <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value as any)}
-              className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-4 text-white focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
-            >
-              <option value="restaurant">Restaurant / Eats</option>
-              <option value="attraction">Attraction / Sightseeing</option>
-              <option value="activity">Activity</option>
-              <option value="fitness">Fitness / Gym</option>
-              <option value="nightlife">Nightlife</option>
-              <option value="transportation">Transportation</option>
-              <option value="hotel">Hotel / Lodging</option>
-            </select>
           </div>
+
+          {/* Category Selection */}
+          {!useAiSorting && (
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-3">
+                Category (optional)
+              </label>
+              <div className="grid grid-cols-1 gap-2 max-h-64 overflow-y-auto">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    type="button"
+                    onClick={() => setCategory(cat.id === category ? '' : cat.id)}
+                    className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-all ${
+                      category === cat.id
+                        ? 'bg-blue-600/20 border-blue-600 text-white'
+                        : 'bg-slate-900/30 border-slate-700 text-slate-300 hover:border-slate-600'
+                    }`}
+                  >
+                    <span className="text-lg">{cat.icon}</span>
+                    <div>
+                      <div className="font-medium">{cat.label}</div>
+                      <div className="text-xs text-slate-400">{cat.description}</div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Distance Calculation Toggle */}
           {basecamp && (
-            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+            <div className="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-semibold text-white">Calculate distance from Basecamp</span>
                 <label className="relative inline-flex items-center cursor-pointer">
@@ -148,19 +229,20 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
             </div>
           )}
 
+          {/* Submit Button */}
           <div className="flex gap-3 pt-4">
             <Button
               type="button"
               variant="outline"
               onClick={onClose}
-              className="flex-1 h-12 rounded-xl border-2 border-gray-700 hover:border-gray-600 font-semibold bg-gray-800 text-white hover:bg-gray-700"
+              className="flex-1"
             >
               Cancel
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !url.trim()}
-              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 font-semibold shadow-lg shadow-red-500/25 border border-red-500/50"
+              disabled={isLoading || !url.trim() || !placeName.trim()}
+              className="flex-1 bg-blue-600 hover:bg-blue-700"
             >
               {isLoading ? 'Adding...' : 'Add Place'}
             </Button>
