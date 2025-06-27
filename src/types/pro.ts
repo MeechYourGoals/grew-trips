@@ -1,4 +1,3 @@
-
 export interface Tour {
   id: string;
   name: string;
@@ -151,6 +150,43 @@ export interface Broadcast {
   priority: 'normal' | 'urgent';
   timestamp: string;
   readBy: string[];
+}
+
+export interface ProTripParticipant {
+  id: number; // Unified as number across all components
+  name: string;
+  email?: string;
+  avatar: string;
+  role: string;
+}
+
+export interface ProTripData {
+  id: string;
+  title: string;
+  description: string;
+  location: string;
+  dateRange: string;
+  category: string;
+  tags: string[];
+  participants: ProTripParticipant[];
+  budget: {
+    total: number;
+    spent: number;
+    categories: Array<{
+      name: string;
+      allocated: number;
+      spent: number;
+    }>;
+  };
+  itinerary: Array<{
+    date: string;
+    events: Array<{
+      time: string;
+      title: string;
+      location: string;
+      type: string;
+    }>;
+  }>;
 }
 
 export const SUBSCRIPTION_TIERS = {

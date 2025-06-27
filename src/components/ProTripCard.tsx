@@ -5,7 +5,7 @@ import { Calendar, MapPin, Crown, Copy, Eye } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { ProTripData } from '../data/proTripMockData';
+import { ProTripData } from '../types/pro';
 
 interface ProTripCardProps {
   trip: ProTripData;
@@ -66,6 +66,11 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
           >
             {trip.category}
           </Badge>
+          {trip.tags && trip.tags.map((tag, index) => (
+            <Badge key={index} className="text-xs bg-gray-500/20 text-gray-300 border-gray-500/30 border">
+              {tag}
+            </Badge>
+          ))}
         </div>
       </div>
 

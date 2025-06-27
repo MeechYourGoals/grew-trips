@@ -1,11 +1,12 @@
+
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Calendar, MapPin, Users, Plus, Mic, Music, Trophy, Briefcase, Hotel, Plane } from 'lucide-react';
-import { Tour, TourTrip } from '../types/pro';
+import { Tour, TourTrip, ProTripData } from '../types/pro';
 import { proTripMockData } from '../data/proTripMockData';
 
 // Convert ProTripData to Tour format for compatibility
-const convertProTripToTour = (proTripData: any): Tour => {
+const convertProTripToTour = (proTripData: ProTripData): Tour => {
   return {
     id: proTripData.id,
     name: proTripData.title,
@@ -15,15 +16,15 @@ const convertProTripToTour = (proTripData: any): Tour => {
     endDate: proTripData.dateRange.split(' - ')[1] || '2025-12-31',
     createdAt: '2025-01-01',
     updatedAt: '2025-01-15',
-    teamMembers: proTripData.participants.map((p: any, index: number) => ({
-      id: p.id, // Keep as number since we fixed the mock data
+    teamMembers: proTripData.participants.map((p, index) => ({
+      id: p.id.toString(), // Convert to string as expected by TeamMember interface
       name: p.name,
-      email: `${p.name.toLowerCase().replace(' ', '.')}@${proTripData.category.toLowerCase().replace(/[^a-z]/g, '')}.com`,
-      role: p.role.toLowerCase().replace(/[^a-z]/g, '-'),
+      email: p.email || `${p.name.toLowerCase().replace(' ', '.')}@${proTripData.category.toLowerCase().replace(/[^a-z]/g, '')}.com`,
+      role: p.role.toLowerCase().replace(/[^a-z]/g, '-') as any,
       permissions: index === 0 ? 'admin' : index === 1 ? 'admin' : 'editor',
       isActive: true
     })),
-    trips: proTripData.itinerary.map((day: any, dayIndex: number) => ({
+    trips: proTripData.itinerary.map((day, dayIndex) => ({
       id: `${proTripData.id}-${dayIndex}`,
       tourId: proTripData.id,
       city: proTripData.location.split(',')[0] || proTripData.location,
@@ -35,7 +36,15 @@ const convertProTripToTour = (proTripData: any): Tour => {
                 proTripData.category.includes('Tour') ? 'headline' :
                 proTripData.category.includes('Conference') ? 'college' : 'private',
       status: dayIndex === 0 ? 'confirmed' : dayIndex === 1 ? 'planned' : 'confirmed',
-      participants: proTripData.participants,
+      participants: proTripData.participants.map(p => ({
+        id: p.id.toString(),
+        name: p.name,
+        email: p.email || '',
+        avatar: p.avatar,
+        role: p.role.toLowerCase().replace(/[^a-z]/g, '-') as any,
+        permissions: 'viewer' as any,
+        isActive: true
+      })),
       accommodation: {
         type: 'hotel',
         name: `${proTripData.location} Premium Hotel`,
