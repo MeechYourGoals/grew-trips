@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, Crown, Building, Sparkles, MessageCircle, Settings, Zap } from 'lucide-react';
+import { X, Crown, Building, Sparkles, MessageCircle, Settings, Zap, Users, Shield, TrendingUp, Star, BarChart3, Calendar, Wallet, Globe, Phone } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TRIPS_PLUS_PRICE } from '../types/consumer';
 
@@ -131,33 +131,81 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
                 <Building size={32} className="text-black" />
               </div>
               <h3 className="text-2xl font-bold text-white mb-2">Trips Pro</h3>
-              <p className="text-gray-300">Professional trip management for organizations</p>
+              <p className="text-gray-300">Enterprise software for professional trip management</p>
             </div>
 
-            {/* Pro Features */}
+            {/* Pro Features - Full descriptions restored */}
             <div className="grid md:grid-cols-2 gap-6 mb-8">
               <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-2xl p-6">
-                <h4 className="text-lg font-bold text-white mb-2">Team Collaboration</h4>
-                <p className="text-gray-300 text-sm">Advanced team management, role-based permissions, and collaborative planning tools.</p>
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mb-4">
+                  <Users size={24} className="text-yellow-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Advanced Team Collaboration</h4>
+                <p className="text-gray-300 text-sm">Comprehensive team management with role-based permissions, collaborative planning tools, and real-time synchronization across all team members.</p>
               </div>
+
               <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-2xl p-6">
-                <h4 className="text-lg font-bold text-white mb-2">Budget Management</h4>
-                <p className="text-gray-300 text-sm">Comprehensive expense tracking, budget allocation, and financial reporting.</p>
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mb-4">
+                  <Wallet size={24} className="text-yellow-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Enterprise Budget Management</h4>
+                <p className="text-gray-300 text-sm">Comprehensive expense tracking, budget allocation, automated approval workflows, and detailed financial reporting with export capabilities.</p>
               </div>
+
               <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-2xl p-6">
-                <h4 className="text-lg font-bold text-white mb-2">Analytics & Insights</h4>
-                <p className="text-gray-300 text-sm">Detailed trip analytics, sentiment analysis, and performance metrics.</p>
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mb-4">
+                  <BarChart3 size={24} className="text-yellow-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Analytics & Business Intelligence</h4>
+                <p className="text-gray-300 text-sm">Detailed trip analytics, sentiment analysis, performance metrics, ROI tracking, and customizable dashboards for data-driven decision making.</p>
               </div>
+
               <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-2xl p-6">
-                <h4 className="text-lg font-bold text-white mb-2">Priority Support</h4>
-                <p className="text-gray-300 text-sm">24/7 priority support, dedicated account management, and custom integrations.</p>
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mb-4">
+                  <Phone size={24} className="text-yellow-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">24/7 Priority Support</h4>
+                <p className="text-gray-300 text-sm">Dedicated account management, priority technical support, custom integrations, and enterprise-grade SLA guarantees.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mb-4">
+                  <Shield size={24} className="text-yellow-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Enterprise Security & Compliance</h4>
+                <p className="text-gray-300 text-sm">Advanced security features, SSO integration, audit trails, GDPR compliance, and enterprise-grade data protection standards.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mb-4">
+                  <Globe size={24} className="text-yellow-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Multi-Organization Management</h4>
+                <p className="text-gray-300 text-sm">Manage multiple organizations, white-label options, custom branding, and scalable seat-based pricing for enterprise deployments.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mb-4">
+                  <Calendar size={24} className="text-yellow-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Advanced Scheduling & Automation</h4>
+                <p className="text-gray-300 text-sm">Automated itinerary generation, smart scheduling optimization, calendar integrations, and workflow automation for complex travel operations.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-yellow-500/10 to-yellow-600/10 border border-yellow-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center mb-4">
+                  <Star size={24} className="text-yellow-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Custom Integrations & API Access</h4>
+                <p className="text-gray-300 text-sm">REST API access, custom integrations with existing systems, webhook support, and developer resources for seamless enterprise integration.</p>
               </div>
             </div>
 
             <div className="text-center">
               <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 backdrop-blur-sm border border-yellow-500/30 rounded-2xl p-6 mb-6">
                 <div className="text-4xl font-bold text-white mb-2">Contact Sales</div>
-                <p className="text-gray-300">Custom pricing for organizations</p>
+                <p className="text-gray-300 mb-2">Custom pricing for organizations</p>
+                <p className="text-sm text-yellow-400">Starting from $99/month for up to 10 seats</p>
               </div>
             </div>
           </div>

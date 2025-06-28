@@ -22,7 +22,7 @@ const TripDetail = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isPlus } = useConsumerSubscription();
-  const [activeTab, setActiveTab] = useState('places');
+  const [activeTab, setActiveTab] = useState('chat');
   const [showInbox, setShowInbox] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
@@ -52,14 +52,16 @@ const TripDetail = () => {
   };
 
   const tabs = [
+    { id: 'chat', label: 'Chat' },
     { id: 'places', label: 'Places' },
     { id: 'preferences', label: 'Preferences', premium: true },
-    { id: 'ai-chat', label: 'AI Assistant', premium: true },
-    { id: 'chat', label: 'Chat' }
+    { id: 'ai-chat', label: 'AI Assistant', premium: true }
   ];
 
   const renderTabContent = () => {
     switch (activeTab) {
+      case 'chat':
+        return <TripTabs activeTab="chat" onTabChange={() => {}} />;
       case 'places':
         return <PlacesSection />;
       case 'preferences':
@@ -77,10 +79,8 @@ const TripDetail = () => {
             preferences={tripPreferences}
           />
         );
-      case 'chat':
-        return <TripTabs activeTab={activeTab} onTabChange={setActiveTab} />;
       default:
-        return <PlacesSection />;
+        return <TripTabs activeTab="chat" onTabChange={() => {}} />;
     }
   };
 
