@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, Sparkles, Crown, MessageCircle } from 'lucide-react';
+import { Send, Sparkles, Crown, MessageCircle, AlertCircle } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
 
@@ -22,13 +22,73 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [apiKey, setApiKey] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
-  const mockResponses = [
-    "Based on your basecamp location, I found 3 great vegetarian restaurants within walking distance. Would you like me to share the details?",
-    "Since your group prefers outdoor activities, I recommend checking out the nearby hiking trails. The weather looks perfect for it!",
-    "For your night owl preference, I've found some great late-night spots that match your vibe. Want to see the recommendations?",
-    "I noticed you're looking for budget-friendly options. Here are some local gems that offer great value without compromising on experience."
-  ];
+  const buildContextPrompt = (userMessage: string) => {
+    let contextInfo = `You are a helpful travel assistant. The user is planning a trip and needs recommendations.`;
+    
+    if (basecamp) {
+      contextInfo += `\n\nBasecamp Location: ${basecamp.name} at ${basecamp.address}`;
+    }
+    
+    if (preferences) {
+      if (preferences.dietary.length > 0) {
+        contextInfo += `\nDietary preferences: ${preferences.dietary.join(', ')}`;
+      }
+      if (preferences.vibe.length > 0) {
+        contextInfo += `\nPreferred activities/vibe: ${preferences.vibe.join(', ')}`;
+      }
+      contextInfo += `\nBudget range: ${preferences.budget}`;
+      contextInfo += `\nTime preference: ${preferences.timePreference}`;
+    }
+    
+    contextInfo += `\n\nPlease provide helpful, specific recommendations based on this context. Focus on practical advice and real places/activities near their basecamp location.`;
+    contextInfo += `\n\nUser question: ${userMessage}`;
+    
+    return contextInfo;
+  };
+
+  const callGeminiAPI = async (message: string): Promise<string> => {
+    if (!apiKey.trim()) {
+      throw new Error('Please enter your Google Gemini API key first');
+    }
+
+    const contextualPrompt = buildContextPrompt(message);
+    
+    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + apiKey, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: contextualPrompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        }
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(`API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+    }
+
+    const data = await response.json();
+    
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      throw new Error('Invalid response format from Gemini API');
+    }
+    
+    return data.candidates[0].content.parts[0].text;
+  };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -43,18 +103,34 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsTyping(true);
+    setError(null);
 
-    // Simulate AI response
-    setTimeout(() => {
-      const aiResponse: ChatMessage = {
+    try {
+      const aiResponse = await callGeminiAPI(inputMessage);
+      
+      const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: mockResponses[Math.floor(Math.random() * mockResponses.length)],
+        content: aiResponse,
         timestamp: new Date().toISOString()
       };
-      setMessages(prev => [...prev, aiResponse]);
+      
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
+      setError(errorMessage);
+      
+      const errorResponse: ChatMessage = {
+        id: (Date.now() + 1).toString(),
+        type: 'assistant',
+        content: `Sorry, I encountered an error: ${errorMessage}. Please check your API key and try again.`,
+        timestamp: new Date().toISOString()
+      };
+      
+      setMessages(prev => [...prev, errorResponse]);
+    } finally {
       setIsTyping(false);
-    }, 2000);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -169,12 +245,45 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         </div>
       </div>
 
+      {/* API Key Input */}
+      {!apiKey && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-4">
+          <div className="flex items-start gap-3">
+            <AlertCircle size={20} className="text-yellow-400 flex-shrink-0 mt-0.5" />
+            <div className="flex-1">
+              <h4 className="text-yellow-300 font-medium mb-2">Google Gemini API Key Required</h4>
+              <p className="text-yellow-200 text-sm mb-3">Enter your Google Gemini API key to start chatting with AI.</p>
+              <input
+                type="password"
+                placeholder="Enter your Google Gemini API key..."
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500"
+              />
+              <p className="text-yellow-200/70 text-xs mt-2">
+                Get your API key from <a href="https://makersuite.google.com/app/apikey" target="_blank" rel="noopener noreferrer" className="underline">Google AI Studio</a>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Context Info */}
       {basecamp && (
         <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3 mb-4">
           <p className="text-green-300 text-sm">
             📍 Basecamp: {basecamp.name} • {basecamp.address}
           </p>
+        </div>
+      )}
+
+      {/* Error Display */}
+      {error && (
+        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mb-4">
+          <div className="flex items-center gap-2">
+            <AlertCircle size={16} className="text-red-400" />
+            <p className="text-red-300 text-sm">{error}</p>
+          </div>
         </div>
       )}
 
@@ -194,7 +303,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
                   ? 'bg-gray-800 text-white'
                   : 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-gray-300 border border-blue-500/20'
               }`}>
-                <p className="text-sm">{message.content}</p>
+                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
               </div>
             </div>
           ))
@@ -220,11 +329,12 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
           onKeyPress={handleKeyPress}
           placeholder="Ask me about restaurants, activities, or anything about your trip..."
           rows={2}
-          className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+          disabled={!apiKey}
+          className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <button
           onClick={handleSendMessage}
-          disabled={!inputMessage.trim()}
+          disabled={!inputMessage.trim() || !apiKey || isTyping}
           className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3 rounded-xl transition-all duration-200"
         >
           <Send size={16} />
