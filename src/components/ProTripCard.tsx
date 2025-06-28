@@ -5,21 +5,17 @@ import { Calendar, MapPin, Crown, Copy, Eye } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { ProTripData } from '../data/proTripMockData';
 
 interface ProParticipant {
-  id: number;
+  id: string;
   name: string;
   avatar: string;
   role: string;
 }
 
-interface ProTrip {
-  id: string;
-  title: string;
-  location: string;
-  dateRange: string;
-  category: string;
-  tags: string[];
+interface ProTrip extends ProTripData {
+  tags?: string[];
   participants: ProParticipant[];
 }
 

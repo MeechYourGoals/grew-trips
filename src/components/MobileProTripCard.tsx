@@ -3,21 +3,17 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Users, Crown } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import { ProTripData } from '../data/proTripMockData';
 
 interface Participant {
-  id: number;
+  id: string;
   name: string;
   avatar: string;
   role: string;
 }
 
-interface ProTrip {
-  id: string;
-  title: string;
-  location: string;
-  dateRange: string;
-  category: string;
-  tags: string[];
+interface ProTrip extends ProTripData {
+  tags?: string[];
   participants: Participant[];
 }
 
@@ -82,12 +78,12 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
       <div className="p-4">
         {/* Tags */}
         <div className="flex flex-wrap gap-1 mb-4">
-          {trip.tags.slice(0, 2).map((tag, index) => (
+          {trip.tags?.slice(0, 2).map((tag, index) => (
             <span key={index} className="bg-white/10 backdrop-blur-sm px-2 py-1 rounded-md text-xs text-white">
               {tag}
             </span>
           ))}
-          {trip.tags.length > 2 && (
+          {trip.tags && trip.tags.length > 2 && (
             <span className="bg-white/10 backdrop-blur-sm px-2 py-1 rounded-md text-xs text-white">
               +{trip.tags.length - 2}
             </span>
