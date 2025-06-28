@@ -13,10 +13,11 @@ import { EnterpriseGeneralSettings } from './enterprise/EnterpriseGeneralSetting
 interface EnterpriseSettingsProps {
   organizationId: string;
   currentUserId: string;
+  defaultSection?: string;
 }
 
-export const EnterpriseSettings = ({ organizationId, currentUserId }: EnterpriseSettingsProps) => {
-  const [activeSection, setActiveSection] = useState('organization');
+export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSection = 'organization' }: EnterpriseSettingsProps) => {
+  const [activeSection, setActiveSection] = useState(defaultSection);
 
   // Mock organization data
   const organization = {
@@ -65,6 +66,15 @@ export const EnterpriseSettings = ({ organizationId, currentUserId }: Enterprise
         return <OrganizationSection organization={organization} />;
     }
   };
+
+  // When integrated into dashboard, render without the full layout
+  if (defaultSection !== 'organization') {
+    return (
+      <div className="w-full">
+        {renderSection()}
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-full">

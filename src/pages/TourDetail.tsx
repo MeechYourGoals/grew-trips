@@ -7,6 +7,7 @@ import { BroadcastSystem } from '../components/BroadcastSystem';
 import { MessageInbox } from '../components/MessageInbox';
 import { TourChat } from '../components/TourChat';
 import { TransportationAccommodations } from '../components/TransportationAccommodations';
+import { EnterpriseSettings } from '../components/EnterpriseSettings';
 import { useAuth } from '../hooks/useAuth';
 
 const TourDetail = () => {
@@ -25,12 +26,23 @@ const TourDetail = () => {
     isActive: true
   };
 
+  // Mock organization data for enterprise features
+  const userOrganization = {
+    id: 'org-123',
+    name: 'Acme Entertainment Group',
+    role: 'owner',
+    hasProAccess: true
+  };
+
   const sections = [
-    { id: 'dashboard', label: 'Tour Dashboard' },
+    { id: 'dashboard', label: 'Dashboard' },
     { id: 'transport-accommodation', label: 'Transport & Stay' },
     { id: 'messages', label: 'Message Inbox' },
-    { id: 'tour-chat', label: 'Tour Chat' },
-    { id: 'broadcasts', label: 'Broadcasts' }
+    { id: 'chat', label: 'Chat' },
+    { id: 'broadcasts', label: 'Broadcasts' },
+    { id: 'organization', label: 'Organization' },
+    { id: 'seat-management', label: 'Seat Management' },
+    { id: 'travel-wallet', label: 'Travel Wallet' }
   ];
 
   const renderSection = () => {
@@ -75,10 +87,37 @@ const TourDetail = () => {
         );
       case 'messages':
         return <MessageInbox />;
-      case 'tour-chat':
+      case 'chat':
         return <TourChat />;
       case 'broadcasts':
         return <BroadcastSystem tourId={tourId || '1'} />;
+      case 'organization':
+        return (
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
+            <EnterpriseSettings 
+              organizationId={userOrganization.id} 
+              currentUserId={user?.id || 'current-user'} 
+            />
+          </div>
+        );
+      case 'seat-management':
+        return (
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
+            <EnterpriseSettings 
+              organizationId={userOrganization.id} 
+              currentUserId={user?.id || 'current-user'} 
+            />
+          </div>
+        );
+      case 'travel-wallet':
+        return (
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
+            <EnterpriseSettings 
+              organizationId={userOrganization.id} 
+              currentUserId={user?.id || 'current-user'} 
+            />
+          </div>
+        );
       default:
         return <TourDashboard />;
     }

@@ -68,7 +68,7 @@ export const BroadcastSystem = ({ tourId }: BroadcastSystemProps) => {
           <div className="w-10 h-10 bg-gradient-to-r from-glass-orange/30 to-glass-yellow/30 backdrop-blur-sm rounded-xl flex items-center justify-center">
             <Radio size={24} className="text-glass-orange" />
           </div>
-          <h2 className="text-xl font-semibold text-white">Tour Broadcasts</h2>
+          <h2 className="text-xl font-semibold text-white">Broadcasts</h2>
         </div>
         <button
           onClick={() => setShowComposer(!showComposer)}
@@ -85,7 +85,7 @@ export const BroadcastSystem = ({ tourId }: BroadcastSystemProps) => {
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Send a message to your tour team..."
+            placeholder="Send a message to your team..."
             rows={3}
             className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-glass-orange resize-none"
           />

@@ -17,7 +17,7 @@ const convertProTripToTour = (proTripData: ProTripData): Tour => {
     createdAt: '2025-01-01',
     updatedAt: '2025-01-15',
     teamMembers: proTripData.participants.map((p, index) => ({
-      id: p.id.toString(), // Convert to string as expected by TeamMember interface
+      id: p.id.toString(),
       name: p.name,
       email: p.email || `${p.name.toLowerCase().replace(' ', '.')}@${proTripData.category.toLowerCase().replace(/[^a-z]/g, '')}.com`,
       role: p.role.toLowerCase().replace(/[^a-z]/g, '-') as any,
@@ -151,7 +151,7 @@ export const TourDashboard = () => {
           </div>
         </div>
 
-        {/* Tour Stats */}
+        {/* Dashboard Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-4 md:p-6">
             <div className="text-xl md:text-2xl font-bold text-white mb-1">{tour.trips.length}</div>
@@ -171,7 +171,7 @@ export const TourDashboard = () => {
           </div>
         </div>
 
-        {/* Tour Schedule */}
+        {/* Schedule */}
         <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 md:p-8 mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
             <h2 className="text-xl md:text-2xl font-semibold text-white">Schedule</h2>
