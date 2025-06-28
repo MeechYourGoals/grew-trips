@@ -1,28 +1,18 @@
+
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageCircle, Settings, UserPlus, Sparkles, Crown } from 'lucide-react';
-import { TripTabs } from '../components/TripTabs';
+import { useParams } from 'react-router-dom';
 import { TripHeader } from '../components/TripHeader';
-import { PlacesSection } from '../components/PlacesSection';
 import { MessageInbox } from '../components/MessageInbox';
-import { SettingsMenu } from '../components/SettingsMenu';
-import { InviteModal } from '../components/InviteModal';
-import { AuthModal } from '../components/AuthModal';
-import { TripSettings } from '../components/TripSettings';
-import { TripPreferences } from '../components/TripPreferences';
-import { GeminiAIChat } from '../components/GeminiAIChat';
-import { UniversalTripAI } from '../components/UniversalTripAI';
-import { TripsPlusUpsellModal } from '../components/TripsPlusUpsellModal';
+import { TripDetailHeader } from '../components/trip/TripDetailHeader';
+import { TripDetailContent } from '../components/trip/TripDetailContent';
+import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { useAuth } from '../hooks/useAuth';
-import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { useMessages } from '../hooks/useMessages';
 import { TripPreferences as TripPreferencesType } from '../types/consumer';
 
 const TripDetail = () => {
   const { tripId } = useParams();
-  const navigate = useNavigate();
   const { user } = useAuth();
-  const { isPlus } = useConsumerSubscription();
   const { getMessagesForTrip } = useMessages();
   const [activeTab, setActiveTab] = useState('chat');
   const [showInbox, setShowInbox] = useState(false);
@@ -102,101 +92,18 @@ const TripDetail = () => {
     isPro: false
   };
 
-  const tabs = [
-    { id: 'chat', label: 'Chat' },
-    { id: 'places', label: 'Places' },
-    { id: 'preferences', label: 'Preferences', premium: true },
-    { id: 'ai-chat', label: 'AI Assistant', premium: true }
-  ];
-
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'chat':
-        return <TripTabs activeTab="chat" onTabChange={() => {}} />;
-      case 'places':
-        return <PlacesSection />;
-      case 'preferences':
-        return (
-          <TripPreferences 
-            tripId={tripId || '1'} 
-            onPreferencesChange={setTripPreferences} 
-          />
-        );
-      case 'ai-chat':
-        return (
-          <GeminiAIChat 
-            tripId={tripId || '1'} 
-            basecamp={basecamp}
-            preferences={tripPreferences}
-          />
-        );
-      default:
-        return <TripTabs activeTab="chat" onTabChange={() => {}} />;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-black">
       <div className="container mx-auto px-6 py-8 max-w-7xl">
         {/* Top Navigation */}
-        <div className="flex items-center justify-between mb-8">
-          <button 
-            onClick={() => navigate('/')}
-            className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors group"
-          >
-            <div className="bg-gray-800 p-2 rounded-lg shadow-lg group-hover:shadow-red-500/20 transition-all border border-gray-700 hover:border-red-500/50">
-              <ArrowLeft size={20} />
-            </div>
-            <span className="font-medium">Back to My Places</span>
-          </button>
-
-          <div className="flex items-center gap-3">
-            {/* Universal Trip AI Button */}
-            <UniversalTripAI tripContext={tripContext} />
-
-            {/* Trips Plus Badge */}
-            {isPlus && (
-              <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-glass-orange/30 rounded-xl px-4 py-2 flex items-center gap-2">
-                <Crown size={16} className="text-glass-orange" />
-                <span className="text-glass-orange font-medium">TRIPS PLUS</span>
-              </div>
-            )}
-
-            {user ? (
-              <>
-                <button
-                  onClick={() => setShowInvite(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
-                >
-                  <UserPlus size={16} />
-                  <span className="hidden sm:inline">Invite</span>
-                </button>
-                
-                <button
-                  onClick={() => setShowInbox(!showInbox)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl transition-colors flex items-center gap-2"
-                >
-                  <MessageCircle size={16} />
-                  <span className="hidden sm:inline">{showInbox ? 'Hide Inbox' : 'Messages'}</span>
-                </button>
-
-                <button
-                  onClick={() => setShowTripSettings(true)}
-                  className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-xl transition-colors"
-                >
-                  <Settings size={20} />
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setShowAuth(true)}
-                className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-2 rounded-xl transition-colors font-medium"
-              >
-                Sign In
-              </button>
-            )}
-          </div>
-        </div>
+        <TripDetailHeader
+          tripContext={tripContext}
+          showInbox={showInbox}
+          onToggleInbox={() => setShowInbox(!showInbox)}
+          onShowInvite={() => setShowInvite(true)}
+          onShowTripSettings={() => setShowTripSettings(true)}
+          onShowAuth={() => setShowAuth(true)}
+        />
 
         {/* Message Inbox */}
         {showInbox && user && (
@@ -208,58 +115,33 @@ const TripDetail = () => {
         {/* Trip Header */}
         <TripHeader trip={trip} />
 
-        {/* Tab Navigation */}
-        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => {
-                if (tab.premium && !isPlus) {
-                  setShowTripsPlusModal(true);
-                } else {
-                  setActiveTab(tab.id);
-                }
-              }}
-              className={`flex-shrink-0 px-4 md:px-6 py-3 rounded-xl font-medium transition-all duration-200 text-sm md:text-base flex items-center gap-2 ${
-                activeTab === tab.id
-                  ? 'bg-gradient-to-r from-glass-orange to-glass-yellow text-white'
-                  : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
-              }`}
-            >
-              {tab.label}
-              {tab.premium && !isPlus && (
-                <Crown size={16} className="text-glass-orange" />
-              )}
-              {tab.premium && isPlus && (
-                <Sparkles size={16} className="text-glass-orange" />
-              )}
-            </button>
-          ))}
-        </div>
-
-        {/* Tab Content */}
-        {renderTabContent()}
+        {/* Main Content */}
+        <TripDetailContent
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
+          tripId={tripId || '1'}
+          basecamp={basecamp}
+          tripPreferences={tripPreferences}
+          onPreferencesChange={setTripPreferences}
+        />
       </div>
 
       {/* Modals */}
-      <SettingsMenu isOpen={showSettings} onClose={() => setShowSettings(false)} />
-      <InviteModal 
-        isOpen={showInvite} 
-        onClose={() => setShowInvite(false)}
+      <TripDetailModals
+        showSettings={showSettings}
+        onCloseSettings={() => setShowSettings(false)}
+        showInvite={showInvite}
+        onCloseInvite={() => setShowInvite(false)}
+        showAuth={showAuth}
+        onCloseAuth={() => setShowAuth(false)}
+        showTripSettings={showTripSettings}
+        onCloseTripSettings={() => setShowTripSettings(false)}
+        showTripsPlusModal={showTripsPlusModal}
+        onCloseTripsPlusModal={() => setShowTripsPlusModal(false)}
         tripName={trip.title}
         tripId={tripId || '1'}
-      />
-      <AuthModal isOpen={showAuth} onClose={() => setShowAuth(false)} />
-      <TripSettings
-        isOpen={showTripSettings}
-        onClose={() => setShowTripSettings(false)}
-        tripId={tripId || '1'}
-        tripName={trip.title}
-        currentUserId={user?.id || '4'}
-      />
-      <TripsPlusUpsellModal
-        isOpen={showTripsPlusModal}
-        onClose={() => setShowTripsPlusModal(false)}
+        userId={user?.id}
       />
     </div>
   );
