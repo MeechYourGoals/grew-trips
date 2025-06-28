@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MessageCircle, Users, Calendar, Camera, Radio, Link, MessageSquare } from 'lucide-react';
 import { TripChat } from './TripChat';
 import { GroupCalendar } from './GroupCalendar';
@@ -13,7 +13,9 @@ interface TripTabsProps {
   onTabChange: (tab: string) => void;
 }
 
-export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
+export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabChange }: TripTabsProps) => {
+  const [activeTab, setActiveTab] = useState('chat');
+
   const tabs = [
     { id: 'chat', label: 'Chat', icon: MessageCircle },
     { id: 'broadcasts', label: 'Broadcasts', icon: Radio },
@@ -22,6 +24,10 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'photos', label: 'Photos', icon: Camera }
   ];
+
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -51,7 +57,7 @@ export const TripTabs = ({ activeTab, onTabChange }: TripTabsProps) => {
           return (
             <button
               key={tab.id}
-              onClick={() => onTabChange(tab.id)}
+              onClick={() => handleTabChange(tab.id)}
               className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
                 activeTab === tab.id
                   ? 'bg-gradient-to-r from-glass-orange to-glass-yellow text-white'
