@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageCircle, Settings, UserPlus } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Settings, UserPlus, Sparkles, Crown } from 'lucide-react';
 import { TripTabs } from '../components/TripTabs';
 import { TripHeader } from '../components/TripHeader';
 import { PlacesSection } from '../components/PlacesSection';
@@ -10,18 +10,26 @@ import { SettingsMenu } from '../components/SettingsMenu';
 import { InviteModal } from '../components/InviteModal';
 import { AuthModal } from '../components/AuthModal';
 import { TripSettings } from '../components/TripSettings';
+import { TripPreferences } from '../components/TripPreferences';
+import { GeminiAIChat } from '../components/GeminiAIChat';
+import { TripsPlusUpsellModal } from '../components/TripsPlusUpsellModal';
 import { useAuth } from '../hooks/useAuth';
+import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
+import { TripPreferences as TripPreferencesType } from '../types/consumer';
 
 const TripDetail = () => {
   const { tripId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [activeTab, setActiveTab] = useState('chat');
+  const { isPlus } = useConsumerSubscription();
+  const [activeTab, setActiveTab] = useState('places');
   const [showInbox, setShowInbox] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showInvite, setShowInvite] = useState(false);
   const [showAuth, setShowAuth] = useState(false);
   const [showTripSettings, setShowTripSettings] = useState(false);
+  const [showTripsPlusModal, setShowTripsPlusModal] = useState(false);
+  const [tripPreferences, setTripPreferences] = useState<TripPreferencesType | undefined>();
 
   // Sample trip data - this would come from your database
   const trip = {
@@ -35,6 +43,45 @@ const TripDetail = () => {
       { id: 2, name: "Jake", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
       { id: 3, name: "Sarah", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face" }
     ]
+  };
+
+  // Mock basecamp data
+  const basecamp = {
+    name: "Central Paris Hotel",
+    address: "123 Rue de Rivoli, 75001 Paris, France"
+  };
+
+  const tabs = [
+    { id: 'places', label: 'Places' },
+    { id: 'preferences', label: 'Preferences', premium: true },
+    { id: 'ai-chat', label: 'AI Assistant', premium: true },
+    { id: 'chat', label: 'Chat' }
+  ];
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'places':
+        return <PlacesSection />;
+      case 'preferences':
+        return (
+          <TripPreferences 
+            tripId={tripId || '1'} 
+            onPreferencesChange={setTripPreferences} 
+          />
+        );
+      case 'ai-chat':
+        return (
+          <GeminiAIChat 
+            tripId={tripId || '1'} 
+            basecamp={basecamp}
+            preferences={tripPreferences}
+          />
+        );
+      case 'chat':
+        return <TripTabs activeTab={activeTab} onTabChange={setActiveTab} />;
+      default:
+        return <PlacesSection />;
+    }
   };
 
   return (
@@ -53,6 +100,14 @@ const TripDetail = () => {
           </button>
 
           <div className="flex items-center gap-3">
+            {/* Trips Plus Badge */}
+            {isPlus && (
+              <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-glass-orange/30 rounded-xl px-4 py-2 flex items-center gap-2">
+                <Crown size={16} className="text-glass-orange" />
+                <span className="text-glass-orange font-medium">TRIPS PLUS</span>
+              </div>
+            )}
+
             {user ? (
               <>
                 <button
@@ -99,11 +154,37 @@ const TripDetail = () => {
         {/* Trip Header */}
         <TripHeader trip={trip} />
 
-        {/* Places to Visit Section */}
-        <PlacesSection />
+        {/* Tab Navigation */}
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => {
+                if (tab.premium && !isPlus) {
+                  setShowTripsPlusModal(true);
+                } else {
+                  setActiveTab(tab.id);
+                }
+              }}
+              className={`flex-shrink-0 px-4 md:px-6 py-3 rounded-xl font-medium transition-all duration-200 text-sm md:text-base flex items-center gap-2 ${
+                activeTab === tab.id
+                  ? 'bg-gradient-to-r from-glass-orange to-glass-yellow text-white'
+                  : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
+              }`}
+            >
+              {tab.label}
+              {tab.premium && !isPlus && (
+                <Crown size={16} className="text-glass-orange" />
+              )}
+              {tab.premium && isPlus && (
+                <Sparkles size={16} className="text-glass-orange" />
+              )}
+            </button>
+          ))}
+        </div>
 
-        {/* Trip Tabs - NOW INCLUDING BROADCASTS */}
-        <TripTabs activeTab={activeTab} onTabChange={setActiveTab} />
+        {/* Tab Content */}
+        {renderTabContent()}
       </div>
 
       {/* Modals */}
@@ -121,6 +202,10 @@ const TripDetail = () => {
         tripId={tripId || '1'}
         tripName={trip.title}
         currentUserId={user?.id || '4'}
+      />
+      <TripsPlusUpsellModal
+        isOpen={showTripsPlusModal}
+        onClose={() => setShowTripsPlusModal(false)}
       />
     </div>
   );
