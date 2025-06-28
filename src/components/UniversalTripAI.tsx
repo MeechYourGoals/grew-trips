@@ -1,9 +1,7 @@
-
 import React, { useState } from 'react';
-import { Send, Sparkles, MessageCircle, AlertCircle, ExternalLink } from 'lucide-react';
+import { Send, Sparkles, MessageCircle, ExternalLink } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
-import { ProTripData } from '../types/pro';
 import {
   Sheet,
   SheetContent,
@@ -49,7 +47,6 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [apiKey, setApiKey] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const canUseAI = isPlus || tripContext.isPro;
@@ -146,44 +143,32 @@ USER QUESTION: ${userMessage}`;
   };
 
   const callGeminiAPI = async (message: string): Promise<string> => {
-    if (!apiKey.trim()) {
-      throw new Error('Please enter your Google Gemini API key first');
-    }
-
     const contextualPrompt = buildTripContextPrompt(message);
     
-    const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + apiKey, {
+    const response = await fetch('/api/gemini-chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        contents: [{
-          parts: [{
-            text: contextualPrompt
-          }]
-        }],
-        generationConfig: {
+        message: contextualPrompt,
+        config: {
           temperature: 0.3,
           topK: 40,
           topP: 0.95,
           maxOutputTokens: tripContext.isPro ? 2048 : 1024,
-        }
+        },
+        tripContext
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+      throw new Error(`API Error: ${response.status} - ${errorData.error || 'Unknown error'}`);
     }
 
     const data = await response.json();
-    
-    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-      throw new Error('Invalid response format from Gemini API');
-    }
-    
-    return data.candidates[0].content.parts[0].text;
+    return data.response;
   };
 
   const handleSendMessage = async () => {
@@ -219,7 +204,7 @@ USER QUESTION: ${userMessage}`;
       const errorResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: `Sorry, I encountered an error: ${errorMessage}. Please check your API key and try again.`,
+        content: `Sorry, I encountered an error: ${errorMessage}. Please try again.`,
         timestamp: new Date().toISOString()
       };
       
@@ -289,32 +274,10 @@ USER QUESTION: ${userMessage}`;
         </SheetHeader>
 
         <div className="mt-6 flex flex-col h-[calc(100vh-120px)]">
-          {/* API Key Input */}
-          {!apiKey && (
-            <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle size={20} className="text-yellow-400 flex-shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <h4 className="text-yellow-300 font-medium mb-2">Google Gemini API Key Required</h4>
-                  <input
-                    type="password"
-                    placeholder="Enter your Google Gemini API key..."
-                    value={apiKey}
-                    onChange={(e) => setApiKey(e.target.value)}
-                    className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-yellow-500"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
           {/* Error Display */}
           {error && (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mb-4">
-              <div className="flex items-center gap-2">
-                <AlertCircle size={16} className="text-red-400" />
-                <p className="text-red-300 text-sm">{error}</p>
-              </div>
+              <p className="text-red-300 text-sm">{error}</p>
             </div>
           )}
 
@@ -377,12 +340,11 @@ USER QUESTION: ${userMessage}`;
               onKeyPress={handleKeyPress}
               placeholder="Ask about your trip..."
               rows={2}
-              disabled={!apiKey}
-              className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
             />
             <Button
               onClick={handleSendMessage}
-              disabled={!inputMessage.trim() || !apiKey || isTyping}
+              disabled={!inputMessage.trim() || isTyping}
               className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send size={16} />

@@ -1,11 +1,10 @@
 
 import React, { useState } from 'react';
-import { Sparkles, AlertCircle } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
 import { ChatMessage, GeminiAPIConfig } from './chat/types';
 import { GeminiService } from './chat/geminiService';
-import { APIKeyInput } from './chat/APIKeyInput';
 import { ChatMessages } from './chat/ChatMessages';
 import { ChatInput } from './chat/ChatInput';
 import { GeminiPlusUpgrade } from './chat/GeminiPlusUpgrade';
@@ -21,7 +20,6 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [apiKey, setApiKey] = useState('');
   const [error, setError] = useState<string | null>(null);
 
   const geminiConfig: GeminiAPIConfig = {
@@ -47,7 +45,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
     setError(null);
 
     try {
-      const geminiService = new GeminiService(apiKey);
+      const geminiService = new GeminiService();
       const contextualPrompt = geminiService.buildContextPrompt(inputMessage, basecamp, preferences);
       const aiResponse = await geminiService.callAPI(contextualPrompt, geminiConfig);
       
@@ -66,7 +64,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
       const errorResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: `Sorry, I encountered an error: ${errorMessage}. Please check your API key and try again.`,
+        content: `Sorry, I encountered an error: ${errorMessage}. Please try again.`,
         timestamp: new Date().toISOString()
       };
       
@@ -102,8 +100,6 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         </div>
       </div>
 
-      <APIKeyInput apiKey={apiKey} onApiKeyChange={setApiKey} />
-
       {/* Context Info */}
       {basecamp && (
         <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3 mb-4">
@@ -116,10 +112,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
       {/* Error Display */}
       {error && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mb-4">
-          <div className="flex items-center gap-2">
-            <AlertCircle size={16} className="text-red-400" />
-            <p className="text-red-300 text-sm">{error}</p>
-          </div>
+          <p className="text-red-300 text-sm">{error}</p>
         </div>
       )}
 
@@ -134,7 +127,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         onInputChange={setInputMessage}
         onSendMessage={handleSendMessage}
         onKeyPress={handleKeyPress}
-        apiKey={apiKey}
+        apiKey="" // No longer needed
         isTyping={isTyping}
       />
     </div>

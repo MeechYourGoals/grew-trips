@@ -65,13 +65,12 @@ const ProTripDetail = () => {
   
   const labels = getTripLabels(tripData.category);
 
-  // Build comprehensive Pro trip context
+  // Build comprehensive Pro trip context - removed basecamp references since it doesn't exist in ProTripData
   const tripContext = {
     id: proTripId,
     title: tripData.title,
     location: tripData.location,
     dateRange: tripData.dateRange,
-    basecamp: tripData.basecamp ? { name: tripData.basecamp.name, address: tripData.basecamp.address } : undefined,
     collaborators: tripData.participants,
     itinerary: tripData.itinerary,
     budget: tripData.budget,
