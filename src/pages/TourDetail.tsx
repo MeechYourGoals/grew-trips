@@ -40,9 +40,7 @@ const TourDetail = () => {
     { id: 'messages', label: 'Message Inbox' },
     { id: 'chat', label: 'Chat' },
     { id: 'broadcasts', label: 'Broadcasts' },
-    { id: 'organization', label: 'Organization' },
-    { id: 'seat-management', label: 'Seat Management' },
-    { id: 'travel-wallet', label: 'Travel Wallet' }
+    { id: 'enterprise', label: 'Enterprise' }
   ];
 
   const renderSection = () => {
@@ -91,25 +89,7 @@ const TourDetail = () => {
         return <TourChat />;
       case 'broadcasts':
         return <BroadcastSystem tourId={tourId || '1'} />;
-      case 'organization':
-        return (
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
-            <EnterpriseSettings 
-              organizationId={userOrganization.id} 
-              currentUserId={user?.id || 'current-user'} 
-            />
-          </div>
-        );
-      case 'seat-management':
-        return (
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
-            <EnterpriseSettings 
-              organizationId={userOrganization.id} 
-              currentUserId={user?.id || 'current-user'} 
-            />
-          </div>
-        );
-      case 'travel-wallet':
+      case 'enterprise':
         return (
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
             <EnterpriseSettings 

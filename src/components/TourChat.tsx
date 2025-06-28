@@ -14,7 +14,7 @@ export const TourChat = () => {
 
   // Get tour data for context
   const tourData = proTripMockData[finalTourId];
-  const tourName = tourData?.title || 'Tour';
+  const tourName = tourData?.title || 'Event';
 
   const tourMessages = getMessagesForTour(finalTourId);
 
@@ -42,8 +42,8 @@ export const TourChat = () => {
           <Radio size={20} className="text-glass-orange" />
         </div>
         <div>
-          <h3 className="text-lg font-semibold text-white">Tour-Wide Chat</h3>
-          <p className="text-gray-400 text-sm">Messages across all {tourName} stops</p>
+          <h3 className="text-lg font-semibold text-white">Event Chat</h3>
+          <p className="text-gray-400 text-sm">Messages across the event</p>
         </div>
       </div>
 
@@ -69,8 +69,8 @@ export const TourChat = () => {
         ) : (
           <div className="text-center py-8">
             <MessageCircle size={48} className="text-slate-600 mx-auto mb-4" />
-            <h4 className="text-lg font-medium text-slate-400 mb-2">Start the tour conversation</h4>
-            <p className="text-slate-500 text-sm">Messages here are visible to everyone on the tour</p>
+            <h4 className="text-lg font-medium text-slate-400 mb-2">Start the event conversation</h4>
+            <p className="text-slate-500 text-sm">Messages here are visible to everyone in the event</p>
           </div>
         )}
       </div>
@@ -90,7 +90,7 @@ export const TourChat = () => {
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Message the entire tour team..."
+            placeholder=""
             rows={2}
             className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-glass-orange resize-none"
           />
