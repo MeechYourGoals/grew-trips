@@ -6,8 +6,9 @@ import { MobileProTripCard } from '../components/MobileProTripCard';
 import { MobileHeader } from '../components/MobileHeader';
 import { CreateTripModal } from '../components/CreateTripModal';
 import { SentimentAnalysis } from '../components/SentimentAnalysis';
-import { ProUpgradeModal } from '../components/ProUpgradeModal';
+import { UpgradeModal } from '../components/UpgradeModal';
 import { SettingsMenu } from '../components/SettingsMenu';
+import { NotificationBell } from '../components/NotificationBell';
 import { ToggleGroup, ToggleGroupItem } from '../components/ui/toggle-group';
 import { 
   DropdownMenu,
@@ -23,7 +24,7 @@ import { proTripMockData } from '../data/proTripMockData';
 
 const Index = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isProModalOpen, setIsProModalOpen] = useState(false);
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [viewMode, setViewMode] = useState('myTrips');
   const navigate = useNavigate();
@@ -151,7 +152,7 @@ const Index = () => {
         {/* Mobile Header */}
         <MobileHeader
           onCreateTrip={() => setIsCreateModalOpen(true)}
-          onUpgradeToProo={() => setIsProModalOpen(true)}
+          onUpgradeToProo={() => setIsUpgradeModalOpen(true)}
           onSettings={() => setIsSettingsOpen(true)}
           onProDashboard={() => navigate('/tour/pro-1')}
           viewMode={viewMode}
@@ -182,11 +183,11 @@ const Index = () => {
               </button>
               
               <button
-                onClick={() => setIsProModalOpen(true)}
+                onClick={() => setIsUpgradeModalOpen(true)}
                 className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg font-medium"
               >
                 <Crown size={20} />
-                Upgrade to Pro
+                Upgrade to Plus/Pro
               </button>
               
               <button
@@ -196,6 +197,8 @@ const Index = () => {
                 <Plus size={20} />
                 Create New Trip
               </button>
+
+              <NotificationBell />
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -215,11 +218,11 @@ const Index = () => {
                     Account Settings
                   </DropdownMenuItem>
                   <DropdownMenuItem 
-                    onClick={() => setIsProModalOpen(true)}
+                    onClick={() => setIsUpgradeModalOpen(true)}
                     className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
                   >
                     <Crown size={16} className="text-yellow-500" />
-                    Upgrade to Pro
+                    Upgrade to Plus/Pro
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -342,10 +345,10 @@ const Index = () => {
         onClose={() => setIsCreateModalOpen(false)} 
       />
 
-      {/* Pro Upgrade Modal */}
-      <ProUpgradeModal 
-        isOpen={isProModalOpen} 
-        onClose={() => setIsProModalOpen(false)} 
+      {/* Upgrade Modal */}
+      <UpgradeModal 
+        isOpen={isUpgradeModalOpen} 
+        onClose={() => setIsUpgradeModalOpen(false)} 
       />
 
       {/* Settings Menu */}
