@@ -9,6 +9,7 @@ import { ProTripTeam } from '../components/ProTripTeam';
 import { ProTripSchedule } from '../components/ProTripSchedule';
 import { ProTripItinerary } from '../components/ProTripItinerary';
 import { ProTripBudgetDetailed } from '../components/ProTripBudgetDetailed';
+import { UniversalTripAI } from '../components/UniversalTripAI';
 import { proTripMockData } from '../data/proTripMockData';
 import { getTripLabels } from '../utils/tripLabels';
 
@@ -64,6 +65,22 @@ const ProTripDetail = () => {
   
   const labels = getTripLabels(tripData.category);
 
+  // Build comprehensive Pro trip context
+  const tripContext = {
+    id: proTripId,
+    title: tripData.title,
+    location: tripData.location,
+    dateRange: tripData.dateRange,
+    basecamp: tripData.basecamp ? { name: tripData.basecamp.name, address: tripData.basecamp.address } : undefined,
+    collaborators: tripData.participants,
+    itinerary: tripData.itinerary,
+    budget: tripData.budget,
+    broadcasts: [],
+    links: [],
+    messages: [],
+    isPro: true
+  };
+
   return (
     <div className="min-h-screen bg-black">
       <div className="container mx-auto px-6 py-8 max-w-7xl">
@@ -80,6 +97,9 @@ const ProTripDetail = () => {
           </button>
 
           <div className="flex items-center gap-4">
+            {/* Universal Trip AI Button */}
+            <UniversalTripAI tripContext={tripContext} />
+
             <div className="bg-gradient-to-r from-glass-orange to-glass-yellow p-2 rounded-lg">
               <Crown size={20} className="text-white" />
             </div>

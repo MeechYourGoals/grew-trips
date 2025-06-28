@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Calendar, MapPin, Users, Plus, Mic, Music, Trophy, Briefcase, Hotel, Plane } from 'lucide-react';
 import { Tour, TourTrip, ProTripData } from '../types/pro';
+import { UniversalTripAI } from './UniversalTripAI';
 import { proTripMockData } from '../data/proTripMockData';
 
 // Convert ProTripData to Tour format for compatibility
@@ -94,6 +94,22 @@ export const TourDashboard = () => {
   console.log('TourDashboard - Found trip data:', proTripData.title);
   const [tour] = useState<Tour>(convertProTripToTour(proTripData));
 
+  // Build trip context for AI
+  const tripContext = {
+    id: proTripId || 'tour-1',
+    title: tour.name,
+    location: proTripData.location,
+    dateRange: `${tour.startDate} - ${tour.endDate}`,
+    basecamp: proTripData.basecamp ? { name: proTripData.basecamp.name, address: proTripData.basecamp.address } : undefined,
+    collaborators: proTripData.participants,
+    itinerary: proTripData.itinerary,
+    budget: proTripData.budget,
+    broadcasts: [],
+    links: [],
+    messages: [],
+    isPro: true
+  };
+
   // Calculate upcoming events (current date or future)
   const today = new Date();
   const upcomingEvents = tour.trips.filter(trip => new Date(trip.date) >= today).length;
@@ -134,8 +150,13 @@ export const TourDashboard = () => {
               <h1 className="text-4xl font-bold text-white mb-2">{tour.name}</h1>
               <p className="text-gray-400">{tour.description}</p>
             </div>
-            <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-2">
-              <span className="text-glass-orange font-medium">TRIPS PRO</span>
+            <div className="flex items-center gap-4">
+              {/* Universal Trip AI Button */}
+              <UniversalTripAI tripContext={tripContext} />
+              
+              <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-white/20 rounded-2xl px-4 py-2">
+                <span className="text-glass-orange font-medium">TRIPS PRO</span>
+              </div>
             </div>
           </div>
           

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MessageCircle, Settings, UserPlus, Sparkles, Crown } from 'lucide-react';
@@ -12,9 +11,11 @@ import { AuthModal } from '../components/AuthModal';
 import { TripSettings } from '../components/TripSettings';
 import { TripPreferences } from '../components/TripPreferences';
 import { GeminiAIChat } from '../components/GeminiAIChat';
+import { UniversalTripAI } from '../components/UniversalTripAI';
 import { TripsPlusUpsellModal } from '../components/TripsPlusUpsellModal';
 import { useAuth } from '../hooks/useAuth';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
+import { useMessages } from '../hooks/useMessages';
 import { TripPreferences as TripPreferencesType } from '../types/consumer';
 
 const TripDetail = () => {
@@ -22,6 +23,7 @@ const TripDetail = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isPlus } = useConsumerSubscription();
+  const { getMessagesForTrip } = useMessages();
   const [activeTab, setActiveTab] = useState('chat');
   const [showInbox, setShowInbox] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -49,6 +51,55 @@ const TripDetail = () => {
   const basecamp = {
     name: "Central Paris Hotel",
     address: "123 Rue de Rivoli, 75001 Paris, France"
+  };
+
+  // Get trip messages for context
+  const tripMessages = getMessagesForTrip(tripId || '1');
+
+  // Mock data for trip context
+  const mockBroadcasts = [
+    { id: 1, senderName: "Emma", content: "Just booked our dinner reservation at Le Comptoir du 7ème for 7:30 PM tonight!", timestamp: "2025-01-15T15:30:00Z" },
+    { id: 2, senderName: "Jake", content: "Weather looks great tomorrow - perfect for the Eiffel Tower visit at 2 PM", timestamp: "2025-01-15T10:00:00Z" }
+  ];
+
+  const mockLinks = [
+    { id: 1, title: "Our Airbnb in Montmartre", url: "https://airbnb.com/rooms/123", category: "Accommodation" },
+    { id: 2, title: "Louvre Museum Tickets", url: "https://louvre.fr/tickets", category: "Attractions" },
+    { id: 3, title: "Best Bakeries Near Us", url: "https://timeout.com/paris/bakeries", category: "Food" }
+  ];
+
+  const mockItinerary = [
+    {
+      date: "2025-07-14",
+      events: [
+        { title: "Arrival & Check-in", location: "Central Paris Hotel", time: "14:00" },
+        { title: "Dinner at Le Comptoir du 7ème", location: "8 Avenue Bosquet", time: "19:30" }
+      ]
+    },
+    {
+      date: "2025-07-15", 
+      events: [
+        { title: "Louvre Museum Visit", location: "Musée du Louvre", time: "10:00" },
+        { title: "Eiffel Tower", location: "Champ de Mars", time: "14:00" }
+      ]
+    }
+  ];
+
+  // Build comprehensive trip context
+  const tripContext = {
+    id: tripId || '1',
+    title: trip.title,
+    location: trip.location,
+    dateRange: trip.dateRange,
+    basecamp,
+    preferences: tripPreferences,
+    calendar: mockItinerary,
+    broadcasts: mockBroadcasts,
+    links: mockLinks,
+    messages: tripMessages,
+    collaborators: trip.collaborators,
+    itinerary: mockItinerary,
+    isPro: false
   };
 
   const tabs = [
@@ -100,6 +151,9 @@ const TripDetail = () => {
           </button>
 
           <div className="flex items-center gap-3">
+            {/* Universal Trip AI Button */}
+            <UniversalTripAI tripContext={tripContext} />
+
             {/* Trips Plus Badge */}
             {isPlus && (
               <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-glass-orange/30 rounded-xl px-4 py-2 flex items-center gap-2">
