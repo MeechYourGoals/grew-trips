@@ -21,7 +21,6 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
     e.preventDefault();
     setIsLoading(true);
     setHasError(false);
-    // The iframe will update automatically due to the getEmbedUrl() call
   };
 
   const handleIframeLoad = () => {
@@ -52,7 +51,7 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
 
       {/* Loading State */}
       {isLoading && (
-        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center z-5">
+        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center z-5 rounded-3xl">
           <div className="text-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-3"></div>
             <p className="text-gray-300 text-sm">Loading map...</p>
@@ -62,7 +61,7 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
 
       {/* Error State */}
       {hasError && (
-        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center z-5">
+        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center z-5 rounded-3xl">
           <div className="text-center p-6">
             <MapPin size={48} className="text-gray-500 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-300 mb-2">Map unavailable</h3>
@@ -82,7 +81,7 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
 
       {/* Google Maps Iframe */}
       <iframe
-        key={getEmbedUrl()} // Force re-render when URL changes
+        key={getEmbedUrl()}
         src={getEmbedUrl()}
         width="100%"
         height="100%"
@@ -90,7 +89,7 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
         allowFullScreen
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
-        className="absolute inset-0 rounded-3xl"
+        className="absolute inset-0 w-full h-full"
         onLoad={handleIframeLoad}
         onError={handleIframeError}
       />

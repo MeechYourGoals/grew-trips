@@ -113,9 +113,9 @@ export const PlacesSection = () => {
       )}
 
       {/* Two Equal-Sized Squares Side by Side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 h-96">
-        {/* Left Square - Add Place Section or Places List */}
-        <div className="bg-gray-900 border border-gray-800 rounded-3xl p-8 flex flex-col shadow-2xl shadow-black/50">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Left Square - Places Section */}
+        <div className="bg-gray-900 border border-gray-800 rounded-3xl p-8 flex flex-col shadow-2xl shadow-black/50 min-h-[500px]">
           {places.length === 0 ? (
             <div className="flex flex-col justify-center items-center text-center h-full">
               <div className="flex justify-center mb-6">
@@ -163,7 +163,7 @@ export const PlacesSection = () => {
         </div>
 
         {/* Right Square - Google Maps */}
-        <div className="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl shadow-black/50">
+        <div className="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl shadow-black/50 min-h-[500px]">
           <GoogleMapsEmbed className="w-full h-full" />
         </div>
       </div>
