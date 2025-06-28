@@ -117,7 +117,7 @@ export const PlacesSection = () => {
         {/* Left Square - Add Place Section or Places List */}
         <div className="bg-gray-900 border border-gray-800 rounded-3xl p-8 flex flex-col shadow-2xl shadow-black/50">
           {places.length === 0 ? (
-            // Empty state
+            // Empty state - REMOVED THE GRAY BAR
             <div className="flex flex-col justify-center items-center text-center h-full">
               <div className="flex justify-center mb-6">
                 <div className="w-20 h-20 bg-gradient-to-r from-red-900/50 to-yellow-900/50 rounded-full flex items-center justify-center border border-red-500/30">
