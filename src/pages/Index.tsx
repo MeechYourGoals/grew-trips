@@ -284,27 +284,21 @@ const Index = () => {
         {/* Main Content - Trip Cards */}
         <div className="mb-8">
           <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
-            {viewMode === 'myTrips' ? (
-              trips.map((trip) => (
-                <React.Fragment key={trip.id}>
-                  {isMobile ? (
-                    <MobileTripCard trip={trip} />
+            {viewMode === 'myTrips'
+              ? trips.map((trip) =>
+                  isMobile ? (
+                    <MobileTripCard key={trip.id} trip={trip} />
                   ) : (
-                    <TripCard trip={trip} />
-                  )}
-                </React.Fragment>
-              ))
-            ) : (
-              Object.values(proTripMockData).map((trip) => (
-                <React.Fragment key={trip.id}>
-                  {isMobile ? (
-                    <MobileProTripCard trip={trip} />
+                    <TripCard key={trip.id} trip={trip} />
+                  )
+                )
+              : Object.values(proTripMockData).map((trip) =>
+                  isMobile ? (
+                    <MobileProTripCard key={trip.id} trip={trip} />
                   ) : (
-                    <ProTripCard trip={trip} />
-                  )}
-                </React.Fragment>
-              ))
-            )}
+                    <ProTripCard key={trip.id} trip={trip} />
+                  )
+                )}
           </div>
 
           {/* Empty State for new users */}
