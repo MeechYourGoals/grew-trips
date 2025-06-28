@@ -28,8 +28,10 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/trip/:tripId" element={<TripDetail />} />
               <Route path="/trip/:tripId/edit-itinerary" element={<ItineraryAssignmentPage />} />
+              {/* Pro trip routes MUST come before general tour routes */}
               <Route path="/tour/pro-:proTripId" element={<ProTripDetail />} />
               <Route path="/tour/pro-:proTripId/dashboard" element={<TourDashboard />} />
+              {/* General tour route comes AFTER specific pro routes */}
               <Route path="/tour/:tourId" element={<TourDetail />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
