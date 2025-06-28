@@ -109,9 +109,13 @@ const ProTripDetail = () => {
     <div className="min-h-screen bg-black">
       <div className="container mx-auto px-6 py-8 max-w-7xl">
         {/* Pro Trip Header */}
-        <ProTripDetailHeader 
+        <ProTripDetailHeader
           tripContext={tripContext}
-          onSettingsOpen={() => setShowTripSettings(true)}
+          showInbox={showInbox}
+          onToggleInbox={() => setShowInbox(!showInbox)}
+          onShowInvite={() => setShowInvite(true)}
+          onShowTripSettings={() => setShowTripSettings(true)}
+          onShowAuth={() => setShowAuth(true)}
         />
 
         {/* Message Inbox - same as regular trips */}
