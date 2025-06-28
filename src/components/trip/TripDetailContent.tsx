@@ -39,7 +39,7 @@ export const TripDetailContent = ({
   const renderTabContent = () => {
     switch (activeTab) {
       case 'chat':
-        return <TripTabs activeTab="chat" onTabChange={() => {}} />;
+        return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
       case 'places':
         return <PlacesSection />;
       case 'preferences':
@@ -58,7 +58,7 @@ export const TripDetailContent = ({
           />
         );
       default:
-        return <TripTabs activeTab="chat" onTabChange={() => {}} />;
+        return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
     }
   };
 

@@ -1,19 +1,21 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Users, Calendar, Camera, Radio, Link, MessageSquare } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Camera, Radio, Link, MessageSquare, Receipt } from 'lucide-react';
 import { TripChat } from './TripChat';
 import { GroupCalendar } from './GroupCalendar';
 import { PhotoAlbum } from './PhotoAlbum';
 import { Broadcasts } from './Broadcasts';
 import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
+import { ReceiptsTab } from './receipts/ReceiptsTab';
 
 interface TripTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  tripId?: string;
 }
 
-export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabChange }: TripTabsProps) => {
+export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabChange, tripId = '1' }: TripTabsProps) => {
   const [activeTab, setActiveTab] = useState('chat');
 
   const tabs = [
@@ -22,7 +24,8 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
     { id: 'links', label: 'Links', icon: Link },
     { id: 'comments', label: 'Comments', icon: MessageSquare },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
-    { id: 'photos', label: 'Photos', icon: Camera }
+    { id: 'photos', label: 'Photos', icon: Camera },
+    { id: 'receipts', label: 'Receipts', icon: Receipt }
   ];
 
   const handleTabChange = (tab: string) => {
@@ -43,6 +46,8 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
         return <GroupCalendar />;
       case 'photos':
         return <PhotoAlbum />;
+      case 'receipts':
+        return <ReceiptsTab tripId={tripId} />;
       default:
         return <TripChat />;
     }
@@ -51,7 +56,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
   return (
     <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
       {/* Tab Navigation */}
-      <div className="grid grid-cols-6 gap-2 mb-8">
+      <div className="grid grid-cols-7 gap-2 mb-8">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
@@ -65,7 +70,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
               }`}
             >
               <Icon size={16} />
-              <span className="hidden sm:inline">{tab.label}</span>
+              <span className="hidden sm:inline text-xs">{tab.label}</span>
             </button>
           );
         })}
