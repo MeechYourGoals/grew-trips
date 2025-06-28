@@ -14,7 +14,7 @@ const TourDetail = () => {
   const { tourId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [activeSection, setActiveSection] = useState('dashboard');
+  const [activeSection, setActiveSection] = useState('transport-accommodation');
 
   // Mock current user as team member for demo
   const currentUser = {
@@ -35,9 +35,7 @@ const TourDetail = () => {
   };
 
   const sections = [
-    { id: 'dashboard', label: 'Dashboard' },
     { id: 'transport-accommodation', label: 'Transport & Stay' },
-    { id: 'messages', label: 'Message Inbox' },
     { id: 'chat', label: 'Chat' },
     { id: 'broadcasts', label: 'Broadcasts' },
     { id: 'enterprise', label: 'Enterprise' }
@@ -45,8 +43,6 @@ const TourDetail = () => {
 
   const renderSection = () => {
     switch (activeSection) {
-      case 'dashboard':
-        return <TourDashboard />;
       case 'transport-accommodation':
         return (
           <div className="space-y-8">
@@ -83,8 +79,6 @@ const TourDetail = () => {
             />
           </div>
         );
-      case 'messages':
-        return <MessageInbox />;
       case 'chat':
         return <TourChat />;
       case 'broadcasts':
@@ -99,7 +93,41 @@ const TourDetail = () => {
           </div>
         );
       default:
-        return <TourDashboard />;
+        return (
+          <div className="space-y-8">
+            {/* Mock trip data for demo */}
+            <TransportationAccommodations 
+              trip={{
+                id: '1',
+                tourId: '1',
+                city: 'Los Angeles',
+                venue: 'Comedy Store',
+                venueAddress: '8433 Sunset Blvd, West Hollywood, CA 90069',
+                date: '2025-07-15',
+                category: 'headline',
+                status: 'confirmed',
+                participants: [],
+                accommodation: {
+                  type: 'hotel',
+                  name: 'The Sunset Marquis',
+                  address: '1200 Alta Loma Rd, West Hollywood, CA 90069',
+                  confirmationNumber: 'SM-789123',
+                  checkIn: '2025-07-14',
+                  checkOut: '2025-07-16',
+                  isPrivate: false
+                },
+                transportation: {
+                  type: 'flight',
+                  details: 'Delta Flight 1234 - LAX Terminal 3',
+                  confirmationNumber: 'DL-ABC123',
+                  dateTime: '2025-07-14T14:30:00',
+                  isPrivate: false
+                }
+              }}
+              currentUser={currentUser}
+            />
+          </div>
+        );
     }
   };
 
@@ -138,7 +166,7 @@ const TourDetail = () => {
               }`}
             >
               {section.label}
-              {section.id === 'messages' && (
+              {section.id === 'chat' && (
                 <MessageCircle size={16} className="ml-2" />
               )}
             </button>
