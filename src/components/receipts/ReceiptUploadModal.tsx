@@ -65,7 +65,7 @@ export const ReceiptUploadModal = ({
         id: Date.now().toString(),
         tripId,
         uploaderId: user.id,
-        uploaderName: user.name || 'Unknown User',
+        uploaderName: user.displayName || 'Unknown User',
         fileUrl: URL.createObjectURL(selectedFile),
         fileName: selectedFile.name,
         fileType: selectedFile.type,
