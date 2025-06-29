@@ -175,14 +175,6 @@ const Index = () => {
             
             <div className="flex items-center gap-4">
               <button
-                onClick={() => navigate('/tour/pro-1')}
-                className="bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:border-yellow-500/50 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
-              >
-                <Crown size={20} className="text-yellow-500" />
-                Pro Dashboard
-              </button>
-              
-              <button
                 onClick={() => setIsUpgradeModalOpen(true)}
                 className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg font-medium"
               >

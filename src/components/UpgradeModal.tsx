@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Crown, Building, Sparkles, MessageCircle, Settings, Zap, Users, Shield, TrendingUp, Star, BarChart3, Calendar, Wallet, Globe, Phone } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
@@ -20,8 +19,9 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
       await upgradeToPlus();
       onClose();
     } else {
-      // Handle Pro upgrade - integrate with existing Pro modal logic
+      // Handle Pro upgrade - activate Pro features
       console.log('Upgrading to Pro...');
+      // TODO: Implement Pro activation logic
       onClose();
     }
   };
@@ -203,28 +203,21 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
 
             <div className="text-center">
               <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 backdrop-blur-sm border border-yellow-500/30 rounded-2xl p-6 mb-6">
-                <div className="text-4xl font-bold text-white mb-2">Contact Sales</div>
-                <p className="text-gray-300 mb-2">Custom pricing for organizations</p>
-                <p className="text-sm text-yellow-400">Starting from $99/month for up to 10 seats</p>
+                <div className="text-4xl font-bold text-white mb-2">Start Trial</div>
+                <p className="text-gray-300 mb-2">Custom pricing available for large scale events, contact sales for more</p>
               </div>
             </div>
           </div>
         )}
 
         {/* Action Buttons */}
-        <div className="flex gap-4 justify-center">
-          <button
-            onClick={onClose}
-            className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white rounded-2xl transition-all duration-200 font-medium"
-          >
-            Maybe Later
-          </button>
+        <div className="flex justify-center">
           <button
             onClick={handleUpgrade}
             disabled={isLoading}
             className="px-8 py-3 bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg disabled:opacity-50"
           >
-            {isLoading ? 'Processing...' : selectedPlan === 'plus' ? 'Start Free Trial' : 'Contact Sales'}
+            {isLoading ? 'Processing...' : 'Start Free Trial'}
           </button>
         </div>
       </div>

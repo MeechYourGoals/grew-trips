@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Crown, Users, Shield, Zap, TrendingUp, Building, Star } from 'lucide-react';
 import { SUBSCRIPTION_TIERS } from '../types/pro';
@@ -17,7 +16,7 @@ export const ProUpgradeModal = ({ isOpen, onClose }: ProUpgradeModalProps) => {
 
   const handleStartFreeTrial = (tier: string) => {
     console.log(`Starting free trial for ${tier} tier`);
-    // This would integrate with your Stripe checkout for Enterprise subscriptions
+    // TODO: Implement Pro activation logic
     onClose();
   };
 
@@ -146,13 +145,7 @@ export const ProUpgradeModal = ({ isOpen, onClose }: ProUpgradeModalProps) => {
           <div className="text-sm text-glass-yellow mb-4">
             14-day free trial • No credit card required • Cancel anytime
           </div>
-          <div className={`flex gap-4 ${isMobile ? 'flex-col' : 'justify-center'}`}>
-            <button
-              onClick={onClose}
-              className="px-8 py-3 bg-white/10 backdrop-blur-md border border-white/20 hover:bg-white/20 text-white rounded-2xl transition-all duration-200 font-medium"
-            >
-              Maybe Later
-            </button>
+          <div className={`flex justify-center ${isMobile ? '' : ''}`}>
             <button
               onClick={() => handleStartFreeTrial(selectedTier)}
               className="px-8 py-3 bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg"
