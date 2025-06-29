@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TripHeader } from '../components/TripHeader';
@@ -26,18 +25,14 @@ const ProTripDetail = () => {
   const [showTripsPlusModal, setShowTripsPlusModal] = useState(false);
   const [tripPreferences, setTripPreferences] = useState<TripPreferencesType | undefined>();
 
-  console.log('ProTripDetail - proTripId from URL:', proTripId);
-  console.log('ProTripDetail - Available trip IDs:', Object.keys(proTripMockData));
 
   if (!proTripId) {
-    console.log('ProTripDetail - No proTripId provided');
     return (
       <ProTripNotFound message="No trip ID provided." />
     );
   }
 
   if (!(proTripId in proTripMockData)) {
-    console.log('ProTripDetail - Trip ID not found in mock data:', proTripId);
     return (
       <ProTripNotFound 
         message="The requested trip could not be found."
@@ -48,7 +43,6 @@ const ProTripDetail = () => {
   }
 
   const tripData = proTripMockData[proTripId];
-  console.log('ProTripDetail - Found trip data:', tripData?.title);
 
   // Convert Pro trip data to standard trip format
   const trip = {
