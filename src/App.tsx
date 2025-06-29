@@ -8,10 +8,8 @@ import { AuthProvider } from "./hooks/useAuth";
 import { ConsumerSubscriptionProvider } from "./hooks/useConsumerSubscription";
 import Index from "./pages/Index";
 import TripDetail from "./pages/TripDetail";
-import TourDetail from "./pages/TourDetail";
 import ItineraryAssignmentPage from "./pages/ItineraryAssignmentPage";
 import ProTripDetail from "./pages/ProTripDetail";
-import { TourDashboard } from "./components/TourDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,12 +26,9 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/trip/:tripId" element={<TripDetail />} />
               <Route path="/trip/:tripId/edit-itinerary" element={<ItineraryAssignmentPage />} />
-              {/* Pro trip routes MUST come before general tour routes */}
+              {/* Pro trip routes - MUST come before general routes */}
               <Route path="/tour/pro-:proTripId" element={<ProTripDetail />} />
-              <Route path="/tour/pro-:proTripId/dashboard" element={<TourDashboard />} />
-              {/* General tour route comes AFTER specific pro routes */}
-              <Route path="/tour/:tourId" element={<TourDetail />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              {/* Catch-all route for 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
