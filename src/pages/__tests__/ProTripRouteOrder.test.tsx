@@ -4,14 +4,12 @@ import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ProTripDetail from '../ProTripDetail';
-import TourDetail from '../TourDetail';
 
 const renderWithRoutes = (path: string) => {
   render(
     <MemoryRouter initialEntries={[path]}>
       <Routes>
         <Route path="/tour/pro-:proTripId" element={<ProTripDetail />} />
-        <Route path="/tour/:tourId" element={<TourDetail />} />
       </Routes>
     </MemoryRouter>
   );
