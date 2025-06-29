@@ -1,23 +1,15 @@
+
 import React, { useState } from 'react';
-import { TripCard } from '../components/TripCard';
-import { ProTripCard } from '../components/ProTripCard';
-import { MobileTripCard } from '../components/MobileTripCard';
-import { MobileProTripCard } from '../components/MobileProTripCard';
 import { MobileHeader } from '../components/MobileHeader';
 import { CreateTripModal } from '../components/CreateTripModal';
 import { SentimentAnalysis } from '../components/SentimentAnalysis';
 import { UpgradeModal } from '../components/UpgradeModal';
 import { SettingsMenu } from '../components/SettingsMenu';
-import { NotificationBell } from '../components/NotificationBell';
-import { ToggleGroup, ToggleGroupItem } from '../components/ui/toggle-group';
-import { 
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../components/ui/dropdown-menu';
-import { Plus, Crown, Settings, User, MapPin } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { TripStatsOverview } from '../components/home/TripStatsOverview';
+import { TripViewToggle } from '../components/home/TripViewToggle';
+import { DesktopHeader } from '../components/home/DesktopHeader';
+import { TripGrid } from '../components/home/TripGrid';
+import { EmptyState } from '../components/home/EmptyState';
 import { useAuth } from '../hooks/useAuth';
 import { useIsMobile } from '../hooks/use-mobile';
 import { proTripMockData } from '../data/proTripMockData';
@@ -27,7 +19,6 @@ const Index = () => {
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [viewMode, setViewMode] = useState('myTrips');
-  const navigate = useNavigate();
   const { user } = useAuth();
   const isMobile = useIsMobile();
 
@@ -139,6 +130,8 @@ const Index = () => {
 
   console.log('Index - proTripMockData IDs:', Object.keys(proTripMockData));
 
+  const hasTrips = viewMode === 'myTrips' ? trips.length > 0 : Object.keys(proTripMockData).length > 0;
+
   return (
     <div className="min-h-screen bg-black font-outfit">
       {/* Animated background elements */}
@@ -154,196 +147,64 @@ const Index = () => {
           onCreateTrip={() => setIsCreateModalOpen(true)}
           onUpgradeToProo={() => setIsUpgradeModalOpen(true)}
           onSettings={() => setIsSettingsOpen(true)}
-          onProDashboard={() => navigate('/tour/pro-1')}
+          onProDashboard={() => {}} // Empty function since Pro Dashboard was removed
           viewMode={viewMode}
         />
 
         {/* Desktop Header */}
         {!isMobile && (
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
-                {viewMode === 'myTrips' ? 'My Trips' : 'Trips Pro'}
-              </h1>
-              <p className="text-gray-400">
-                {viewMode === 'myTrips' 
-                  ? 'Plan, organize, and share your perfect trips' 
-                  : 'Professional trip management with advanced features'
-                }
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setIsUpgradeModalOpen(true)}
-                className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg font-medium"
-              >
-                <Crown size={20} />
-                Upgrade to Plus/Pro
-              </button>
-              
-              <button
-                onClick={() => setIsCreateModalOpen(true)}
-                className="bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:bg-gray-800/80 hover:border-gray-600 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
-              >
-                <Plus size={20} />
-                Create New Trip
-              </button>
-
-              <NotificationBell />
-
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button className="bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:bg-gray-800/80 hover:border-gray-600 text-white p-3 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
-                    <Settings size={20} />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent 
-                  align="end" 
-                  className="bg-gray-900/95 backdrop-blur-md border border-gray-700 text-white min-w-[200px] z-50"
-                >
-                  <DropdownMenuItem 
-                    onClick={() => setIsSettingsOpen(true)}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
-                  >
-                    <User size={16} />
-                    Account Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={() => setIsUpgradeModalOpen(true)}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
-                  >
-                    <Crown size={16} className="text-yellow-500" />
-                    Upgrade to Plus/Pro
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
+          <DesktopHeader
+            viewMode={viewMode}
+            onCreateTrip={() => setIsCreateModalOpen(true)}
+            onUpgrade={() => setIsUpgradeModalOpen(true)}
+            onSettings={() => setIsSettingsOpen(true)}
+          />
         )}
 
         {/* Enhanced Toggle */}
-        <div className="flex justify-center mb-8">
-          <ToggleGroup 
-            type="single" 
-            value={viewMode} 
-            onValueChange={(value) => value && setViewMode(value)}
-            className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-2"
-          >
-            <ToggleGroupItem 
-              value="myTrips" 
-              className={`px-4 sm:px-8 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-yellow-500 data-[state=on]:text-black transition-all font-medium ${isMobile ? 'text-sm' : ''}`}
-            >
-              <div className="flex items-center gap-2">
-                <MapPin size={isMobile ? 16 : 18} />
-                <span className={isMobile ? 'text-sm' : ''}>My Trips</span>
-              </div>
-            </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="tripsPro" 
-              className={`px-4 sm:px-8 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-yellow-500 data-[state=on]:to-yellow-600 data-[state=on]:text-black transition-all font-medium flex items-center gap-2 ${isMobile ? 'text-sm' : ''}`}
-            >
-              <Crown size={isMobile ? 16 : 18} />
-              <span className={isMobile ? 'text-sm' : ''}>Trips Pro</span>
-            </ToggleGroupItem>
-          </ToggleGroup>
-        </div>
+        <TripViewToggle
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+        />
 
-        {/* Trip Stats Overview - CHANGED TO HORIZONTAL LAYOUT */}
+        {/* Trip Stats Overview */}
         {viewMode === 'myTrips' && !isMobile && (
-          <div className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-6 mb-8">
-            <div className="grid grid-cols-4 gap-6">
-              <div className="text-center">
-                <div className="text-3xl font-bold text-white mb-2">{trips.length}</div>
-                <div className="text-gray-400">Total Trips</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-yellow-500 mb-2">3</div>
-                <div className="text-gray-400">Upcoming</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-green-500 mb-2">2</div>
-                <div className="text-gray-400">Completed</div>
-              </div>
-              <div className="text-center">
-                <div className="text-3xl font-bold text-blue-500 mb-2">1</div>
-                <div className="text-gray-400">In Planning</div>
-              </div>
-            </div>
-          </div>
+          <TripStatsOverview totalTrips={trips.length} />
         )}
 
         {/* Main Content - Trip Cards */}
         <div className="mb-8">
-          <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
-            {viewMode === 'myTrips' ? (
-              trips.map((trip) => (
-                <React.Fragment key={trip.id}>
-                  {isMobile ? (
-                    <MobileTripCard trip={trip} />
-                  ) : (
-                    <TripCard trip={trip} />
-                  )}
-                </React.Fragment>
-              ))
-            ) : (
-              Object.values(proTripMockData).map((trip) => (
-                <React.Fragment key={trip.id}>
-                  {isMobile ? (
-                    <MobileProTripCard trip={trip} />
-                  ) : (
-                    <ProTripCard trip={trip} />
-                  )}
-                </React.Fragment>
-              ))
-            )}
-          </div>
-
-          {/* Empty State for new users */}
-          {((viewMode === 'myTrips' && trips.length === 0) ||
-            (viewMode === 'tripsPro' && Object.keys(proTripMockData).length === 0)) && (
-            <div className="text-center py-16">
-              <div className="w-24 h-24 bg-gradient-to-br from-yellow-500/20 to-yellow-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                <MapPin size={40} className="text-yellow-500" />
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-3">
-                {viewMode === 'myTrips' ? 'No trips yet' : 'No professional trips yet'}
-              </h3>
-              <p className="text-gray-400 mb-8 max-w-md mx-auto">
-                {viewMode === 'myTrips' 
-                  ? 'Start planning your next adventure! Create your first trip and invite friends to join.'
-                  : 'Manage professional trips, tours, and events with advanced collaboration tools.'
-                }
-              </p>
-              <button
-                onClick={() => setIsCreateModalOpen(true)}
-                className="bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black px-8 py-4 rounded-2xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg"
-              >
-                Create Your First Trip
-              </button>
-            </div>
+          {hasTrips ? (
+            <TripGrid
+              viewMode={viewMode}
+              trips={trips}
+              proTrips={proTripMockData}
+            />
+          ) : (
+            <EmptyState
+              viewMode={viewMode}
+              onCreateTrip={() => setIsCreateModalOpen(true)}
+            />
           )}
         </div>
 
-        {/* AI Sentiment Analysis Section - Simplified on mobile */}
+        {/* AI Sentiment Analysis Section */}
         <div className="mt-12">
           <SentimentAnalysis />
         </div>
       </div>
 
-      {/* Create Trip Modal */}
+      {/* Modals */}
       <CreateTripModal 
         isOpen={isCreateModalOpen} 
         onClose={() => setIsCreateModalOpen(false)} 
       />
 
-      {/* Upgrade Modal */}
       <UpgradeModal 
         isOpen={isUpgradeModalOpen} 
         onClose={() => setIsUpgradeModalOpen(false)} 
       />
 
-      {/* Settings Menu */}
       <SettingsMenu 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
