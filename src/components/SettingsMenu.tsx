@@ -6,6 +6,7 @@ import { ProUpgradeModal } from './ProUpgradeModal';
 import { EnterpriseSettings } from './EnterpriseSettings';
 import { ConsumerSettings } from './ConsumerSettings';
 import { ProfileSection } from './settings/ProfileSection';
+import { useTripVariant } from '../contexts/TripVariantContext';
 import { NotificationsSection } from './settings/NotificationsSection';
 import { SubscriptionSection } from './settings/SubscriptionSection';
 
@@ -19,6 +20,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   const [showProModal, setShowProModal] = useState(false);
   const [activeSection, setActiveSection] = useState('profile');
   const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise'>('consumer');
+  const { accentColors } = useTripVariant();
 
   if (!isOpen || !user) return null;
 
@@ -95,7 +97,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
                 onClick={() => setSettingsType('consumer')}
                 className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
                   settingsType === 'consumer'
-                    ? 'bg-glass-orange text-white'
+                    ? `bg-${accentColors.primary} text-white`
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
@@ -105,7 +107,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
                 onClick={() => setSettingsType('enterprise')}
                 className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
                   settingsType === 'enterprise'
-                    ? 'bg-glass-orange text-white'
+                    ? `bg-${accentColors.primary} text-white`
                     : 'text-gray-400 hover:text-white'
                 }`}
               >

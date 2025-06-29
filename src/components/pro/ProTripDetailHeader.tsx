@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Settings, Crown, MessageCircle, UserPlus } from 'lucide-react';
 import { UniversalTripAI } from '../UniversalTripAI';
 import { useAuth } from '../../hooks/useAuth';
+import { useTripVariant } from '../../contexts/TripVariantContext';
 
 interface ProTripDetailHeaderProps {
   tripContext: any;
@@ -24,6 +25,7 @@ export const ProTripDetailHeader = ({
 }: ProTripDetailHeaderProps) => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { accentColors } = useTripVariant();
 
   return (
     <div className="flex items-center justify-between mb-8">
@@ -42,7 +44,7 @@ export const ProTripDetailHeader = ({
         <UniversalTripAI tripContext={tripContext} />
 
         {/* Pro Badge */}
-        <div className="bg-gradient-to-r from-glass-orange to-glass-yellow backdrop-blur-sm border border-yellow-500/30 rounded-xl px-4 py-2 flex items-center gap-2">
+        <div className={`bg-gradient-to-r ${accentColors.gradient} backdrop-blur-sm border border-yellow-500/30 rounded-xl px-4 py-2 flex items-center gap-2`}>
           <Crown size={16} className="text-white" />
           <span className="text-white font-medium">PRO</span>
         </div>
@@ -75,7 +77,7 @@ export const ProTripDetailHeader = ({
         ) : (
           <button
             onClick={onShowAuth}
-            className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-2 rounded-xl transition-colors font-medium"
+            className={`bg-gradient-to-r ${accentColors.gradient} text-white px-6 py-2 rounded-xl transition-colors font-medium`}
           >
             Sign In
           </button>

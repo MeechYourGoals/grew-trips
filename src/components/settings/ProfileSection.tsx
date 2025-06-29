@@ -2,6 +2,7 @@
 import React from 'react';
 import { User, Mail, Phone, Building } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useTripVariant } from '../../contexts/TripVariantContext';
 
 interface ProfileSectionProps {
   userOrganization?: {
@@ -11,13 +12,14 @@ interface ProfileSectionProps {
 
 export const ProfileSection = ({ userOrganization }: ProfileSectionProps) => {
   const { user, updateProfile } = useAuth();
+  const { accentColors } = useTripVariant();
 
   if (!user) return null;
 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <div className="w-20 h-20 bg-gradient-to-r from-glass-orange to-glass-yellow rounded-full mx-auto mb-4 flex items-center justify-center">
+        <div className={`w-20 h-20 bg-gradient-to-r ${accentColors.gradient} rounded-full mx-auto mb-4 flex items-center justify-center`}>
           {user.avatar ? (
             <img src={user.avatar} alt="Profile" className="w-full h-full rounded-full" />
           ) : (
@@ -28,9 +30,9 @@ export const ProfileSection = ({ userOrganization }: ProfileSectionProps) => {
         <p className="text-gray-400 text-sm">{user.email || user.phone}</p>
         {userOrganization && (
           <div className="mt-2">
-            <div className="inline-flex items-center gap-2 bg-glass-orange/20 px-3 py-1 rounded-full">
-              <Building size={14} className="text-glass-orange" />
-              <span className="text-glass-orange text-sm font-medium">{userOrganization.name}</span>
+            <div className={`inline-flex items-center gap-2 bg-${accentColors.primary}/20 px-3 py-1 rounded-full`}>
+              <Building size={14} className={`text-${accentColors.primary}`} />
+              <span className={`text-${accentColors.primary} text-sm font-medium`}>{userOrganization.name}</span>
             </div>
           </div>
         )}
@@ -43,7 +45,7 @@ export const ProfileSection = ({ userOrganization }: ProfileSectionProps) => {
             type="text"
             value={user.displayName}
             onChange={(e) => updateProfile({ displayName: e.target.value })}
-            className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-glass-orange"
+            className={`w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-${accentColors.primary}`}
           />
         </div>
 

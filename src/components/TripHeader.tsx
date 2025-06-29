@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Calendar, MapPin, Users, Plus, Settings } from 'lucide-react';
 import { InviteModal } from './InviteModal';
 import { useAuth } from '../hooks/useAuth';
+import { useTripVariant } from '../contexts/TripVariantContext';
 
 interface TripHeaderProps {
   trip: {
@@ -23,6 +24,7 @@ interface TripHeaderProps {
 export const TripHeader = ({ trip, onManageUsers }: TripHeaderProps) => {
   const { user } = useAuth();
   const [showInvite, setShowInvite] = useState(false);
+  const { accentColors } = useTripVariant();
 
   return (
     <>
@@ -33,11 +35,11 @@ export const TripHeader = ({ trip, onManageUsers }: TripHeaderProps) => {
             <h1 className="text-4xl font-bold text-white mb-4">{trip.title}</h1>
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
               <div className="flex items-center gap-2 text-gray-300">
-                <MapPin size={18} className="text-glass-orange" />
+                <MapPin size={18} className={`text-${accentColors.primary}`} />
                 <span>{trip.location}</span>
               </div>
               <div className="flex items-center gap-2 text-gray-300">
-                <Calendar size={18} className="text-glass-orange" />
+                <Calendar size={18} className={`text-${accentColors.primary}`} />
                 <span>{trip.dateRange}</span>
               </div>
             </div>
@@ -50,7 +52,7 @@ export const TripHeader = ({ trip, onManageUsers }: TripHeaderProps) => {
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 min-w-[280px]">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
-                <Users size={20} className="text-glass-orange" />
+                <Users size={20} className={`text-${accentColors.primary}`} />
                 <h3 className="text-white font-semibold">Trip Collaborators</h3>
               </div>
               <div className="flex items-center gap-2">
@@ -58,7 +60,7 @@ export const TripHeader = ({ trip, onManageUsers }: TripHeaderProps) => {
                 {onManageUsers && (
                   <button
                     onClick={onManageUsers}
-                    className="text-gray-400 hover:text-glass-orange transition-colors p-1 rounded-lg hover:bg-white/10"
+                    className={`text-gray-400 hover:text-${accentColors.primary} transition-colors p-1 rounded-lg hover:bg-white/10`}
                     title="Manage users"
                   >
                     <Settings size={16} />
@@ -83,7 +85,7 @@ export const TripHeader = ({ trip, onManageUsers }: TripHeaderProps) => {
             {user && (
               <button
                 onClick={() => setShowInvite(true)}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium py-3 rounded-xl transition-all duration-200 hover:scale-105"
+                className={`w-full flex items-center justify-center gap-2 bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 text-white font-medium py-3 rounded-xl transition-all duration-200 hover:scale-105`}
               >
                 <Plus size={16} />
                 Invite to Trip

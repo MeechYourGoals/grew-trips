@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Settings, Sparkles, Crown } from 'lucide-react';
 import { TripPreferences as TripPreferencesType, DIETARY_OPTIONS, VIBE_OPTIONS } from '../types/consumer';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
+import { useTripVariant } from '../contexts/TripVariantContext';
 
 interface TripPreferencesProps {
   tripId: string;
@@ -11,6 +12,7 @@ interface TripPreferencesProps {
 
 export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferencesProps) => {
   const { isPlus } = useConsumerSubscription();
+  const { accentColors } = useTripVariant();
   const [preferences, setPreferences] = useState<TripPreferencesType>({
     dietary: [],
     vibe: [],
@@ -55,10 +57,10 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
       <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 relative">
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
           <div className="text-center">
-            <Crown size={48} className="text-glass-orange mx-auto mb-4" />
+            <Crown size={48} className={`text-${accentColors.primary} mx-auto mb-4`} />
             <h3 className="text-xl font-bold text-white mb-2">Trips Plus Exclusive</h3>
             <p className="text-gray-300 mb-4">Set group preferences to get personalized AI recommendations</p>
-            <button className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-transform">
+            <button className={`bg-gradient-to-r ${accentColors.gradient} text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-transform`}>
               Upgrade to Trips Plus
             </button>
           </div>
@@ -66,7 +68,7 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
         
         <div className="opacity-30">
           <div className="flex items-center gap-3 mb-6">
-            <Settings size={24} className="text-glass-orange" />
+            <Settings size={24} className={`text-${accentColors.primary}`} />
             <h3 className="text-lg font-semibold text-white">Trip Preferences</h3>
           </div>
           <div className="space-y-6">
@@ -89,16 +91,16 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
   return (
     <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="bg-gradient-to-r from-glass-orange/30 to-glass-yellow/30 p-2 rounded-xl">
-          <Sparkles size={20} className="text-glass-orange" />
+        <div className={`bg-gradient-to-r from-${accentColors.primary}/30 to-${accentColors.secondary}/30 p-2 rounded-xl`}>
+          <Sparkles size={20} className={`text-${accentColors.primary}`} />
         </div>
         <div>
           <h3 className="text-lg font-semibold text-white">Trip Preferences</h3>
           <p className="text-gray-400 text-sm">Help our AI make better recommendations</p>
         </div>
         <div className="ml-auto">
-          <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 px-3 py-1 rounded-full">
-            <span className="text-glass-orange text-sm font-medium">PLUS</span>
+          <div className={`bg-gradient-to-r from-${accentColors.primary}/20 to-${accentColors.secondary}/20 px-3 py-1 rounded-full`}>
+            <span className={`text-${accentColors.primary} text-sm font-medium`}>PLUS</span>
           </div>
         </div>
       </div>
@@ -114,7 +116,7 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
                 onClick={() => handleDietaryChange(option)}
                 className={`px-3 py-2 rounded-full text-sm transition-colors ${
                   preferences.dietary.includes(option)
-                    ? 'bg-glass-orange text-white'
+                    ? `bg-${accentColors.primary} text-white`
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
@@ -134,7 +136,7 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
                 onClick={() => handleVibeChange(option)}
                 className={`px-3 py-2 rounded-full text-sm transition-colors ${
                   preferences.vibe.includes(option)
-                    ? 'bg-glass-orange text-white'
+                    ? `bg-${accentColors.primary} text-white`
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
@@ -154,7 +156,7 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
                 onClick={() => handleBudgetChange(option as any)}
                 className={`px-4 py-2 rounded-xl text-sm transition-colors capitalize ${
                   preferences.budget === option
-                    ? 'bg-glass-orange text-white'
+                    ? `bg-${accentColors.primary} text-white`
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
@@ -174,7 +176,7 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
                 onClick={() => handleTimeChange(option as any)}
                 className={`px-4 py-2 rounded-xl text-sm transition-colors capitalize ${
                   preferences.timePreference === option
-                    ? 'bg-glass-orange text-white'
+                    ? `bg-${accentColors.primary} text-white`
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >

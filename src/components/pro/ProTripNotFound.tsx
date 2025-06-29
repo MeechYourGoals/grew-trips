@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTripVariant } from '../../contexts/TripVariantContext';
 
 interface ProTripNotFoundProps {
   message: string;
@@ -10,6 +11,7 @@ interface ProTripNotFoundProps {
 
 export const ProTripNotFound = ({ message, details, availableIds }: ProTripNotFoundProps) => {
   const navigate = useNavigate();
+  const { accentColors } = useTripVariant();
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center">
@@ -22,7 +24,7 @@ export const ProTripNotFound = ({ message, details, availableIds }: ProTripNotFo
         )}
         <button
           onClick={() => navigate('/')}
-          className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-3 rounded-xl"
+          className={`bg-gradient-to-r ${accentColors.gradient} text-white px-6 py-3 rounded-xl`}
         >
           Back to Home
         </button>
