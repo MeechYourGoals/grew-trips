@@ -3,26 +3,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Users, Crown } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
-
-interface Participant {
-  id: number;
-  name: string;
-  avatar: string;
-  role: string;
-}
-
-interface ProTrip {
-  id: string;
-  title: string;
-  location: string;
-  dateRange: string;
-  category: string;
-  tags: string[];
-  participants: Participant[];
-}
+import { ProTripData } from '../types/pro';
 
 interface MobileProTripCardProps {
-  trip: ProTrip;
+  trip: ProTripData;
 }
 
 export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {

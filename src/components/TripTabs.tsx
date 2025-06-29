@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Users, Calendar, Camera, Radio, Link, MessageSquare, Receipt } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Camera, Radio, Link, MessageSquare, Receipt, FileText } from 'lucide-react';
 import { TripChat } from './TripChat';
 import { GroupCalendar } from './GroupCalendar';
 import { PhotoAlbum } from './PhotoAlbum';
@@ -8,6 +8,7 @@ import { Broadcasts } from './Broadcasts';
 import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
 import { ReceiptsTab } from './receipts/ReceiptsTab';
+import { FilesTab } from './FilesTab';
 
 interface TripTabsProps {
   activeTab: string;
@@ -25,7 +26,8 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
     { id: 'comments', label: 'Comments', icon: MessageSquare },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'photos', label: 'Photos', icon: Camera },
-    { id: 'receipts', label: 'Receipts', icon: Receipt }
+    { id: 'receipts', label: 'Receipts', icon: Receipt },
+    { id: 'files', label: 'Files', icon: FileText }
   ];
 
   const handleTabChange = (tab: string) => {
@@ -48,6 +50,8 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
         return <PhotoAlbum />;
       case 'receipts':
         return <ReceiptsTab tripId={tripId} />;
+      case 'files':
+        return <FilesTab tripId={tripId} />;
       default:
         return <TripChat />;
     }
@@ -56,7 +60,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
   return (
     <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
       {/* Tab Navigation */}
-      <div className="grid grid-cols-7 gap-2 mb-8">
+      <div className="grid grid-cols-8 gap-2 mb-8">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (

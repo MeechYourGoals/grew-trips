@@ -5,6 +5,7 @@ import { ProTripCard } from '../ProTripCard';
 import { MobileTripCard } from '../MobileTripCard';
 import { MobileProTripCard } from '../MobileProTripCard';
 import { useIsMobile } from '../../hooks/use-mobile';
+import { ProTripData } from '../../types/pro';
 
 interface Trip {
   id: number;
@@ -18,22 +19,10 @@ interface Trip {
   }>;
 }
 
-interface ProTrip {
-  id: string;
-  title: string;
-  location: string;
-  dateRange: string;
-  participants: Array<{
-    id: number;
-    name: string;
-    avatar: string;
-  }>;
-}
-
 interface TripGridProps {
   viewMode: string;
   trips: Trip[];
-  proTrips: Record<string, ProTrip>;
+  proTrips: Record<string, ProTripData>;
 }
 
 export const TripGrid = ({ viewMode, trips, proTrips }: TripGridProps) => {
