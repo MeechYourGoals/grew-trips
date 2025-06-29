@@ -2,9 +2,11 @@
 import React from 'react';
 import { Crown, Sparkles, Send, MessageCircle } from 'lucide-react';
 import { useConsumerSubscription } from '../../hooks/useConsumerSubscription';
+import { useTripVariant } from '../../contexts/TripVariantContext';
 
 export const GeminiPlusUpgrade = () => {
   const { upgradeToPlus } = useConsumerSubscription();
+  const { accentColors } = useTripVariant();
 
   return (
     <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl overflow-hidden relative">
@@ -52,7 +54,7 @@ export const GeminiPlusUpgrade = () => {
       {/* Glassmorphism Overlay */}
       <div className="absolute inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center">
         <div className="text-center max-w-md p-8">
-          <div className="w-16 h-16 bg-gradient-to-r from-glass-orange to-glass-yellow rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className={`w-16 h-16 bg-gradient-to-r ${accentColors.gradient} rounded-full flex items-center justify-center mx-auto mb-6`}>
             <Crown size={32} className="text-white" />
           </div>
           
@@ -81,7 +83,7 @@ export const GeminiPlusUpgrade = () => {
           <div className="space-y-3">
             <button
               onClick={upgradeToPlus}
-              className="w-full bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-bold py-4 rounded-xl transition-all duration-200 hover:scale-105 shadow-lg text-lg"
+              className={`w-full bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 text-white font-bold py-4 rounded-xl transition-all duration-200 hover:scale-105 shadow-lg text-lg`}
             >
               🔓 Unlock with Trips Plus
             </button>

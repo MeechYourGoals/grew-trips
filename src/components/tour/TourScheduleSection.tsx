@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, MapPin, Mic, Music, Trophy, Briefcase, Hotel, Plane } from 'lucide-react';
 import { Tour, TourTrip } from '../../types/pro';
+import { useTripVariant } from '../../contexts/TripVariantContext';
 
 interface TourScheduleSectionProps {
   tour: Tour;
@@ -10,11 +11,12 @@ interface TourScheduleSectionProps {
 
 export const TourScheduleSection = ({ tour }: TourScheduleSectionProps) => {
   const navigate = useNavigate();
+  const { accentColors } = useTripVariant();
 
   const getCategoryIcon = (category: TourTrip['category']) => {
     switch (category) {
-      case 'headline': return <Mic size={16} className="text-glass-orange" />;
-      case 'private': return <Briefcase size={16} className="text-glass-yellow" />;
+      case 'headline': return <Mic size={16} className={`text-${accentColors.primary}`} />;
+      case 'private': return <Briefcase size={16} className={`text-${accentColors.secondary}`} />;
       case 'college': return <Trophy size={16} className="text-glass-green" />;
       case 'festival': return <Music size={16} className="text-purple-400" />;
       case 'corporate': return <Briefcase size={16} className="text-blue-400" />;
@@ -34,7 +36,7 @@ export const TourScheduleSection = ({ tour }: TourScheduleSectionProps) => {
     <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 md:p-8 mb-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
         <h2 className="text-xl md:text-2xl font-semibold text-white">Schedule</h2>
-        <button className="bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium px-4 md:px-6 py-3 rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg flex items-center gap-2">
+        <button className={`bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 text-white font-medium px-4 md:px-6 py-3 rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg flex items-center gap-2`}>
           <Plus size={20} />
           Add Event
         </button>
@@ -49,11 +51,11 @@ export const TourScheduleSection = ({ tour }: TourScheduleSectionProps) => {
           >
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="flex items-start gap-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-glass-orange/30 to-glass-yellow/30 backdrop-blur-sm rounded-xl flex items-center justify-center flex-shrink-0">
+                <div className={`w-12 h-12 bg-gradient-to-r from-${accentColors.primary}/30 to-${accentColors.secondary}/30 backdrop-blur-sm rounded-xl flex items-center justify-center flex-shrink-0`}>
                   {getCategoryIcon(trip.category)}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <h3 className="text-lg font-semibold text-white group-hover:text-glass-yellow transition-colors mb-1">
+                  <h3 className={`text-lg font-semibold text-white group-hover:text-${accentColors.secondary} transition-colors mb-1`}>
                     {trip.city}
                   </h3>
                   <div className="space-y-1">
@@ -75,7 +77,7 @@ export const TourScheduleSection = ({ tour }: TourScheduleSectionProps) => {
                     {trip.status}
                   </div>
                 </div>
-                <div className="w-2 h-2 bg-glass-orange rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className={`w-2 h-2 bg-${accentColors.primary} rounded-full opacity-0 group-hover:opacity-100 transition-opacity`}></div>
               </div>
             </div>
             
@@ -83,7 +85,7 @@ export const TourScheduleSection = ({ tour }: TourScheduleSectionProps) => {
             <div className="mt-4 pt-4 border-t border-white/10">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div className="flex items-center gap-2 text-gray-400">
-                  <Hotel size={12} className="text-glass-yellow" />
+                  <Hotel size={12} className={`text-${accentColors.secondary}`} />
                   <span className="truncate">{trip.accommodation?.name} - {trip.accommodation?.confirmationNumber}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-400">

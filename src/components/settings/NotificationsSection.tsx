@@ -2,9 +2,11 @@
 import React from 'react';
 import { Bell } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useTripVariant } from '../../contexts/TripVariantContext';
 
 export const NotificationsSection = () => {
   const { user, updateProfile } = useAuth();
+  const { accentColors } = useTripVariant();
 
   if (!user) return null;
 
@@ -31,7 +33,7 @@ export const NotificationsSection = () => {
             <button
               onClick={() => handleNotificationToggle(key)}
               className={`relative w-12 h-6 rounded-full transition-colors ${
-                value ? 'bg-glass-orange' : 'bg-gray-600'
+                value ? `bg-${accentColors.primary}` : 'bg-gray-600'
               }`}
             >
               <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${

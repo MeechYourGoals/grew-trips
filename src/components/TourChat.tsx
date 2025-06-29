@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Send, Radio, Users, MessageCircle } from 'lucide-react';
+import { useTripVariant } from '../contexts/TripVariantContext';
 import { useMessages } from '../hooks/useMessages';
 import { useParams } from 'react-router-dom';
 import { proTripMockData } from '../data/proTripMockData';
@@ -11,6 +12,7 @@ export const TourChat = () => {
   const { getMessagesForTour, addMessage } = useMessages();
   const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const { accentColors } = useTripVariant();
 
   // Get tour data for context
   const tourData = proTripMockData[finalTourId];
@@ -38,8 +40,8 @@ export const TourChat = () => {
   return (
     <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
       <div className="flex items-center gap-3 mb-6">
-        <div className="w-10 h-10 bg-gradient-to-r from-glass-orange/30 to-glass-yellow/30 backdrop-blur-sm rounded-xl flex items-center justify-center">
-          <Radio size={20} className="text-glass-orange" />
+        <div className={`w-10 h-10 bg-gradient-to-r from-${accentColors.primary}/30 to-${accentColors.secondary}/30 backdrop-blur-sm rounded-xl flex items-center justify-center`}>
+          <Radio size={20} className={`text-${accentColors.primary}`} />
         </div>
         <div>
           <h3 className="text-lg font-semibold text-white">Event Chat</h3>
@@ -92,12 +94,12 @@ export const TourChat = () => {
             onKeyPress={handleKeyPress}
             placeholder=""
             rows={2}
-            className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-glass-orange resize-none"
+            className={`w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-${accentColors.primary} resize-none`}
           />
           <button
             onClick={handleSendMessage}
             disabled={!message.trim()}
-            className="absolute right-2 bottom-2 bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-all duration-200"
+            className={`absolute right-2 bottom-2 bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-all duration-200`}
           >
             <Send size={16} />
           </button>

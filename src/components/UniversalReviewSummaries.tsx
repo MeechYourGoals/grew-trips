@@ -1,17 +1,19 @@
 
 import React from 'react';
 import { Globe } from 'lucide-react';
+import { useTripVariant } from '../contexts/TripVariantContext';
 
 export const UniversalReviewSummaries = () => {
+  const { accentColors } = useTripVariant();
   return (
     <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 shadow-xl hover:bg-white/15 transition-all duration-300">
       {/* Header */}
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 bg-gradient-to-r from-glass-orange/30 to-glass-yellow/30 backdrop-blur-sm rounded-xl flex items-center justify-center">
-          <Globe size={24} className="text-glass-orange" />
+        <div className={`w-10 h-10 bg-gradient-to-r from-${accentColors.primary}/30 to-${accentColors.secondary}/30 backdrop-blur-sm rounded-xl flex items-center justify-center`}>
+          <Globe size={24} className={`text-${accentColors.primary}`} />
         </div>
         <h2 className="text-xl font-semibold text-white">Universal Review Summaries</h2>
-        <span className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-white/20 text-white text-xs font-medium px-3 py-1 rounded-full">
+        <span className={`bg-gradient-to-r from-${accentColors.primary}/20 to-${accentColors.secondary}/20 backdrop-blur-sm border border-white/20 text-white text-xs font-medium px-3 py-1 rounded-full`}>
           Plus Required
         </span>
       </div>
@@ -35,7 +37,7 @@ export const UniversalReviewSummaries = () => {
 
       {/* Upgrade Button */}
       <div className="flex justify-center">
-        <button className="bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium px-8 py-3 rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg">
+        <button className={`bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 text-white font-medium px-8 py-3 rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg`}>
           Upgrade to Plus
         </button>
       </div>
