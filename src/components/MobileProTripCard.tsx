@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Users, Crown } from 'lucide-react';
@@ -16,7 +15,9 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
   const { accentColors } = useTripVariant();
 
   const handleViewTrip = () => {
-    navigate(`/tour/pro-${trip.id}`);
+    console.log('MobileProTripCard - Navigating to trip ID:', trip.id);
+    console.log('MobileProTripCard - Full URL will be:', `/tour/pro/${trip.id}`);
+    navigate(`/tour/pro/${trip.id}`);
   };
 
   if (!isMobile) return null;

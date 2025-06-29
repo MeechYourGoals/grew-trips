@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Crown, Copy, Eye } from 'lucide-react';
@@ -17,8 +16,9 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
   const { accentColors } = useTripVariant();
 
   const handleViewTrip = () => {
-    console.log('Navigating to trip ID:', trip.id);
-    navigate(`/tour/pro-${trip.id}`);
+    console.log('ProTripCard - Navigating to trip ID:', trip.id);
+    console.log('ProTripCard - Full URL will be:', `/tour/pro/${trip.id}`);
+    navigate(`/tour/pro/${trip.id}`);
   };
 
   const handleDuplicateTrip = () => {

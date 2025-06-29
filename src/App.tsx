@@ -26,8 +26,8 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/trip/:tripId" element={<TripDetail />} />
               <Route path="/trip/:tripId/edit-itinerary" element={<ItineraryAssignmentPage />} />
-              {/* Pro trip routes - MUST come before general routes */}
-              <Route path="/tour/pro-:proTripId" element={<ProTripDetail />} />
+              {/* Pro trip routes - Fixed pattern to properly match URLs like /tour/pro-2 */}
+              <Route path="/tour/pro/:proTripId" element={<ProTripDetail />} />
               {/* Catch-all route for 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
