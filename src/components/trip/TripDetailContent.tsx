@@ -6,6 +6,7 @@ import { PlacesSection } from '../PlacesSection';
 import { TripPreferences } from '../TripPreferences';
 import { GeminiAIChat } from '../GeminiAIChat';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
+import { useTripVariant } from '../../contexts/TripVariantContext';
 import { useConsumerSubscription } from '../../hooks/useConsumerSubscription';
 
 interface TripDetailContentProps {
@@ -28,12 +29,13 @@ export const TripDetailContent = ({
   onPreferencesChange
 }: TripDetailContentProps) => {
   const { isPlus } = useConsumerSubscription();
+  const { variant, accentColors } = useTripVariant();
 
   const tabs = [
     { id: 'chat', label: 'Chat' },
     { id: 'places', label: 'Places' },
-    { id: 'preferences', label: 'Preferences', premium: true },
-    { id: 'ai-chat', label: 'AI Assistant', premium: true }
+    { id: 'preferences', label: 'Preferences', premium: variant === 'consumer' }, // Always available for Pro
+    { id: 'ai-chat', label: 'AI Assistant', premium: variant === 'consumer' } // Always available for Pro
   ];
 
   const renderTabContent = () => {
@@ -70,7 +72,7 @@ export const TripDetailContent = ({
           <button
             key={tab.id}
             onClick={() => {
-              if (tab.premium && !isPlus) {
+              if (tab.premium && !isPlus && variant === 'consumer') {
                 onShowTripsPlusModal();
               } else {
                 onTabChange(tab.id);
@@ -78,16 +80,16 @@ export const TripDetailContent = ({
             }}
             className={`flex-shrink-0 px-4 md:px-6 py-3 rounded-xl font-medium transition-all duration-200 text-sm md:text-base flex items-center gap-2 ${
               activeTab === tab.id
-                ? 'bg-gradient-to-r from-glass-orange to-glass-yellow text-white'
+                ? `bg-gradient-to-r ${accentColors.gradient} text-white`
                 : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
             }`}
           >
             {tab.label}
-            {tab.premium && !isPlus && (
-              <Crown size={16} className="text-glass-orange" />
+            {tab.premium && !isPlus && variant === 'consumer' && (
+              <Crown size={16} className={`text-${accentColors.primary}`} />
             )}
-            {tab.premium && isPlus && (
-              <Sparkles size={16} className="text-glass-orange" />
+            {((tab.premium && isPlus) || variant === 'pro') && (tab.id === 'preferences' || tab.id === 'ai-chat') && (
+              <Sparkles size={16} className={`text-${accentColors.primary}`} />
             )}
           </button>
         ))}

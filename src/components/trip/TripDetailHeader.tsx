@@ -3,6 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MessageCircle, Settings, UserPlus, Crown } from 'lucide-react';
 import { UniversalTripAI } from '../UniversalTripAI';
+import { useTripVariant } from '../../contexts/TripVariantContext';
 import { useAuth } from '../../hooks/useAuth';
 import { useConsumerSubscription } from '../../hooks/useConsumerSubscription';
 
@@ -26,6 +27,7 @@ export const TripDetailHeader = ({
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isPlus } = useConsumerSubscription();
+  const { variant, accentColors } = useTripVariant();
 
   return (
     <div className="flex items-center justify-between mb-8">
@@ -33,7 +35,7 @@ export const TripDetailHeader = ({
         onClick={() => navigate('/')}
         className="flex items-center gap-3 text-gray-300 hover:text-white transition-colors group"
       >
-        <div className="bg-gray-800 p-2 rounded-lg shadow-lg group-hover:shadow-red-500/20 transition-all border border-gray-700 hover:border-red-500/50">
+        <div className={`bg-gray-800 p-2 rounded-lg shadow-lg group-hover:shadow-${accentColors.primary}/20 transition-all border border-gray-700 hover:border-${accentColors.primary}/50`}>
           <ArrowLeft size={20} />
         </div>
         <span className="font-medium">Back to My Places</span>
@@ -43,11 +45,16 @@ export const TripDetailHeader = ({
         {/* Universal Trip AI Button */}
         <UniversalTripAI tripContext={tripContext} />
 
-        {/* Trips Plus Badge */}
-        {isPlus && (
-          <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-glass-orange/30 rounded-xl px-4 py-2 flex items-center gap-2">
-            <Crown size={16} className="text-glass-orange" />
-            <span className="text-glass-orange font-medium">TRIPS PLUS</span>
+        {/* Badge - Pro or Trips Plus */}
+        {variant === 'pro' ? (
+          <div className={`bg-gradient-to-r ${accentColors.gradient} backdrop-blur-sm border border-${accentColors.primary}/30 rounded-xl px-4 py-2 flex items-center gap-2`}>
+            <Crown size={16} className="text-white" />
+            <span className="text-white font-medium">PRO</span>
+          </div>
+        ) : isPlus && (
+          <div className={`bg-gradient-to-r from-${accentColors.primary}/20 to-${accentColors.secondary}/20 backdrop-blur-sm border border-${accentColors.primary}/30 rounded-xl px-4 py-2 flex items-center gap-2`}>
+            <Crown size={16} className={`text-${accentColors.primary}`} />
+            <span className={`text-${accentColors.primary} font-medium`}>TRIPS PLUS</span>
           </div>
         )}
 
@@ -79,7 +86,7 @@ export const TripDetailHeader = ({
         ) : (
           <button
             onClick={onShowAuth}
-            className="bg-gradient-to-r from-glass-orange to-glass-yellow text-white px-6 py-2 rounded-xl transition-colors font-medium"
+            className={`bg-gradient-to-r ${accentColors.gradient} text-white px-6 py-2 rounded-xl transition-colors font-medium`}
           >
             Sign In
           </button>

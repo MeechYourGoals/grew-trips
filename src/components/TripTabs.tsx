@@ -9,6 +9,7 @@ import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
 import { ReceiptsTab } from './receipts/ReceiptsTab';
 import { FilesTab } from './FilesTab';
+import { useTripVariant } from '../contexts/TripVariantContext';
 
 interface TripTabsProps {
   activeTab: string;
@@ -18,6 +19,7 @@ interface TripTabsProps {
 
 export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabChange, tripId = '1' }: TripTabsProps) => {
   const [activeTab, setActiveTab] = useState('chat');
+  const { accentColors } = useTripVariant();
 
   const tabs = [
     { id: 'chat', label: 'Chat', icon: MessageCircle },
@@ -69,7 +71,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
               onClick={() => handleTabChange(tab.id)}
               className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
                 activeTab === tab.id
-                  ? 'bg-gradient-to-r from-glass-orange to-glass-yellow text-white'
+                  ? `bg-gradient-to-r ${accentColors.gradient} text-white`
                   : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
               }`}
             >

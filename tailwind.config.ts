@@ -23,13 +23,16 @@ export default {
 				'outfit': ['Outfit', 'sans-serif'],
 			},
 			colors: {
-				// Dark theme with gold accents
+				// Dark theme with gold accents and new Pro crimson
 				glass: {
 					orange: '#FFD700', // Gold
 					yellow: '#FFC107', // Amber Gold
 					green: '#62D621',
 					dark: '#000000',
 					light: '#FFFFFF',
+					// Pro theme colors
+					crimson: '#B91C3C', // Deep red/crimson for Pro
+					'crimson-light': '#DC2626', // Lighter crimson
 				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
