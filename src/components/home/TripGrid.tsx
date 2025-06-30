@@ -2,10 +2,13 @@
 import React from 'react';
 import { TripCard } from '../TripCard';
 import { ProTripCard } from '../ProTripCard';
+import { EventCard } from '../EventCard';
 import { MobileTripCard } from '../MobileTripCard';
 import { MobileProTripCard } from '../MobileProTripCard';
+import { MobileEventCard } from '../MobileEventCard';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { ProTripData } from '../../types/pro';
+import { EventData } from '../../data/eventsMockData';
 
 interface Trip {
   id: number;
@@ -23,9 +26,10 @@ interface TripGridProps {
   viewMode: string;
   trips: Trip[];
   proTrips: Record<string, ProTripData>;
+  events: Record<string, EventData>;
 }
 
-export const TripGrid = ({ viewMode, trips, proTrips }: TripGridProps) => {
+export const TripGrid = ({ viewMode, trips, proTrips, events }: TripGridProps) => {
   const isMobile = useIsMobile();
 
   return (
@@ -40,13 +44,23 @@ export const TripGrid = ({ viewMode, trips, proTrips }: TripGridProps) => {
             )}
           </React.Fragment>
         ))
-      ) : (
+      ) : viewMode === 'tripsPro' ? (
         Object.values(proTrips).map((trip) => (
           <React.Fragment key={trip.id}>
             {isMobile ? (
               <MobileProTripCard trip={trip} />
             ) : (
               <ProTripCard trip={trip} />
+            )}
+          </React.Fragment>
+        ))
+      ) : (
+        Object.values(events).map((event) => (
+          <React.Fragment key={event.id}>
+            {isMobile ? (
+              <MobileEventCard event={event} />
+            ) : (
+              <EventCard event={event} />
             )}
           </React.Fragment>
         ))

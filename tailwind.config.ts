@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -23,7 +22,7 @@ export default {
 				'outfit': ['Outfit', 'sans-serif'],
 			},
 			colors: {
-				// Dark theme with gold accents and new Pro crimson
+				// Dark theme with gold accents, Pro crimson, and Events blue
 				glass: {
 					orange: '#FFD700', // Gold
 					yellow: '#FFC107', // Amber Gold
@@ -33,6 +32,9 @@ export default {
 					// Pro theme colors
 					crimson: '#B91C3C', // Deep red/crimson for Pro
 					'crimson-light': '#DC2626', // Lighter crimson
+					// Events theme colors
+					blue: '#2A66FF', // Primary blue for Events
+					'blue-light': '#4F80FF', // Lighter blue
 				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext } from 'react';
 
-type TripVariant = 'consumer' | 'pro';
+type TripVariant = 'consumer' | 'pro' | 'events';
 
 interface TripVariantContextType {
   variant: TripVariant;
@@ -37,6 +37,13 @@ export const TripVariantProvider = ({ variant, children }: TripVariantProviderPr
         secondary: 'glass-crimson-light',
         gradient: 'from-glass-crimson to-glass-crimson-light',
         badge: 'from-glass-crimson to-glass-crimson-light'
+      }
+    : variant === 'events'
+    ? {
+        primary: 'glass-blue',
+        secondary: 'glass-blue-light',
+        gradient: 'from-glass-blue to-glass-blue-light',
+        badge: 'from-glass-blue to-glass-blue-light'
       }
     : {
         primary: 'glass-orange',

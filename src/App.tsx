@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import TripDetail from "./pages/TripDetail";
 import ItineraryAssignmentPage from "./pages/ItineraryAssignmentPage";
 import ProTripDetail from "./pages/ProTripDetail";
+import EventDetail from "./pages/EventDetail";
 import ReviewAnalysis from "./pages/ReviewAnalysis";
 import AudioOverviews from "./pages/AudioOverviews";
 import NotFound from "./pages/NotFound";
@@ -30,6 +31,8 @@ const App = () => (
               <Route path="/trip/:tripId/edit-itinerary" element={<ItineraryAssignmentPage />} />
               {/* Pro trip routes - Fixed pattern to properly match URLs like /tour/pro-2 */}
               <Route path="/tour/pro/:proTripId" element={<ProTripDetail />} />
+              {/* Events routes - New routes for Events functionality */}
+              <Route path="/event/:eventId" element={<EventDetail />} />
               {/* AI Feature routes */}
               <Route path="/ai/review-analysis" element={<ReviewAnalysis />} />
               <Route path="/ai/audio-overviews" element={<AudioOverviews />} />

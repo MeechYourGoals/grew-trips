@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MobileHeader } from '../components/MobileHeader';
 import { CreateTripModal } from '../components/CreateTripModal';
@@ -13,6 +12,7 @@ import { EmptyState } from '../components/home/EmptyState';
 import { useAuth } from '../hooks/useAuth';
 import { useIsMobile } from '../hooks/use-mobile';
 import { proTripMockData } from '../data/proTripMockData';
+import { eventsMockData } from '../data/eventsMockData';
 
 const Index = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -129,8 +129,13 @@ const Index = () => {
   ];
 
   console.log('Index - proTripMockData IDs:', Object.keys(proTripMockData));
+  console.log('Index - eventsMockData IDs:', Object.keys(eventsMockData));
 
-  const hasTrips = viewMode === 'myTrips' ? trips.length > 0 : Object.keys(proTripMockData).length > 0;
+  const hasTrips = viewMode === 'myTrips' 
+    ? trips.length > 0 
+    : viewMode === 'tripsPro' 
+    ? Object.keys(proTripMockData).length > 0
+    : Object.keys(eventsMockData).length > 0;
 
   return (
     <div className="min-h-screen bg-black font-outfit">
@@ -179,6 +184,7 @@ const Index = () => {
               viewMode={viewMode}
               trips={trips}
               proTrips={proTripMockData}
+              events={eventsMockData}
             />
           ) : (
             <EmptyState

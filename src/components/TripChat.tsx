@@ -1,17 +1,22 @@
 
 import React, { useState } from 'react';
-import { Send, Search, MessageCircle, User } from 'lucide-react';
+import { Send, Search, MessageCircle, User, Settings } from 'lucide-react';
 import { useMessages } from '../hooks/useMessages';
 import { useParams } from 'react-router-dom';
 
-export const TripChat = () => {
-  const { tripId } = useParams();
+interface TripChatProps {
+  groupChatEnabled?: boolean;
+}
+
+export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
+  const { tripId, eventId } = useParams();
   const { getMessagesForTrip, addMessage, getTripUnreadCount } = useMessages();
   const [message, setMessage] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const tripMessages = getMessagesForTrip(tripId || 'default-trip');
-  const unreadCount = getTripUnreadCount(tripId || 'default-trip');
+  const currentTripId = tripId || eventId || 'default-trip';
+  const tripMessages = getMessagesForTrip(currentTripId);
+  const unreadCount = getTripUnreadCount(currentTripId);
 
   const filteredMessages = tripMessages.filter(msg =>
     msg.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -19,8 +24,8 @@ export const TripChat = () => {
   );
 
   const handleSendMessage = () => {
-    if (!message.trim()) return;
-    addMessage(message, tripId);
+    if (!message.trim() || !groupChatEnabled) return;
+    addMessage(message, currentTripId);
     setMessage('');
   };
 
@@ -35,6 +40,30 @@ export const TripChat = () => {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  // Show disabled chat notice for large events
+  if (!groupChatEnabled) {
+    return (
+      <div className="p-6">
+        <div className="text-center py-12">
+          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-8 max-w-md mx-auto">
+            <Settings size={48} className="text-gray-500 mx-auto mb-4" />
+            <h4 className="text-lg font-medium text-gray-300 mb-2">
+              Group Chat Disabled
+            </h4>
+            <p className="text-gray-500 text-sm mb-4">
+              Group chat has been disabled for this event to manage large-scale communication. 
+              You can still access broadcasts, calendar updates, and other event information.
+            </p>
+            <div className="flex items-center justify-center gap-2 text-blue-400 text-sm">
+              <MessageCircle size={16} />
+              <span>Check Broadcasts for important updates</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
       {/* Header */}
@@ -42,7 +71,7 @@ export const TripChat = () => {
         <div className="flex items-center gap-3">
           <MessageCircle size={24} className="text-blue-400" />
           <div>
-            <h3 className="text-lg font-semibold text-white">Trip Chat</h3>
+            <h3 className="text-lg font-semibold text-white">Event Chat</h3>
             <p className="text-gray-400 text-sm">
               {unreadCount > 0 ? `${unreadCount} unread messages` : 'You\'re all caught up!'}
             </p>
@@ -99,7 +128,7 @@ export const TripChat = () => {
               {searchQuery ? 'No messages found' : 'No messages yet'}
             </h4>
             <p className="text-slate-500 text-sm">
-              {searchQuery ? 'Try a different search term' : 'Start the conversation with your trip mates!'}
+              {searchQuery ? 'Try a different search term' : 'Start the conversation with your event attendees!'}
             </p>
           </div>
         )}
