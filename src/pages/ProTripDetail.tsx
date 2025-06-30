@@ -98,7 +98,7 @@ const ProTripDetail = () => {
     itinerary: tripData.itinerary,
     budget: tripData.budget,
     isPro: true,
-    // Enhanced Pro features
+    // Enhanced Pro features with role-based access
     proFeatures: {
       roster: true,
       logistics: true,
@@ -106,7 +106,9 @@ const ProTripDetail = () => {
       finance: true,
       medical: true,
       media: true,
-      sponsors: true
+      sponsors: true,
+      roleBasedAccess: true,
+      permissionSystem: true
     }
   };
 
@@ -134,7 +136,7 @@ const ProTripDetail = () => {
           {/* Trip Header */}
           <TripHeader trip={trip} />
 
-          {/* Enhanced Pro Content */}
+          {/* Enhanced Pro Content with Role-Based Access */}
           <ProTripDetailContent
             activeTab={activeTab}
             onTabChange={setActiveTab}

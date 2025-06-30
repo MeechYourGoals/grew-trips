@@ -3,7 +3,9 @@ import React, { useState } from 'react';
 import { RoomAssignmentsModal } from './RoomAssignmentsModal';
 import { ProTabNavigation } from './ProTabNavigation';
 import { ProTabContent } from './ProTabContent';
+import { RoleSwitcher } from './RoleSwitcher';
 import { getVisibleTabs } from './ProTabsConfig';
+import { useAuth } from '../../hooks/useAuth';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { ProTripData } from '../../types/pro';
 
@@ -29,11 +31,12 @@ export const ProTripDetailContent = ({
   tripData
 }: ProTripDetailContentProps) => {
   const [showRoomModal, setShowRoomModal] = useState(false);
+  const { user } = useAuth();
 
-  // Mock user role - in real app this would come from auth context
-  const userRole = 'admin'; // 'admin', 'staff', 'talent', 'player'
+  const userRole = user?.proRole || 'staff';
+  const userPermissions = user?.permissions || ['read'];
 
-  const visibleTabs = getVisibleTabs(userRole);
+  const visibleTabs = getVisibleTabs(userRole, userPermissions);
 
   const handleUpdateRoomAssignments = (assignments: any[]) => {
     // In a real app, this would update the trip data
@@ -47,6 +50,9 @@ export const ProTripDetailContent = ({
 
   return (
     <>
+      {/* Role Switcher for Testing */}
+      <RoleSwitcher />
+
       {/* Enhanced Tab Navigation for Pro Trips */}
       <ProTabNavigation
         tabs={visibleTabs}
@@ -61,7 +67,6 @@ export const ProTripDetailContent = ({
         basecamp={basecamp}
         tripPreferences={tripPreferences}
         tripData={tripData}
-        userRole={userRole}
         onUpdateRoomAssignments={handleUpdateRoomAssignments}
         onUpdateEquipment={handleUpdateEquipment}
       />

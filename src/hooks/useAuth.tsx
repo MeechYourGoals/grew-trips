@@ -8,6 +8,10 @@ interface User {
   displayName: string;
   avatar?: string;
   isPro: boolean;
+  // Enhanced pro role system
+  proRole?: 'admin' | 'staff' | 'talent' | 'player' | 'crew' | 'security' | 'medical' | 'producer';
+  organizationId?: string;
+  permissions: string[];
   notificationSettings: {
     messages: boolean;
     broadcasts: boolean;
@@ -25,6 +29,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, displayName: string) => Promise<void>;
   signOut: () => Promise<void>;
   updateProfile: (updates: Partial<User>) => Promise<void>;
+  switchRole: (role: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -33,8 +38,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>({
     id: '1',
     email: 'demo@example.com',
-    displayName: 'Demo User',
-    isPro: false,
+    displayName: 'Demo Admin',
+    isPro: true,
+    proRole: 'admin',
+    organizationId: 'org-1',
+    permissions: ['read', 'write', 'admin', 'finance', 'compliance'],
     notificationSettings: {
       messages: true,
       broadcasts: true,
@@ -53,7 +61,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         id: '1',
         email,
         displayName: 'Demo User',
-        isPro: false,
+        isPro: true,
+        proRole: 'admin',
+        organizationId: 'org-1',
+        permissions: ['read', 'write', 'admin'],
         notificationSettings: {
           messages: true,
           broadcasts: true,
@@ -74,7 +85,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         id: '1',
         phone,
         displayName: 'Demo User',
-        isPro: false,
+        isPro: true,
+        proRole: 'staff',
+        organizationId: 'org-1',
+        permissions: ['read', 'write'],
         notificationSettings: {
           messages: true,
           broadcasts: true,
@@ -96,6 +110,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         email,
         displayName,
         isPro: false,
+        permissions: ['read'],
         notificationSettings: {
           messages: true,
           broadcasts: true,
@@ -118,6 +133,27 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const switchRole = (role: string) => {
+    if (user) {
+      const rolePermissions: Record<string, string[]> = {
+        admin: ['read', 'write', 'admin', 'finance', 'compliance'],
+        staff: ['read', 'write'],
+        talent: ['read'],
+        player: ['read'],
+        crew: ['read', 'write'],
+        security: ['read', 'write'],
+        medical: ['read', 'write', 'medical'],
+        producer: ['read', 'write', 'admin']
+      };
+      
+      setUser({
+        ...user,
+        proRole: role as User['proRole'],
+        permissions: rolePermissions[role] || ['read']
+      });
+    }
+  };
+
   return (
     <AuthContext.Provider value={{
       user,
@@ -126,7 +162,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       signInWithPhone,
       signUp,
       signOut,
-      updateProfile
+      updateProfile,
+      switchRole
     }}>
       {children}
     </AuthContext.Provider>

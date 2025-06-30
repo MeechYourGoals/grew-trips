@@ -9,7 +9,8 @@ import { RosterTab } from './RosterTab';
 import { EquipmentTracking } from './EquipmentTracking';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { ProTripData } from '../../types/pro';
-import { isReadOnlyTab } from './ProTabsConfig';
+import { isReadOnlyTab, hasTabAccess } from './ProTabsConfig';
+import { useAuth } from '../../hooks/useAuth';
 
 interface ProTabContentProps {
   activeTab: string;
@@ -17,7 +18,6 @@ interface ProTabContentProps {
   basecamp: { name: string; address: string };
   tripPreferences: TripPreferencesType | undefined;
   tripData: ProTripData;
-  userRole: string;
   onUpdateRoomAssignments: (assignments: any[]) => void;
   onUpdateEquipment: (equipment: any[]) => void;
 }
@@ -28,10 +28,29 @@ export const ProTabContent = ({
   basecamp,
   tripPreferences,
   tripData,
-  userRole,
   onUpdateRoomAssignments,
   onUpdateEquipment
 }: ProTabContentProps) => {
+  const { user } = useAuth();
+  
+  const userRole = user?.proRole || 'staff';
+  const userPermissions = user?.permissions || ['read'];
+  
+  // Check if user has access to the current tab
+  if (!hasTabAccess(activeTab, userRole, userPermissions)) {
+    return (
+      <div className="space-y-6">
+        <div className="bg-red-500/10 backdrop-blur-sm border border-red-500/20 rounded-xl p-6">
+          <h3 className="text-lg font-bold text-red-400 mb-2">Access Denied</h3>
+          <p className="text-red-300">You don't have permission to access this section.</p>
+          <p className="text-red-300/80 text-sm mt-2">Current role: {userRole}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isReadOnly = isReadOnlyTab(activeTab, userRole, userPermissions);
+
   const renderTabContent = () => {
     switch (activeTab) {
       case 'chat':
@@ -43,6 +62,7 @@ export const ProTabContent = ({
           <RosterTab
             roster={tripData.roster || []}
             userRole={userRole}
+            isReadOnly={isReadOnly}
           />
         );
       case 'equipment':
@@ -50,6 +70,7 @@ export const ProTabContent = ({
           <EquipmentTracking
             equipment={tripData.equipment || []}
             onUpdateEquipment={onUpdateEquipment}
+            isReadOnly={isReadOnly}
           />
         );
       case 'calendar':
@@ -57,6 +78,11 @@ export const ProTabContent = ({
           <div className="space-y-6">
             <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-bold text-white mb-4">Production Calendar</h3>
+              {isReadOnly && (
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-4">
+                  <p className="text-yellow-400 text-sm">Read-only access for your role</p>
+                </div>
+              )}
               <div className="text-center py-12">
                 <CalendarIcon size={48} className="text-red-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-400 mb-2">Load-in/Load-out Scheduler</h3>
@@ -70,7 +96,7 @@ export const ProTabContent = ({
           <div className="space-y-6">
             <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-bold text-white mb-4">Financial Management</h3>
-              {isReadOnlyTab('finance', userRole) && (
+              {isReadOnly && (
                 <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-4">
                   <p className="text-yellow-400 text-sm">Read-only access for your role</p>
                 </div>
@@ -88,6 +114,11 @@ export const ProTabContent = ({
           <div className="space-y-6">
             <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-bold text-white mb-4">Medical & Wellness</h3>
+              {isReadOnly && (
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-4">
+                  <p className="text-yellow-400 text-sm">Read-only access for your role</p>
+                </div>
+              )}
               <div className="text-center py-12">
                 <Shield size={48} className="text-red-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-400 mb-2">Health Monitoring</h3>
@@ -101,7 +132,7 @@ export const ProTabContent = ({
           <div className="space-y-6">
             <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-bold text-white mb-4">Compliance Management</h3>
-              {isReadOnlyTab('compliance', userRole) && (
+              {isReadOnly && (
                 <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-4">
                   <p className="text-yellow-400 text-sm">Read-only access for your role</p>
                 </div>
@@ -119,6 +150,11 @@ export const ProTabContent = ({
           <div className="space-y-6">
             <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-bold text-white mb-4">Media & Press</h3>
+              {isReadOnly && (
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-4">
+                  <p className="text-yellow-400 text-sm">Read-only access for your role</p>
+                </div>
+              )}
               <div className="text-center py-12">
                 <Tv size={48} className="text-red-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-400 mb-2">Media Coordination</h3>
@@ -132,6 +168,11 @@ export const ProTabContent = ({
           <div className="space-y-6">
             <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
               <h3 className="text-lg font-bold text-white mb-4">Sponsor Management</h3>
+              {isReadOnly && (
+                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-4">
+                  <p className="text-yellow-400 text-sm">Read-only access for your role</p>
+                </div>
+              )}
               <div className="text-center py-12">
                 <Award size={48} className="text-red-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-400 mb-2">Partnership Tracking</h3>
