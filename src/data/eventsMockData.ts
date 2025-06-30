@@ -1,4 +1,7 @@
-import { EventData } from './eventsMockData';
+
+import { EnhancedEventData } from '../types/events';
+
+export type EventData = EnhancedEventData;
 
 export const eventsMockData: Record<string, EventData> = {
   'sxsw-2025': {
