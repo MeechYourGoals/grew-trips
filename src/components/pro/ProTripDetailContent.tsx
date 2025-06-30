@@ -8,6 +8,7 @@ import { getVisibleTabs } from './ProTabsConfig';
 import { useAuth } from '../../hooks/useAuth';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { ProTripData } from '../../types/pro';
+import { ProTripCategory } from '../../types/proCategories';
 
 interface ProTripDetailContentProps {
   activeTab: string;
@@ -36,7 +37,7 @@ export const ProTripDetailContent = ({
   const userRole = user?.proRole || 'staff';
   const userPermissions = user?.permissions || ['read'];
 
-  const visibleTabs = getVisibleTabs(userRole, userPermissions);
+  const visibleTabs = getVisibleTabs(userRole, userPermissions, tripData.proTripCategory);
 
   const handleUpdateRoomAssignments = (assignments: any[]) => {
     // In a real app, this would update the trip data
@@ -53,7 +54,7 @@ export const ProTripDetailContent = ({
       {/* Role Switcher for Testing */}
       <RoleSwitcher />
 
-      {/* Enhanced Tab Navigation for Pro Trips */}
+      {/* Category-Specific Tab Navigation */}
       <ProTabNavigation
         tabs={visibleTabs}
         activeTab={activeTab}

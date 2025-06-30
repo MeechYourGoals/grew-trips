@@ -1,4 +1,3 @@
-
 import { ProTripData } from '../../types/pro';
 
 export const harrisElementaryFieldTrip: ProTripData = {
@@ -8,12 +7,13 @@ export const harrisElementaryFieldTrip: ProTripData = {
   location: 'Washington DC',
   dateRange: 'Apr 10 - Apr 14, 2025',
   category: 'Education',
+  proTripCategory: 'Education & Academic',
   tags: ['Education', 'Field Trip', 'Middle School'],
   participants: [
-    { id: 16, name: 'Ms. Jennifer Wilson', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'TourManager' },
-    { id: 17, name: 'Mr. David Chen', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'TourManager' },
-    { id: 18, name: 'Student Group A', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'VIP' },
-    { id: 19, name: 'Student Group B', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'VIP' }
+    { id: 16, name: 'Ms. Jennifer Wilson', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Teacher' },
+    { id: 17, name: 'Mr. David Chen', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Teacher' },
+    { id: 18, name: 'Student Group A', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Student' },
+    { id: 19, name: 'Student Group B', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Student' }
   ],
   budget: {
     total: 15000,
@@ -42,7 +42,7 @@ export const harrisElementaryFieldTrip: ProTripData = {
       name: 'Ms. Jennifer Wilson',
       email: 'jwilson@harriselementary.edu',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-      role: 'TourManager',
+      role: 'Teacher',
       credentialLevel: 'AllAccess',
       permissions: ['student-supervision', 'emergency-contact'],
       roomPreferences: ['single-room', 'near-students'],
@@ -53,7 +53,7 @@ export const harrisElementaryFieldTrip: ProTripData = {
       name: 'Mr. David Chen',
       email: 'dchen@harriselementary.edu',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-      role: 'TourManager',
+      role: 'Teacher',
       credentialLevel: 'AllAccess',
       permissions: ['student-supervision', 'emergency-contact'],
       roomPreferences: ['single-room', 'near-students'],
@@ -64,7 +64,7 @@ export const harrisElementaryFieldTrip: ProTripData = {
       name: 'Student Group A (13 students)',
       email: 'students@harriselementary.edu',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
-      role: 'VIP',
+      role: 'Student',
       credentialLevel: 'Guest',
       permissions: ['supervised-access'],
       roomPreferences: ['quad-rooms'],
@@ -75,7 +75,7 @@ export const harrisElementaryFieldTrip: ProTripData = {
       name: 'Student Group B (12 students)',
       email: 'students@harriselementary.edu',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face',
-      role: 'VIP',
+      role: 'Student',
       credentialLevel: 'Guest',
       permissions: ['supervised-access'],
       roomPreferences: ['quad-rooms'],

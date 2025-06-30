@@ -2,6 +2,7 @@
 import React from 'react';
 import { Crown, Users, Package, Calendar as CalendarIcon, DollarSign, Shield, Tv, Award, FileCheck } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
+import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 
 export interface ProTab {
   id: string;
@@ -18,19 +19,29 @@ export const proTabs: ProTab[] = [
   { id: 'roster', label: 'Roster', icon: Users, proOnly: true, requiredPermissions: ['read'] },
   { id: 'equipment', label: 'Equipment', icon: Package, proOnly: true, requiredPermissions: ['read'] },
   { id: 'calendar', label: 'Calendar', icon: CalendarIcon, proOnly: true, requiredPermissions: ['read'] },
-  { id: 'finance', label: 'Finance', icon: DollarSign, proOnly: true, restrictedRoles: ['talent', 'player'], requiredPermissions: ['finance'] },
+  { id: 'finance', label: 'Finance', icon: DollarSign, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['finance'] },
   { id: 'medical', label: 'Medical', icon: Shield, proOnly: true, requiredPermissions: ['medical', 'admin'] },
-  { id: 'compliance', label: 'Compliance', icon: FileCheck, proOnly: true, restrictedRoles: ['talent', 'player'], requiredPermissions: ['compliance', 'admin'] },
+  { id: 'compliance', label: 'Compliance', icon: FileCheck, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['compliance', 'admin'] },
   { id: 'media', label: 'Media', icon: Tv, proOnly: true, requiredPermissions: ['read'] },
   { id: 'sponsors', label: 'Sponsors', icon: Award, proOnly: true, requiredPermissions: ['admin'] },
   { id: 'ai-chat', label: 'AI Assistant', icon: null },
   { id: 'search', label: 'Search', icon: null }
 ];
 
-export const getVisibleTabs = (userRole: string, userPermissions: string[]): ProTab[] => {
-  return proTabs.filter(tab => {
+export const getVisibleTabs = (userRole: string, userPermissions: string[], category?: ProTripCategory): ProTab[] => {
+  let availableTabs = proTabs;
+  
+  // Filter tabs based on category if provided
+  if (category) {
+    const categoryConfig = getCategoryConfig(category);
+    availableTabs = proTabs.filter(tab => 
+      !tab.proOnly || categoryConfig.availableTabs.includes(tab.id) || ['chat', 'places', 'ai-chat', 'search'].includes(tab.id)
+    );
+  }
+  
+  return availableTabs.filter(tab => {
     // Check role-based restrictions
-    if (tab.restrictedRoles && tab.restrictedRoles.includes(userRole)) {
+    if (tab.restrictedRoles && tab.restrictedRoles.includes(userRole.toLowerCase())) {
       return false;
     }
     
@@ -49,8 +60,9 @@ export const getVisibleTabs = (userRole: string, userPermissions: string[]): Pro
 };
 
 export const isReadOnlyTab = (tabId: string, userRole: string, userPermissions: string[]): boolean => {
-  // Finance and compliance tabs are read-only for talent/player roles
-  if ((tabId === 'finance' || tabId === 'compliance') && (userRole === 'talent' || userRole === 'player')) {
+  // Finance and compliance tabs are read-only for certain roles
+  if ((tabId === 'finance' || tabId === 'compliance') && 
+      ['talent', 'cast', 'student', 'artist'].includes(userRole.toLowerCase())) {
     return true;
   }
   
@@ -67,7 +79,7 @@ export const hasTabAccess = (tabId: string, userRole: string, userPermissions: s
   if (!tab) return false;
   
   // Check role restrictions
-  if (tab.restrictedRoles && tab.restrictedRoles.includes(userRole)) {
+  if (tab.restrictedRoles && tab.restrictedRoles.includes(userRole.toLowerCase())) {
     return false;
   }
   

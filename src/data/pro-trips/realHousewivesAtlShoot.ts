@@ -1,4 +1,3 @@
-
 import { ProTripData } from '../../types/pro';
 
 export const realHousewivesAtlShoot: ProTripData = {
@@ -10,7 +9,7 @@ export const realHousewivesAtlShoot: ProTripData = {
   category: 'TV Production',
   tags: ['TV Production', 'Reality Show', 'Cast & Crew'],
   participants: [
-    { id: 27, name: 'Kenya Moore', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Talent' },
+    { id: 27, name: 'Kenya Moore', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Cast' },
     { id: 28, name: 'Executive Producer', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Producer' },
     { id: 29, name: 'Camera Operator', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Crew' },
     { id: 30, name: 'Production Assistant', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Crew' }
@@ -42,7 +41,7 @@ export const realHousewivesAtlShoot: ProTripData = {
       name: 'Kenya Moore',
       email: 'kenya@bravotv.com',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-      role: 'Talent',
+      role: 'Cast',
       credentialLevel: 'AllAccess',
       permissions: ['cast-areas', 'media-access'],
       roomPreferences: ['luxury-suite', 'atlanta-downtown'],
@@ -176,7 +175,7 @@ export const realHousewivesAtlShoot: ProTripData = {
       activation: 'Wardrobe integration',
       deadline: '2025-08-15',
       assignedTo: '27',
-      status: 'active',
+      status: 'in-progress',
       deliverables: ['wardrobe-showcase', 'social-media-posts'],
       notes: 'Season-long wardrobe partnership'
     }
