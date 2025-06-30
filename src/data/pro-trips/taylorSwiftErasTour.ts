@@ -1,4 +1,3 @@
-
 import { ProTripData } from '../../types/pro';
 
 export const taylorSwiftErasTour: ProTripData = {

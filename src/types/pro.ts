@@ -1,4 +1,3 @@
-
 export interface Tour {
   id: string;
   name: string;
@@ -61,7 +60,7 @@ export interface ProParticipant {
   name: string;
   email: string;
   avatar?: string;
-  role: 'Player' | 'Coach' | 'TourManager' | 'Crew' | 'VIP' | 'Security' | 'Medical' | 'Tech' | 'Producer' | 'Talent';
+  role: string; // Changed from hardcoded union to string to support dynamic roles
   credentialLevel: 'AllAccess' | 'Backstage' | 'Guest' | 'Restricted';
   permissions: string[];
   roomPreferences?: string[];
@@ -281,7 +280,7 @@ export interface ProTripParticipant {
   name: string;
   email?: string;
   avatar: string;
-  role: string;
+  role: string; // Changed from hardcoded union to string to support dynamic roles
 }
 
 export interface ProTripData {
