@@ -1,9 +1,8 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TripHeader } from '../components/TripHeader';
 import { MessageInbox } from '../components/MessageInbox';
-import { TripDetailHeader } from '../components/trip/TripDetailHeader';
+import { ProTripDetailHeader } from '../components/pro/ProTripDetailHeader';
 import { ProTripDetailContent } from '../components/pro/ProTripDetailContent';
 import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { TripVariantProvider } from '../contexts/TripVariantContext';
@@ -116,7 +115,7 @@ const ProTripDetail = () => {
       <div className="min-h-screen bg-black">
         <div className="container mx-auto px-6 py-8 max-w-7xl">
           {/* Top Navigation */}
-          <TripDetailHeader
+          <ProTripDetailHeader
             tripContext={tripContext}
             showInbox={showInbox}
             onToggleInbox={() => setShowInbox(!showInbox)}
