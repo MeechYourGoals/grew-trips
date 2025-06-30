@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Crown, Users, Package, Calendar as CalendarIcon, DollarSign, Shield, Tv, Award, FileCheck, Home } from 'lucide-react';
 import { TripTabs } from '../TripTabs';
@@ -64,10 +63,11 @@ export const ProTripDetailContent = ({
   });
 
   const isReadOnly = (tabId: string) => {
-    const tab = tabs.find(t => t.id === tabId);
-    return tab?.restrictedRoles?.includes(userRole) === false && 
-           (userRole === 'talent' || userRole === 'player') && 
-           (tabId === 'finance' || tabId === 'compliance');
+    // Only finance and compliance tabs have read-only access for talent/player roles
+    if ((tabId === 'finance' || tabId === 'compliance') && (userRole === 'talent' || userRole === 'player')) {
+      return true;
+    }
+    return false;
   };
 
   const handleUpdateRoomAssignments = (assignments: any[]) => {
