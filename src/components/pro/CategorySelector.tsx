@@ -24,26 +24,35 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange, className
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-full bg-gray-800 border border-gray-600 rounded-xl shadow-xl z-50 overflow-hidden">
-          {categories.map((category) => {
-            const config = getCategoryConfig(category);
-            return (
-              <button
-                key={category}
-                onClick={() => {
-                  onCategoryChange(category);
-                  setIsOpen(false);
-                }}
-                className={`w-full text-left px-4 py-3 text-sm transition-colors hover:bg-gray-700 ${
-                  selectedCategory === category ? 'bg-gray-700 text-yellow-400' : 'text-gray-300'
-                }`}
-              >
-                <div className="font-medium">{config.name}</div>
-                <div className="text-xs text-gray-400 mt-1">{config.description}</div>
-              </button>
-            );
-          })}
-        </div>
+        <>
+          {/* Backdrop to close dropdown when clicking outside */}
+          <div 
+            className="fixed inset-0 z-40" 
+            onClick={() => setIsOpen(false)}
+          />
+          
+          {/* Dropdown menu with higher z-index and better positioning */}
+          <div className="absolute top-full left-0 mt-2 w-full min-w-[280px] bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-50 overflow-hidden max-h-96 overflow-y-auto">
+            {categories.map((category) => {
+              const config = getCategoryConfig(category);
+              return (
+                <button
+                  key={category}
+                  onClick={() => {
+                    onCategoryChange(category);
+                    setIsOpen(false);
+                  }}
+                  className={`w-full text-left px-4 py-3 text-sm transition-colors hover:bg-gray-700 border-b border-gray-700 last:border-b-0 ${
+                    selectedCategory === category ? 'bg-gray-700 text-yellow-400' : 'text-gray-300'
+                  }`}
+                >
+                  <div className="font-medium">{config.name}</div>
+                  <div className="text-xs text-gray-400 mt-1 leading-relaxed">{config.description}</div>
+                </button>
+              );
+            })}
+          </div>
+        </>
       )}
     </div>
   );
