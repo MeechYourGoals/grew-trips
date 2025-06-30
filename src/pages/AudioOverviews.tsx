@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { ArrowLeft, Volume2, Play, Pause, Download, FileText, Waveform } from 'lucide-react';
+import { ArrowLeft, Volume2, Play, Pause, Download, FileText, Radio } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -114,7 +113,7 @@ const AudioOverviews = () => {
                   {/* Waveform Visualization */}
                   <div className="mb-6 p-4 bg-gray-800 rounded-lg">
                     <div className="flex items-center justify-center h-24 mb-4">
-                      <Waveform size={48} className="text-yellow-500" />
+                      <Radio size={48} className="text-yellow-500" />
                     </div>
                     <div className="flex items-center gap-4">
                       <Button
