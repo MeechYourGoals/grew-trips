@@ -1,11 +1,12 @@
 
 import React from 'react';
 import { Crown, Users, Package, Calendar as CalendarIcon, DollarSign, Shield, Tv, Award, FileCheck } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
 
 export interface ProTab {
   id: string;
   label: string;
-  icon: React.ComponentType<{ size?: number }> | null;
+  icon: LucideIcon | null;
   proOnly?: boolean;
   restrictedRoles?: string[];
 }
