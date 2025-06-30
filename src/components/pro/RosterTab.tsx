@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Users, Shield, Settings, UserCheck, AlertTriangle } from 'lucide-react';
 import { ProParticipant } from '../../types/pro';
@@ -6,9 +5,10 @@ import { ProParticipant } from '../../types/pro';
 interface RosterTabProps {
   roster: ProParticipant[];
   userRole: string;
+  isReadOnly?: boolean;
 }
 
-export const RosterTab = ({ roster, userRole }: RosterTabProps) => {
+export const RosterTab = ({ roster, userRole, isReadOnly = false }: RosterTabProps) => {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [showCredentials, setShowCredentials] = useState(false);
 
@@ -30,6 +30,13 @@ export const RosterTab = ({ roster, userRole }: RosterTabProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Read-only notice */}
+      {isReadOnly && (
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
+          <p className="text-yellow-400 text-sm">Read-only access for your role</p>
+        </div>
+      )}
+
       {/* Header with Stats */}
       <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
         <div className="flex items-center justify-between mb-4">
@@ -96,7 +103,7 @@ export const RosterTab = ({ roster, userRole }: RosterTabProps) => {
                   )}
                 </div>
               </div>
-              {userRole === 'admin' && (
+              {userRole === 'admin' && !isReadOnly && (
                 <button className="text-gray-400 hover:text-white transition-colors">
                   <Settings size={16} />
                 </button>

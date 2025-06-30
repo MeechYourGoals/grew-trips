@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Package, Search, MapPin, CheckCircle, AlertCircle, Clock, Truck } from 'lucide-react';
 import { Equipment } from '../../types/pro';
@@ -6,9 +5,10 @@ import { Equipment } from '../../types/pro';
 interface EquipmentTrackingProps {
   equipment: Equipment[];
   onUpdateEquipment: (equipment: Equipment[]) => void;
+  isReadOnly?: boolean;
 }
 
-export const EquipmentTracking = ({ equipment, onUpdateEquipment }: EquipmentTrackingProps) => {
+export const EquipmentTracking = ({ equipment, onUpdateEquipment, isReadOnly = false }: EquipmentTrackingProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
 
@@ -55,6 +55,8 @@ export const EquipmentTracking = ({ equipment, onUpdateEquipment }: EquipmentTra
   };
 
   const updateEquipmentStatus = (id: string, newStatus: string) => {
+    if (isReadOnly) return;
+    
     const updatedEquipment = equipment.map(item =>
       item.id === id ? { ...item, status: newStatus as Equipment['status'] } : item
     );
@@ -63,6 +65,13 @@ export const EquipmentTracking = ({ equipment, onUpdateEquipment }: EquipmentTra
 
   return (
     <div className="space-y-6">
+      {/* Read-only notice */}
+      {isReadOnly && (
+        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
+          <p className="text-yellow-400 text-sm">Read-only access for your role</p>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
         <div className="flex items-center justify-between mb-4">
@@ -158,22 +167,24 @@ export const EquipmentTracking = ({ equipment, onUpdateEquipment }: EquipmentTra
               </div>
             )}
 
-            {/* Quick Status Update */}
-            <div className="flex gap-1 mt-3">
-              {['packed', 'in-transit', 'delivered', 'setup'].map((status) => (
-                <button
-                  key={status}
-                  onClick={() => updateEquipmentStatus(item.id, status)}
-                  className={`flex-1 px-2 py-1 rounded text-xs transition-colors ${
-                    item.status === status
-                      ? 'bg-red-600 text-white'
-                      : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                  }`}
-                >
-                  {status.replace('-', ' ')}
-                </button>
-              ))}
-            </div>
+            {/* Quick Status Update - only show if not read-only */}
+            {!isReadOnly && (
+              <div className="flex gap-1 mt-3">
+                {['packed', 'in-transit', 'delivered', 'setup'].map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => updateEquipmentStatus(item.id, status)}
+                    className={`flex-1 px-2 py-1 rounded text-xs transition-colors ${
+                      item.status === status
+                        ? 'bg-red-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    {status.replace('-', ' ')}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ))}
       </div>
