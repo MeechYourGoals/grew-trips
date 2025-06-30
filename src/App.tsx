@@ -10,6 +10,8 @@ import Index from "./pages/Index";
 import TripDetail from "./pages/TripDetail";
 import ItineraryAssignmentPage from "./pages/ItineraryAssignmentPage";
 import ProTripDetail from "./pages/ProTripDetail";
+import ReviewAnalysis from "./pages/ReviewAnalysis";
+import AudioOverviews from "./pages/AudioOverviews";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,9 @@ const App = () => (
               <Route path="/trip/:tripId/edit-itinerary" element={<ItineraryAssignmentPage />} />
               {/* Pro trip routes - Fixed pattern to properly match URLs like /tour/pro-2 */}
               <Route path="/tour/pro/:proTripId" element={<ProTripDetail />} />
+              {/* AI Feature routes */}
+              <Route path="/ai/review-analysis" element={<ReviewAnalysis />} />
+              <Route path="/ai/audio-overviews" element={<AudioOverviews />} />
               {/* Catch-all route for 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
