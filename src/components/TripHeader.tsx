@@ -4,6 +4,9 @@ import { Calendar, MapPin, Users, Plus, Settings } from 'lucide-react';
 import { InviteModal } from './InviteModal';
 import { useAuth } from '../hooks/useAuth';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { CategorySelector } from './pro/CategorySelector';
+import { CategoryTags } from './pro/CategoryTags';
+import { ProTripCategory } from '../types/proCategories';
 
 interface TripHeaderProps {
   trip: {
@@ -19,12 +22,17 @@ interface TripHeaderProps {
     }>;
   };
   onManageUsers?: () => void;
+  // Pro-specific props
+  category?: ProTripCategory;
+  tags?: string[];
+  onCategoryChange?: (category: ProTripCategory) => void;
 }
 
-export const TripHeader = ({ trip, onManageUsers }: TripHeaderProps) => {
+export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategoryChange }: TripHeaderProps) => {
   const { user } = useAuth();
   const [showInvite, setShowInvite] = useState(false);
-  const { accentColors } = useTripVariant();
+  const { variant, accentColors } = useTripVariant();
+  const isPro = variant === 'pro';
 
   return (
     <>
@@ -33,6 +41,14 @@ export const TripHeader = ({ trip, onManageUsers }: TripHeaderProps) => {
           {/* Trip Info */}
           <div className="flex-1">
             <h1 className="text-4xl font-bold text-white mb-4">{trip.title}</h1>
+            
+            {/* Category Tags for Pro trips */}
+            {isPro && category && (
+              <div className="mb-4">
+                <CategoryTags category={category} tags={tags} />
+              </div>
+            )}
+            
             <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
               <div className="flex items-center gap-2 text-gray-300">
                 <MapPin size={18} className={`text-${accentColors.primary}`} />
@@ -68,6 +84,17 @@ export const TripHeader = ({ trip, onManageUsers }: TripHeaderProps) => {
                 )}
               </div>
             </div>
+            
+            {/* Category Selector for Pro trips */}
+            {isPro && category && onCategoryChange && (
+              <div className="mb-4">
+                <label className="block text-gray-400 text-sm mb-2">Trip Category</label>
+                <CategorySelector
+                  selectedCategory={category}
+                  onCategoryChange={onCategoryChange}
+                />
+              </div>
+            )}
             
             <div className="space-y-3 mb-4">
               {trip.collaborators.map((collaborator) => (

@@ -19,6 +19,7 @@ interface ProTripDetailContentProps {
   tripPreferences: TripPreferencesType | undefined;
   onPreferencesChange: (preferences: TripPreferencesType) => void;
   tripData: ProTripData;
+  selectedCategory: ProTripCategory;
 }
 
 export const ProTripDetailContent = ({
@@ -29,7 +30,8 @@ export const ProTripDetailContent = ({
   basecamp,
   tripPreferences,
   onPreferencesChange,
-  tripData
+  tripData,
+  selectedCategory
 }: ProTripDetailContentProps) => {
   const [showRoomModal, setShowRoomModal] = useState(false);
   const { user } = useAuth();
@@ -37,7 +39,7 @@ export const ProTripDetailContent = ({
   const userRole = user?.proRole || 'staff';
   const userPermissions = user?.permissions || ['read'];
 
-  const visibleTabs = getVisibleTabs(userRole, userPermissions, tripData.proTripCategory);
+  const visibleTabs = getVisibleTabs(userRole, userPermissions, selectedCategory);
 
   const handleUpdateRoomAssignments = (assignments: any[]) => {
     // In a real app, this would update the trip data
@@ -51,8 +53,8 @@ export const ProTripDetailContent = ({
 
   return (
     <>
-      {/* Role Switcher for Testing */}
-      <RoleSwitcher />
+      {/* Role Switcher for Testing - Now Dynamic */}
+      <RoleSwitcher category={selectedCategory} />
 
       {/* Category-Specific Tab Navigation */}
       <ProTabNavigation

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TripHeader } from '../components/TripHeader';
@@ -11,6 +12,7 @@ import { useMessages } from '../hooks/useMessages';
 import { proTripMockData } from '../data/proTripMockData';
 import { ProTripNotFound } from '../components/pro/ProTripNotFound';
 import { TripPreferences as TripPreferencesType } from '../types/consumer';
+import { ProTripCategory } from '../types/proCategories';
 
 const ProTripDetail = () => {
   const { proTripId } = useParams<{ proTripId?: string }>();
@@ -46,6 +48,11 @@ const ProTripDetail = () => {
 
   const tripData = proTripMockData[proTripId];
   console.log('ProTripDetail - found trip data:', tripData);
+  
+  // State for selected category - defaults to trip's original category
+  const [selectedCategory, setSelectedCategory] = useState<ProTripCategory>(
+    tripData.proTripCategory || 'Corporate & Business'
+  );
 
   // Convert Pro trip data to standard trip format
   const trip = {
@@ -133,10 +140,15 @@ const ProTripDetail = () => {
             </div>
           )}
 
-          {/* Trip Header */}
-          <TripHeader trip={trip} />
+          {/* Trip Header with Category Selection */}
+          <TripHeader 
+            trip={trip}
+            category={selectedCategory}
+            tags={tripData.tags}
+            onCategoryChange={setSelectedCategory}
+          />
 
-          {/* Enhanced Pro Content with Role-Based Access */}
+          {/* Enhanced Pro Content with Dynamic Category */}
           <ProTripDetailContent
             activeTab={activeTab}
             onTabChange={setActiveTab}
@@ -146,6 +158,7 @@ const ProTripDetail = () => {
             tripPreferences={tripPreferences}
             onPreferencesChange={setTripPreferences}
             tripData={tripData}
+            selectedCategory={selectedCategory}
           />
         </div>
 
