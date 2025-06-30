@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TripHeader } from '../components/TripHeader';
 import { MessageInbox } from '../components/MessageInbox';
 import { TripDetailHeader } from '../components/trip/TripDetailHeader';
-import { TripDetailContent } from '../components/trip/TripDetailContent';
+import { EventDetailContent } from '../components/events/EventDetailContent';
 import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { TripVariantProvider } from '../contexts/TripVariantContext';
 import { useAuth } from '../hooks/useAuth';
@@ -46,9 +45,8 @@ const EventDetail = () => {
   }
 
   const eventData = eventsMockData[eventId];
-  console.log('EventDetail - found event data:', eventData);
 
-  // Convert Event data to standard trip format
+  // Enhanced trip data with event-specific features
   const trip = {
     id: parseInt(eventId.replace(/\D/g, '') || '1'),
     title: eventData.title,
@@ -83,7 +81,7 @@ const EventDetail = () => {
     { id: 3, title: "Networking Hub", url: "https://networking.events.com", category: "Networking" }
   ];
 
-  // Build comprehensive trip context - same as standard trips
+  // Enhanced trip context with event-specific features
   const tripContext = {
     id: eventId,
     title: eventData.title,
@@ -100,7 +98,15 @@ const EventDetail = () => {
     budget: eventData.budget,
     isPro: false,
     isEvent: true,
-    groupChatEnabled: eventData.groupChatEnabled
+    groupChatEnabled: eventData.groupChatEnabled,
+    // Event-specific features
+    eventFeatures: {
+      registration: true,
+      agenda: true,
+      networking: true,
+      speakers: true,
+      analytics: (eventData.userRole || 'attendee') === 'organizer'
+    }
   };
 
   return (
@@ -124,11 +130,11 @@ const EventDetail = () => {
             </div>
           )}
 
-          {/* Trip Header - same as standard trips */}
+          {/* Trip Header */}
           <TripHeader trip={trip} />
 
-          {/* Main Content - same as standard trips */}
-          <TripDetailContent
+          {/* Enhanced Event Content */}
+          <EventDetailContent
             activeTab={activeTab}
             onTabChange={setActiveTab}
             onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
@@ -136,6 +142,8 @@ const EventDetail = () => {
             basecamp={basecamp}
             tripPreferences={tripPreferences}
             onPreferencesChange={setTripPreferences}
+            eventData={eventData}
+            tripContext={tripContext}
           />
         </div>
 

@@ -1,38 +1,4 @@
-
-export interface EventData {
-  id: string;
-  title: string;
-  location: string;
-  dateRange: string;
-  category: string;
-  description: string;
-  tags: string[];
-  participants: Array<{
-    id: number;
-    name: string;
-    avatar: string;
-    role: string;
-  }>;
-  itinerary: Array<{
-    date: string;
-    events: Array<{
-      title: string;
-      location: string;
-      time: string;
-    }>;
-  }>;
-  budget: {
-    total: number;
-    spent: number;
-    categories: Array<{
-      name: string;
-      allocated: number;
-      spent: number;
-    }>;
-  };
-  groupChatEnabled: boolean;
-  attendanceExpected: number;
-}
+import { EventData } from './eventsMockData';
 
 export const eventsMockData: Record<string, EventData> = {
   'sxsw-2025': {
@@ -235,7 +201,143 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: false,
-    attendanceExpected: 50000
+    attendanceExpected: 50000,
+    
+    // Enhanced event-specific data
+    capacity: 50000,
+    registrationStatus: 'open',
+    checkedInCount: 12500,
+    userRole: 'attendee',
+    
+    tracks: [
+      { id: 'main-stage', name: 'Main Stage', color: '#10B981', location: 'Hall A' },
+      { id: 'workshops', name: 'Workshops', color: '#3B82F6', location: 'Hall B' },
+      { id: 'networking', name: 'Networking', color: '#8B5CF6', location: 'Expo Hall' },
+      { id: 'panels', name: 'Expert Panels', color: '#F59E0B', location: 'Hall C' }
+    ],
+    
+    speakers: [
+      {
+        id: 'speaker-1',
+        name: 'Robert Kiyosaki',
+        title: 'Author & Investor',
+        company: 'Rich Dad Company',
+        bio: 'Best-selling author of "Rich Dad Poor Dad" and internationally recognized financial educator who has challenged the way people think about money and investing.',
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face',
+        sessions: ['keynote-1', 'panel-1'],
+        socialLinks: {
+          twitter: 'https://twitter.com/therealKiyosaki',
+          website: 'https://richdad.com'
+        }
+      },
+      {
+        id: 'speaker-2',
+        name: 'Suze Orman',
+        title: 'Financial Advisor & Author',
+        company: 'Suze Orman Media',
+        bio: 'New York Times bestselling author and personal finance expert who has transformed the way Americans think about personal finance, money, and life.',
+        avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=80&h=80&fit=crop&crop=face',
+        sessions: ['keynote-2', 'workshop-1'],
+        socialLinks: {
+          twitter: 'https://twitter.com/SuzeOrmanShow',
+          website: 'https://suzeorman.com'
+        }
+      },
+      {
+        id: 'speaker-3',
+        name: 'Dave Ramsey',
+        title: 'Radio Host & Author',
+        company: 'Ramsey Solutions',
+        bio: 'Radio host, author, and financial expert who has helped millions of people get out of debt and build wealth through his proven money principles.',
+        avatar: 'https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=80&h=80&fit=crop&crop=face',
+        sessions: ['workshop-2', 'panel-2'],
+        socialLinks: {
+          twitter: 'https://twitter.com/DaveRamsey',
+          website: 'https://ramseysolutions.com'
+        }
+      }
+    ],
+    
+    sessions: [
+      {
+        id: 'keynote-1',
+        title: 'The Future of Financial Education',
+        description: 'Exploring how financial literacy will evolve in the digital age and what it means for building generational wealth.',
+        speaker: 'speaker-1',
+        track: 'main-stage',
+        startTime: '09:30',
+        endTime: '10:30',
+        location: 'Hall A - Main Stage',
+        capacity: 15000,
+        rsvpCount: 12750,
+        materials: [
+          { title: 'Future of Finance Slides', url: '#', type: 'slides' },
+          { title: 'Resource Guide', url: '#', type: 'document' }
+        ]
+      },
+      {
+        id: 'workshop-1',
+        title: 'Women & Wealth: Breaking Barriers',
+        description: 'Addressing the unique financial challenges women face and providing actionable strategies for building wealth.',
+        speaker: 'speaker-2',
+        track: 'workshops',
+        startTime: '11:00',
+        endTime: '12:00',
+        location: 'Hall B - Workshop Area',
+        capacity: 500,
+        rsvpCount: 485,
+        materials: [
+          { title: 'Women & Wealth Workbook', url: '#', type: 'document' }
+        ]
+      },
+      {
+        id: 'panel-1',
+        title: 'Investing in Volatile Times',
+        description: 'Expert panel discussion on navigating market uncertainty and making smart investment decisions.',
+        speaker: 'speaker-1',
+        track: 'panels',
+        startTime: '14:00',
+        endTime: '15:00',
+        location: 'Hall C - Panel Stage',
+        capacity: 1000,
+        rsvpCount: 875
+      }
+    ],
+    
+    sponsors: [
+      {
+        id: 'sponsor-1',
+        name: 'Fidelity Investments',
+        tier: 'platinum',
+        logo: 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=120&h=60&fit=crop',
+        website: 'https://fidelity.com',
+        description: 'Leading financial services company',
+        booth: 'A1'
+      },
+      {
+        id: 'sponsor-2',
+        name: 'Charles Schwab',
+        tier: 'gold',
+        logo: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=120&h=60&fit=crop',
+        website: 'https://schwab.com',
+        description: 'Investment and advisory services',
+        booth: 'B2'
+      }
+    ],
+    
+    exhibitors: [
+      {
+        id: 'exhibitor-1',
+        name: 'Financial Planning Solutions',
+        description: 'Comprehensive financial planning services for individuals and families',
+        booth: 'E1',
+        logo: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=80&h=80&fit=crop',
+        website: 'https://fppsolutions.com',
+        contacts: [
+          { name: 'Michael Johnson', role: 'Senior Advisor', email: 'michael@fppsolutions.com' }
+        ]
+      }
+    ]
   },
   'grammys-2025': {
     id: 'grammys-2025',
