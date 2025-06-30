@@ -18,9 +18,9 @@ export const ConsumerSubscriptionProvider = ({ children }: { children: React.Rea
   const [subscription, setSubscription] = useState<ConsumerSubscription | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock subscription data for demo
+  // Mock subscription data - now defaulting to plus for all users
   const mockSubscription: ConsumerSubscription = {
-    tier: 'free',
+    tier: 'plus', // Changed from 'free' to 'plus'
     status: 'active'
   };
 
@@ -28,7 +28,7 @@ export const ConsumerSubscriptionProvider = ({ children }: { children: React.Rea
     if (user) {
       setSubscription(mockSubscription);
     } else {
-      setSubscription(null);
+      setSubscription(mockSubscription); // Even non-authenticated users get plus access
     }
   }, [user]);
 
@@ -50,7 +50,7 @@ export const ConsumerSubscriptionProvider = ({ children }: { children: React.Rea
     }, 2000);
   };
 
-  const isPlus = subscription?.tier === 'plus';
+  const isPlus = true; // Always return true to remove paywall
 
   return (
     <ConsumerSubscriptionContext.Provider value={{

@@ -1,26 +1,20 @@
 
 import React, { useState, useRef } from 'react';
-import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { useAudioOverview } from '../hooks/useAiFeatures';
 import { AudioOverviewsHeader } from '../components/audio/AudioOverviewsHeader';
 import { AudioPlayer } from '../components/audio/AudioPlayer';
 import { AudioTranscript } from '../components/audio/AudioTranscript';
 import { AudioSidebar } from '../components/audio/AudioSidebar';
-import { PremiumGate } from '../components/audio/PremiumGate';
 import { EmptyState } from '../components/audio/EmptyState';
 import { useToast } from '../hooks/use-toast';
 
 const AudioOverviews = () => {
-  const { isPlus } = useConsumerSubscription();
   const audioOverview = useAudioOverview();
   const { toast } = useToast();
   const [url, setUrl] = useState('');
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
-
-  // For now, treat Plus users as having Premium access
-  const isPremium = isPlus;
 
   const handleGenerate = async () => {
     if (!url.trim()) {
@@ -72,10 +66,6 @@ const AudioOverviews = () => {
     const secs = seconds % 60;
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
-
-  if (!isPremium) {
-    return <PremiumGate />;
-  }
 
   return (
     <div className="min-h-screen bg-black text-white">
