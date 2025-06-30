@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { TripHeader } from '../components/TripHeader';
 import { MessageInbox } from '../components/MessageInbox';
 import { TripDetailHeader } from '../components/trip/TripDetailHeader';
-import { ProTripDetailContent } from '../components/pro/ProTripDetailContent';
+import { TripDetailContent } from '../components/trip/TripDetailContent';
 import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { TripVariantProvider } from '../contexts/TripVariantContext';
 import { useAuth } from '../hooks/useAuth';
@@ -125,8 +125,8 @@ const ProTripDetail = () => {
           {/* Trip Header - same as standard trips */}
           <TripHeader trip={trip} />
 
-          {/* Enhanced Pro Content */}
-          <ProTripDetailContent
+          {/* Main Content - same as standard trips */}
+          <TripDetailContent
             activeTab={activeTab}
             onTabChange={setActiveTab}
             onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
@@ -134,7 +134,6 @@ const ProTripDetail = () => {
             basecamp={basecamp}
             tripPreferences={tripPreferences}
             onPreferencesChange={setTripPreferences}
-            tripData={tripData}
           />
         </div>
 

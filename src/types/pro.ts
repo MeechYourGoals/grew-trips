@@ -1,3 +1,4 @@
+
 export interface Tour {
   id: string;
   name: string;
@@ -160,123 +161,6 @@ export interface ProTripParticipant {
   role: string;
 }
 
-export interface ProParticipant {
-  id: string;
-  name: string;
-  email: string;
-  avatar?: string;
-  role: 'artist' | 'manager' | 'assistant' | 'crew' | 'security' | 'photographer' | 'videographer' | 'label-rep' | 'venue-rep' | 'player' | 'coach' | 'tour-mgr' | 'guitar-tech' | 'sound-engineer';
-  permissions: 'admin' | 'staff' | 'talent';
-  isActive: boolean;
-  credentials: string[];
-  roomAssignment?: string;
-  medicalNotes?: string;
-  accessLevel: 'all-areas' | 'backstage' | 'venue-only' | 'restricted';
-}
-
-export interface RoomAssignment {
-  id: string;
-  roomNumber: string;
-  participants: string[];
-  roomType: 'single' | 'double' | 'suite';
-  hotel: string;
-  checkIn: string;
-  checkOut: string;
-}
-
-export interface Equipment {
-  id: string;
-  name: string;
-  category: 'instruments' | 'sound' | 'lighting' | 'transport' | 'jerseys' | 'signage';
-  status: 'packed' | 'shipped' | 'arrived' | 'missing';
-  trackingNumber?: string;
-  responsiblePerson: string;
-  value: number;
-}
-
-export interface ProSchedule {
-  id: string;
-  eventType: 'load-in' | 'sound-check' | 'practice' | 'load-out' | 'media';
-  startTime: string;
-  endTime: string;
-  location: string;
-  crew: string[];
-  equipment: string[];
-  notes?: string;
-}
-
-export interface PerDiemData {
-  dailyRate: number;
-  currency: string;
-  deductions: Array<{
-    date: string;
-    amount: number;
-    reason: string;
-  }>;
-  advances: Array<{
-    date: string;
-    amount: number;
-    recipient: string;
-  }>;
-}
-
-export interface SettlementData {
-  guarantee: number;
-  actualRevenue: number;
-  merchPercentage: number;
-  merchRevenue: number;
-  expenses: number;
-  finalPayout: number;
-  date: string;
-  venue: string;
-}
-
-export interface MedicalLog {
-  id: string;
-  participantId: string;
-  date: string;
-  type: 'injury' | 'illness' | 'therapy' | 'checkup';
-  description: string;
-  treatment?: string;
-  status: 'active' | 'healing' | 'cleared';
-  restrictedActivities: string[];
-  medicalStaff: string;
-  private: boolean;
-}
-
-export interface ComplianceRule {
-  id: string;
-  type: 'ncaa' | 'union' | 'visa' | 'venue' | 'insurance';
-  description: string;
-  deadline?: string;
-  status: 'compliant' | 'warning' | 'violation' | 'pending';
-  assignedTo: string;
-  documents: string[];
-}
-
-export interface MediaSlot {
-  id: string;
-  type: 'interview' | 'photo-shoot' | 'podcast' | 'post-game';
-  participant: string;
-  outlet: string;
-  startTime: string;
-  duration: number;
-  location: string;
-  requirements: string[];
-  status: 'scheduled' | 'completed' | 'cancelled';
-}
-
-export interface SponsorActivation {
-  id: string;
-  sponsor: string;
-  activity: string;
-  deadline: string;
-  status: 'pending' | 'in-progress' | 'completed' | 'overdue';
-  assignedTo: string;
-  deliverables: string[];
-  notes?: string;
-}
-
 export interface ProTripData {
   id: string;
   title: string;
@@ -286,16 +170,6 @@ export interface ProTripData {
   category: string;
   tags: string[];
   participants: ProTripParticipant[];
-  roster: ProParticipant[];
-  roomAssignments: RoomAssignment[];
-  equipment: Equipment[];
-  schedule: ProSchedule[];
-  perDiem: PerDiemData;
-  settlements: SettlementData[];
-  medicalLog: MedicalLog[];
-  compliance: ComplianceRule[];
-  mediaSlots: MediaSlot[];
-  sponsorActivations: SponsorActivation[];
   budget: {
     total: number;
     spent: number;
