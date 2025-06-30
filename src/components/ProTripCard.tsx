@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, Crown, Copy, Eye } from 'lucide-react';
+import { Calendar, MapPin, Crown, Copy, Eye, Users, Clock } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
@@ -41,8 +42,39 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
     }
   };
 
+  // Get next load-in event from schedule
+  const getNextLoadIn = () => {
+    if (!trip.schedule || trip.schedule.length === 0) return null;
+    
+    const now = new Date();
+    const loadInEvents = trip.schedule
+      .filter(event => event.type === 'load-in')
+      .filter(event => new Date(event.startTime) > now)
+      .sort((a, b) => new Date(a.startTime).getTime() - new Date(b.startTime).getTime());
+    
+    return loadInEvents.length > 0 ? loadInEvents[0] : null;
+  };
+
+  const nextLoadIn = getNextLoadIn();
+
   return (
     <div className={`bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-3xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-xl group hover:border-${accentColors.primary}/50 relative overflow-hidden`}>
+      {/* Crown Badge - Only show if roster exists and has members */}
+      {trip.roster && trip.roster.length > 0 && (
+        <div className="absolute top-4 left-4">
+          <Tooltip>
+            <TooltipTrigger>
+              <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 p-2 rounded-lg shadow-lg">
+                <Crown size={14} className="text-white" />
+              </div>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Professional Trip</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      )}
+
       {/* Pro Badge */}
       <div className="absolute top-4 right-4">
         <Tooltip>
@@ -58,11 +90,11 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
       </div>
 
       {/* Header */}
-      <div className="mb-4 pr-12">
+      <div className="mb-4 pr-12 pl-12">
         <h3 className={`text-xl font-semibold text-white group-hover:text-${accentColors.secondary} transition-colors mb-2`}>
           {trip.title}
         </h3>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-2 mb-3">
           <Badge 
             className={`text-xs ${getCategoryColor(trip.category)} border`}
           >
@@ -73,6 +105,22 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
               {tag}
             </Badge>
           ))}
+        </div>
+
+        {/* New Pills - Roster and Next Load-In */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {trip.roster && trip.roster.length > 0 && (
+            <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-xs border border-blue-500/30">
+              <Users size={12} />
+              <span>Roster: {trip.roster.length}</span>
+            </div>
+          )}
+          {nextLoadIn && (
+            <div className="flex items-center gap-1 bg-orange-500/20 text-orange-300 px-3 py-1 rounded-full text-xs border border-orange-500/30">
+              <Clock size={12} />
+              <span>Next Load-In: {new Date(nextLoadIn.startTime).toLocaleDateString()}</span>
+            </div>
+          )}
         </div>
       </div>
 

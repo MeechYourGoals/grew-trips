@@ -123,5 +123,3 @@ export interface EventData {
     }>;
   }>;
 }
-
-export type { EventData };

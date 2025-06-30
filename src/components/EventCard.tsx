@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Users, Settings } from 'lucide-react';
-import { EventData } from '../data/eventsMockData';
+import { EventData } from '../types/events';
 import { useTripVariant } from '../contexts/TripVariantContext';
 
 interface EventCardProps {
