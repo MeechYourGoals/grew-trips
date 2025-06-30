@@ -1,16 +1,15 @@
 
 import React from 'react';
-import { UniversalReviewSummaries } from './UniversalReviewSummaries';
-import { AudioOverviews } from './AudioOverviews';
+import { AiFeatureCard } from './AiFeatureCard';
 
 export const SentimentAnalysis = () => {
   return (
     <div className="grid md:grid-cols-2 gap-6 w-full">
       {/* Universal Review Summaries - Left Side */}
-      <UniversalReviewSummaries />
+      <AiFeatureCard feature="reviews" planRequired="plus" />
 
       {/* Audio Overviews - Right Side */}
-      <AudioOverviews />
+      <AiFeatureCard feature="audio" planRequired="premium" />
     </div>
   );
 };
