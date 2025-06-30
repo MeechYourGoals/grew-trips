@@ -65,7 +65,7 @@ export interface Exhibitor {
 
 export type EventUserRole = 'organizer' | 'speaker' | 'exhibitor' | 'attendee';
 
-export interface EnhancedEventData {
+export interface EventData {
   id: string;
   title: string;
   location: string;
@@ -97,7 +97,7 @@ export interface EnhancedEventData {
     name: string;
     avatar: string;
     role: string;
-    userRole: EventUserRole;
+    userRole?: EventUserRole;
     checkedIn?: boolean;
   }>;
   
@@ -105,7 +105,7 @@ export interface EnhancedEventData {
   budget: {
     total: number;
     spent: number;
-    sponsorRevenue: number;
+    sponsorRevenue?: number;
     categories: Array<{
       name: string;
       allocated: number;
@@ -123,3 +123,5 @@ export interface EnhancedEventData {
     }>;
   }>;
 }
+
+export type { EventData };

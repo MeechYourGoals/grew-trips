@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { TripHeader } from '../components/TripHeader';
 import { MessageInbox } from '../components/MessageInbox';
 import { TripDetailHeader } from '../components/trip/TripDetailHeader';
-import { TripDetailContent } from '../components/trip/TripDetailContent';
+import { ProTripDetailContent } from '../components/pro/ProTripDetailContent';
 import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { TripVariantProvider } from '../contexts/TripVariantContext';
 import { useAuth } from '../hooks/useAuth';
@@ -71,7 +71,7 @@ const ProTripDetail = () => {
   // Get trip messages for context
   const tripMessages = getMessagesForTrip(proTripId);
 
-  // Mock data for Pro trip context - same structure as standard trips
+  // Mock data for Pro trip context
   const mockBroadcasts = [
     { id: 1, senderName: "Team Lead", content: `${tripData.category} schedule confirmed for all participants`, timestamp: "2025-01-15T15:30:00Z" },
     { id: 2, senderName: "Operations", content: `Budget approved for ${tripData.title} - all expenses covered`, timestamp: "2025-01-15T10:00:00Z" }
@@ -83,7 +83,7 @@ const ProTripDetail = () => {
     { id: 3, title: "Team Building Activities", url: "https://team-events.com/pro", category: "Activities" }
   ];
 
-  // Build comprehensive trip context - same as standard trips
+  // Build comprehensive trip context
   const tripContext = {
     id: proTripId,
     title: tripData.title,
@@ -98,14 +98,24 @@ const ProTripDetail = () => {
     collaborators: trip.collaborators,
     itinerary: tripData.itinerary,
     budget: tripData.budget,
-    isPro: true
+    isPro: true,
+    // Enhanced Pro features
+    proFeatures: {
+      roster: true,
+      logistics: true,
+      schedule: true,
+      finance: true,
+      medical: true,
+      media: true,
+      sponsors: true
+    }
   };
 
   return (
     <TripVariantProvider variant="pro">
       <div className="min-h-screen bg-black">
         <div className="container mx-auto px-6 py-8 max-w-7xl">
-          {/* Top Navigation - same as standard trips */}
+          {/* Top Navigation */}
           <TripDetailHeader
             tripContext={tripContext}
             showInbox={showInbox}
@@ -115,18 +125,18 @@ const ProTripDetail = () => {
             onShowAuth={() => setShowAuth(true)}
           />
 
-          {/* Message Inbox - same as standard trips */}
+          {/* Message Inbox */}
           {showInbox && user && (
             <div className="mb-8">
               <MessageInbox />
             </div>
           )}
 
-          {/* Trip Header - same as standard trips */}
+          {/* Trip Header */}
           <TripHeader trip={trip} />
 
-          {/* Main Content - same as standard trips */}
-          <TripDetailContent
+          {/* Enhanced Pro Content */}
+          <ProTripDetailContent
             activeTab={activeTab}
             onTabChange={setActiveTab}
             onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
@@ -134,6 +144,7 @@ const ProTripDetail = () => {
             basecamp={basecamp}
             tripPreferences={tripPreferences}
             onPreferencesChange={setTripPreferences}
+            tripData={tripData}
           />
         </div>
 

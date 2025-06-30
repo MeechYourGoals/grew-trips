@@ -1,4 +1,4 @@
-import { EventData } from './eventsMockData';
+import { EventData } from '../types/events';
 
 export const eventsMockData: Record<string, EventData> = {
   'sxsw-2025': {
@@ -34,7 +34,16 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: false,
-    attendanceExpected: 75000
+    attendanceExpected: 75000,
+    capacity: 75000,
+    registrationStatus: 'open',
+    checkedInCount: 22500,
+    userRole: 'attendee',
+    tracks: [],
+    speakers: [],
+    sessions: [],
+    sponsors: [],
+    exhibitors: []
   },
   'wef-2025': {
     id: 'wef-2025',
@@ -68,7 +77,16 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: false,
-    attendanceExpected: 3000
+    attendanceExpected: 3000,
+    capacity: 3000,
+    registrationStatus: 'open',
+    checkedInCount: 900,
+    userRole: 'attendee',
+    tracks: [],
+    speakers: [],
+    sessions: [],
+    sponsors: [],
+    exhibitors: []
   },
   'money2020-2025': {
     id: 'money2020-2025',
@@ -102,7 +120,16 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: false,
-    attendanceExpected: 12000
+    attendanceExpected: 12000,
+    capacity: 12000,
+    registrationStatus: 'open',
+    checkedInCount: 3600,
+    userRole: 'attendee',
+    tracks: [],
+    speakers: [],
+    sessions: [],
+    sponsors: [],
+    exhibitors: []
   },
   'bloomberg-screentime-2025': {
     id: 'bloomberg-screentime-2025',
@@ -135,7 +162,16 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: true,
-    attendanceExpected: 800
+    attendanceExpected: 800,
+    capacity: 800,
+    registrationStatus: 'open',
+    checkedInCount: 240,
+    userRole: 'attendee',
+    tracks: [],
+    speakers: [],
+    sessions: [],
+    sponsors: [],
+    exhibitors: []
   },
   'inbound-2025': {
     id: 'inbound-2025',
@@ -168,7 +204,16 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: false,
-    attendanceExpected: 25000
+    attendanceExpected: 25000,
+    capacity: 25000,
+    registrationStatus: 'open',
+    checkedInCount: 7500,
+    userRole: 'attendee',
+    tracks: [],
+    speakers: [],
+    sessions: [],
+    sponsors: [],
+    exhibitors: []
   },
   'invest-fest-2025': {
     id: 'invest-fest-2025',
@@ -202,20 +247,16 @@ export const eventsMockData: Record<string, EventData> = {
     },
     groupChatEnabled: false,
     attendanceExpected: 50000,
-    
-    // Enhanced event-specific data
     capacity: 50000,
     registrationStatus: 'open',
     checkedInCount: 12500,
     userRole: 'attendee',
-    
     tracks: [
       { id: 'main-stage', name: 'Main Stage', color: '#10B981', location: 'Hall A' },
       { id: 'workshops', name: 'Workshops', color: '#3B82F6', location: 'Hall B' },
       { id: 'networking', name: 'Networking', color: '#8B5CF6', location: 'Expo Hall' },
       { id: 'panels', name: 'Expert Panels', color: '#F59E0B', location: 'Hall C' }
     ],
-    
     speakers: [
       {
         id: 'speaker-1',
@@ -257,7 +298,6 @@ export const eventsMockData: Record<string, EventData> = {
         }
       }
     ],
-    
     sessions: [
       {
         id: 'keynote-1',
@@ -303,7 +343,6 @@ export const eventsMockData: Record<string, EventData> = {
         rsvpCount: 875
       }
     ],
-    
     sponsors: [
       {
         id: 'sponsor-1',
@@ -324,7 +363,6 @@ export const eventsMockData: Record<string, EventData> = {
         booth: 'B2'
       }
     ],
-    
     exhibitors: [
       {
         id: 'exhibitor-1',
@@ -370,7 +408,16 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: true,
-    attendanceExpected: 750
+    attendanceExpected: 750,
+    capacity: 750,
+    registrationStatus: 'open',
+    checkedInCount: 225,
+    userRole: 'attendee',
+    tracks: [],
+    speakers: [],
+    sessions: [],
+    sponsors: [],
+    exhibitors: []
   },
   'yc-demo-day-2025': {
     id: 'yc-demo-day-2025',
@@ -403,7 +450,16 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: true,
-    attendanceExpected: 400
+    attendanceExpected: 400,
+    capacity: 400,
+    registrationStatus: 'open',
+    checkedInCount: 120,
+    userRole: 'attendee',
+    tracks: [],
+    speakers: [],
+    sessions: [],
+    sponsors: [],
+    exhibitors: []
   },
   'tiktok-summit-2025': {
     id: 'tiktok-summit-2025',
@@ -436,7 +492,16 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: true,
-    attendanceExpected: 200
+    attendanceExpected: 200,
+    capacity: 200,
+    registrationStatus: 'open',
+    checkedInCount: 60,
+    userRole: 'attendee',
+    tracks: [],
+    speakers: [],
+    sessions: [],
+    sponsors: [],
+    exhibitors: []
   },
   'oscars-2025': {
     id: 'oscars-2025',
@@ -469,7 +534,16 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: true,
-    attendanceExpected: 500
+    attendanceExpected: 500,
+    capacity: 500,
+    registrationStatus: 'open',
+    checkedInCount: 150,
+    userRole: 'attendee',
+    tracks: [],
+    speakers: [],
+    sessions: [],
+    sponsors: [],
+    exhibitors: []
   },
   'nba-hof-2025': {
     id: 'nba-hof-2025',
@@ -502,6 +576,15 @@ export const eventsMockData: Record<string, EventData> = {
       ]
     },
     groupChatEnabled: true,
-    attendanceExpected: 300
+    attendanceExpected: 300,
+    capacity: 300,
+    registrationStatus: 'open',
+    checkedInCount: 90,
+    userRole: 'attendee',
+    tracks: [],
+    speakers: [],
+    sessions: [],
+    sponsors: [],
+    exhibitors: []
   }
 };
