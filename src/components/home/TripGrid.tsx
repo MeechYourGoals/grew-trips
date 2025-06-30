@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { TripCard } from '../TripCard';
 import { ProTripCard } from '../ProTripCard';
@@ -8,7 +7,7 @@ import { MobileProTripCard } from '../MobileProTripCard';
 import { MobileEventCard } from '../MobileEventCard';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { ProTripData } from '../../types/pro';
-import { EventData } from '../../data/eventsMockData';
+import { EventData } from '../../types/events';
 
 interface Trip {
   id: number;

@@ -11,7 +11,7 @@ import { AgendaBuilder } from './AgendaBuilder';
 import { NetworkingHub } from './NetworkingHub';
 import { SpeakerDirectory } from './SpeakerDirectory';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
-import { EventData } from '../../data/eventsMockData';
+import { EventData } from '../../types/events';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 
 interface EventDetailContentProps {
