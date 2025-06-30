@@ -10,6 +10,7 @@ export interface AudioOverviewResult {
   summary: string;
   audioUrl: string;
   duration: number;
+  fileKey?: string;
 }
 
 export interface AiFeatureResponse<T> {
@@ -52,8 +53,44 @@ export class AiFeatureService {
     return this.makeRequest<ReviewAnalysisResult>('reviews', url);
   }
 
-  static async generateAudioOverview(url: string): Promise<AiFeatureResponse<AudioOverviewResult>> {
-    return this.makeRequest<AudioOverviewResult>('audio', url);
+  static async generateAudioOverview(url: string, userId?: string, tripId?: string): Promise<AiFeatureResponse<AudioOverviewResult>> {
+    try {
+      // Use the new dedicated Supabase function
+      const response = await fetch('/functions/v1/generate-audio-summary', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`,
+        },
+        body: JSON.stringify({ 
+          url,
+          user_id: userId || 'anonymous',
+          trip_id: tripId
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `API Error: ${response.status}`);
+      }
+
+      const result = await response.json();
+      
+      return { 
+        success: true, 
+        data: {
+          summary: result.summary,
+          audioUrl: result.audioUrl,
+          duration: result.duration
+        }
+      };
+    } catch (error) {
+      console.error('Audio Overview Error:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
   }
 }
 

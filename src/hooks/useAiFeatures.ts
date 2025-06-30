@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { AiFeatureService, ReviewAnalysisResult, AudioOverviewResult } from '../services/aiFeatures';
+import { useAuth } from './useAuth';
 
 export const useReviewAnalysis = () => {
   const [result, setResult] = useState<ReviewAnalysisResult | null>(null);
@@ -26,9 +27,11 @@ export const useReviewAnalysis = () => {
 
 export const useAudioOverview = () => {
   const [result, setResult] = useState<AudioOverviewResult | null>(null);
+  const { user } = useAuth();
   
   const mutation = useMutation({
-    mutationFn: (url: string) => AiFeatureService.generateAudioOverview(url),
+    mutationFn: ({ url, tripId }: { url: string; tripId?: string }) => 
+      AiFeatureService.generateAudioOverview(url, user?.id, tripId),
     onSuccess: (response) => {
       if (response.success && response.data) {
         setResult(response.data);
@@ -37,7 +40,7 @@ export const useAudioOverview = () => {
   });
 
   return {
-    generateAudio: mutation.mutate,
+    generateAudio: (url: string, tripId?: string) => mutation.mutate({ url, tripId }),
     isLoading: mutation.isPending,
     error: mutation.error?.message || (mutation.data?.error),
     result,
