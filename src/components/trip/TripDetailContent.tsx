@@ -5,6 +5,7 @@ import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
 import { TripPreferences } from '../TripPreferences';
 import { GeminiAIChat } from '../GeminiAIChat';
+import { TripSearchTab } from '../TripSearchTab';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 import { useConsumerSubscription } from '../../hooks/useConsumerSubscription';
@@ -35,7 +36,8 @@ export const TripDetailContent = ({
     { id: 'chat', label: 'Chat' },
     { id: 'places', label: 'Places' },
     { id: 'preferences', label: 'Preferences', premium: variant === 'consumer' }, // Always available for Pro
-    { id: 'ai-chat', label: 'AI Assistant', premium: variant === 'consumer' } // Always available for Pro
+    { id: 'ai-chat', label: 'AI Assistant', premium: variant === 'consumer' }, // Always available for Pro
+    { id: 'search', label: 'Search' } // New search tab - always available
   ];
 
   const renderTabContent = () => {
@@ -59,6 +61,8 @@ export const TripDetailContent = ({
             preferences={tripPreferences}
           />
         );
+      case 'search':
+        return <TripSearchTab tripId={tripId} />;
       default:
         return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
     }
@@ -66,7 +70,7 @@ export const TripDetailContent = ({
 
   return (
     <>
-      {/* Tab Navigation */}
+      {/* Tab Navigation - Updated order: Chat | Places | Preferences | AI Assistant | Search */}
       <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
         {tabs.map((tab) => (
           <button
