@@ -1,10 +1,12 @@
 
-import { useState } from 'react';
-import { Message } from '../types/messaging';
+import { useState, useEffect } from 'react';
+import { Message, ScheduledMessage } from '../types/messaging';
+import { OpenAIService } from '../services/OpenAIService';
 import { proTripMockData } from '../data/proTripMockData';
 
 export const useMessages = () => {
   const [messages, setMessages] = useState<Message[]>([]);
+  const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Generate dynamic mock messages based on trip data
@@ -57,7 +59,24 @@ export const useMessages = () => {
     return messages.filter(msg => msg.tripId === tripId);
   };
 
-  const addMessage = (content: string, tripId?: string, tourId?: string) => {
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const now = new Date();
+      setScheduledMessages(prev => {
+        const toSend = prev.filter(m => !m.isSent && new Date(m.sendAt) <= now);
+        if (toSend.length > 0) {
+          toSend.forEach(m => {
+            setMessages(ms => [...ms, { ...m, isSent: undefined }]);
+          });
+        }
+        return prev.map(m => (toSend.includes(m) ? { ...m, isSent: true } : m));
+      });
+    }, 60000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const addMessage = async (content: string, tripId?: string, tourId?: string) => {
+    const priority = await OpenAIService.classifyPriority(content);
     const newMessage: Message = {
       id: Date.now().toString(),
       content,
@@ -67,10 +86,30 @@ export const useMessages = () => {
       timestamp: new Date().toISOString(),
       isRead: true,
       tripId,
-      tourId
+      tourId,
+      priority
     };
 
     setMessages(prev => [...prev, newMessage]);
+  };
+
+  const scheduleMessage = async (content: string, sendAt: Date, tripId?: string, tourId?: string) => {
+    const priority = await OpenAIService.classifyPriority(content);
+    const newMsg: ScheduledMessage = {
+      id: Date.now().toString(),
+      content,
+      senderId: 'current-user',
+      senderName: 'You',
+      senderAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+      timestamp: sendAt.toISOString(),
+      isRead: true,
+      tripId,
+      tourId,
+      priority,
+      sendAt: sendAt.toISOString(),
+      isSent: false
+    };
+    setScheduledMessages(prev => [...prev, newMsg]);
   };
 
   const searchMessages = (query: string) => {
@@ -95,10 +134,12 @@ export const useMessages = () => {
 
   return {
     messages,
+    scheduledMessages,
     searchQuery,
     getMessagesForTour,
     getMessagesForTrip,
     addMessage,
+    scheduleMessage,
     searchMessages,
     markAsRead,
     getTotalUnreadCount,
