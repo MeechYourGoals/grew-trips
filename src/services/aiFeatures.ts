@@ -1,5 +1,5 @@
 
-import { SciraAIService } from './sciraAI';
+import { OpenAIService } from './openAI';
 
 export interface ReviewAnalysisResult {
   text: string;
@@ -24,43 +24,30 @@ export interface AiFeatureResponse<T> {
 export class AiFeatureService {
   static async analyzeReviews(url: string): Promise<AiFeatureResponse<ReviewAnalysisResult>> {
     try {
-      const result = await SciraAIService.analyzeReviews(url);
+      const result = await OpenAIService.analyzeReviews(url);
       return { success: true, data: result };
     } catch (error) {
       console.error('Review Analysis Error:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
       };
     }
   }
 
   static async generateAudioOverview(url: string, userId?: string, tripId?: string): Promise<AiFeatureResponse<AudioOverviewResult>> {
-    try {
-      // Create a minimal trip context for audio generation
-      const tripContext = {
-        id: tripId || 'unknown',
-        title: 'Trip Overview',
-        location: 'Various locations',
-        dateRange: 'Current period',
-        isPro: false
-      };
+    if (!userId) {
+      return { success: false, error: 'User not authenticated' };
+    }
 
-      const result = await SciraAIService.generateAudioSummary(tripContext);
-      
-      return { 
-        success: true, 
-        data: {
-          summary: result.summary,
-          audioUrl: result.audioUrl,
-          duration: result.duration
-        }
-      };
+    try {
+      const result = await OpenAIService.generateAudioSummary(url, userId, tripId);
+      return { success: true, data: result };
     } catch (error) {
       console.error('Audio Overview Error:', error);
-      return { 
-        success: false, 
-        error: error instanceof Error ? error.message : 'Unknown error' 
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
       };
     }
   }
