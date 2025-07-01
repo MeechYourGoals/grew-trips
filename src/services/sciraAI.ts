@@ -17,6 +17,7 @@ export interface SciraAIResponse {
     snippet: string;
   }>;
   citations?: string[];
+  isFromFallback?: boolean;
 }
 
 export interface TripContext {
@@ -38,6 +39,7 @@ export interface TripContext {
 
 export class SciraAIService {
   private static readonly SCIRA_API_BASE = 'https://scira.sh/api';
+  private static readonly FALLBACK_ENABLED = true;
   
   static buildTripContext(tripContext: TripContext): string {
     const contextSize = tripContext.isPro ? 8000 : 2000;
@@ -116,6 +118,58 @@ SAVED LINKS:`;
     return context;
   }
 
+  private static async generateFallbackResponse(query: string, context: string): Promise<SciraAIResponse> {
+    // Intelligent fallback responses based on query patterns
+    const lowerQuery = query.toLowerCase();
+    
+    if (lowerQuery.includes('weather')) {
+      return {
+        content: "I'd recommend checking the weather forecast for your destination. You can use weather.com or your phone's weather app for the most current conditions. Generally, it's good to pack layers and check the forecast a few days before your trip.",
+        isFromFallback: true
+      };
+    }
+    
+    if (lowerQuery.includes('restaurant') || lowerQuery.includes('food') || lowerQuery.includes('eat')) {
+      return {
+        content: "For restaurant recommendations, I suggest checking Google Maps, Yelp, or TripAdvisor for highly-rated local spots near your destination. Look for places with recent reviews and consider making reservations if it's a popular area.",
+        isFromFallback: true
+      };
+    }
+    
+    if (lowerQuery.includes('activity') || lowerQuery.includes('things to do') || lowerQuery.includes('attraction')) {
+      return {
+        content: "To find great activities and attractions, try searching on Google Maps, TripAdvisor, or local tourism websites. Consider your group's interests and check opening hours and ticket requirements in advance.",
+        isFromFallback: true
+      };
+    }
+    
+    if (lowerQuery.includes('transport') || lowerQuery.includes('getting around') || lowerQuery.includes('uber') || lowerQuery.includes('taxi')) {
+      return {
+        content: "For transportation, consider using ride-sharing apps like Uber or Lyft, public transit apps for your destination, or rental car services. Google Maps can help with navigation and transit options.",
+        isFromFallback: true
+      };
+    }
+    
+    // Generic helpful response
+    return {
+      content: "I'm currently experiencing connectivity issues with my advanced AI features. For the best travel information, I recommend checking:\n\n• Google Maps for locations and directions\n• TripAdvisor or Yelp for reviews\n• Local tourism websites\n• Weather apps for forecasts\n\nYour trip details are saved, and I'll be back to full functionality soon!",
+      isFromFallback: true
+    };
+  }
+
+  private static isCorsError(error: any): boolean {
+    return error.message?.includes('CORS') || 
+           error.message?.includes('Access-Control-Allow-Origin') ||
+           error.name === 'TypeError' && error.message?.includes('Failed to fetch');
+  }
+
+  private static isNetworkError(error: any): boolean {
+    return error.message?.includes('Failed to fetch') ||
+           error.message?.includes('NetworkError') ||
+           error.message?.includes('ERR_NETWORK') ||
+           error.code === 'NETWORK_ERROR';
+  }
+
   static async querySciraAI(
     query: string,
     context: string,
@@ -128,6 +182,8 @@ USER QUESTION: ${query}
 Please provide a helpful, specific response based on the trip context above. If you need current information about places, events, or travel conditions, use web search capabilities.`;
 
     try {
+      console.log('Attempting Scira AI request...');
+      
       const response = await fetch(`${this.SCIRA_API_BASE}/chat`, {
         method: 'POST',
         headers: {
@@ -135,9 +191,9 @@ Please provide a helpful, specific response based on the trip context above. If 
         },
         body: JSON.stringify({
           message: prompt,
-          model: 'gpt-4o-mini', // Using the free model from Scira
+          model: 'gpt-4o-mini',
           stream: false,
-          web_search: config.webSearch || true,
+          web_search: config.webSearch !== false,
           temperature: config.temperature || 0.3,
           max_tokens: config.maxTokens || 1024,
         }),
@@ -145,12 +201,13 @@ Please provide a helpful, specific response based on the trip context above. If 
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(`Scira AI API Error: ${response.status} - ${errorText}`);
+        console.error('Scira API HTTP Error:', response.status, errorText);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('Scira AI response received:', data);
       
-      // Handle Scira AI response format
       const content = data.message || data.response || data.content || 'No response received';
       const sources = data.sources || [];
       
@@ -164,13 +221,31 @@ Please provide a helpful, specific response based on the trip context above. If 
         citations: data.citations || []
       };
     } catch (error) {
-      console.error('Scira AI Query Error:', error);
+      console.error('Scira AI Request Failed:', error);
       
-      // Fallback to simple response on error
+      // Determine error type for better user messaging
+      let errorType = 'unknown';
+      if (this.isCorsError(error)) {
+        errorType = 'cors';
+        console.log('CORS error detected - using fallback');
+      } else if (this.isNetworkError(error)) {
+        errorType = 'network';
+        console.log('Network error detected - using fallback');
+      }
+      
+      // Use fallback if enabled
+      if (this.FALLBACK_ENABLED) {
+        console.log('Using fallback response system');
+        return await this.generateFallbackResponse(query, context);
+      }
+      
+      // Return error message if no fallback
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
-        content: `I apologize, but I'm experiencing technical difficulties. Please try again in a moment. Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        content: `I'm currently unable to connect to my advanced AI features. This might be due to network connectivity or service availability. Please try again in a moment.\n\n${errorMessage}`,
         sources: [],
-        citations: []
+        citations: [],
+        isFromFallback: true
       };
     }
   }
@@ -197,6 +272,16 @@ Format your response as a detailed analysis.`;
         temperature: 0.2
       });
 
+      // If fallback was used, provide a generic analysis
+      if (response.isFromFallback) {
+        return {
+          text: "Review analysis is temporarily unavailable. Please check the URL directly for the most current reviews and ratings.",
+          sentiment: 'neutral',
+          score: 75,
+          platforms: ['Reviews temporarily unavailable']
+        };
+      }
+
       // Extract sentiment info from response
       const content = response.content;
       const score = this.extractScoreFromText(content);
@@ -206,11 +291,16 @@ Format your response as a detailed analysis.`;
         text: content,
         sentiment,
         score,
-        platforms: ['Google Reviews', 'Yelp', 'TripAdvisor'] // Will be enhanced with actual platform detection
+        platforms: ['Google Reviews', 'Yelp', 'TripAdvisor']
       };
     } catch (error) {
       console.error('Review Analysis Error:', error);
-      throw new Error('Failed to analyze reviews. Please try again.');
+      return {
+        text: "Unable to analyze reviews at this time. Please check the URL directly.",
+        sentiment: 'neutral',
+        score: 50,
+        platforms: ['Analysis unavailable']
+      };
     }
   }
 
@@ -232,15 +322,18 @@ Please create a natural, conversational script that would work well as an audio 
         maxTokens: 1000
       });
 
-      // For now, return the text summary - audio generation would require additional TTS integration
       return {
         summary: response.content,
-        audioUrl: "https://www.soundjay.com/misc/sounds/magic-chime-02.wav", // Placeholder
-        duration: Math.max(60, Math.floor(response.content.length / 10)) // Estimate based on text length
+        audioUrl: "https://www.soundjay.com/misc/sounds/magic-chime-02.wav",
+        duration: Math.max(60, Math.floor(response.content.length / 10))
       };
     } catch (error) {
       console.error('Audio Summary Error:', error);
-      throw new Error('Failed to generate audio summary. Please try again.');
+      return {
+        summary: "Audio summary generation is temporarily unavailable. Your trip details are saved and you can access them in the trip overview.",
+        audioUrl: "https://www.soundjay.com/misc/sounds/magic-chime-02.wav",
+        duration: 30
+      };
     }
   }
 

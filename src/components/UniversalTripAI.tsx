@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Send, Sparkles, MessageCircle, ExternalLink } from 'lucide-react';
+import { Send, Sparkles, MessageCircle, ExternalLink, AlertCircle, Wifi, WifiOff } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
 import { SciraAIService, TripContext } from '../services/sciraAI';
@@ -24,6 +24,7 @@ interface ChatMessage {
   content: string;
   timestamp: string;
   sources?: Array<{ title: string; url: string; snippet: string }>;
+  isFromFallback?: boolean;
 }
 
 export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
@@ -32,7 +33,7 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [aiStatus, setAiStatus] = useState<'connected' | 'fallback' | 'error'>('connected');
 
   const canUseAI = isPlus || tripContext.isPro;
   const contextLimit = tripContext.isPro ? 'Advanced (5x larger)' : 'Standard';
@@ -50,7 +51,6 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsTyping(true);
-    setError(null);
 
     try {
       const context = SciraAIService.buildTripContext(tripContext);
@@ -61,24 +61,33 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
         citations: true
       });
       
+      // Update AI status based on response
+      if (response.isFromFallback) {
+        setAiStatus('fallback');
+      } else {
+        setAiStatus('connected');
+      }
+      
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
         content: response.content,
         timestamp: new Date().toISOString(),
-        sources: response.sources
+        sources: response.sources,
+        isFromFallback: response.isFromFallback
       };
       
       setMessages(prev => [...prev, assistantMessage]);
     } catch (err) {
+      setAiStatus('error');
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
       
       const errorResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: `Sorry, I encountered an error: ${errorMessage}. Please try again.`,
-        timestamp: new Date().toISOString()
+        content: `I'm having trouble connecting right now. Please try again in a moment.`,
+        timestamp: new Date().toISOString(),
+        isFromFallback: true
       };
       
       setMessages(prev => [...prev, errorResponse]);
@@ -127,6 +136,32 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
     );
   }
 
+  const getStatusIcon = () => {
+    switch (aiStatus) {
+      case 'connected':
+        return <Wifi size={16} className="text-green-400" />;
+      case 'fallback':
+        return <WifiOff size={16} className="text-yellow-400" />;
+      case 'error':
+        return <AlertCircle size={16} className="text-red-400" />;
+      default:
+        return <Sparkles size={16} className="text-blue-400" />;
+    }
+  };
+
+  const getStatusText = () => {
+    switch (aiStatus) {
+      case 'connected':
+        return 'Connected';
+      case 'fallback':
+        return 'Limited Mode';
+      case 'error':
+        return 'Reconnecting...';
+      default:
+        return 'Ready';
+    }
+  };
+
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -137,22 +172,31 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
       </SheetTrigger>
       <SheetContent className="bg-black border-white/20 text-white w-full sm:max-w-lg">
         <SheetHeader>
-          <SheetTitle className="text-white flex items-center gap-2">
-            <Sparkles size={20} className="text-blue-400" />
-            TripSync AI for {tripContext.title}
+          <SheetTitle className="text-white flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Sparkles size={20} className="text-blue-400" />
+              TripSync AI for {tripContext.title}
+            </div>
+            <div className="flex items-center gap-1 text-xs">
+              {getStatusIcon()}
+              <span className="text-gray-400">{getStatusText()}</span>
+            </div>
           </SheetTitle>
           <SheetDescription className="text-gray-400">
             Powered by Scira AI • Context: {contextLimit}
           </SheetDescription>
         </SheetHeader>
 
-        <div className="mt-6 flex flex-col h-[calc(100vh-120px)]">
-          {error && (
-            <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mb-4">
-              <p className="text-red-300 text-sm">{error}</p>
-            </div>
-          )}
+        {aiStatus === 'fallback' && (
+          <div className="mt-4 bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3">
+            <p className="text-yellow-300 text-sm flex items-center gap-2">
+              <WifiOff size={14} />
+              Running in limited mode - basic responses available
+            </p>
+          </div>
+        )}
 
+        <div className="mt-6 flex flex-col h-[calc(100vh-120px)]">
           <div className="flex-1 space-y-4 mb-4 overflow-y-auto">
             {messages.length === 0 ? (
               <div className="text-center py-8">
@@ -170,9 +214,15 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
                   <div className={`max-w-[80%] px-4 py-3 rounded-2xl ${
                     message.type === 'user'
                       ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white'
-                      : 'bg-gray-800 text-gray-300 border border-gray-700'
+                      : `${message.isFromFallback ? 'bg-yellow-900/20 border border-yellow-500/30' : 'bg-gray-800 border border-gray-700'} text-gray-300`
                   }`}>
                     <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                    {message.isFromFallback && (
+                      <p className="text-xs text-yellow-400 mt-2 flex items-center gap-1">
+                        <WifiOff size={10} />
+                        Limited response
+                      </p>
+                    )}
                     {message.sources && message.sources.length > 0 && (
                       <div className="mt-2 space-y-1">
                         <p className="text-xs text-gray-400">Sources:</p>

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, WifiOff, Wifi, AlertCircle } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
 import { SciraAIService, TripContext } from '../services/sciraAI';
@@ -19,6 +19,7 @@ interface ChatMessage {
   type: 'user' | 'assistant';
   content: string;
   timestamp: string;
+  isFromFallback?: boolean;
 }
 
 export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProps) => {
@@ -26,7 +27,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [aiStatus, setAiStatus] = useState<'connected' | 'fallback' | 'error'>('connected');
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -41,7 +42,6 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsTyping(true);
-    setError(null);
 
     try {
       const tripContext: TripContext = {
@@ -61,23 +61,30 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         webSearch: true
       });
       
+      // Update AI status based on response
+      if (response.isFromFallback) {
+        setAiStatus('fallback');
+      } else {
+        setAiStatus('connected');
+      }
+      
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
         content: response.content,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        isFromFallback: response.isFromFallback
       };
       
       setMessages(prev => [...prev, assistantMessage]);
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'An error occurred';
-      setError(errorMessage);
-      
+      setAiStatus('error');
       const errorResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: `Sorry, I encountered an error: ${errorMessage}. Please try again.`,
-        timestamp: new Date().toISOString()
+        content: `I'm having trouble connecting right now. Please try again in a moment.`,
+        timestamp: new Date().toISOString(),
+        isFromFallback: true
       };
       
       setMessages(prev => [...prev, errorResponse]);
@@ -93,6 +100,32 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
     }
   };
 
+  const getStatusIcon = () => {
+    switch (aiStatus) {
+      case 'connected':
+        return <Wifi size={16} className="text-green-400" />;
+      case 'fallback':
+        return <WifiOff size={16} className="text-yellow-400" />;
+      case 'error':
+        return <AlertCircle size={16} className="text-red-400" />;
+      default:
+        return <Sparkles size={16} className="text-blue-400" />;
+    }
+  };
+
+  const getStatusText = () => {
+    switch (aiStatus) {
+      case 'connected':
+        return 'Connected';
+      case 'fallback':
+        return 'Limited Mode';
+      case 'error':
+        return 'Reconnecting...';
+      default:
+        return 'Ready';
+    }
+  };
+
   if (!isPlus) {
     return <GeminiPlusUpgrade />;
   }
@@ -105,7 +138,13 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-white">AI Travel Assistant</h3>
-          <p className="text-gray-400 text-sm">Powered by Scira AI</p>
+          <div className="flex items-center gap-2">
+            <p className="text-gray-400 text-sm">Powered by Scira AI</p>
+            <div className="flex items-center gap-1">
+              {getStatusIcon()}
+              <span className="text-gray-400 text-xs">{getStatusText()}</span>
+            </div>
+          </div>
         </div>
         <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 px-3 py-1 rounded-full">
           <span className="text-glass-orange text-sm font-medium">PLUS</span>
@@ -120,9 +159,12 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         </div>
       )}
 
-      {error && (
-        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mb-4">
-          <p className="text-red-300 text-sm">{error}</p>
+      {aiStatus === 'fallback' && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 mb-4">
+          <p className="text-yellow-300 text-sm flex items-center gap-2">
+            <WifiOff size={14} />
+            Running in limited mode - basic responses available
+          </p>
         </div>
       )}
 
