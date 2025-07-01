@@ -39,7 +39,7 @@ export interface TripContext {
 
 export class SciraAIService {
   private static readonly SCIRA_API_BASE = 'https://scira.sh/api';
-  private static readonly GEMINI_ENDPOINT = '/api/gemini-chat';
+  private static readonly OPENAI_ENDPOINT = '/api/openai-chat';
   private static readonly FALLBACK_ENABLED = true;
   
   static buildTripContext(tripContext: TripContext): string {
@@ -183,9 +183,9 @@ USER QUESTION: ${query}
 Please provide a helpful, specific response based on the trip context above. If you need current information about places, events, or travel conditions, use web search capabilities.`;
 
     try {
-      console.log('Attempting Gemini AI request...');
+      console.log('Attempting OpenAI chat request...');
 
-      const geminiRes = await fetch(this.GEMINI_ENDPOINT, {
+      const openaiRes = await fetch(this.OPENAI_ENDPOINT, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -202,16 +202,16 @@ Please provide a helpful, specific response based on the trip context above. If 
         })
       });
 
-      if (geminiRes.ok) {
-        const geminiData = await geminiRes.json();
-        console.log('Gemini AI response received:', geminiData);
+      if (openaiRes.ok) {
+        const geminiData = await openaiRes.json();
+        console.log('OpenAI response received:', geminiData);
         return { content: geminiData.response, sources: [], citations: [], isFromFallback: false };
       } else {
-        const text = await geminiRes.text();
-        throw new Error(`Gemini HTTP ${geminiRes.status}: ${text}`);
+        const text = await openaiRes.text();
+        throw new Error(`OpenAI HTTP ${openaiRes.status}: ${text}`);
       }
     } catch (gemError) {
-      console.error('Gemini AI Request Failed:', gemError);
+      console.error('OpenAI Request Failed:', gemError);
     }
 
     try {

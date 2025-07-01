@@ -29,7 +29,7 @@ export class GeminiService {
 
   async callAPI(message: string, config: GeminiAPIConfig, tripContext?: any): Promise<string> {
     // Call the Supabase Edge Function instead of direct Gemini API
-    const response = await fetch('/api/gemini-chat', {
+    const response = await fetch('/api/openai-chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
