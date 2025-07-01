@@ -1,4 +1,4 @@
-import { ProTripData } from '../../types/pro-features';
+import { ProTripData } from '../../types/pro';
 
 export const lakersRoadTrip: ProTripData = {
   id: 'lakers-road-trip',

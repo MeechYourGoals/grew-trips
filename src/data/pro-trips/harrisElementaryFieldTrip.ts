@@ -1,4 +1,4 @@
-import { ProTripData } from '../../types/pro-features';
+import { ProTripData } from '../../types/pro';
 
 export const harrisElementaryFieldTrip: ProTripData = {
   id: 'harris-elementary-dc-field-trip-2025',

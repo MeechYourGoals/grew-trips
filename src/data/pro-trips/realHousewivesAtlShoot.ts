@@ -1,4 +1,4 @@
-import { ProTripData } from '../../types/pro-features';
+import { ProTripData } from '../../types/pro';
 
 export const realHousewivesAtlShoot: ProTripData = {
   id: 'real-housewives-atl-s9-shoot-2025',

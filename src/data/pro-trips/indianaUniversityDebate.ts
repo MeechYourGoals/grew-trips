@@ -1,4 +1,4 @@
-import { ProTripData } from '../../types/pro-features';
+import { ProTripData } from '../../types/pro';
 
 export const indianaUniversityDebate: ProTripData = {
   id: 'indiana-university-debate-championships-2025',

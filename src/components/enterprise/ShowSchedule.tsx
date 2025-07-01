@@ -1,10 +1,9 @@
 
 import React, { useState } from 'react';
-import { Music, MapPin, Clock, Plus, Mic, Calendar } from 'lucide-react';
-import { ShowScheduleItem } from '../../types/enterprise';
+import { Music, MapPin, Clock, Plus, Mic } from 'lucide-react';
 
 export const ShowSchedule = () => {
-  const [shows] = useState<ShowScheduleItem[]>([
+  const [shows] = useState([
     {
       id: '1',
       title: 'The Eras Tour - Night 1',
@@ -14,7 +13,7 @@ export const ShowSchedule = () => {
       showTime: '20:00',
       soundCheckTime: '17:00',
       loadInTime: '08:00',
-      status: 'confirmed'
+      status: 'confirmed' as const
     },
     {
       id: '2',
@@ -25,7 +24,7 @@ export const ShowSchedule = () => {
       showTime: '20:00',
       soundCheckTime: '17:00',
       loadInTime: '08:00',
-      status: 'scheduled'
+      status: 'scheduled' as const
     }
   ]);
 
