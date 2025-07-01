@@ -1,9 +1,21 @@
 
 import React, { useState } from 'react';
-import { Music, MapPin, Clock, Plus, Mic } from 'lucide-react';
+import { Music, MapPin, Clock, Plus, Mic, Calendar } from 'lucide-react';
+
+interface Show {
+  id: string;
+  title: string;
+  venue: string;
+  venueAddress: string;
+  showDate: string;
+  showTime: string;
+  soundCheckTime: string;
+  loadInTime: string;
+  status: 'confirmed' | 'scheduled' | 'completed' | 'cancelled';
+}
 
 export const ShowSchedule = () => {
-  const [shows] = useState([
+  const [shows] = useState<Show[]>([
     {
       id: '1',
       title: 'The Eras Tour - Night 1',
@@ -13,7 +25,7 @@ export const ShowSchedule = () => {
       showTime: '20:00',
       soundCheckTime: '17:00',
       loadInTime: '08:00',
-      status: 'confirmed' as const
+      status: 'confirmed'
     },
     {
       id: '2',
@@ -24,7 +36,7 @@ export const ShowSchedule = () => {
       showTime: '20:00',
       soundCheckTime: '17:00',
       loadInTime: '08:00',
-      status: 'scheduled' as const
+      status: 'scheduled'
     }
   ]);
 

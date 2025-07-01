@@ -1,8 +1,10 @@
 
+import { SciraAIService } from './sciraAI';
+
 export interface ReviewAnalysisResult {
   text: string;
   sentiment: 'positive' | 'negative' | 'neutral';
-  score: number; // 0-100
+  score: number;
   platforms: string[];
 }
 
@@ -20,28 +22,12 @@ export interface AiFeatureResponse<T> {
 }
 
 export class AiFeatureService {
-  private static async makeRequest<T>(
-    feature: 'reviews' | 'audio',
-    url: string
-  ): Promise<AiFeatureResponse<T>> {
+  static async analyzeReviews(url: string): Promise<AiFeatureResponse<ReviewAnalysisResult>> {
     try {
-      const response = await fetch('/api/ai-features', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ feature, url }),
-      });
-
-      if (!response.ok) {
-        const error = await response.text();
-        throw new Error(error || 'API request failed');
-      }
-
-      const result = await response.json();
+      const result = await SciraAIService.analyzeReviews(url);
       return { success: true, data: result };
     } catch (error) {
-      console.error(`AI Feature Error (${feature}):`, error);
+      console.error('Review Analysis Error:', error);
       return { 
         success: false, 
         error: error instanceof Error ? error.message : 'Unknown error' 
@@ -49,32 +35,18 @@ export class AiFeatureService {
     }
   }
 
-  static async analyzeReviews(url: string): Promise<AiFeatureResponse<ReviewAnalysisResult>> {
-    return this.makeRequest<ReviewAnalysisResult>('reviews', url);
-  }
-
   static async generateAudioOverview(url: string, userId?: string, tripId?: string): Promise<AiFeatureResponse<AudioOverviewResult>> {
     try {
-      // Use the new dedicated Supabase function
-      const response = await fetch('/functions/v1/generate-audio-summary', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('supabase.auth.token')}`,
-        },
-        body: JSON.stringify({ 
-          url,
-          user_id: userId || 'anonymous',
-          trip_id: tripId
-        }),
-      });
+      // Create a minimal trip context for audio generation
+      const tripContext = {
+        id: tripId || 'unknown',
+        title: 'Trip Overview',
+        location: 'Various locations',
+        dateRange: 'Current period',
+        isPro: false
+      };
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || `API Error: ${response.status}`);
-      }
-
-      const result = await response.json();
+      const result = await SciraAIService.generateAudioSummary(tripContext);
       
       return { 
         success: true, 
@@ -108,7 +80,6 @@ export const extractPlaceInfo = (url: string): { name?: string; location?: strin
   const urlObj = new URL(url);
   const hostname = urlObj.hostname.toLowerCase();
   
-  // Basic extraction logic for common platforms
   if (hostname.includes('yelp.com')) {
     const pathParts = urlObj.pathname.split('/');
     const bizIndex = pathParts.indexOf('biz');
@@ -120,7 +91,6 @@ export const extractPlaceInfo = (url: string): { name?: string; location?: strin
   
   if (hostname.includes('tripadvisor.com')) {
     const pathParts = urlObj.pathname.split('/');
-    // TripAdvisor URLs often have restaurant names in the path
     const restaurantPart = pathParts.find(part => part.includes('Restaurant'));
     if (restaurantPart) {
       const name = restaurantPart.replace(/Restaurant_Review-|_/g, ' ').trim();

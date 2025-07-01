@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import { Sparkles } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
-import { ChatMessage, GeminiAPIConfig } from './chat/types';
-import { GeminiService } from './chat/geminiService';
+import { SciraAIService, TripContext } from '../services/sciraAI';
 import { ChatMessages } from './chat/ChatMessages';
 import { ChatInput } from './chat/ChatInput';
 import { GeminiPlusUpgrade } from './chat/GeminiPlusUpgrade';
@@ -15,19 +14,19 @@ interface GeminiAIChatProps {
   preferences?: TripPreferences;
 }
 
+interface ChatMessage {
+  id: string;
+  type: 'user' | 'assistant';
+  content: string;
+  timestamp: string;
+}
+
 export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProps) => {
   const { isPlus } = useConsumerSubscription();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const geminiConfig: GeminiAPIConfig = {
-    temperature: 0.7,
-    topK: 40,
-    topP: 0.95,
-    maxOutputTokens: 1024,
-  };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -45,14 +44,27 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
     setError(null);
 
     try {
-      const geminiService = new GeminiService();
-      const contextualPrompt = geminiService.buildContextPrompt(inputMessage, basecamp, preferences);
-      const aiResponse = await geminiService.callAPI(contextualPrompt, geminiConfig);
+      const tripContext: TripContext = {
+        id: tripId,
+        title: 'Current Trip',
+        location: basecamp?.address || 'Unknown location',
+        dateRange: 'Current dates',
+        basecamp,
+        preferences,
+        isPro: false
+      };
+
+      const context = SciraAIService.buildTripContext(tripContext);
+      const response = await SciraAIService.querySciraAI(inputMessage, context, {
+        temperature: 0.7,
+        maxTokens: 1024,
+        webSearch: true
+      });
       
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: aiResponse,
+        content: response.content,
         timestamp: new Date().toISOString()
       };
       
@@ -93,14 +105,13 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         </div>
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-white">AI Travel Assistant</h3>
-          <p className="text-gray-400 text-sm">Powered by Google Gemini</p>
+          <p className="text-gray-400 text-sm">Powered by Scira AI</p>
         </div>
         <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 px-3 py-1 rounded-full">
           <span className="text-glass-orange text-sm font-medium">PLUS</span>
         </div>
       </div>
 
-      {/* Context Info */}
       {basecamp && (
         <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3 mb-4">
           <p className="text-green-300 text-sm">
@@ -109,25 +120,22 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         </div>
       )}
 
-      {/* Error Display */}
       {error && (
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mb-4">
           <p className="text-red-300 text-sm">{error}</p>
         </div>
       )}
 
-      {/* Chat Messages */}
       <div className="space-y-4 mb-6 max-h-80 overflow-y-auto">
         <ChatMessages messages={messages} isTyping={isTyping} />
       </div>
 
-      {/* Input */}
       <ChatInput
         inputMessage={inputMessage}
         onInputChange={setInputMessage}
         onSendMessage={handleSendMessage}
         onKeyPress={handleKeyPress}
-        apiKey="" // No longer needed
+        apiKey=""
         isTyping={isTyping}
       />
     </div>
