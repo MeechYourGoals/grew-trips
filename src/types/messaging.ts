@@ -11,6 +11,7 @@ export interface Message {
   tourName?: string;
   timestamp: string;
   isRead: boolean;
+  priority?: 'urgent' | 'reminder' | 'fyi';
   mentions?: string[];
   threadId?: string;
   replyToId?: string;
@@ -29,4 +30,9 @@ export interface UnifiedInboxData {
   messages: Message[];
   threads: MessageThread[];
   totalUnread: number;
+}
+
+export interface ScheduledMessage extends Message {
+  sendAt: string;
+  isSent: boolean;
 }
