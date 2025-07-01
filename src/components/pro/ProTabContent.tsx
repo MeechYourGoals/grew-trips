@@ -8,7 +8,7 @@ import { TripSearchTab } from '../TripSearchTab';
 import { RosterTab } from './RosterTab';
 import { EquipmentTracking } from './EquipmentTracking';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
-import { ProTripData } from '../../types/pro';
+import { ProTripData } from '../../types/pro-features';
 import { isReadOnlyTab, hasTabAccess } from './ProTabsConfig';
 import { useAuth } from '../../hooks/useAuth';
 

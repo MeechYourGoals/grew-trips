@@ -7,7 +7,9 @@ import { EnterpriseSettings } from './EnterpriseSettings';
 import { ConsumerSettings } from './ConsumerSettings';
 import { EventsSettings } from './EventsSettings';
 import { ProfileSection } from './settings/ProfileSection';
+import { MobileSettingsMenu } from './MobileSettingsMenu';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { useIsMobile } from '../hooks/use-mobile';
 import { NotificationsSection } from './settings/NotificationsSection';
 import { SubscriptionSection } from './settings/SubscriptionSection';
 
@@ -22,8 +24,26 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   const [activeSection, setActiveSection] = useState('profile');
   const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise' | 'events'>('consumer');
   const { accentColors } = useTripVariant();
+  const isMobile = useIsMobile();
 
   if (!isOpen || !user) return null;
+
+  // Use mobile version on mobile devices
+  if (isMobile) {
+    return (
+      <>
+        <MobileSettingsMenu
+          isOpen={isOpen}
+          onClose={onClose}
+          onShowProModal={() => setShowProModal(true)}
+        />
+        <ProUpgradeModal 
+          isOpen={showProModal} 
+          onClose={() => setShowProModal(false)} 
+        />
+      </>
+    );
+  }
 
   // Mock organization data - would come from your auth context
   const userOrganization = {

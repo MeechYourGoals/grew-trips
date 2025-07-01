@@ -1,7 +1,7 @@
-
-import React from 'react';
-import { Plus } from 'lucide-react';
-import { Tour } from '../../types/pro';
+import React, { useState } from 'react';
+import { Users, Plus, UserPlus, Settings } from 'lucide-react';
+import { useTripVariant } from '../../contexts/TripVariantContext';
+import { Tour } from '../../types/tour';
 
 interface TourTeamSectionProps {
   tour: Tour;

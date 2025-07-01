@@ -7,7 +7,7 @@ import { RoleSwitcher } from './RoleSwitcher';
 import { getVisibleTabs } from './ProTabsConfig';
 import { useAuth } from '../../hooks/useAuth';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
-import { ProTripData } from '../../types/pro';
+import { ProTripData } from '../../types/pro-features';
 import { ProTripCategory } from '../../types/proCategories';
 
 interface ProTripDetailContentProps {

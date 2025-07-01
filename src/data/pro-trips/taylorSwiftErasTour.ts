@@ -1,4 +1,4 @@
-import { ProTripData } from '../../types/pro';
+import { ProTripData } from '../../types/pro-features';
 
 export const taylorSwiftErasTour: ProTripData = {
   id: 'taylor-swift-eras-tour',

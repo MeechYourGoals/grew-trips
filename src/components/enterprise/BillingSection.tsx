@@ -1,135 +1,129 @@
-
 import React, { useState } from 'react';
-import { Crown } from 'lucide-react';
-import { SUBSCRIPTION_TIERS } from '../../types/pro';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
+import { CreditCard, Download, AlertCircle, Check } from 'lucide-react';
+import { useTripVariant } from '../../contexts/TripVariantContext';
+import { SUBSCRIPTION_TIERS } from '../../types/subscription';
 
 interface BillingSectionProps {
-  organization: {
-    subscriptionTier: 'starter' | 'growing' | 'enterprise' | 'enterprise-plus';
-    seatLimit: number;
-    seatsUsed: number;
-    subscriptionEndsAt: string;
-  };
+  organizationId: string;
 }
 
-export const BillingSection = ({ organization }: BillingSectionProps) => {
-  const [expandedPlan, setExpandedPlan] = useState<string | null>('growing');
+export const BillingSection = ({ organizationId }: BillingSectionProps) => {
+  const { accentColors } = useTripVariant();
+  const [currentPlan, setCurrentPlan] = useState<'starter' | 'growing' | 'enterprise' | 'enterprise-plus'>('starter');
+  const [billingHistory, setBillingHistory] = useState([
+    { id: '1', date: '2024-01-15', amount: 19.99, status: 'paid' },
+    { id: '2', date: '2023-12-15', amount: 19.99, status: 'paid' },
+    { id: '3', date: '2023-11-15', amount: 19.99, status: 'paid' }
+  ]);
 
   return (
-    <div className="space-y-6">
-      <h3 className="text-2xl font-bold text-white">Billing & Subscription</h3>
-      
+    <div className="space-y-8">
       {/* Current Plan */}
-      <div className="bg-gradient-to-r from-green-500/10 to-green-600/10 border border-green-500/20 rounded-xl p-6">
+      <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+        <h3 className="text-lg font-bold text-white mb-4">Current Plan</h3>
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Crown size={24} className="text-green-400" />
-            <div>
-              <h4 className="text-xl font-bold text-white">{SUBSCRIPTION_TIERS[organization.subscriptionTier].name}</h4>
-              <p className="text-green-400">Active Subscription</p>
-            </div>
+          <div>
+            <h4 className="text-white font-medium">{SUBSCRIPTION_TIERS[currentPlan].name}</h4>
+            <p className="text-gray-400 text-sm">${SUBSCRIPTION_TIERS[currentPlan].price}/month • {SUBSCRIPTION_TIERS[currentPlan].seatLimit} seats</p>
           </div>
-          <div className="text-right">
-            <div className="text-2xl font-bold text-white">${SUBSCRIPTION_TIERS[organization.subscriptionTier].price}/month</div>
-            <div className="text-sm text-gray-400">Renews {organization.subscriptionEndsAt}</div>
+          <div className="bg-green-500/20 text-green-400 px-3 py-1 rounded-full text-sm">
+            Active
           </div>
         </div>
         
-        <div className="grid md:grid-cols-2 gap-6 mb-6">
-          <div>
-            <h5 className="font-semibold text-white mb-3">Current Plan Features</h5>
-            <ul className="space-y-2 text-sm text-gray-300">
-              {SUBSCRIPTION_TIERS[organization.subscriptionTier].features.map((feature, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 bg-green-400 rounded-full mt-2 flex-shrink-0"></div>
-                  {feature}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h5 className="font-semibold text-white mb-3">Usage Statistics</h5>
-            <div className="space-y-3">
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span className="text-gray-400">Seats Used</span>
-                  <span className="text-white">{organization.seatsUsed}/{organization.seatLimit}</span>
-                </div>
-                <div className="w-full bg-gray-700 rounded-full h-2">
-                  <div 
-                    className="bg-green-400 h-2 rounded-full" 
-                    style={{ width: `${(organization.seatsUsed / organization.seatLimit) * 100}%` }}
-                  ></div>
-                </div>
-              </div>
-              <div className="text-sm text-gray-400">
-                {organization.seatLimit - organization.seatsUsed} seats available
-              </div>
+        {/* Features */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-6">
+          {SUBSCRIPTION_TIERS[currentPlan].features.map((feature, index) => (
+            <div key={index} className="flex items-center gap-2 text-sm text-gray-300">
+              <Check size={14} className="text-green-400" />
+              {feature}
             </div>
-          </div>
+          ))}
         </div>
 
-        <div className="flex gap-3">
-          <button className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-            Manage Billing
-          </button>
-          <button className="bg-glass-orange hover:bg-glass-orange/80 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-            Upgrade Plan
-          </button>
+        <button className="bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-lg">
+          Change Plan
+        </button>
+      </div>
+
+      {/* Available Plans */}
+      <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+        <h3 className="text-lg font-bold text-white mb-6">Available Plans</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Object.entries(SUBSCRIPTION_TIERS).map(([tier, details]) => (
+            <div key={tier} className={`border rounded-xl p-4 ${
+              currentPlan === tier 
+                ? 'border-glass-orange bg-glass-orange/10' 
+                : 'border-gray-600 bg-gray-800/30'
+            }`}>
+              <h4 className="text-white font-medium mb-2">{details.name}</h4>
+              <p className="text-2xl font-bold text-white mb-1">${details.price}</p>
+              <p className="text-gray-400 text-sm mb-4">{details.seatLimit} seats</p>
+              
+              <ul className="space-y-1 mb-4">
+                {details.features.slice(0, 3).map((feature, index) => (
+                  <li key={index} className="text-xs text-gray-300">• {feature}</li>
+                ))}
+                {details.features.length > 3 && (
+                  <li className="text-xs text-gray-400">+ {details.features.length - 3} more...</li>
+                )}
+              </ul>
+              
+              {currentPlan !== tier && (
+                <button className="w-full bg-glass-orange hover:bg-glass-orange/80 text-white py-2 rounded-lg text-sm">
+                  {details.price > SUBSCRIPTION_TIERS[currentPlan].price ? 'Upgrade' : 'Downgrade'}
+                </button>
+              )}
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Plan Comparison - Expandable */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h4 className="text-lg font-semibold text-white mb-4">Available Plans</h4>
-        <div className="space-y-4">
-          {Object.entries(SUBSCRIPTION_TIERS).map(([key, tier]) => (
-            <Collapsible key={key} open={expandedPlan === key} onOpenChange={() => setExpandedPlan(expandedPlan === key ? null : key)}>
-              <CollapsibleTrigger className="w-full">
-                <div className={`border rounded-lg p-4 transition-colors hover:bg-white/5 ${
-                  key === organization.subscriptionTier
-                    ? 'border-green-500/50 bg-green-500/10'
-                    : 'border-white/10 bg-white/5'
-                }`}>
-                  <div className="flex items-center justify-between">
-                    <div className="text-left">
-                      <h5 className="font-semibold text-white">{tier.name}</h5>
-                      <div className="text-xl font-bold text-white">${tier.price}/month</div>
-                      <div className="text-sm text-gray-400">Up to {tier.seatLimit} seats</div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {key === organization.subscriptionTier && (
-                        <div className="text-sm text-green-400 font-medium">Current Plan</div>
+      {/* Billing History */}
+      <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+        <h3 className="text-lg font-bold text-white mb-4">Billing History</h3>
+        {billingHistory.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="text-gray-400">
+                  <th className="py-2">Date</th>
+                  <th className="py-2">Amount</th>
+                  <th className="py-2">Status</th>
+                  <th className="py-2">Invoice</th>
+                </tr>
+              </thead>
+              <tbody>
+                {billingHistory.map((item) => (
+                  <tr key={item.id} className="text-white">
+                    <td className="py-3">{item.date}</td>
+                    <td className="py-3">${item.amount}</td>
+                    <td className="py-3">
+                      {item.status === 'paid' ? (
+                        <div className="flex items-center gap-2 text-green-400">
+                          <Check size={14} />
+                          Paid
+                        </div>
+                      ) : (
+                        <div className="flex items-center gap-2 text-red-400">
+                          <AlertCircle size={14} />
+                          {item.status}
+                        </div>
                       )}
-                      <div className="text-gray-400">
-                        {expandedPlan === key ? '−' : '+'}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </CollapsibleTrigger>
-              <CollapsibleContent className="mt-2">
-                <div className="bg-white/5 rounded-lg p-4 ml-4">
-                  <h6 className="font-medium text-white mb-3">Features Included:</h6>
-                  <ul className="space-y-2 text-sm text-gray-300">
-                    {tier.features.map((feature, index) => (
-                      <li key={index} className="flex items-start gap-2">
-                        <div className="w-1.5 h-1.5 bg-glass-orange rounded-full mt-2 flex-shrink-0"></div>
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
-                  {key !== organization.subscriptionTier && (
-                    <button className="mt-4 bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-lg font-medium transition-colors">
-                      Upgrade to {tier.name}
-                    </button>
-                  )}
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          ))}
-        </div>
+                    </td>
+                    <td className="py-3">
+                      <button className="text-glass-orange hover:text-glass-orange/80">
+                        <Download size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <p className="text-gray-400">No billing history available.</p>
+        )}
       </div>
     </div>
   );

@@ -6,64 +6,62 @@ import { MobileTripCard } from '../MobileTripCard';
 import { MobileProTripCard } from '../MobileProTripCard';
 import { MobileEventCard } from '../MobileEventCard';
 import { useIsMobile } from '../../hooks/use-mobile';
-import { ProTripData } from '../../types/pro';
-import { EventData } from '../../types/events';
-
-interface Trip {
-  id: number;
-  title: string;
-  location: string;
-  dateRange: string;
-  participants: Array<{
-    id: number;
-    name: string;
-    avatar: string;
-  }>;
-}
+import { ProTripData } from '../../types/pro-features';
 
 interface TripGridProps {
   viewMode: string;
-  trips: Trip[];
-  proTrips: Record<string, ProTripData>;
-  events: Record<string, EventData>;
+  trips: any[];
+  proTrips: { [key: string]: ProTripData };
+  events: any[];
 }
 
 export const TripGrid = ({ viewMode, trips, proTrips, events }: TripGridProps) => {
   const isMobile = useIsMobile();
 
-  return (
-    <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
-      {viewMode === 'myTrips' ? (
-        trips.map((trip) => (
-          <React.Fragment key={trip.id}>
-            {isMobile ? (
-              <MobileTripCard trip={trip} />
-            ) : (
-              <TripCard trip={trip} />
-            )}
-          </React.Fragment>
-        ))
-      ) : viewMode === 'tripsPro' ? (
-        Object.values(proTrips).map((trip) => (
-          <React.Fragment key={trip.id}>
-            {isMobile ? (
-              <MobileProTripCard trip={trip} />
-            ) : (
-              <ProTripCard trip={trip} />
-            )}
-          </React.Fragment>
-        ))
+  const renderTripCard = (trip: any, index: number) => {
+    if (viewMode === 'myTrips') {
+      return isMobile ? (
+        <MobileTripCard key={index} trip={trip} />
       ) : (
-        Object.values(events).map((event) => (
-          <React.Fragment key={event.id}>
-            {isMobile ? (
-              <MobileEventCard event={event} />
-            ) : (
-              <EventCard event={event} />
-            )}
-          </React.Fragment>
-        ))
-      )}
+        <TripCard key={index} trip={trip} />
+      );
+    } else if (viewMode === 'tripsPro') {
+      return null;
+    } else {
+      return null;
+    }
+  };
+
+  const renderProTripCard = (tripId: string, trip: ProTripData) => {
+    if (viewMode === 'tripsPro') {
+      return isMobile ? (
+        <MobileProTripCard key={tripId} trip={trip} />
+      ) : (
+        <ProTripCard key={tripId} trip={trip} />
+      );
+    } else {
+      return null;
+    }
+  };
+
+  const renderEventCard = (event: any, index: number) => {
+    if (viewMode === 'events') {
+      return isMobile ? (
+        <MobileEventCard key={index} event={event} />
+      ) : (
+        <EventCard key={index} event={event} />;
+      )
+    } else {
+      return null;
+    }
+  };
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {viewMode === 'myTrips' && trips.map((trip, index) => renderTripCard(trip, index))}
+      {viewMode === 'tripsPro' && Object.entries(proTrips).map(([tripId, trip]) => renderProTripCard(tripId, trip))}
+      {viewMode === 'events' && events.map((event, index) => renderEventCard(event, index))}
     </div>
   );
 };
+

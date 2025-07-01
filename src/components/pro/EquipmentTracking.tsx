@@ -1,200 +1,311 @@
 import React, { useState } from 'react';
-import { Package, Search, MapPin, CheckCircle, AlertCircle, Clock, Truck } from 'lucide-react';
-import { Equipment } from '../../types/pro';
+import { Package, Plus, Search, Filter, MapPin, AlertTriangle, CheckCircle, Truck } from 'lucide-react';
+import { Equipment } from '../../types/pro-features';
 
 interface EquipmentTrackingProps {
   equipment: Equipment[];
   onUpdateEquipment: (equipment: Equipment[]) => void;
-  isReadOnly?: boolean;
+  isReadOnly: boolean;
 }
 
-export const EquipmentTracking = ({ equipment, onUpdateEquipment, isReadOnly = false }: EquipmentTrackingProps) => {
+export const EquipmentTracking = ({ equipment: initialEquipment, onUpdateEquipment, isReadOnly }: EquipmentTrackingProps) => {
+  const [equipment, setEquipment] = useState(initialEquipment);
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [filterStatus, setFilterStatus] = useState('all');
+  const [isAdding, setIsAdding] = useState(false);
 
-  const categories = ['all', 'audio', 'video', 'lighting', 'instruments', 'sports', 'general'];
-  
-  const filteredEquipment = equipment.filter(item => {
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'packed': return 'text-blue-400 bg-blue-500/20';
-      case 'in-transit': return 'text-yellow-400 bg-yellow-500/20';
-      case 'delivered': return 'text-green-400 bg-green-500/20';
-      case 'setup': return 'text-purple-400 bg-purple-500/20';
-      case 'missing': return 'text-red-400 bg-red-500/20';
-      default: return 'text-gray-400 bg-gray-500/20';
-    }
+  const handleAddEquipment = () => {
+    setIsAdding(true);
   };
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case 'packed': return <Package size={16} />;
-      case 'in-transit': return <Truck size={16} />;
-      case 'delivered': return <CheckCircle size={16} />;
-      case 'setup': return <CheckCircle size={16} />;
-      case 'missing': return <AlertCircle size={16} />;
-      default: return <Clock size={16} />;
-    }
+  const handleSaveNewEquipment = (newEquipment: Omit<Equipment, 'id'>) => {
+    const newItem: Equipment = {
+      id: Math.random().toString(36).substring(2, 15),
+      ...newEquipment
+    };
+    const updatedEquipment = [...equipment, newItem];
+    setEquipment(updatedEquipment);
+    onUpdateEquipment(updatedEquipment);
+    setIsAdding(false);
   };
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'audio': return 'bg-green-500/20 text-green-400';
-      case 'video': return 'bg-blue-500/20 text-blue-400';
-      case 'lighting': return 'bg-yellow-500/20 text-yellow-400';
-      case 'instruments': return 'bg-purple-500/20 text-purple-400';
-      case 'sports': return 'bg-orange-500/20 text-orange-400';
-      case 'general': return 'bg-gray-500/20 text-gray-400';
-      default: return 'bg-gray-500/20 text-gray-400';
-    }
-  };
-
-  const updateEquipmentStatus = (id: string, newStatus: string) => {
-    if (isReadOnly) return;
-    
+  const handleUpdateEquipment = (id: string, updatedFields: Partial<Equipment>) => {
     const updatedEquipment = equipment.map(item =>
-      item.id === id ? { ...item, status: newStatus as Equipment['status'] } : item
+      item.id === id ? { ...item, ...updatedFields } : item
     );
+    setEquipment(updatedEquipment);
     onUpdateEquipment(updatedEquipment);
   };
 
+  const handleDeleteEquipment = (id: string) => {
+    const updatedEquipment = equipment.filter(item => item.id !== id);
+    setEquipment(updatedEquipment);
+    onUpdateEquipment(updatedEquipment);
+  };
+
+  const filteredEquipment = equipment.filter(item => {
+    const searchMatch = item.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const statusMatch = filterStatus === 'all' || item.status === filterStatus;
+    return searchMatch && statusMatch;
+  });
+
   return (
     <div className="space-y-6">
-      {/* Read-only notice */}
-      {isReadOnly && (
-        <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
-          <p className="text-yellow-400 text-sm">Read-only access for your role</p>
-        </div>
-      )}
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+          <Package size={24} className="text-glass-orange" />
+          Equipment Tracking
+        </h3>
+        {!isReadOnly && (
+          <button
+            onClick={handleAddEquipment}
+            className="bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2"
+          >
+            <Plus size={16} />
+            Add Equipment
+          </button>
+        )}
+      </div>
 
-      {/* Header */}
-      <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Package className="text-red-400" size={24} />
-            <h2 className="text-xl font-bold text-white">Equipment & Freight</h2>
-          </div>
-          <div className="text-gray-400 text-sm">
-            {equipment.length} items • {equipment.filter(e => e.status === 'missing').length} missing
-          </div>
-        </div>
-
-        {/* Search and Filters */}
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={16} />
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        {/* Search and Filter */}
+        <div className="flex items-center justify-between mb-6">
+          <div className="relative w-full md:w-1/2">
             <input
               type="text"
               placeholder="Search equipment..."
+              className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-2 pl-10 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-red-500"
             />
+            <Search size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           </div>
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
-                key={category}
-                onClick={() => setSelectedCategory(category)}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  selectedCategory === category
-                    ? 'bg-red-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                {category === 'all' ? 'All' : category.charAt(0).toUpperCase() + category.slice(1)}
-              </button>
-            ))}
-          </div>
+
+          <select
+            className="bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+          >
+            <option value="all">All Statuses</option>
+            <option value="packed">Packed</option>
+            <option value="in-transit">In Transit</option>
+            <option value="delivered">Delivered</option>
+            <option value="setup">Setup</option>
+            <option value="missing">Missing</option>
+          </select>
         </div>
-      </div>
 
-      {/* Equipment Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filteredEquipment.map((item) => (
-          <div key={item.id} className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-4">
-            <div className="flex items-start justify-between mb-3">
-              <div className="flex-1 min-w-0">
-                <h3 className="text-white font-medium truncate">{item.name}</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${getCategoryColor(item.category)}`}>
-                    {item.category}
-                  </span>
-                  <span className="text-gray-400 text-sm">Qty: {item.quantity}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Status */}
-            <div className="flex items-center gap-2 mb-3">
-              <div className={`flex items-center gap-1 px-2 py-1 rounded-lg ${getStatusColor(item.status)}`}>
-                {getStatusIcon(item.status)}
-                <span className="text-xs font-medium">{item.status.replace('-', ' ')}</span>
-              </div>
-            </div>
-
-            {/* Location */}
-            <div className="flex items-center gap-2 mb-3">
-              <MapPin size={14} className="text-gray-400" />
-              <span className="text-gray-300 text-sm">{item.location}</span>
-            </div>
-
-            {/* Assigned To */}
-            {item.assignedTo && (
-              <div className="mb-3">
-                <span className="text-gray-400 text-xs">Assigned to: </span>
-                <span className="text-white text-sm">{item.assignedTo}</span>
-              </div>
-            )}
-
-            {/* Tracking Number */}
-            {item.trackingNumber && (
-              <div className="mb-3">
-                <span className="text-gray-400 text-xs">Tracking: </span>
-                <span className="text-blue-400 text-sm font-mono">{item.trackingNumber}</span>
-              </div>
-            )}
-
-            {/* Notes */}
-            {item.notes && (
-              <div className="mb-3">
-                <p className="text-gray-300 text-xs">{item.notes}</p>
-              </div>
-            )}
-
-            {/* Quick Status Update - only show if not read-only */}
-            {!isReadOnly && (
-              <div className="flex gap-1 mt-3">
-                {['packed', 'in-transit', 'delivered', 'setup'].map((status) => (
-                  <button
-                    key={status}
-                    onClick={() => updateEquipmentStatus(item.id, status)}
-                    className={`flex-1 px-2 py-1 rounded text-xs transition-colors ${
-                      item.status === status
-                        ? 'bg-red-600 text-white'
-                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                    }`}
-                  >
-                    {status.replace('-', ' ')}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-
-      {filteredEquipment.length === 0 && (
-        <div className="text-center py-12">
-          <Package size={48} className="text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400">No equipment found matching your criteria.</p>
+        {/* Equipment List */}
+        <div className="overflow-x-auto">
+          <table className="w-full whitespace-nowrap">
+            <thead>
+              <tr className="text-left text-gray-400">
+                <th className="py-2 px-3 font-medium">Name</th>
+                <th className="py-2 px-3 font-medium">Category</th>
+                <th className="py-2 px-3 font-medium">Quantity</th>
+                <th className="py-2 px-3 font-medium">Status</th>
+                <th className="py-2 px-3 font-medium">Tracking #</th>
+                <th className="py-2 px-3 font-medium">Assigned To</th>
+                {!isReadOnly && <th className="py-2 px-3 font-medium">Actions</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {filteredEquipment.map((item) => (
+                <tr key={item.id} className="border-b border-white/10 last:border-b-0">
+                  <td className="py-3 px-3 text-white">{item.name}</td>
+                  <td className="py-3 px-3 text-gray-300">{item.category}</td>
+                  <td className="py-3 px-3 text-gray-300">{item.quantity}</td>
+                  <td className="py-3 px-3">
+                    {item.status === 'packed' && (
+                      <div className="flex items-center gap-2 text-yellow-400">
+                        <Package size={14} />
+                        Packed
+                      </div>
+                    )}
+                    {item.status === 'in-transit' && (
+                      <div className="flex items-center gap-2 text-blue-400">
+                        <Truck size={14} />
+                        In Transit
+                      </div>
+                    )}
+                    {item.status === 'delivered' && (
+                      <div className="flex items-center gap-2 text-green-400">
+                        <MapPin size={14} />
+                        Delivered
+                      </div>
+                    )}
+                    {item.status === 'setup' && (
+                      <div className="flex items-center gap-2 text-green-400">
+                        <CheckCircle size={14} />
+                        Setup
+                      </div>
+                    )}
+                    {item.status === 'missing' && (
+                      <div className="flex items-center gap-2 text-red-400">
+                        <AlertTriangle size={14} />
+                        Missing
+                      </div>
+                    )}
+                  </td>
+                  <td className="py-3 px-3 text-gray-300">{item.trackingNumber || '-'}</td>
+                  <td className="py-3 px-3 text-gray-300">{item.assignedTo || '-'}</td>
+                  {!isReadOnly && (
+                    <td className="py-3 px-3">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => {
+                            const newStatus =
+                              item.status === 'packed'
+                                ? 'in-transit'
+                                : item.status === 'in-transit'
+                                  ? 'delivered'
+                                  : item.status === 'delivered'
+                                    ? 'setup'
+                                    : 'missing';
+                            handleUpdateEquipment(item.id, { status: newStatus });
+                          }}
+                          className="text-glass-orange hover:text-glass-orange/80 text-sm"
+                        >
+                          Update
+                        </button>
+                        <button
+                          onClick={() => handleDeleteEquipment(item.id)}
+                          className="text-red-400 hover:text-red-300 text-sm"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  )}
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
-      )}
+
+        {/* Add Equipment Form */}
+        {isAdding && (
+          <div className="mt-6 p-4 bg-white/5 rounded-lg border border-white/10">
+            <h4 className="text-lg font-medium text-white mb-4">Add New Equipment</h4>
+            <NewEquipmentForm onSave={handleSaveNewEquipment} onCancel={() => setIsAdding(false)} />
+          </div>
+        )}
+      </div>
     </div>
+  );
+};
+
+interface NewEquipmentFormProps {
+  onSave: (equipment: Omit<Equipment, 'id'>) => void;
+  onCancel: () => void;
+}
+
+const NewEquipmentForm = ({ onSave, onCancel }: NewEquipmentFormProps) => {
+  const [name, setName] = useState('');
+  const [category, setCategory] = useState('audio');
+  const [quantity, setQuantity] = useState(1);
+  const [status, setStatus] = useState('packed');
+  const [trackingNumber, setTrackingNumber] = useState('');
+  const [assignedTo, setAssignedTo] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newEquipment = {
+      name,
+      category,
+      quantity,
+      status,
+      trackingNumber,
+      assignedTo
+    };
+    onSave(newEquipment);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">Name</label>
+        <input
+          type="text"
+          className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">Category</label>
+        <select
+          className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
+          value={category}
+          onChange={(e) => setCategory(e.target.value as any)}
+        >
+          <option value="audio">Audio</option>
+          <option value="video">Video</option>
+          <option value="lighting">Lighting</option>
+          <option value="instruments">Instruments</option>
+          <option value="sports">Sports</option>
+          <option value="general">General</option>
+        </select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">Quantity</label>
+        <input
+          type="number"
+          className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
+          value={quantity}
+          onChange={(e) => setQuantity(parseInt(e.target.value))}
+          min="1"
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">Status</label>
+        <select
+          className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
+          value={status}
+          onChange={(e) => setStatus(e.target.value as any)}
+        >
+          <option value="packed">Packed</option>
+          <option value="in-transit">In Transit</option>
+          <option value="delivered">Delivered</option>
+          <option value="setup">Setup</option>
+          <option value="missing">Missing</option>
+        </select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">Tracking Number</label>
+        <input
+          type="text"
+          className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
+          value={trackingNumber}
+          onChange={(e) => setTrackingNumber(e.target.value)}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-300 mb-1">Assigned To</label>
+        <input
+          type="text"
+          className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 focus:border-glass-orange/50"
+          value={assignedTo}
+          onChange={(e) => setAssignedTo(e.target.value)}
+        />
+      </div>
+
+      <div className="md:col-span-2 flex justify-end gap-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-xl transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          className="bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-xl transition-colors"
+        >
+          Save
+        </button>
+      </div>
+    </form>
   );
 };
