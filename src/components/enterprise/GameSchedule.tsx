@@ -1,9 +1,10 @@
 
 import React, { useState } from 'react';
 import { Calendar, MapPin, Clock, Plus, Trophy } from 'lucide-react';
+import { GameScheduleItem } from '../../types/enterprise';
 
 export const GameSchedule = () => {
-  const [games] = useState([
+  const [games] = useState<GameScheduleItem[]>([
     {
       id: '1',
       opponent: 'Phoenix Suns',
@@ -12,7 +13,7 @@ export const GameSchedule = () => {
       gameDate: '2025-01-20',
       gameTime: '19:30',
       loadInTime: '15:00',
-      status: 'confirmed' as const,
+      status: 'confirmed',
       isHome: true
     },
     {
@@ -23,7 +24,7 @@ export const GameSchedule = () => {
       gameDate: '2025-01-25',
       gameTime: '20:00',
       loadInTime: '16:00',
-      status: 'scheduled' as const,
+      status: 'scheduled',
       isHome: false
     }
   ]);

@@ -1,4 +1,4 @@
-import { ProTripData } from '../../types/pro';
+import { ProTripData } from '../../types/pro-features';
 
 export const eliLillyCsuiteRetreat: ProTripData = {
   id: 'eli-lilly-c-suite-retreat-2026',

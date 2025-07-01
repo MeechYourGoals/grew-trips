@@ -1,4 +1,4 @@
-import { ProTripData } from '../../types/pro';
+import { ProTripData } from '../../types/pro-features';
 
 export const yCombinatorCohort: ProTripData = {
   id: 'y-combinator-winter-2025-cohort',

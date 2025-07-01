@@ -1,5 +1,4 @@
-
-import { ProTripData } from '../../types/pro';
+import { ProTripData } from '../../types/pro-features';
 
 export const scarletKnightsVolleyball: ProTripData = {
   id: 'scarlet-knights-aau-volleyball-2025',
