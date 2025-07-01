@@ -49,7 +49,7 @@ export const TripGrid = ({ viewMode, trips, proTrips, events }: TripGridProps) =
       return isMobile ? (
         <MobileEventCard key={index} event={event} />
       ) : (
-        <EventCard key={index} event={event} />;
+        <EventCard key={index} event={event} />
       )
     } else {
       return null;
