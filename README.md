@@ -72,6 +72,6 @@ To connect a domain, navigate to Project > Settings > Domains and click Connect 
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
 
-## Configuring the Gemini API
+## Configuring the OpenAI API
 
-The Supabase edge function `gemini-chat` requires a `GEMINI_API_KEY` environment variable. Set this variable in your deployment environment with your Google Gemini API key so the app can retrieve real responses.
+The Supabase edge function `openai-chat` requires an `OPENAI_API_KEY` environment variable. Set this variable in your deployment environment with your OpenAI API key so the app can retrieve real responses.
