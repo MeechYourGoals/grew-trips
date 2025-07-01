@@ -1,5 +1,5 @@
 
-import { SciraAIService } from './sciraAI';
+import { OpenAIService } from './sciraAI';
 
 export interface ReviewAnalysisResult {
   text: string;
@@ -24,7 +24,7 @@ export interface AiFeatureResponse<T> {
 export class AiFeatureService {
   static async analyzeReviews(url: string): Promise<AiFeatureResponse<ReviewAnalysisResult>> {
     try {
-      const result = await SciraAIService.analyzeReviews(url);
+      const result = await OpenAIService.analyzeReviews(url);
       return { success: true, data: result };
     } catch (error) {
       console.error('Review Analysis Error:', error);
@@ -46,7 +46,7 @@ export class AiFeatureService {
         isPro: false
       };
 
-      const result = await SciraAIService.generateAudioSummary(tripContext);
+      const result = await OpenAIService.generateAudioSummary(tripContext);
       
       return { 
         success: true, 

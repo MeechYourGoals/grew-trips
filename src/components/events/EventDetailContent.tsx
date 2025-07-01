@@ -4,7 +4,7 @@ import { Crown, Sparkles, Users, Calendar, UserCheck, Network, TrendingUp } from
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
 import { TripPreferences } from '../TripPreferences';
-import { GeminiAIChat } from '../GeminiAIChat';
+import { OpenAIChat } from '../OpenAIChat';
 import { TripSearchTab } from '../TripSearchTab';
 import { RegistrationTab } from './RegistrationTab';
 import { AgendaBuilder } from './AgendaBuilder';
@@ -106,8 +106,8 @@ export const EventDetailContent = ({
         );
       case 'ai-chat':
         return (
-          <GeminiAIChat 
-            tripId={tripId} 
+          <OpenAIChat
+            tripId={tripId}
             basecamp={basecamp}
             preferences={tripPreferences}
           />

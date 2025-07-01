@@ -3,7 +3,7 @@ import React from 'react';
 import { CalendarIcon, DollarSign, Shield, FileCheck, Tv, Award } from 'lucide-react';
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
-import { GeminiAIChat } from '../GeminiAIChat';
+import { OpenAIChat } from '../OpenAIChat';
 import { TripSearchTab } from '../TripSearchTab';
 import { RosterTab } from './RosterTab';
 import { EquipmentTracking } from './EquipmentTracking';
@@ -183,8 +183,8 @@ export const ProTabContent = ({
         );
       case 'ai-chat':
         return (
-          <GeminiAIChat 
-            tripId={tripId} 
+          <OpenAIChat
+            tripId={tripId}
             basecamp={basecamp}
             preferences={tripPreferences}
           />

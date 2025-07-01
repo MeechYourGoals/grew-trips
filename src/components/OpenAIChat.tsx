@@ -3,12 +3,12 @@ import React, { useState } from 'react';
 import { Sparkles, WifiOff, Wifi, AlertCircle } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
-import { SciraAIService, TripContext } from '../services/sciraAI';
+import { OpenAIService, TripContext } from '../services/sciraAI';
 import { ChatMessages } from './chat/ChatMessages';
 import { ChatInput } from './chat/ChatInput';
-import { GeminiPlusUpgrade } from './chat/GeminiPlusUpgrade';
+import { AIChatUpgrade } from './chat/AIChatUpgrade';
 
-interface GeminiAIChatProps {
+interface OpenAIChatProps {
   tripId: string;
   basecamp?: { name: string; address: string };
   preferences?: TripPreferences;
@@ -22,7 +22,7 @@ interface ChatMessage {
   isFromFallback?: boolean;
 }
 
-export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProps) => {
+export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) => {
   const { isPlus } = useConsumerSubscription();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
@@ -54,8 +54,8 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         isPro: false
       };
 
-      const context = SciraAIService.buildTripContext(tripContext);
-      const response = await SciraAIService.querySciraAI(inputMessage, context, {
+      const context = OpenAIService.buildTripContext(tripContext);
+      const response = await OpenAIService.queryOpenAI(inputMessage, context, {
         temperature: 0.7,
         maxTokens: 1024,
         webSearch: true
@@ -127,7 +127,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
   };
 
   if (!isPlus) {
-    return <GeminiPlusUpgrade />;
+    return <AIChatUpgrade />;
   }
 
   return (
@@ -139,7 +139,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-white">AI Travel Assistant</h3>
           <div className="flex items-center gap-2">
-            <p className="text-gray-400 text-sm">Powered by Google Gemini</p>
+            <p className="text-gray-400 text-sm">Powered by OpenAI</p>
             <div className="flex items-center gap-1">
               {getStatusIcon()}
               <span className="text-gray-400 text-xs">{getStatusText()}</span>

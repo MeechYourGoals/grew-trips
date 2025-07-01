@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Send, Sparkles, MessageCircle, ExternalLink, AlertCircle, Wifi, WifiOff } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
-import { SciraAIService, TripContext } from '../services/sciraAI';
+import { OpenAIService, TripContext } from '../services/sciraAI';
 import {
   Sheet,
   SheetContent,
@@ -53,8 +53,8 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
     setIsTyping(true);
 
     try {
-      const context = SciraAIService.buildTripContext(tripContext);
-      const response = await SciraAIService.querySciraAI(inputMessage, context, {
+      const context = OpenAIService.buildTripContext(tripContext);
+      const response = await OpenAIService.queryOpenAI(inputMessage, context, {
         temperature: 0.3,
         maxTokens: tripContext.isPro ? 2048 : 1024,
         webSearch: true,

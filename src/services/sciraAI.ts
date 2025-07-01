@@ -2,14 +2,14 @@
 import { TripPreferences } from '../types/consumer';
 import { ProTripData } from '../types/pro';
 
-export interface SciraAIConfig {
+export interface OpenAIConfig {
   temperature?: number;
   maxTokens?: number;
   webSearch?: boolean;
   citations?: boolean;
 }
 
-export interface SciraAIResponse {
+export interface OpenAIResponse {
   content: string;
   sources?: Array<{
     title: string;
@@ -37,7 +37,7 @@ export interface TripContext {
   proData?: ProTripData;
 }
 
-export class SciraAIService {
+export class OpenAIService {
   private static readonly SCIRA_API_BASE = 'https://scira.sh/api';
   private static readonly GEMINI_ENDPOINT = '/api/gemini-chat';
   private static readonly FALLBACK_ENABLED = true;
@@ -119,7 +119,7 @@ SAVED LINKS:`;
     return context;
   }
 
-  private static async generateFallbackResponse(query: string, context: string): Promise<SciraAIResponse> {
+  private static async generateFallbackResponse(query: string, context: string): Promise<OpenAIResponse> {
     // Intelligent fallback responses based on query patterns
     const lowerQuery = query.toLowerCase();
     
@@ -171,11 +171,11 @@ SAVED LINKS:`;
            error.code === 'NETWORK_ERROR';
   }
 
-  static async querySciraAI(
+  static async queryOpenAI(
     query: string,
     context: string,
-    config: SciraAIConfig = {}
-  ): Promise<SciraAIResponse> {
+    config: OpenAIConfig = {}
+  ): Promise<OpenAIResponse> {
     const prompt = `${context}
 
 USER QUESTION: ${query}
@@ -301,7 +301,7 @@ Provide a comprehensive sentiment analysis including:
 
 Format your response as a detailed analysis.`;
 
-      const response = await this.querySciraAI(prompt, '', {
+      const response = await this.queryOpenAI(prompt, '', {
         webSearch: true,
         temperature: 0.2
       });
@@ -351,7 +351,7 @@ ${context}
 
 Please create a natural, conversational script that would work well as an audio overview of this trip. Include key details, highlights, and practical information that travelers would want to know.`;
 
-      const response = await this.querySciraAI(prompt, '', {
+      const response = await this.queryOpenAI(prompt, '', {
         temperature: 0.4,
         maxTokens: 1000
       });
