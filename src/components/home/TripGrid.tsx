@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { TripCard } from '../TripCard';
 import { ProTripCard } from '../ProTripCard';
@@ -49,8 +50,8 @@ export const TripGrid = ({ viewMode, trips, proTrips, events }: TripGridProps) =
       return isMobile ? (
         <MobileEventCard key={index} event={event} />
       ) : (
-        <EventCard key={index} event={event} />;
-      )
+        <EventCard key={index} event={event} />
+      );
     } else {
       return null;
     }
@@ -64,4 +65,3 @@ export const TripGrid = ({ viewMode, trips, proTrips, events }: TripGridProps) =
     </div>
   );
 };
-
