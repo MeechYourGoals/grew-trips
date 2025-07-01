@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { Users, Plus, Search, Filter, Phone, Mail, Shield, User } from 'lucide-react';
-import { ProParticipant } from '../../types/pro-features';
+import { Users, Shield, Settings, UserCheck, AlertTriangle } from 'lucide-react';
+import { ProParticipant } from '../../types/pro';
 
 interface RosterTabProps {
   roster: ProParticipant[];

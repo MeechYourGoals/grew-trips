@@ -32,17 +32,17 @@ export const MobileHeader = ({
           </h1>
         </div>
         
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={onCreateTrip}
-            className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black p-3 rounded-xl transition-all duration-300 shadow-lg min-w-[48px] min-h-[48px] flex items-center justify-center"
+            className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black p-3 rounded-xl transition-all duration-300 shadow-lg"
           >
             <Plus size={20} />
           </button>
           
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="bg-gray-800/80 backdrop-blur-md border border-gray-700 hover:bg-gray-700/80 text-white p-3 rounded-xl transition-all duration-300 min-w-[48px] min-h-[48px] flex items-center justify-center"
+            className="bg-gray-800/80 backdrop-blur-md border border-gray-700 hover:bg-gray-700/80 text-white p-3 rounded-xl transition-all duration-300"
           >
             <Menu size={20} />
           </button>
@@ -51,13 +51,13 @@ export const MobileHeader = ({
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 flex items-end">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end">
           <div className="w-full bg-gray-900/95 backdrop-blur-md border-t border-gray-700 rounded-t-3xl p-6 animate-slide-in-bottom">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-white">Menu</h2>
               <button
                 onClick={() => setIsMenuOpen(false)}
-                className="text-gray-400 hover:text-white p-2 rounded-lg hover:bg-gray-800 transition-colors min-w-[44px] min-h-[44px] flex items-center justify-center"
+                className="text-gray-400 hover:text-white p-2"
               >
                 <X size={24} />
               </button>
@@ -69,10 +69,10 @@ export const MobileHeader = ({
                   onProDashboard();
                   setIsMenuOpen(false);
                 }}
-                className="w-full flex items-center gap-4 bg-gray-800/50 hover:bg-gray-700/50 text-white p-5 rounded-xl transition-all min-h-[64px]"
+                className="w-full flex items-center gap-3 bg-gray-800/50 hover:bg-gray-700/50 text-white p-4 rounded-xl transition-all"
               >
-                <Crown size={24} className="text-yellow-500 flex-shrink-0" />
-                <span className="font-medium text-lg">Pro Dashboard</span>
+                <Crown size={20} className="text-yellow-500" />
+                <span className="font-medium">Pro Dashboard</span>
               </button>
               
               <button
@@ -80,10 +80,10 @@ export const MobileHeader = ({
                   onUpgradeToProo();
                   setIsMenuOpen(false);
                 }}
-                className="w-full flex items-center gap-4 bg-gradient-to-r from-yellow-600/20 to-yellow-500/20 border border-yellow-500/30 text-yellow-400 p-5 rounded-xl transition-all min-h-[64px]"
+                className="w-full flex items-center gap-3 bg-gradient-to-r from-yellow-600/20 to-yellow-500/20 border border-yellow-500/30 text-yellow-400 p-4 rounded-xl transition-all"
               >
-                <Crown size={24} className="flex-shrink-0" />
-                <span className="font-medium text-lg">Upgrade to Pro</span>
+                <Crown size={20} />
+                <span className="font-medium">Upgrade to Pro</span>
               </button>
               
               <button
@@ -91,10 +91,10 @@ export const MobileHeader = ({
                   onSettings();
                   setIsMenuOpen(false);
                 }}
-                className="w-full flex items-center gap-4 bg-gray-800/50 hover:bg-gray-700/50 text-white p-5 rounded-xl transition-all min-h-[64px]"
+                className="w-full flex items-center gap-3 bg-gray-800/50 hover:bg-gray-700/50 text-white p-4 rounded-xl transition-all"
               >
-                <Settings size={24} className="flex-shrink-0" />
-                <span className="font-medium text-lg">Settings</span>
+                <Settings size={20} />
+                <span className="font-medium">Settings</span>
               </button>
             </div>
           </div>

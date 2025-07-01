@@ -1,123 +1,101 @@
-import React, { useState } from 'react';
-import { Calendar, MapPin, Clock, Plus, Edit2 } from 'lucide-react';
+
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, MapPin, Mic, Music, Trophy, Briefcase, Hotel, Plane } from 'lucide-react';
+import { Tour, TourTrip } from '../../types/pro';
 import { useTripVariant } from '../../contexts/TripVariantContext';
-import { Tour, TourTrip } from '../../types/tour';
 
 interface TourScheduleSectionProps {
   tour: Tour;
-  onTripAdded: (trip: TourTrip) => void;
 }
 
-export const TourScheduleSection = ({ tour, onTripAdded }: TourScheduleSectionProps) => {
+export const TourScheduleSection = ({ tour }: TourScheduleSectionProps) => {
+  const navigate = useNavigate();
   const { accentColors } = useTripVariant();
-  const [newTrip, setNewTrip] = useState<Omit<TourTrip, 'id' | 'tourId'>>({
-    city: '',
-    venue: '',
-    venueAddress: '',
-    date: '',
-    category: 'headline',
-    status: 'planned',
-    participants: [],
-    accommodation: {
-      type: 'hotel',
-      name: '',
-      address: '',
-      confirmationNumber: '',
-      checkIn: '',
-      checkOut: '',
-    },
-    transportation: {
-      type: 'flight',
-      details: '',
-      confirmationNumber: '',
-      dateTime: '',
-    },
-  });
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>, section?: string) => {
-    const { name, value } = e.target;
-    if (section === 'accommodation' || section === 'transportation') {
-      setNewTrip(prev => ({
-        ...prev,
-        [section]: {
-          ...prev[section as keyof TourTrip],
-          [name]: value,
-        } as any,
-      }));
-    } else {
-      setNewTrip(prev => ({ ...prev, [name]: value }));
+  const getCategoryIcon = (category: TourTrip['category']) => {
+    switch (category) {
+      case 'headline': return <Mic size={16} className={`text-${accentColors.primary}`} />;
+      case 'private': return <Briefcase size={16} className={`text-${accentColors.secondary}`} />;
+      case 'college': return <Trophy size={16} className="text-glass-green" />;
+      case 'festival': return <Music size={16} className="text-purple-400" />;
+      case 'corporate': return <Briefcase size={16} className="text-blue-400" />;
     }
   };
 
-  const handleAddTrip = () => {
-    const newTripWithId = { ...newTrip, id: Math.random().toString(36).substring(2, 15), tourId: tour.id };
-    onTripAdded(newTripWithId);
-    setNewTrip({
-      city: '',
-      venue: '',
-      venueAddress: '',
-      date: '',
-      category: 'headline',
-      status: 'planned',
-      participants: [],
-      accommodation: {
-        type: 'hotel',
-        name: '',
-        address: '',
-        confirmationNumber: '',
-        checkIn: '',
-        checkOut: '',
-      },
-      transportation: {
-        type: 'flight',
-        details: '',
-        confirmationNumber: '',
-        dateTime: '',
-      },
-    });
+  const getStatusColor = (status: TourTrip['status']) => {
+    switch (status) {
+      case 'confirmed': return 'bg-green-500/20 text-green-400';
+      case 'planned': return 'bg-yellow-500/20 text-yellow-400';
+      case 'completed': return 'bg-blue-500/20 text-blue-400';
+      case 'cancelled': return 'bg-red-500/20 text-red-400';
+    }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-white">Tour Schedule</h3>
-        <button
-          onClick={handleAddTrip}
-          className={`bg-gradient-to-r ${accentColors.gradient} hover:bg-gradient-to-l text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2`}
-        >
-          <Plus size={16} />
-          Add Trip
+    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 md:p-8 mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
+        <h2 className="text-xl md:text-2xl font-semibold text-white">Schedule</h2>
+        <button className={`bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 text-white font-medium px-4 md:px-6 py-3 rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg flex items-center gap-2`}>
+          <Plus size={20} />
+          Add Event
         </button>
       </div>
 
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <div className="space-y-4">
-          {tour.trips.map((trip) => (
-            <div key={trip.id} className="bg-white/5 rounded-lg p-4 border border-white/10">
-              <div className="flex items-center justify-between mb-3">
-                <h4 className="text-white font-medium">{trip.city}</h4>
-                <div className="flex gap-2">
-                  <button className="text-glass-orange hover:text-glass-orange/80 text-sm">Edit</button>
-                  {/* <button className="text-red-400 hover:text-red-300 text-sm">Delete</button> */}
+      <div className="grid gap-4">
+        {tour.trips.map((trip) => (
+          <div 
+            key={trip.id} 
+            onClick={() => navigate(`/trip/${trip.id}`)}
+            className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 md:p-6 hover:bg-white/10 transition-all duration-200 cursor-pointer group"
+          >
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="flex items-start gap-4">
+                <div className={`w-12 h-12 bg-gradient-to-r from-${accentColors.primary}/30 to-${accentColors.secondary}/30 backdrop-blur-sm rounded-xl flex items-center justify-center flex-shrink-0`}>
+                  {getCategoryIcon(trip.category)}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <h3 className={`text-lg font-semibold text-white group-hover:text-${accentColors.secondary} transition-colors mb-1`}>
+                    {trip.city}
+                  </h3>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2 text-gray-400 text-sm">
+                      <MapPin size={12} />
+                      <span className="truncate">{trip.venue}</span>
+                    </div>
+                    <div className="text-gray-500 text-xs">
+                      {trip.venueAddress}
+                    </div>
+                  </div>
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              
+              <div className="flex items-center justify-between lg:justify-end gap-4">
+                <div className="text-right">
+                  <div className="text-white font-medium text-sm md:text-base">{new Date(trip.date).toLocaleDateString()}</div>
+                  <div className={`text-xs px-2 py-1 rounded-full ${getStatusColor(trip.status)}`}>
+                    {trip.status}
+                  </div>
+                </div>
+                <div className={`w-2 h-2 bg-${accentColors.primary} rounded-full opacity-0 group-hover:opacity-100 transition-opacity`}></div>
+              </div>
+            </div>
+            
+            {/* Transportation & Accommodations Preview */}
+            <div className="mt-4 pt-4 border-t border-white/10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
                 <div className="flex items-center gap-2 text-gray-400">
-                  <Calendar size={14} />
-                  {trip.date}
+                  <Hotel size={12} className={`text-${accentColors.secondary}`} />
+                  <span className="truncate">{trip.accommodation?.name} - {trip.accommodation?.confirmationNumber}</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-400">
-                  <MapPin size={14} />
-                  {trip.venue}
-                </div>
-                <div className="flex items-center gap-2 text-gray-400">
-                  <Clock size={14} />
-                  {trip.status}
+                  <Plane size={12} className="text-glass-green" />
+                  <span className="truncate">{trip.transportation?.details} - {trip.transportation?.confirmationNumber}</span>
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
     </div>
   );

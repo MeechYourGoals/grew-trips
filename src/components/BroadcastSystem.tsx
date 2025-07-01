@@ -1,7 +1,7 @@
+
 import React, { useState } from 'react';
-import { Radio, Send, Users, AlertTriangle } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
-import { Broadcast } from '../types/core';
+import { Send, Radio, AlertTriangle, Users } from 'lucide-react';
+import { Broadcast } from '../types/pro';
 
 interface BroadcastSystemProps {
   tourId: string;

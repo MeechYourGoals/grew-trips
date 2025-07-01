@@ -1,6 +1,6 @@
+
 import React from 'react';
-import { Calendar, MapPin, Users, DollarSign, TrendingUp, Clock } from 'lucide-react';
-import { Tour } from '../../types/tour';
+import { Tour } from '../../types/pro';
 
 interface TourDashboardStatsProps {
   tour: Tour;

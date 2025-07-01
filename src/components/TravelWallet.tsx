@@ -1,6 +1,7 @@
+
 import React, { useState } from 'react';
-import { CreditCard, Plus, Edit2, Trash2, Star, Plane, Building, Car } from 'lucide-react';
-import { TravelWallet as TravelWalletType, AirlineProgram, HotelProgram, RentalCarProgram } from '../types/travel';
+import { Plus, Edit, Trash2, Star, Plane, Car, Building, CreditCard } from 'lucide-react';
+import { AirlineProgram, HotelProgram, RentalCarProgram } from '../types/pro';
 
 interface TravelWalletProps {
   userId: string;
@@ -221,7 +222,7 @@ export const TravelWallet = ({ userId }: TravelWalletProps) => {
               <Star size={16} className="text-yellow-500 fill-current" />
             )}
             <button onClick={onEdit} className="text-gray-400 hover:text-white p-1">
-              <Edit2 size={14} />
+              <Edit size={14} />
             </button>
             <button onClick={onDelete} className="text-gray-400 hover:text-red-400 p-1">
               <Trash2 size={14} />
