@@ -5,6 +5,7 @@ import { useAuth } from '../hooks/useAuth';
 import { ProUpgradeModal } from './ProUpgradeModal';
 import { EnterpriseSettings } from './EnterpriseSettings';
 import { ConsumerSettings } from './ConsumerSettings';
+import { EventsSettings } from './EventsSettings';
 import { ProfileSection } from './settings/ProfileSection';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { NotificationsSection } from './settings/NotificationsSection';
@@ -19,7 +20,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   const { user, signOut } = useAuth();
   const [showProModal, setShowProModal] = useState(false);
   const [activeSection, setActiveSection] = useState('profile');
-  const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise'>('consumer');
+  const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise' | 'events'>('consumer');
   const { accentColors } = useTripVariant();
 
   if (!isOpen || !user) return null;
@@ -80,7 +81,6 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   return (
     <>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50">
-        {/* REMOVED max-w-md constraint to fix the settings width issue */}
         <div className="h-full bg-white/10 backdrop-blur-md border-r border-white/20 w-full">
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-white/20">
@@ -90,7 +90,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
             </button>
           </div>
 
-          {/* Settings Type Toggle */}
+          {/* Settings Type Toggle - Updated to include Events */}
           <div className="p-6 border-b border-white/20">
             <div className="bg-white/10 rounded-xl p-1 flex">
               <button
@@ -113,6 +113,16 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
               >
                 Enterprise
               </button>
+              <button
+                onClick={() => setSettingsType('events')}
+                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                  settingsType === 'events'
+                    ? `bg-${accentColors.primary} text-white`
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Events
+              </button>
             </div>
           </div>
 
@@ -121,12 +131,16 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
             <div className="h-full">
               <ConsumerSettings currentUserId={user.id} />
             </div>
-          ) : (
+          ) : settingsType === 'enterprise' ? (
             <div className="h-full">
               <EnterpriseSettings 
                 organizationId={userOrganization?.id || 'default-org'} 
                 currentUserId={user.id} 
               />
+            </div>
+          ) : (
+            <div className="h-full">
+              <EventsSettings currentUserId={user.id} />
             </div>
           )}
 
