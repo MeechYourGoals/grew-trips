@@ -1074,4 +1074,100 @@ export const proTripMockData: Record<string, ProTripData> = {
         id: '28',
         name: 'Executive Producer',
         email: 'producer@bravotv.com',
-        avatar: 'https://images.unsplash.com/photo-147
+        avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+        role: 'Producer',
+        credentialLevel: 'AllAccess',
+        permissions: ['set-access', 'budget-approval'],
+        roomPreferences: ['executive-suite', 'atlanta-downtown'],
+        dietaryRestrictions: []
+      },
+      {
+        id: '29',
+        name: 'Camera Operator',
+        email: 'camera@production.com',
+        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
+        role: 'Crew',
+        credentialLevel: 'Backstage',
+        permissions: ['camera-crew', 'equipment-access'],
+        roomPreferences: ['standard-room', 'near-studio'],
+        dietaryRestrictions: []
+      },
+      {
+        id: '30',
+        name: 'Production Assistant',
+        email: 'assistant@production.com',
+        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face',
+        role: 'Crew',
+        credentialLevel: 'Backstage',
+        permissions: ['set-access'],
+        roomPreferences: ['shared-room', 'near-studio'],
+        dietaryRestrictions: []
+      }
+    ],
+    roomAssignments: [
+      {
+        id: 'room-rh1',
+        room: 'Production Loft',
+        hotel: 'Loews Atlanta',
+        occupants: ['27', '28', '29', '30'],
+        checkIn: '2025-08-01T14:00:00Z',
+        checkOut: '2025-09-30T12:00:00Z',
+        roomType: 'suite',
+        specialRequests: ['production-office', 'cast-lounge']
+      }
+    ],
+    equipment: [
+      {
+        id: 'eq-rh1',
+        name: 'Camera & Lighting Kit',
+        category: 'video',
+        quantity: 5,
+        location: 'Set',
+        status: 'in-use',
+        assignedTo: '29',
+        notes: 'High priority equipment for daily shoots'
+      }
+    ],
+    schedule: [
+      {
+        id: 'sched-rh1',
+        type: 'meeting',
+        title: 'Daily Shoot',
+        startTime: '2025-08-02T08:00:00Z',
+        endTime: '2025-08-02T18:00:00Z',
+        location: 'Various Atlanta Locations',
+        participants: ['27', '28', '29', '30'],
+        priority: 'high',
+        notes: 'Follow shooting script for episode scenes'
+      }
+    ],
+    perDiem: {
+      dailyRate: 100,
+      currency: 'USD',
+      startDate: '2025-08-01',
+      endDate: '2025-09-30',
+      participants: [
+        { participantId: '27', customRate: 100, advances: 0, deductions: 0, balance: 6100 },
+        { participantId: '28', customRate: 100, advances: 0, deductions: 0, balance: 6100 },
+        { participantId: '29', customRate: 100, advances: 0, deductions: 0, balance: 6100 },
+        { participantId: '30', customRate: 100, advances: 0, deductions: 0, balance: 6100 }
+      ]
+    },
+    settlement: [],
+    medical: [],
+    compliance: [
+      {
+        id: 'comp-rh1',
+        type: 'union',
+        title: 'SAG-AFTRA Guidelines',
+        description: 'Ensure compliance with union filming regulations',
+        deadline: '2025-09-30',
+        status: 'pending',
+        assignedTo: '28',
+        documents: ['sag-aftra.pdf']
+      }
+    ],
+    media: [],
+    sponsors: []
+  }
+};
