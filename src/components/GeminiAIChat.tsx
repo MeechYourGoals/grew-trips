@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Sparkles, WifiOff, Wifi, AlertCircle } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
-import { SciraAIService, TripContext } from '../services/sciraAI';
+import { OpenAIService, TripContext } from '../services/openAI';
 import { ChatMessages } from './chat/ChatMessages';
 import { ChatInput } from './chat/ChatInput';
 import { GeminiPlusUpgrade } from './chat/GeminiPlusUpgrade';
@@ -54,12 +54,14 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         isPro: false
       };
 
-      const context = SciraAIService.buildTripContext(tripContext);
-      const response = await SciraAIService.querySciraAI(inputMessage, context, {
+      const context = OpenAIService.buildTripContext(tripContext);
+      const response = await OpenAIService.queryOpenAI(
+        `${context}\n\nUSER QUESTION: ${inputMessage}`,
+        {
         temperature: 0.7,
         maxTokens: 1024,
-        webSearch: true
-      });
+      }
+      );
       
       // Update AI status based on response
       if (response.isFromFallback) {
