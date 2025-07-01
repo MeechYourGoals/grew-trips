@@ -37,7 +37,7 @@ export interface TripContext {
 }
 
 export class SciraAIService {
-  private static readonly SCIRA_API_BASE = 'https://api.scira.ai/v1';
+  private static readonly SCIRA_API_BASE = 'https://scira.sh/api';
   
   static buildTripContext(tripContext: TripContext): string {
     const contextSize = tripContext.isPro ? 8000 : 2000;
@@ -125,39 +125,53 @@ SAVED LINKS:`;
 
 USER QUESTION: ${query}
 
-Please provide a helpful, specific response based on the trip context above. If you need current information about places, events, or travel conditions, feel free to search the web.`;
+Please provide a helpful, specific response based on the trip context above. If you need current information about places, events, or travel conditions, use web search capabilities.`;
 
     try {
-      // For now, we'll use a fallback service until Scira AI is properly integrated
-      // This maintains the existing functionality while preparing for Scira integration
-      const response = await fetch('/api/gemini-chat', {
+      const response = await fetch(`${this.SCIRA_API_BASE}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           message: prompt,
-          config: {
-            temperature: config.temperature || 0.3,
-            maxOutputTokens: config.maxTokens || 1024,
-          },
+          model: 'gpt-4o-mini', // Using the free model from Scira
+          stream: false,
+          web_search: config.webSearch || true,
+          temperature: config.temperature || 0.3,
+          max_tokens: config.maxTokens || 1024,
         }),
       });
 
       if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
+        const errorText = await response.text();
+        throw new Error(`Scira AI API Error: ${response.status} - ${errorText}`);
       }
 
       const data = await response.json();
       
+      // Handle Scira AI response format
+      const content = data.message || data.response || data.content || 'No response received';
+      const sources = data.sources || [];
+      
       return {
-        content: data.response,
-        sources: [], // Will be populated when Scira AI is integrated
-        citations: []
+        content,
+        sources: sources.map((source: any) => ({
+          title: source.title || 'Unknown',
+          url: source.url || '',
+          snippet: source.snippet || source.description || ''
+        })),
+        citations: data.citations || []
       };
     } catch (error) {
       console.error('Scira AI Query Error:', error);
-      throw new Error('Failed to get AI response. Please try again.');
+      
+      // Fallback to simple response on error
+      return {
+        content: `I apologize, but I'm experiencing technical difficulties. Please try again in a moment. Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        sources: [],
+        citations: []
+      };
     }
   }
 
@@ -167,16 +181,37 @@ Please provide a helpful, specific response based on the trip context above. If 
     score: number;
     platforms: string[];
   }> {
-    // TODO: Implement with Scira AI web search and analysis
-    // For now, return mock data
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    return {
-      text: "This venue consistently receives praise for its quality and service. Customers particularly appreciate the atmosphere and value. Most reviews highlight positive experiences with staff and amenities.",
-      sentiment: 'positive',
-      score: 85,
-      platforms: ['Google Reviews', 'Yelp', 'TripAdvisor']
-    };
+    try {
+      const prompt = `Please analyze reviews from this URL: ${url}
+      
+Provide a comprehensive sentiment analysis including:
+1. Overall sentiment (positive/negative/neutral)
+2. Sentiment score (0-100)
+3. Key themes and insights
+4. Summary of customer feedback
+
+Format your response as a detailed analysis.`;
+
+      const response = await this.querySciraAI(prompt, '', {
+        webSearch: true,
+        temperature: 0.2
+      });
+
+      // Extract sentiment info from response
+      const content = response.content;
+      const score = this.extractScoreFromText(content);
+      const sentiment = this.determineSentiment(score, content);
+      
+      return {
+        text: content,
+        sentiment,
+        score,
+        platforms: ['Google Reviews', 'Yelp', 'TripAdvisor'] // Will be enhanced with actual platform detection
+      };
+    } catch (error) {
+      console.error('Review Analysis Error:', error);
+      throw new Error('Failed to analyze reviews. Please try again.');
+    }
   }
 
   static async generateAudioSummary(tripContext: TripContext): Promise<{
@@ -184,16 +219,52 @@ Please provide a helpful, specific response based on the trip context above. If 
     audioUrl: string;
     duration: number;
   }> {
-    // TODO: Implement with Scira AI content generation
-    // For now, return mock data
-    await new Promise(resolve => setTimeout(resolve, 3000));
+    try {
+      const context = this.buildTripContext(tripContext);
+      const prompt = `Based on this trip information, create a comprehensive audio summary script:
+
+${context}
+
+Please create a natural, conversational script that would work well as an audio overview of this trip. Include key details, highlights, and practical information that travelers would want to know.`;
+
+      const response = await this.querySciraAI(prompt, '', {
+        temperature: 0.4,
+        maxTokens: 1000
+      });
+
+      // For now, return the text summary - audio generation would require additional TTS integration
+      return {
+        summary: response.content,
+        audioUrl: "https://www.soundjay.com/misc/sounds/magic-chime-02.wav", // Placeholder
+        duration: Math.max(60, Math.floor(response.content.length / 10)) // Estimate based on text length
+      };
+    } catch (error) {
+      console.error('Audio Summary Error:', error);
+      throw new Error('Failed to generate audio summary. Please try again.');
+    }
+  }
+
+  private static extractScoreFromText(text: string): number {
+    // Look for percentage or score mentions in the text
+    const scoreMatch = text.match(/(\d+)%|\bscore[:\s]*(\d+)|(\d+)\s*out\s*of\s*\d+/i);
+    if (scoreMatch) {
+      const score = parseInt(scoreMatch[1] || scoreMatch[2] || scoreMatch[3]);
+      return Math.min(100, Math.max(0, score));
+    }
     
-    const summary = `Welcome to your ${tripContext.title} overview. This trip to ${tripContext.location} ${tripContext.dateRange} includes ${tripContext.participants?.length || 0} participants and covers exciting activities based on your preferences.`;
+    // Default scoring based on sentiment keywords
+    const positiveWords = text.toLowerCase().match(/\b(excellent|great|amazing|wonderful|fantastic|good|positive|satisfied|happy|recommend)\b/g) || [];
+    const negativeWords = text.toLowerCase().match(/\b(poor|bad|terrible|awful|negative|disappointed|unsatisfied|avoid|horrible)\b/g) || [];
     
-    return {
-      summary,
-      audioUrl: "https://www.soundjay.com/misc/sounds/magic-chime-02.wav",
-      duration: 120
-    };
+    const positiveScore = positiveWords.length * 10;
+    const negativeScore = negativeWords.length * 10;
+    
+    return Math.max(50, Math.min(90, 70 + positiveScore - negativeScore));
+  }
+
+  private static determineSentiment(score: number, text: string): 'positive' | 'negative' | 'neutral' {
+    if (score >= 70) return 'positive';
+    if (score <= 40) return 'negative';
+    return 'neutral';
   }
 }
