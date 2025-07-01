@@ -39,6 +39,7 @@ export interface TripContext {
 
 export class SciraAIService {
   private static readonly SCIRA_API_BASE = 'https://scira.sh/api';
+  private static readonly GEMINI_ENDPOINT = '/api/gemini-chat';
   private static readonly FALLBACK_ENABLED = true;
   
   static buildTripContext(tripContext: TripContext): string {
@@ -182,8 +183,40 @@ USER QUESTION: ${query}
 Please provide a helpful, specific response based on the trip context above. If you need current information about places, events, or travel conditions, use web search capabilities.`;
 
     try {
-      console.log('Attempting Scira AI request...');
-      
+      console.log('Attempting Gemini AI request...');
+
+      const geminiRes = await fetch(this.GEMINI_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          message: prompt,
+          config: {
+            temperature: config.temperature ?? 0.3,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: config.maxTokens ?? 1024
+          },
+          tripContext: null
+        })
+      });
+
+      if (geminiRes.ok) {
+        const geminiData = await geminiRes.json();
+        console.log('Gemini AI response received:', geminiData);
+        return { content: geminiData.response, sources: [], citations: [], isFromFallback: false };
+      } else {
+        const text = await geminiRes.text();
+        throw new Error(`Gemini HTTP ${geminiRes.status}: ${text}`);
+      }
+    } catch (gemError) {
+      console.error('Gemini AI Request Failed:', gemError);
+    }
+
+    try {
+      console.log('Attempting Scira fallback request...');
+
       const response = await fetch(`${this.SCIRA_API_BASE}/chat`, {
         method: 'POST',
         headers: {
@@ -207,10 +240,10 @@ Please provide a helpful, specific response based on the trip context above. If 
 
       const data = await response.json();
       console.log('Scira AI response received:', data);
-      
+
       const content = data.message || data.response || data.content || 'No response received';
       const sources = data.sources || [];
-      
+
       return {
         content,
         sources: sources.map((source: any) => ({
@@ -218,7 +251,8 @@ Please provide a helpful, specific response based on the trip context above. If 
           url: source.url || '',
           snippet: source.snippet || source.description || ''
         })),
-        citations: data.citations || []
+        citations: data.citations || [],
+        isFromFallback: false
       };
     } catch (error) {
       console.error('Scira AI Request Failed:', error);

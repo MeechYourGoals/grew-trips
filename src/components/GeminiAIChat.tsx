@@ -139,7 +139,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         <div className="flex-1">
           <h3 className="text-lg font-semibold text-white">AI Travel Assistant</h3>
           <div className="flex items-center gap-2">
-            <p className="text-gray-400 text-sm">Powered by Scira AI</p>
+            <p className="text-gray-400 text-sm">Powered by Google Gemini</p>
             <div className="flex items-center gap-1">
               {getStatusIcon()}
               <span className="text-gray-400 text-xs">{getStatusText()}</span>

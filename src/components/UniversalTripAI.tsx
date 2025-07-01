@@ -183,7 +183,7 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
             </div>
           </SheetTitle>
           <SheetDescription className="text-gray-400">
-            Powered by Scira AI • Context: {contextLimit}
+            Powered by Google Gemini • Context: {contextLimit}
           </SheetDescription>
         </SheetHeader>
 
