@@ -75,3 +75,11 @@ Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-trick
 ## Configuring the OpenAI API
 
 Set the `OPENAI_API_KEY` environment variable with your OpenAI API key. The new `openai-chat` Supabase function requires this variable to generate responses.
+
+## Database Migrations
+
+Apply the migrations in numeric order to keep the schema consistent:
+
+1. `001_audio_summaries.sql`
+2. `002_add_priority_to_messages.sql`
+3. `003_create_daily_digests.sql`
