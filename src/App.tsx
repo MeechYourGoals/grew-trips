@@ -14,6 +14,7 @@ import EventDetail from "./pages/EventDetail";
 import ReviewAnalysis from "./pages/ReviewAnalysis";
 import AudioOverviews from "./pages/AudioOverviews";
 import NotFound from "./pages/NotFound";
+import { AdminDashboard } from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +37,7 @@ const App = () => (
               {/* AI Feature routes */}
               <Route path="/ai/review-analysis" element={<ReviewAnalysis />} />
               <Route path="/ai/audio-overviews" element={<AudioOverviews />} />
+              <Route path="/admin/scheduled-messages" element={<AdminDashboard />} />
               {/* Catch-all route for 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
