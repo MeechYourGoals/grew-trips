@@ -61,7 +61,7 @@ const ProTripDetail = () => {
     location: tripData.location,
     dateRange: tripData.dateRange,
     description: tripData.description || `Professional ${tripData.category.toLowerCase()} in ${tripData.location}`,
-    collaborators: tripData.participants.map(p => ({
+    participants: tripData.participants.map(p => ({
       id: p.id,
       name: p.name,
       avatar: p.avatar
@@ -101,7 +101,7 @@ const ProTripDetail = () => {
     broadcasts: mockBroadcasts,
     links: mockLinks,
     messages: tripMessages,
-    collaborators: trip.collaborators,
+    collaborators: trip.participants,
     itinerary: tripData.itinerary,
     budget: tripData.budget,
     isPro: true,

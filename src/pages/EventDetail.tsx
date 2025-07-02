@@ -53,7 +53,7 @@ const EventDetail = () => {
     location: eventData.location,
     dateRange: eventData.dateRange,
     description: eventData.description || `Professional ${eventData.category.toLowerCase()} event in ${eventData.location}`,
-    collaborators: eventData.participants.map(p => ({
+    participants: eventData.participants.map(p => ({
       id: p.id,
       name: p.name,
       avatar: p.avatar
@@ -93,7 +93,7 @@ const EventDetail = () => {
     broadcasts: mockBroadcasts,
     links: mockLinks,
     messages: tripMessages,
-    collaborators: trip.collaborators,
+    collaborators: trip.participants,
     itinerary: eventData.itinerary,
     budget: eventData.budget,
     isPro: false,

@@ -15,7 +15,7 @@ interface TripHeaderProps {
     location: string;
     dateRange: string;
     description: string;
-    collaborators: Array<{
+    participants: Array<{
       id: number;
       name: string;
       avatar: string;
@@ -72,7 +72,7 @@ export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategor
                 <h3 className="text-white font-semibold">Trip Collaborators</h3>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-gray-400 text-sm">{trip.collaborators.length}</span>
+                <span className="text-gray-400 text-sm">{trip.participants.length}</span>
                 {onManageUsers && (
                   <button
                     onClick={onManageUsers}
@@ -97,14 +97,14 @@ export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategor
             )}
             
             <div className="space-y-3 mb-4">
-              {trip.collaborators.map((collaborator) => (
-                <div key={collaborator.id} className="flex items-center gap-3">
+              {trip.participants.map((participant) => (
+                <div key={participant.id} className="flex items-center gap-3">
                   <img
-                    src={collaborator.avatar}
-                    alt={collaborator.name}
+                    src={participant.avatar}
+                    alt={participant.name}
                     className="w-10 h-10 rounded-full border-2 border-white/20"
                   />
-                  <span className="text-white font-medium">{collaborator.name}</span>
+                  <span className="text-white font-medium">{participant.name}</span>
                 </div>
               ))}
             </div>

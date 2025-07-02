@@ -9,9 +9,12 @@ import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../hooks/useMessages';
 import { TripPreferences as TripPreferencesType } from '../types/consumer';
+import { getTripById, generateTripMockData } from '../data/tripsData';
+import { useNavigate } from 'react-router-dom';
 
 const TripDetail = () => {
   const { tripId } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const { getMessagesForTrip } = useMessages();
   const [activeTab, setActiveTab] = useState('chat');
@@ -23,57 +26,39 @@ const TripDetail = () => {
   const [showTripsPlusModal, setShowTripsPlusModal] = useState(false);
   const [tripPreferences, setTripPreferences] = useState<TripPreferencesType | undefined>();
 
-  // Sample trip data - this would come from your database
-  const trip = {
-    id: 1,
-    title: "Summer in Paris",
-    location: "Paris, France",
-    dateRange: "Jul 14 - Jul 21, 2025",
-    description: "Family vacation exploring the City of Light",
-    collaborators: [
-      { id: 1, name: "Emma", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
-      { id: 2, name: "Jake", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
-      { id: 3, name: "Sarah", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face" }
-    ]
-  };
+  // Get trip data dynamically based on tripId
+  const tripIdNum = tripId ? parseInt(tripId, 10) : null;
+  const trip = tripIdNum ? getTripById(tripIdNum) : null;
+  
+  // Handle missing trip
+  if (!trip) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold text-white mb-4">Trip Not Found</h1>
+          <p className="text-gray-400 mb-6">The trip you're looking for doesn't exist.</p>
+          <button
+            onClick={() => navigate('/')}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl transition-colors"
+          >
+            Back to My Trips
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  // Mock basecamp data
-  const basecamp = {
-    name: "Central Paris Hotel",
-    address: "123 Rue de Rivoli, 75001 Paris, France"
-  };
+  // Generate dynamic mock data based on the trip
+  const mockData = generateTripMockData(trip);
+  const basecamp = mockData.basecamp;
 
   // Get trip messages for context
   const tripMessages = getMessagesForTrip(tripId || '1');
 
-  // Mock data for trip context
-  const mockBroadcasts = [
-    { id: 1, senderName: "Emma", content: "Just booked our dinner reservation at Le Comptoir du 7ème for 7:30 PM tonight!", timestamp: "2025-01-15T15:30:00Z" },
-    { id: 2, senderName: "Jake", content: "Weather looks great tomorrow - perfect for the Eiffel Tower visit at 2 PM", timestamp: "2025-01-15T10:00:00Z" }
-  ];
-
-  const mockLinks = [
-    { id: 1, title: "Our Airbnb in Montmartre", url: "https://airbnb.com/rooms/123", category: "Accommodation" },
-    { id: 2, title: "Louvre Museum Tickets", url: "https://louvre.fr/tickets", category: "Attractions" },
-    { id: 3, title: "Best Bakeries Near Us", url: "https://timeout.com/paris/bakeries", category: "Food" }
-  ];
-
-  const mockItinerary = [
-    {
-      date: "2025-07-14",
-      events: [
-        { title: "Arrival & Check-in", location: "Central Paris Hotel", time: "14:00" },
-        { title: "Dinner at Le Comptoir du 7ème", location: "8 Avenue Bosquet", time: "19:30" }
-      ]
-    },
-    {
-      date: "2025-07-15", 
-      events: [
-        { title: "Louvre Museum Visit", location: "Musée du Louvre", time: "10:00" },
-        { title: "Eiffel Tower", location: "Champ de Mars", time: "14:00" }
-      ]
-    }
-  ];
+  // Use generated mock data
+  const mockBroadcasts = mockData.broadcasts;
+  const mockLinks = mockData.links;
+  const mockItinerary = mockData.itinerary;
 
   // Build comprehensive trip context
   const tripContext = {
@@ -87,7 +72,7 @@ const TripDetail = () => {
     broadcasts: mockBroadcasts,
     links: mockLinks,
     messages: tripMessages,
-    collaborators: trip.collaborators,
+    collaborators: trip.participants,
     itinerary: mockItinerary,
     isPro: false
   };
