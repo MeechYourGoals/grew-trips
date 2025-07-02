@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Send, Search, MessageCircle, User, Settings } from 'lucide-react';
 import { useMessages } from '../hooks/useMessages';
 import { useParams } from 'react-router-dom';
+import { AiMessageComposer } from '../components/AiMessageComposer';
 
 interface TripChatProps {
   groupChatEnabled?: boolean;
@@ -132,6 +133,11 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
             </p>
           </div>
         )}
+      </div>
+
+      {/* AI Composer */}
+      <div className="mb-6">
+        <AiMessageComposer />
       </div>
 
       {/* Message Input */}
