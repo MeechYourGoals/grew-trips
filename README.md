@@ -74,4 +74,16 @@ Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-trick
 
 ## Configuring the OpenAI API
 
-Set the `OPENAI_API_KEY` environment variable with your OpenAI API key. The new `openai-chat` Supabase function requires this variable to generate responses.
+The Supabase functions that power the AI features need access to a few
+environment variables:
+
+- `OPENAI_API_KEY` – required for generating summaries and chat responses.
+- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` – allow the functions to
+  read and write data in your Supabase project.
+- `ELEVENLABS_API_KEY` – optional, enables speech generation in the
+  `generate-audio-summary` function.
+
+For local development, create a `supabase/.env.local` file containing these
+variables so they are loaded when running `supabase functions serve`.
+When deploying, set the same variables using `supabase secrets set` so the
+deployed functions have access to them.
