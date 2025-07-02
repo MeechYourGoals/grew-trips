@@ -19,6 +19,20 @@ serve(async (req) => {
   }
 
   try {
+    const jwt = req.headers.get('Authorization')?.replace('Bearer ', '') || ''
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    const { data: { user } } = await supabase.auth.getUser(jwt)
+    if (!user) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Parse request body
     const { feature, url }: RequestBody = await req.json()
 
@@ -40,11 +54,7 @@ serve(async (req) => {
       )
     }
 
-    // TODO: Add JWT verification and plan checking here
-    // const supabase = createClient(...)
-    // const { data: { user } } = await supabase.auth.getUser(jwt)
-    // if (!user) return unauthorized response
-    // Check user's subscription plan
+    // TODO: Check user's subscription plan
 
     let result;
 

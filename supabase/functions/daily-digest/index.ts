@@ -16,6 +16,20 @@ serve(async (req) => {
   }
 
   try {
+    const jwt = req.headers.get('Authorization')?.replace('Bearer ', '') || '';
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+    const { data: { user } } = await supabase.auth.getUser(jwt);
+    if (!user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { user_id }: RequestBody = await req.json();
     if (!user_id) {
       return new Response(JSON.stringify({ error: 'Missing user_id' }), {
@@ -23,10 +37,6 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
-
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data: messages, error } = await supabase
