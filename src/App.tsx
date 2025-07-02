@@ -13,6 +13,7 @@ import ProTripDetail from "./pages/ProTripDetail";
 import EventDetail from "./pages/EventDetail";
 import ReviewAnalysis from "./pages/ReviewAnalysis";
 import AudioOverviews from "./pages/AudioOverviews";
+import AdminScheduledMessagesPage from "./pages/AdminScheduledMessagesPage"; // Import the new page
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,11 @@ const App = () => (
               {/* AI Feature routes */}
               <Route path="/ai/review-analysis" element={<ReviewAnalysis />} />
               <Route path="/ai/audio-overviews" element={<AudioOverviews />} />
+              {/* Admin route for scheduled messages - can be global or per trip */}
+              {/* Example global route: */}
+              <Route path="/admin/scheduled-messages" element={<AdminScheduledMessagesPage />} />
+              {/* Example per-trip admin route: */}
+              {/* <Route path="/trip/:tripId/admin/scheduled-messages" element={<AdminScheduledMessagesPage />} /> */}
               {/* Catch-all route for 404 */}
               <Route path="*" element={<NotFound />} />
             </Routes>
