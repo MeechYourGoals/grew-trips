@@ -95,21 +95,23 @@ export const useMessages = () => {
 
   const scheduleMessage = async (content: string, sendAt: Date, tripId?: string, tourId?: string) => {
     const priority = await OpenAIService.classifyPriority(content);
-    const newMsg: ScheduledMessage = {
-      id: Date.now().toString(),
-      content,
-      senderId: 'current-user',
-      senderName: 'You',
-      senderAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-      timestamp: sendAt.toISOString(),
-      isRead: true,
-      tripId,
-      tourId,
-      priority,
-      sendAt: sendAt.toISOString(),
-      isSent: false
-    };
-    setScheduledMessages(prev => [...prev, newMsg]);
+    try {
+      await fetch('/api/message-scheduler', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          content,
+          send_at: sendAt.toISOString(),
+          trip_id: tripId,
+          user_id: 'current-user',
+          priority
+        })
+      });
+    } catch (err) {
+      console.error('Failed to schedule message', err);
+    }
   };
 
   const searchMessages = (query: string) => {
