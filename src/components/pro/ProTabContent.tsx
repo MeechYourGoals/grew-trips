@@ -9,6 +9,7 @@ import { RosterTab } from './RosterTab';
 import { EquipmentTracking } from './EquipmentTracking';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { ProTripData } from '../../types/pro';
+import { ProTripCategory } from '../../types/proCategories';
 import { isReadOnlyTab, hasTabAccess } from './ProTabsConfig';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -18,6 +19,7 @@ interface ProTabContentProps {
   basecamp: { name: string; address: string };
   tripPreferences: TripPreferencesType | undefined;
   tripData: ProTripData;
+  category: ProTripCategory;
   onUpdateRoomAssignments: (assignments: any[]) => void;
   onUpdateEquipment: (equipment: any[]) => void;
 }
@@ -28,6 +30,7 @@ export const ProTabContent = ({
   basecamp,
   tripPreferences,
   tripData,
+  category,
   onUpdateRoomAssignments,
   onUpdateEquipment
 }: ProTabContentProps) => {
@@ -63,6 +66,7 @@ export const ProTabContent = ({
             roster={tripData.roster || []}
             userRole={userRole}
             isReadOnly={isReadOnly}
+            category={category}
           />
         );
       case 'equipment':
