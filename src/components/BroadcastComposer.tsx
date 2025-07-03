@@ -1,20 +1,23 @@
 
 import React, { useState } from 'react';
-import { Send, MapPin, Clock } from 'lucide-react';
+import { Send, MapPin } from 'lucide-react';
 import { Button } from './ui/button';
+import type { EventSegment } from './events/eventSegments';
 
 interface BroadcastComposerProps {
   onSend: (broadcast: {
     message: string;
     location?: string;
     category: 'chill' | 'logistics' | 'urgent';
+    segmentId?: string;
   }) => void;
+  segments?: EventSegment[];
 }
-
-export const BroadcastComposer = ({ onSend }: BroadcastComposerProps) => {
+export const BroadcastComposer = ({ onSend, segments }: BroadcastComposerProps) => {
   const [message, setMessage] = useState('');
   const [location, setLocation] = useState('');
   const [category, setCategory] = useState<'chill' | 'logistics' | 'urgent'>('chill');
+  const [segmentId, setSegmentId] = useState('');
   const [showDetails, setShowDetails] = useState(false);
 
   const handleSend = () => {
@@ -23,13 +26,15 @@ export const BroadcastComposer = ({ onSend }: BroadcastComposerProps) => {
     onSend({
       message: message.trim(),
       location: location.trim() || undefined,
-      category
+      category,
+      segmentId: segmentId || undefined
     });
 
     // Reset form
     setMessage('');
     setLocation('');
     setCategory('chill');
+    setSegmentId('');
     setShowDetails(false);
   };
 
@@ -49,6 +54,21 @@ export const BroadcastComposer = ({ onSend }: BroadcastComposerProps) => {
           <Send size={16} className="text-white" />
         </div>
         <div className="flex-1">
+          {segments && segments.length > 0 && (
+            <select
+              value={segmentId}
+              onChange={(e) => setSegmentId(e.target.value)}
+              className="mb-3 w-full bg-slate-900/50 border border-slate-600 rounded-lg px-3 py-2 text-white focus:outline-none"
+            >
+              <option value="">All Participants</option>
+              {segments.map((seg) => (
+                <option key={seg.id} value={seg.id}>
+                  {seg.name}
+                  {seg.count ? ` (${seg.count})` : ''}
+                </option>
+              ))}
+            </select>
+          )}
           <textarea
             value={message}
             onChange={(e) => setMessage(e.target.value)}

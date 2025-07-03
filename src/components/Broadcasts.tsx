@@ -56,6 +56,7 @@ export const Broadcasts = () => {
     message: string;
     location?: string;
     category: 'chill' | 'logistics' | 'urgent';
+    segmentId?: string;
   }) => {
     const broadcast: BroadcastData = {
       id: Date.now().toString(),
