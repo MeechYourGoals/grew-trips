@@ -28,7 +28,7 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
     id: 'Sports & Athletics',
     name: 'Sports & Athletics',
     description: 'Professional sports teams, tournaments, and athletic events',
-    roles: ['Player', 'Coach', 'Athletic Trainer', 'Team Manager', 'Medical Staff', 'Equipment Manager'],
+    roles: ['Players', 'Coaches', 'Trainers', 'Medical Staff', 'Equipment Managers', 'PR/Marketing'],
     availableTabs: ['roster', 'equipment', 'calendar', 'medical', 'finance', 'compliance'],
     requiredTabs: ['roster', 'medical'],
     terminology: {
@@ -41,7 +41,7 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
     id: 'Music & Entertainment Tours',
     name: 'Music & Entertainment Tours',
     description: 'Concert tours, residencies, and entertainment productions',
-    roles: ['Artist', 'Tour Manager', 'Production Manager', 'Security Chief', 'Crew', 'Sound Engineer', 'Lighting Tech'],
+    roles: ['Artists', 'Tour Manager', 'Production Crew', 'Security', 'Drivers', 'Misc'],
     availableTabs: ['roster', 'equipment', 'calendar', 'finance', 'media', 'sponsors'],
     requiredTabs: ['roster', 'equipment'],
     terminology: {
@@ -54,7 +54,7 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
     id: 'Corporate & Business',
     name: 'Corporate & Business',
     description: 'Executive retreats, corporate events, and business travel',
-    roles: ['Executive', 'Manager', 'Coordinator', 'Assistant', 'Facilitator'],
+    roles: ['Executives', 'Employees', 'Managers', 'Coordinators', 'Production'],
     availableTabs: ['roster', 'calendar', 'finance', 'compliance'],
     requiredTabs: ['roster'],
     terminology: {
@@ -67,7 +67,7 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
     id: 'Education & Academic',
     name: 'Education & Academic',
     description: 'School trips, academic competitions, and educational events',
-    roles: ['Teacher', 'Student', 'Supervisor', 'Coordinator', 'Chaperone'],
+    roles: ['Teachers', 'Students', 'Supervisors', 'Coordinators', 'Chaperones'],
     availableTabs: ['roster', 'calendar', 'compliance', 'medical'],
     requiredTabs: ['roster', 'compliance'],
     terminology: {
@@ -80,7 +80,7 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
     id: 'TV/Film Production',
     name: 'TV/Film Production',
     description: 'Television shows, film productions, and media shoots',
-    roles: ['Cast', 'Producer', 'Director', 'Crew', 'Script Supervisor', 'Camera Operator'],
+    roles: ['Cast', 'Producers', 'Directors', 'Crew', 'Script Supervisors', 'Camera Operators'],
     availableTabs: ['roster', 'equipment', 'calendar', 'media', 'sponsors', 'compliance'],
     requiredTabs: ['roster', 'equipment'],
     terminology: {
@@ -93,7 +93,7 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
     id: 'Startup & Tech',
     name: 'Startup & Tech',
     description: 'Accelerator programs, tech conferences, and startup events',
-    roles: ['Founder', 'Mentor', 'Coordinator', 'Investor', 'Advisor'],
+    roles: ['Founders', 'Mentors', 'Coordinators', 'Investors', 'Advisors'],
     availableTabs: ['roster', 'calendar', 'finance'],
     requiredTabs: ['roster'],
     terminology: {
