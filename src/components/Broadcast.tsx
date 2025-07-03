@@ -14,6 +14,7 @@ interface BroadcastProps {
     wait: number;
     cant: number;
   };
+  recipients: { type: 'all' | 'segment' | 'individual'; value: string[] };
   userResponse?: 'coming' | 'wait' | 'cant';
   onRespond: (broadcastId: string, response: 'coming' | 'wait' | 'cant') => void;
 }

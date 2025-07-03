@@ -269,6 +269,7 @@ export interface Broadcast {
   id: string;
   senderId: string;
   message: string;
+  recipients: { type: 'all' | 'segment' | 'individual'; value: string[] };
   targetTrips: string[];
   priority: 'normal' | 'urgent';
   timestamp: string;
