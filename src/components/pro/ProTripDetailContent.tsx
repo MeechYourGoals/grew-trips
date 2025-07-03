@@ -70,6 +70,7 @@ export const ProTripDetailContent = ({
         basecamp={basecamp}
         tripPreferences={tripPreferences}
         tripData={tripData}
+        category={selectedCategory}
         onUpdateRoomAssignments={handleUpdateRoomAssignments}
         onUpdateEquipment={handleUpdateEquipment}
       />
