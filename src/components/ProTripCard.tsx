@@ -7,6 +7,7 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { ProTripData } from '../types/pro';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { getCategoryConfig } from '../types/proCategories';
 
 interface ProTripCardProps {
   trip: ProTripData;
@@ -112,7 +113,9 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
           {trip.roster && trip.roster.length > 0 && (
             <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-xs border border-blue-500/30">
               <Users size={12} />
-              <span>Roster: {trip.roster.length}</span>
+              <span>
+                {getCategoryConfig(trip.category).terminology.teamLabel}: {trip.roster.length}
+              </span>
             </div>
           )}
           {nextLoadIn && (

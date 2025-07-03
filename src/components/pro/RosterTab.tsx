@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
 import { Users, Shield, Settings, UserCheck, AlertTriangle } from 'lucide-react';
 import { ProParticipant } from '../../types/pro';
+import { getCategoryConfig } from '../../types/proCategories';
 
 interface RosterTabProps {
   roster: ProParticipant[];
   userRole: string;
+  category: string;
   isReadOnly?: boolean;
 }
 
-export const RosterTab = ({ roster, userRole, isReadOnly = false }: RosterTabProps) => {
+export const RosterTab = ({ roster, userRole, category, isReadOnly = false }: RosterTabProps) => {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [showCredentials, setShowCredentials] = useState(false);
+
+  const teamLabel = getCategoryConfig(category).terminology.teamLabel;
 
   const roles = ['all', 'Player', 'Coach', 'TourManager', 'Crew', 'VIP', 'Security', 'Medical', 'Tech', 'Producer', 'Talent'];
   
@@ -42,7 +46,7 @@ export const RosterTab = ({ roster, userRole, isReadOnly = false }: RosterTabPro
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <Users className="text-red-400" size={24} />
-            <h2 className="text-xl font-bold text-white">Team Roster</h2>
+            <h2 className="text-xl font-bold text-white">{teamLabel}</h2>
           </div>
           <div className="flex items-center gap-4">
             <span className="text-gray-400">{roster.length} total members</span>

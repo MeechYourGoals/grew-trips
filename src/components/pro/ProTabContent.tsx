@@ -18,6 +18,7 @@ interface ProTabContentProps {
   basecamp: { name: string; address: string };
   tripPreferences: TripPreferencesType | undefined;
   tripData: ProTripData;
+  selectedCategory: ProTripCategory;
   onUpdateRoomAssignments: (assignments: any[]) => void;
   onUpdateEquipment: (equipment: any[]) => void;
 }
@@ -28,6 +29,7 @@ export const ProTabContent = ({
   basecamp,
   tripPreferences,
   tripData,
+  selectedCategory,
   onUpdateRoomAssignments,
   onUpdateEquipment
 }: ProTabContentProps) => {
@@ -62,6 +64,7 @@ export const ProTabContent = ({
           <RosterTab
             roster={tripData.roster || []}
             userRole={userRole}
+            category={selectedCategory}
             isReadOnly={isReadOnly}
           />
         );

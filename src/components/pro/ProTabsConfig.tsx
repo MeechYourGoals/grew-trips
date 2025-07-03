@@ -28,17 +28,30 @@ export const proTabs: ProTab[] = [
   { id: 'search', label: 'Search', icon: null }
 ];
 
-export const getVisibleTabs = (userRole: string, userPermissions: string[], category?: ProTripCategory): ProTab[] => {
+export const getVisibleTabs = (
+  userRole: string,
+  userPermissions: string[],
+  category?: ProTripCategory
+): ProTab[] => {
   let availableTabs = proTabs;
-  
+
   // Filter tabs based on category if provided
   if (category) {
     const categoryConfig = getCategoryConfig(category);
-    availableTabs = proTabs.filter(tab => 
-      !tab.proOnly || categoryConfig.availableTabs.includes(tab.id) || ['chat', 'places', 'ai-chat', 'search'].includes(tab.id)
-    );
+    availableTabs = proTabs
+      .filter(
+        tab =>
+          !tab.proOnly ||
+          categoryConfig.availableTabs.includes(tab.id) ||
+          ['chat', 'places', 'ai-chat', 'search'].includes(tab.id)
+      )
+      .map(tab =>
+        tab.id === 'roster'
+          ? { ...tab, label: categoryConfig.terminology.teamLabel }
+          : tab
+      );
   }
-  
+
   return availableTabs.filter(tab => {
     // Check role-based restrictions
     if (tab.restrictedRoles && tab.restrictedRoles.includes(userRole.toLowerCase())) {
