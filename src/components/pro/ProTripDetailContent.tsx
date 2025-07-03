@@ -61,6 +61,7 @@ export const ProTripDetailContent = ({
         tabs={visibleTabs}
         activeTab={activeTab}
         onTabChange={onTabChange}
+        category={selectedCategory}
       />
 
       {/* Tab Content */}

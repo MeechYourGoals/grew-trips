@@ -4,14 +4,16 @@ import { Crown, Lock } from 'lucide-react';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 import { useAuth } from '../../hooks/useAuth';
 import { ProTab, isReadOnlyTab } from './ProTabsConfig';
+import { ProTripCategory } from '../../types/proCategories';
 
 interface ProTabNavigationProps {
   tabs: ProTab[];
   activeTab: string;
   onTabChange: (tab: string) => void;
+  category: ProTripCategory;
 }
 
-export const ProTabNavigation = ({ tabs, activeTab, onTabChange }: ProTabNavigationProps) => {
+export const ProTabNavigation = ({ tabs, activeTab, onTabChange, category }: ProTabNavigationProps) => {
   const { accentColors } = useTripVariant();
   const { user } = useAuth();
 
@@ -23,6 +25,8 @@ export const ProTabNavigation = ({ tabs, activeTab, onTabChange }: ProTabNavigat
       {tabs.map((tab) => {
         const Icon = tab.icon;
         const isReadOnly = isReadOnlyTab(tab.id, userRole, userPermissions);
+        const displayLabel =
+          tab.id === 'roster' && category === 'Content' ? 'Cast' : tab.label;
         
         return (
           <button
@@ -35,7 +39,7 @@ export const ProTabNavigation = ({ tabs, activeTab, onTabChange }: ProTabNavigat
             } ${isReadOnly ? 'opacity-75' : ''}`}
           >
             {Icon && <Icon size={16} />}
-            {tab.label}
+            {displayLabel}
             {tab.proOnly && (
               <Crown size={14} className={`text-${accentColors.primary}`} />
             )}
