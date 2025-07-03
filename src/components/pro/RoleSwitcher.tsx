@@ -27,7 +27,7 @@ const getRoleIcon = (role: string, category: ProTripCategory) => {
       if (lowerRole.includes('manager')) return Users;
       return Building;
     
-    case 'Education & Academic':
+    case 'School':
       if (lowerRole.includes('teacher') || lowerRole.includes('supervisor')) return GraduationCap;
       if (lowerRole.includes('student')) return Users;
       return Shield;
@@ -67,7 +67,7 @@ const getRoleColor = (role: string, category: ProTripCategory) => {
       if (lowerRole.includes('executive')) return 'bg-red-500';
       return 'bg-blue-500';
     
-    case 'Education & Academic':
+    case 'School':
       if (lowerRole.includes('teacher')) return 'bg-blue-500';
       if (lowerRole.includes('student')) return 'bg-green-500';
       return 'bg-gray-500';

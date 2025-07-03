@@ -7,7 +7,7 @@ export const indianaUniversityDebate: ProTripData = {
   location: 'Austin TX',
   dateRange: 'Mar 1 - Mar 6, 2025',
   category: 'Academic',
-  proTripCategory: 'Education & Academic',
+  proTripCategory: 'School',
   tags: ['Academic', 'Debate', 'Championships'],
   participants: [
     { id: 20, name: 'Prof. Michael Davis', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Teacher' },
