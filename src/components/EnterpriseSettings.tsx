@@ -228,7 +228,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
     { value: 'recruit', label: 'Recruiting Trip' },
     { value: 'biz', label: 'Business Travel (Sales / Exec)' },
     { value: 'field', label: 'School Field Trip' },
-    { value: 'film', label: 'Film / TV Production' },
+    { value: 'film', label: 'Content' },
     { value: 'nonprofit', label: 'Non-Profit Mission (Humanitarian)' }
   ];
 
