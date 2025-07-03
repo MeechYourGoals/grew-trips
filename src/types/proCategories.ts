@@ -80,7 +80,7 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
     id: 'Content',
     name: 'Content',
     description: 'Television shows, film productions, and media shoots',
-    roles: ['Cast', 'Producers', 'Directors', 'Crew', 'Script Supervisors', 'Camera Operators'],
+    roles: ['Cast', 'Producers', 'Directors', 'Crew', 'Writing Team', 'Logistics Coordinators'],
     availableTabs: ['roster', 'equipment', 'calendar', 'media', 'sponsors', 'compliance'],
     requiredTabs: ['roster', 'equipment'],
     terminology: {
