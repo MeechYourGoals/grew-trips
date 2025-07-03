@@ -10,10 +10,10 @@ export const indianaUniversityDebate: ProTripData = {
   proTripCategory: 'School',
   tags: ['Academic', 'Debate', 'Championships'],
   participants: [
-    { id: 20, name: 'Prof. Michael Davis', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Teacher' },
-    { id: 21, name: 'Alex Johnson', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Student' },
-    { id: 22, name: 'Sarah Kim', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Student' },
-    { id: 23, name: 'Faculty Advisor', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Supervisor' }
+    { id: 20, name: 'Prof. Michael Davis', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Teachers' },
+    { id: 21, name: 'Alex Johnson', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Students' },
+    { id: 22, name: 'Sarah Kim', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Students' },
+    { id: 23, name: 'Faculty Advisor', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Supervisors' }
   ],
   budget: {
     total: 8000,
@@ -42,7 +42,7 @@ export const indianaUniversityDebate: ProTripData = {
       name: 'Prof. Michael Davis',
       email: 'mdavis@indiana.edu',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-      role: 'Teacher',
+      role: 'Teachers',
       credentialLevel: 'AllAccess',
       permissions: ['team-management', 'academic-access'],
       roomPreferences: ['single-room', 'quiet-floor'],
@@ -53,7 +53,7 @@ export const indianaUniversityDebate: ProTripData = {
       name: 'Alex Johnson',
       email: 'ajohnson@iu.edu',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-      role: 'Student',
+      role: 'Students',
       credentialLevel: 'Backstage',
       permissions: ['competition-access'],
       roomPreferences: ['shared-room'],
@@ -64,7 +64,7 @@ export const indianaUniversityDebate: ProTripData = {
       name: 'Sarah Kim',
       email: 'skim@iu.edu',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
-      role: 'Student',
+      role: 'Students',
       credentialLevel: 'Backstage',
       permissions: ['competition-access'],
       roomPreferences: ['shared-room'],
@@ -75,7 +75,7 @@ export const indianaUniversityDebate: ProTripData = {
       name: 'Faculty Advisor',
       email: 'advisor@indiana.edu',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face',
-      role: 'Supervisor',
+      role: 'Supervisors',
       credentialLevel: 'AllAccess',
       permissions: ['academic-supervision'],
       roomPreferences: ['single-room']

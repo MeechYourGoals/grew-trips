@@ -10,10 +10,10 @@ export const scarletKnightsVolleyball: ProTripData = {
   category: 'Sports – Team Trip',
   tags: ['Sports – Team Trip', 'Volleyball', 'Tournament'],
   participants: [
-    { id: 12, name: 'Coach Sarah Martinez', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Coach' },
-    { id: 13, name: 'Emma Rodriguez', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Player' },
-    { id: 14, name: 'Mia Thompson', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Player' },
-    { id: 15, name: 'Athletic Trainer', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Medical' }
+    { id: 12, name: 'Coach Sarah Martinez', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Coaches' },
+    { id: 13, name: 'Emma Rodriguez', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Players' },
+    { id: 14, name: 'Mia Thompson', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Players' },
+    { id: 15, name: 'Athletic Trainer', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Trainers' }
   ],
   budget: {
     total: 25000,
@@ -42,7 +42,7 @@ export const scarletKnightsVolleyball: ProTripData = {
       name: 'Coach Sarah Martinez',
       email: 'sarah.martinez@scarletknights.org',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-      role: 'Coach',
+      role: 'Coaches',
       credentialLevel: 'AllAccess',
       permissions: ['team-management', 'medical-access'],
       roomPreferences: ['single-room', 'near-team'],
@@ -53,7 +53,7 @@ export const scarletKnightsVolleyball: ProTripData = {
       name: 'Emma Rodriguez',
       email: 'emma.rodriguez@scarletknights.org',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-      role: 'Player',
+      role: 'Players',
       credentialLevel: 'Backstage',
       permissions: ['court-access', 'locker-room'],
       roomPreferences: ['shared-room'],
@@ -64,7 +64,7 @@ export const scarletKnightsVolleyball: ProTripData = {
       name: 'Mia Thompson',
       email: 'mia.thompson@scarletknights.org',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
-      role: 'Player',
+      role: 'Players',
       credentialLevel: 'Backstage',
       permissions: ['court-access', 'locker-room'],
       roomPreferences: ['shared-room'],
@@ -75,7 +75,7 @@ export const scarletKnightsVolleyball: ProTripData = {
       name: 'Athletic Trainer',
       email: 'trainer@scarletknights.org',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face',
-      role: 'Medical',
+      role: 'Trainers',
       credentialLevel: 'AllAccess',
       permissions: ['medical-access', 'court-access'],
       roomPreferences: ['single-room']

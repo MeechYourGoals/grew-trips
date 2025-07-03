@@ -10,9 +10,9 @@ export const eliLillyCsuiteRetreat: ProTripData = {
   proTripCategory: 'Corporate & Business',
   tags: ['Business Travel', 'Executive', 'Strategy'],
   participants: [
-    { id: 9, name: 'David Ricks', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Executive' },
-    { id: 10, name: 'Anat Ashkenazi', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Executive' },
-    { id: 11, name: 'Strategic Planner', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Coordinator' }
+    { id: 9, name: 'David Ricks', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Executives' },
+    { id: 10, name: 'Anat Ashkenazi', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Executives' },
+    { id: 11, name: 'Strategic Planner', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Coordinators' }
   ],
   budget: {
     total: 75000,
@@ -41,7 +41,7 @@ export const eliLillyCsuiteRetreat: ProTripData = {
       name: 'David Ricks',
       email: 'david.ricks@lilly.com',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-      role: 'Executive',
+      role: 'Executives',
       credentialLevel: 'AllAccess',
       permissions: ['all-areas', 'executive-access'],
       roomPreferences: ['ocean-view', 'executive-suite'],
@@ -52,7 +52,7 @@ export const eliLillyCsuiteRetreat: ProTripData = {
       name: 'Anat Ashkenazi',
       email: 'anat.ashkenazi@lilly.com',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-      role: 'Executive',
+      role: 'Executives',
       credentialLevel: 'AllAccess',
       permissions: ['all-areas', 'executive-access'],
       roomPreferences: ['ocean-view', 'quiet-floor'],
@@ -63,7 +63,7 @@ export const eliLillyCsuiteRetreat: ProTripData = {
       name: 'Strategic Planner',
       email: 'strategy@lilly.com',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
-      role: 'Coordinator',
+      role: 'Coordinators',
       credentialLevel: 'Backstage',
       permissions: ['planning-access', 'logistics-coordination'],
       roomPreferences: ['standard-room']

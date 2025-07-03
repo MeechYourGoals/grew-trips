@@ -10,9 +10,9 @@ export const yCombinatorCohort: ProTripData = {
   proTripCategory: 'Startup & Tech',
   tags: ['Startup', 'Accelerator', 'Demo Day'],
   participants: [
-    { id: 24, name: 'Jessica Chen', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Founder' },
-    { id: 25, name: 'Michael Torres', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Founder' },
-    { id: 26, name: 'Lisa Park', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Founder' }
+    { id: 24, name: 'Jessica Chen', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Founders' },
+    { id: 25, name: 'Michael Torres', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Founders' },
+    { id: 26, name: 'Lisa Park', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Founders' }
   ],
   budget: {
     total: 45000,
@@ -41,7 +41,7 @@ export const yCombinatorCohort: ProTripData = {
       name: 'Jessica Chen',
       email: 'jessica@startup.com',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-      role: 'Founder',
+      role: 'Founders',
       credentialLevel: 'AllAccess',
       permissions: ['founder-access', 'yc-facilities'],
       roomPreferences: ['shared-housing', 'san-francisco'],
@@ -52,7 +52,7 @@ export const yCombinatorCohort: ProTripData = {
       name: 'Michael Torres',
       email: 'michael@startup.com',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-      role: 'Founder',
+      role: 'Founders',
       credentialLevel: 'AllAccess',
       permissions: ['founder-access', 'yc-facilities'],
       roomPreferences: ['shared-housing', 'san-francisco'],
@@ -63,7 +63,7 @@ export const yCombinatorCohort: ProTripData = {
       name: 'Lisa Park',
       email: 'lisa@startup.com',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
-      role: 'Founder',
+      role: 'Founders',
       credentialLevel: 'AllAccess',
       permissions: ['founder-access', 'yc-facilities'],
       roomPreferences: ['shared-housing', 'san-francisco'],
