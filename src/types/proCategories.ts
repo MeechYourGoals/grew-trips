@@ -7,7 +7,7 @@ export type ProTripCategory =
   | 'Corporate & Business'
   | 'School'
   | 'Content'
-  | 'Startup & Tech';
+  | 'Events';
 
 export interface ProCategoryConfig {
   id: ProTripCategory;
@@ -89,10 +89,10 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
       leaderLabel: 'Producer'
     }
   },
-  'Startup & Tech': {
-    id: 'Startup & Tech',
-    name: 'Startup & Tech',
-    description: 'Accelerator programs, tech conferences, and startup events',
+  Events: {
+    id: 'Events',
+    name: 'Events',
+    description: 'Professional conferences, trade shows, and other industry events',
     roles: ['Founders', 'Mentors', 'Coordinators', 'Investors', 'Advisors'],
     availableTabs: ['roster', 'calendar', 'finance'],
     requiredTabs: ['roster'],
