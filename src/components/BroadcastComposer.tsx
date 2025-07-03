@@ -1,20 +1,22 @@
-
-import React, { useState } from 'react';
-import { Send, MapPin, Clock } from 'lucide-react';
-import { Button } from './ui/button';
+import React, { useState } from "react";
+import { Send, MapPin, Clock } from "lucide-react";
+import { Button } from "./ui/button";
 
 interface BroadcastComposerProps {
   onSend: (broadcast: {
     message: string;
     location?: string;
-    category: 'chill' | 'logistics' | 'urgent';
+    category: "chill" | "logistics" | "urgent";
+    recipients?: string[];
   }) => void;
 }
 
 export const BroadcastComposer = ({ onSend }: BroadcastComposerProps) => {
-  const [message, setMessage] = useState('');
-  const [location, setLocation] = useState('');
-  const [category, setCategory] = useState<'chill' | 'logistics' | 'urgent'>('chill');
+  const [message, setMessage] = useState("");
+  const [location, setLocation] = useState("");
+  const [category, setCategory] = useState<"chill" | "logistics" | "urgent">(
+    "chill",
+  );
   const [showDetails, setShowDetails] = useState(false);
 
   const handleSend = () => {
@@ -23,22 +25,27 @@ export const BroadcastComposer = ({ onSend }: BroadcastComposerProps) => {
     onSend({
       message: message.trim(),
       location: location.trim() || undefined,
-      category
+      category,
+      recipients: [],
     });
 
     // Reset form
-    setMessage('');
-    setLocation('');
-    setCategory('chill');
+    setMessage("");
+    setLocation("");
+    setCategory("chill");
     setShowDetails(false);
   };
 
   const getCategoryColor = (cat: string) => {
     switch (cat) {
-      case 'chill': return 'bg-blue-600';
-      case 'logistics': return 'bg-yellow-600';
-      case 'urgent': return 'bg-red-600';
-      default: return 'bg-slate-600';
+      case "chill":
+        return "bg-blue-600";
+      case "logistics":
+        return "bg-yellow-600";
+      case "urgent":
+        return "bg-red-600";
+      default:
+        return "bg-slate-600";
     }
   };
 
@@ -57,7 +64,7 @@ export const BroadcastComposer = ({ onSend }: BroadcastComposerProps) => {
             rows={2}
             className="w-full bg-slate-900/50 border border-slate-600 rounded-lg px-3 py-2 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500 resize-none"
           />
-          
+
           <div className="flex items-center justify-between mt-3">
             <div className="flex items-center gap-2">
               <button
@@ -71,25 +78,25 @@ export const BroadcastComposer = ({ onSend }: BroadcastComposerProps) => {
                 {message.length}/140
               </span>
             </div>
-            
+
             <div className="flex items-center gap-2">
               {/* Category selector */}
               <div className="flex gap-1">
-                {(['chill', 'logistics', 'urgent'] as const).map((cat) => (
+                {(["chill", "logistics", "urgent"] as const).map((cat) => (
                   <button
                     key={cat}
                     onClick={() => setCategory(cat)}
                     className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
                       category === cat
                         ? `${getCategoryColor(cat)} text-white`
-                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                        : "bg-slate-700 text-slate-300 hover:bg-slate-600"
                     }`}
                   >
                     {cat}
                   </button>
                 ))}
               </div>
-              
+
               <Button
                 onClick={handleSend}
                 disabled={!message.trim()}
