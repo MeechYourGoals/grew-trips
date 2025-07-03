@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { Users, Shield, Settings, UserCheck, AlertTriangle } from 'lucide-react';
 import { ProParticipant } from '../../types/pro';
+import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 
 interface RosterTabProps {
   roster: ProParticipant[];
   userRole: string;
   isReadOnly?: boolean;
+  category: ProTripCategory;
 }
 
-export const RosterTab = ({ roster, userRole, isReadOnly = false }: RosterTabProps) => {
+export const RosterTab = ({ roster, userRole, isReadOnly = false, category }: RosterTabProps) => {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [showCredentials, setShowCredentials] = useState(false);
 
-  const roles = ['all', 'Player', 'Coach', 'TourManager', 'Crew', 'VIP', 'Security', 'Medical', 'Tech', 'Producer', 'Talent'];
+  const config = getCategoryConfig(category);
+  const roles = ['all', ...config.roles];
   
   const filteredRoster = selectedRole === 'all' 
     ? roster 

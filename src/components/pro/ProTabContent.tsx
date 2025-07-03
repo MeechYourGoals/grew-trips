@@ -9,6 +9,7 @@ import { RosterTab } from './RosterTab';
 import { EquipmentTracking } from './EquipmentTracking';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { ProTripData } from '../../types/pro';
+import { ProTripCategory } from '../../types/proCategories';
 import { isReadOnlyTab, hasTabAccess } from './ProTabsConfig';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -63,6 +64,7 @@ export const ProTabContent = ({
             roster={tripData.roster || []}
             userRole={userRole}
             isReadOnly={isReadOnly}
+            category={tripData.proTripCategory as ProTripCategory}
           />
         );
       case 'equipment':
