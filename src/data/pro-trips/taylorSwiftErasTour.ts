@@ -10,11 +10,11 @@ export const taylorSwiftErasTour: ProTripData = {
   proTripCategory: 'Music & Entertainment Tours',
   tags: ['Music Tour', 'Concert', 'International'],
   participants: [
-    { id: 4, name: 'Taylor Swift', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Artist' },
+    { id: 4, name: 'Taylor Swift', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Artists' },
     { id: 5, name: 'Tour Director', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Tour Manager' },
-    { id: 6, name: 'Production Manager', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Production Manager' },
-    { id: 7, name: 'Security Chief', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Security Chief' },
-    { id: 8, name: 'Sound Engineer', avatar: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=40&h=40&fit=crop&crop=face', role: 'Sound Engineer' }
+    { id: 6, name: 'Production Manager', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Production Crew' },
+    { id: 7, name: 'Security Chief', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Security' },
+    { id: 8, name: 'Sound Engineer', avatar: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=40&h=40&fit=crop&crop=face', role: 'Production Crew' }
   ],
   budget: {
     total: 25000000,
@@ -43,7 +43,7 @@ export const taylorSwiftErasTour: ProTripData = {
       name: 'Taylor Swift',
       email: 'taylor@taylorswift.com',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-      role: 'Artist',
+      role: 'Artists',
       credentialLevel: 'AllAccess',
       permissions: ['all-areas', 'artist-privileges'],
       roomPreferences: ['presidential-suite', 'top-floor', 'extra-security'],
@@ -65,7 +65,7 @@ export const taylorSwiftErasTour: ProTripData = {
       name: 'Production Manager',
       email: 'production@tourteam.com',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
-      role: 'Production Manager',
+      role: 'Production Crew',
       credentialLevel: 'Backstage',
       permissions: ['production-areas', 'equipment-access'],
       roomPreferences: ['standard-suite'],
@@ -76,7 +76,7 @@ export const taylorSwiftErasTour: ProTripData = {
       name: 'Security Chief',
       email: 'security@tourteam.com',
       avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face',
-      role: 'Security Chief',
+      role: 'Security',
       credentialLevel: 'AllAccess',
       permissions: ['security-protocols', 'emergency-access'],
       roomPreferences: ['standard-room', 'security-floor']
@@ -86,7 +86,7 @@ export const taylorSwiftErasTour: ProTripData = {
       name: 'Sound Engineer',
       email: 'sound@tourteam.com',
       avatar: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=40&h=40&fit=crop&crop=face',
-      role: 'Sound Engineer',
+      role: 'Production Crew',
       credentialLevel: 'Backstage',
       permissions: ['audio-equipment', 'stage-access'],
       roomPreferences: ['crew-housing']

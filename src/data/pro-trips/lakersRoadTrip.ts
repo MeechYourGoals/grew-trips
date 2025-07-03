@@ -10,9 +10,9 @@ export const lakersRoadTrip: ProTripData = {
   proTripCategory: 'Sports & Athletics',
   tags: ['Sports', 'Basketball', 'Road Trip'],
   participants: [
-    { id: 1, name: 'Anthony Davis', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Player' },
-    { id: 2, name: 'Coach Johnson', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Coach' },
-    { id: 3, name: 'Team Manager', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Team Manager' }
+    { id: 1, name: 'Anthony Davis', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Players' },
+    { id: 2, name: 'Coach Johnson', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Coaches' },
+    { id: 3, name: 'Team Manager', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'PR/Marketing' }
   ],
   budget: {
     total: 150000,
@@ -41,7 +41,7 @@ export const lakersRoadTrip: ProTripData = {
       name: 'Anthony Davis',
       email: 'ad@lakers.com',
       avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-      role: 'Player',
+      role: 'Players',
       credentialLevel: 'AllAccess',
       permissions: ['locker-room', 'team-areas'],
       roomPreferences: ['suite', 'high-floor'],
@@ -52,7 +52,7 @@ export const lakersRoadTrip: ProTripData = {
       name: 'Coach Johnson',
       email: 'coach@lakers.com',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-      role: 'Coach',
+      role: 'Coaches',
       credentialLevel: 'AllAccess',
       permissions: ['all-areas', 'team-management'],
       roomPreferences: ['suite', 'quiet-floor'],
@@ -63,7 +63,7 @@ export const lakersRoadTrip: ProTripData = {
       name: 'Team Manager',
       email: 'manager@lakers.com',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
-      role: 'Team Manager',
+      role: 'PR/Marketing',
       credentialLevel: 'Backstage',
       permissions: ['team-coordination', 'logistics'],
       roomPreferences: ['standard-room']
