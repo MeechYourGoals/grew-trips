@@ -3,6 +3,9 @@ import React, { useState } from 'react';
 import { Broadcast } from './Broadcast';
 import { BroadcastComposer } from './BroadcastComposer';
 import { Radio, Clock } from 'lucide-react';
+import { taylorSwiftErasTour } from '../data/pro-trips/taylorSwiftErasTour';
+
+const participants = taylorSwiftErasTour.participants;
 
 interface BroadcastData {
   id: string;
@@ -11,6 +14,7 @@ interface BroadcastData {
   timestamp: Date;
   location?: string;
   category: 'chill' | 'logistics' | 'urgent';
+  recipients: string;
   responses: {
     coming: number;
     wait: number;
@@ -26,6 +30,7 @@ const mockBroadcasts: BroadcastData[] = [
     message: 'Heading to the pool in 10 minutes! Join us if you want 🏊‍♀️',
     timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
     location: 'Hotel Pool',
+    recipients: 'everyone',
     category: 'chill',
     responses: { coming: 3, wait: 1, cant: 0 }
   },
@@ -35,6 +40,7 @@ const mockBroadcasts: BroadcastData[] = [
     message: 'Dinner reservation confirmed for 7:45 PM at Le Petit Bistro. Don\'t be late!',
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
     location: 'Le Petit Bistro',
+    recipients: 'everyone',
     category: 'logistics',
     responses: { coming: 5, wait: 0, cant: 1 }
   },
@@ -43,6 +49,7 @@ const mockBroadcasts: BroadcastData[] = [
     sender: 'Sarah',
     message: 'Last shuttle back to hotel leaves at 1:30 AM - don\'t miss it!!',
     timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
+    recipients: 'everyone',
     category: 'urgent',
     responses: { coming: 6, wait: 0, cant: 0 }
   }
@@ -56,6 +63,7 @@ export const Broadcasts = () => {
     message: string;
     location?: string;
     category: 'chill' | 'logistics' | 'urgent';
+    recipients: string;
   }) => {
     const broadcast: BroadcastData = {
       id: Date.now().toString(),
@@ -64,6 +72,7 @@ export const Broadcasts = () => {
       timestamp: new Date(),
       location: newBroadcast.location,
       category: newBroadcast.category,
+      recipients: newBroadcast.recipients,
       responses: { coming: 0, wait: 0, cant: 0 }
     };
 
@@ -116,7 +125,7 @@ export const Broadcasts = () => {
       </div>
 
       {/* Broadcast Composer */}
-      <BroadcastComposer onSend={handleNewBroadcast} />
+      <BroadcastComposer participants={participants} onSend={handleNewBroadcast} />
 
       {/* Active Broadcasts */}
       <div className="space-y-4">
