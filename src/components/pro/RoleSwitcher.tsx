@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Users, Shield, Star, Play, Wrench, Lock, Heart, Camera, Crown, Building, GraduationCap, Lightbulb } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/button';
@@ -94,6 +94,14 @@ interface RoleSwitcherProps {
 export const RoleSwitcher = ({ category }: RoleSwitcherProps) => {
   const { user, switchRole } = useAuth();
   const config = getCategoryConfig(category);
+
+  useEffect(() => {
+    if (!user?.isPro || !user.proRole) return;
+    const lowerRoles = config.roles.map((r) => r.toLowerCase());
+    if (!lowerRoles.includes(user.proRole)) {
+      switchRole(lowerRoles[0]);
+    }
+  }, [category]);
 
   if (!user?.isPro) return null;
 
