@@ -10,7 +10,15 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const apiKey = 'AIzaSyAWm0vayRrQJHpMc6XcShcge52hGTt9BV4';
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
+
+  if (!apiKey) {
+    return (
+      <div className={`relative w-full h-full flex items-center justify-center ${className}`}> 
+        <p className="text-gray-500 text-sm">Google Maps API key is not configured.</p>
+      </div>
+    );
+  }
   
   const getEmbedUrl = () => {
     const query = searchQuery.trim() || 'New York City';

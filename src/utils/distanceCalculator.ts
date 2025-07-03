@@ -1,7 +1,8 @@
 
 import { BasecampLocation, PlaceWithDistance, DistanceCalculationSettings } from '../types/basecamp';
 
-const GOOGLE_MAPS_API_KEY = 'AIzaSyAWm0vayRrQJHpMc6XcShcge52hGTt9BV4';
+// Google Maps API key is supplied via Vite environment variables
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
 
 export class DistanceCalculator {
   private static cache = new Map<string, any>();
@@ -71,6 +72,10 @@ export class DistanceCalculator {
     place: PlaceWithDistance,
     mode: 'driving' | 'walking'
   ): Promise<number | null> {
+    if (!GOOGLE_MAPS_API_KEY) {
+      console.warn('Google Maps API key is missing');
+      return null;
+    }
     const origin = `${basecamp.coordinates.lat},${basecamp.coordinates.lng}`;
     const destination = place.coordinates 
       ? `${place.coordinates.lat},${place.coordinates.lng}`
@@ -103,6 +108,10 @@ export class DistanceCalculator {
 
   static async geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
     try {
+      if (!GOOGLE_MAPS_API_KEY) {
+        console.warn('Google Maps API key is missing');
+        return null;
+      }
       const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`;
       const response = await fetch(url);
       const data = await response.json();
