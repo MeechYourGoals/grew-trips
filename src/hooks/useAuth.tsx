@@ -9,7 +9,20 @@ interface User {
   avatar?: string;
   isPro: boolean;
   // Enhanced pro role system
-  proRole?: 'admin' | 'staff' | 'talent' | 'player' | 'crew' | 'security' | 'medical' | 'producer';
+  proRole?:
+    | 'admin'
+    | 'staff'
+    | 'talent'
+    | 'player'
+    | 'crew'
+    | 'security'
+    | 'medical'
+    | 'producer'
+    | 'speakers'
+    | 'guests'
+    | 'coordinators'
+    | 'logistics'
+    | 'press';
   organizationId?: string;
   permissions: string[];
   notificationSettings: {
@@ -143,7 +156,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         crew: ['read', 'write'],
         security: ['read', 'write'],
         medical: ['read', 'write', 'medical'],
-        producer: ['read', 'write', 'admin']
+        producer: ['read', 'write', 'admin'],
+        speakers: ['read'],
+        guests: ['read'],
+        coordinators: ['read', 'write'],
+        logistics: ['read', 'write'],
+        press: ['read']
       };
       
       setUser({
