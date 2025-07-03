@@ -1,21 +1,32 @@
 
 import React, { useState } from 'react';
-import { Send, MapPin, Clock } from 'lucide-react';
+import { Send, MapPin } from 'lucide-react';
 import { Button } from './ui/button';
 
+interface Participant {
+  id: string | number;
+  name: string;
+  role: string;
+}
+
 interface BroadcastComposerProps {
+  participants: Participant[];
   onSend: (broadcast: {
     message: string;
     location?: string;
     category: 'chill' | 'logistics' | 'urgent';
+    recipients: string;
   }) => void;
 }
 
-export const BroadcastComposer = ({ onSend }: BroadcastComposerProps) => {
+export const BroadcastComposer = ({ participants, onSend }: BroadcastComposerProps) => {
   const [message, setMessage] = useState('');
   const [location, setLocation] = useState('');
   const [category, setCategory] = useState<'chill' | 'logistics' | 'urgent'>('chill');
   const [showDetails, setShowDetails] = useState(false);
+  const [recipient, setRecipient] = useState('everyone');
+
+  const roleOptions = Array.from(new Set(participants.map(p => p.role)));
 
   const handleSend = () => {
     if (!message.trim()) return;
@@ -23,13 +34,15 @@ export const BroadcastComposer = ({ onSend }: BroadcastComposerProps) => {
     onSend({
       message: message.trim(),
       location: location.trim() || undefined,
-      category
+      category,
+      recipients: recipient
     });
 
     // Reset form
     setMessage('');
     setLocation('');
     setCategory('chill');
+    setRecipient('everyone');
     setShowDetails(false);
   };
 
@@ -73,6 +86,25 @@ export const BroadcastComposer = ({ onSend }: BroadcastComposerProps) => {
             </div>
             
             <div className="flex items-center gap-2">
+              {/* Recipient selector */}
+              <select
+                value={recipient}
+                onChange={(e) => setRecipient(e.target.value)}
+                className="bg-slate-700 text-white text-xs rounded px-2 py-1"
+              >
+                <option value="everyone">Everyone</option>
+                {roleOptions.map((role) => (
+                  <option key={`role-${role}`} value={`role:${role}`}>
+                    {role}
+                  </option>
+                ))}
+                {participants.map((p) => (
+                  <option key={`user-${p.id}`} value={`user:${p.id}`}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+
               {/* Category selector */}
               <div className="flex gap-1">
                 {(['chill', 'logistics', 'urgent'] as const).map((cat) => (
