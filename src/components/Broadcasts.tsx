@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Broadcast } from './Broadcast';
 import { BroadcastComposer } from './BroadcastComposer';
 import { Radio, Clock } from 'lucide-react';
+import { useAuth } from '../hooks/useAuth';
 
 interface BroadcastData {
   id: string;
@@ -17,6 +18,7 @@ interface BroadcastData {
     cant: number;
   };
   userResponse?: 'coming' | 'wait' | 'cant';
+  recipients: string[];
 }
 
 const mockBroadcasts: BroadcastData[] = [
@@ -27,7 +29,8 @@ const mockBroadcasts: BroadcastData[] = [
     timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 minutes ago
     location: 'Hotel Pool',
     category: 'chill',
-    responses: { coming: 3, wait: 1, cant: 0 }
+    responses: { coming: 3, wait: 1, cant: 0 },
+    recipients: ['all']
   },
   {
     id: '2',
@@ -36,7 +39,8 @@ const mockBroadcasts: BroadcastData[] = [
     timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 hours ago
     location: 'Le Petit Bistro',
     category: 'logistics',
-    responses: { coming: 5, wait: 0, cant: 1 }
+    responses: { coming: 5, wait: 0, cant: 1 },
+    recipients: ['staff', 'crew']
   },
   {
     id: '3',
@@ -44,13 +48,15 @@ const mockBroadcasts: BroadcastData[] = [
     message: 'Last shuttle back to hotel leaves at 1:30 AM - don\'t miss it!!',
     timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
     category: 'urgent',
-    responses: { coming: 6, wait: 0, cant: 0 }
+    responses: { coming: 6, wait: 0, cant: 0 },
+    recipients: ['talent']
   }
 ];
 
 export const Broadcasts = () => {
   const [broadcasts, setBroadcasts] = useState<BroadcastData[]>(mockBroadcasts);
   const [userResponses, setUserResponses] = useState<Record<string, 'coming' | 'wait' | 'cant'>>({});
+  const { user } = useAuth();
 
   const handleNewBroadcast = (newBroadcast: {
     message: string;
@@ -64,7 +70,8 @@ export const Broadcasts = () => {
       timestamp: new Date(),
       location: newBroadcast.location,
       category: newBroadcast.category,
-      responses: { coming: 0, wait: 0, cant: 0 }
+      responses: { coming: 0, wait: 0, cant: 0 },
+      recipients: ['all']
     };
 
     setBroadcasts([broadcast, ...broadcasts]);
@@ -102,7 +109,17 @@ export const Broadcasts = () => {
   // Filter broadcasts from last 48 hours
   const recentBroadcasts = broadcasts.filter(broadcast => {
     const hoursDiff = (Date.now() - broadcast.timestamp.getTime()) / (1000 * 60 * 60);
-    return hoursDiff <= 48;
+    if (hoursDiff > 48) return false;
+
+    const recipients = broadcast.recipients || [];
+    const userId = user?.id;
+    const userRole = (user as any)?.proRole || (user as any)?.role;
+
+    return (
+      recipients.includes('all') ||
+      (userId ? recipients.includes(userId) : false) ||
+      (userRole ? recipients.includes(userRole) : false)
+    );
   });
 
   return (
