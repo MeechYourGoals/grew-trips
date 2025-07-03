@@ -296,7 +296,7 @@ export interface ProTripData {
     | 'Music & Entertainment Tours'
     | 'Corporate & Business'
     | 'School'
-    | 'TV/Film Production'
+    | 'Content'
     | 'Startup & Tech';
   tags: string[];
   participants: ProTripParticipant[];

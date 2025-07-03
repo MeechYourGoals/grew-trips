@@ -16,7 +16,7 @@ export interface ProTab {
 export const proTabs: ProTab[] = [
   { id: 'chat', label: 'Chat', icon: null },
   { id: 'places', label: 'Places', icon: null },
-  { id: 'roster', label: 'Roster', icon: Users, proOnly: true, requiredPermissions: ['read'] },
+  { id: 'roster', label: 'Cast', icon: Users, proOnly: true, requiredPermissions: ['read'] },
   { id: 'equipment', label: 'Equipment', icon: Package, proOnly: true, requiredPermissions: ['read'] },
   { id: 'calendar', label: 'Calendar', icon: CalendarIcon, proOnly: true, requiredPermissions: ['read'] },
   { id: 'finance', label: 'Finance', icon: DollarSign, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['finance'] },

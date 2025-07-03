@@ -6,12 +6,12 @@ export const realHousewivesAtlShoot: ProTripData = {
   description: 'Reality TV production shoot for Real Housewives of Atlanta Season 9 cast and crew.',
   location: 'Atlanta GA',
   dateRange: 'Aug 1 - Sep 30, 2025',
-  category: 'TV Production',
-  tags: ['TV Production', 'Reality Show', 'Cast & Crew'],
+  category: 'Content',
+  tags: ['Content', 'Reality Show', 'Cast & Crew'],
   participants: [
     { id: 27, name: 'Kenya Moore', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Cast' },
     { id: 28, name: 'Executive Producer', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Producers' },
-    { id: 29, name: 'Camera Operator', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Camera Operators' },
+    { id: 29, name: 'Camera Operator', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Crew' },
     { id: 30, name: 'Production Assistant', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Crew' }
   ],
   budget: {
@@ -63,7 +63,7 @@ export const realHousewivesAtlShoot: ProTripData = {
       name: 'Camera Operator',
       email: 'camera@bravotv.com',
       avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
-      role: 'Camera Operators',
+      role: 'Crew',
       credentialLevel: 'Backstage',
       permissions: ['filming-areas', 'equipment-access'],
       roomPreferences: ['crew-housing'],
@@ -147,7 +147,7 @@ export const realHousewivesAtlShoot: ProTripData = {
     {
       id: 'comp-rh1',
       type: 'safety',
-      title: 'TV Production Safety Compliance',
+      title: 'Content Safety Compliance',
       description: 'All crew must complete safety training and background checks',
       deadline: '2025-07-25',
       status: 'compliant',

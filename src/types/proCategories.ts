@@ -6,7 +6,7 @@ export type ProTripCategory =
   | 'Music & Entertainment Tours'
   | 'Corporate & Business'
   | 'School'
-  | 'TV/Film Production'
+  | 'Content'
   | 'Startup & Tech';
 
 export interface ProCategoryConfig {
@@ -76,11 +76,11 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
       leaderLabel: 'Lead Teacher'
     }
   },
-  'TV/Film Production': {
-    id: 'TV/Film Production',
-    name: 'TV/Film Production',
-    description: 'Television shows, film productions, and media shoots',
-    roles: ['Cast', 'Producers', 'Directors', 'Crew', 'Script Supervisors', 'Camera Operators'],
+  Content: {
+    id: 'Content',
+    name: 'Content',
+    description: 'Film, television, and online media productions',
+    roles: ['Cast', 'Producers', 'Directors', 'Crew', 'Writing Team', 'Logistics Coordinators'],
     availableTabs: ['roster', 'equipment', 'calendar', 'media', 'sponsors', 'compliance'],
     requiredTabs: ['roster', 'equipment'],
     terminology: {

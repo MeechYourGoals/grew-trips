@@ -32,7 +32,7 @@ const getRoleIcon = (role: string, category: ProTripCategory) => {
       if (lowerRole.includes('student')) return Users;
       return Shield;
     
-    case 'TV/Film Production':
+    case 'Content':
       if (lowerRole.includes('cast') || lowerRole.includes('talent')) return Star;
       if (lowerRole.includes('producer') || lowerRole.includes('director')) return Camera;
       return Wrench;
@@ -72,7 +72,7 @@ const getRoleColor = (role: string, category: ProTripCategory) => {
       if (lowerRole.includes('student')) return 'bg-green-500';
       return 'bg-gray-500';
     
-    case 'TV/Film Production':
+    case 'Content':
       if (lowerRole.includes('cast')) return 'bg-yellow-500';
       if (lowerRole.includes('producer')) return 'bg-red-500';
       return 'bg-gray-500';
