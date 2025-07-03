@@ -7,7 +7,7 @@ export const yCombinatorCohort: ProTripData = {
   location: 'San Francisco CA',
   dateRange: 'Feb 1 - Mar 31, 2025',
   category: 'Startup',
-  proTripCategory: 'Startup & Tech',
+  proTripCategory: 'Events',
   tags: ['Startup', 'Accelerator', 'Demo Day'],
   participants: [
     { id: 24, name: 'Jessica Chen', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Founders' },

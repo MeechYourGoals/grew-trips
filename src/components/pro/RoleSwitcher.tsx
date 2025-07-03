@@ -37,7 +37,7 @@ const getRoleIcon = (role: string, category: ProTripCategory) => {
       if (lowerRole.includes('producer') || lowerRole.includes('director')) return Camera;
       return Wrench;
     
-    case 'Startup & Tech':
+    case 'Events':
       if (lowerRole.includes('founder')) return Lightbulb;
       if (lowerRole.includes('mentor')) return GraduationCap;
       return Users;
@@ -77,7 +77,7 @@ const getRoleColor = (role: string, category: ProTripCategory) => {
       if (lowerRole.includes('producer')) return 'bg-red-500';
       return 'bg-gray-500';
     
-    case 'Startup & Tech':
+    case 'Events':
       if (lowerRole.includes('founder')) return 'bg-yellow-500';
       if (lowerRole.includes('mentor')) return 'bg-blue-500';
       return 'bg-gray-500';

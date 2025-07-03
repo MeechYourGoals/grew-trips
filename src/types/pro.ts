@@ -297,7 +297,7 @@ export interface ProTripData {
     | 'Corporate & Business'
     | 'School'
     | 'Content'
-    | 'Startup & Tech';
+    | 'Events';
   tags: string[];
   participants: ProTripParticipant[];
   budget: {
