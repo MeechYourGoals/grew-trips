@@ -1,11 +1,11 @@
 
 import { LucideIcon } from 'lucide-react';
 
-export type ProTripCategory = 
+export type ProTripCategory =
   | 'Sports & Athletics'
-  | 'Music & Entertainment Tours' 
+  | 'Music & Entertainment Tours'
   | 'Corporate & Business'
-  | 'Education & Academic'
+  | 'School'
   | 'TV/Film Production'
   | 'Startup & Tech';
 
@@ -63,9 +63,9 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
       leaderLabel: 'Event Lead'
     }
   },
-  'Education & Academic': {
-    id: 'Education & Academic',
-    name: 'Education & Academic',
+  School: {
+    id: 'School',
+    name: 'School',
     description: 'School trips, academic competitions, and educational events',
     roles: ['Teachers', 'Students', 'Supervisors', 'Coordinators', 'Chaperones'],
     availableTabs: ['roster', 'calendar', 'compliance', 'medical'],
