@@ -13,6 +13,10 @@ export interface Message {
   isRead: boolean;
   priority?: 'urgent' | 'reminder' | 'fyi';
   mentions?: string[];
+  recipients?: {
+    type: 'individual' | 'all';
+    userIds?: string[];
+  };
   threadId?: string;
   replyToId?: string;
 }
