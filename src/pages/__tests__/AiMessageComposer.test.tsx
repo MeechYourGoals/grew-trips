@@ -14,7 +14,19 @@ import { OpenAIService } from '../../services/OpenAIService';
 describe('AiMessageComposer', () => {
   it('calls addMessage and clears the prompt after send', async () => {
     const addMessage = vi.fn();
-    vi.mocked(useMessages).mockReturnValue({ addMessage });
+    vi.mocked(useMessages).mockReturnValue({ 
+      addMessage,
+      messages: [],
+      scheduledMessages: [],
+      searchQuery: '',
+      getMessagesForTour: vi.fn(),
+      getMessagesForTrip: vi.fn(),
+      scheduleMessage: vi.fn(),
+      searchMessages: vi.fn(),
+      markAsRead: vi.fn(),
+      getTotalUnreadCount: vi.fn(),
+      getTripUnreadCount: vi.fn()
+    });
     vi.mocked(OpenAIService.queryOpenAI).mockResolvedValue('response');
 
     render(<AiMessageComposer />);

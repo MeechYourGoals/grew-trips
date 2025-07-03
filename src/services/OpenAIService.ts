@@ -1,5 +1,5 @@
 export interface OpenAIOptions {
-  tone?: 'friendly' | 'professional' | 'funny';
+  tone?: 'friendly' | 'professional' | 'funny' | 'urgent' | 'direct' | 'cheerful';
   maxTokens?: number;
 }
 

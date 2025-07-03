@@ -5,6 +5,8 @@ import { useTripVariant } from '../contexts/TripVariantContext';
 import { useMessages } from '../hooks/useMessages';
 import { useParams } from 'react-router-dom';
 import { proTripMockData } from '../data/proTripMockData';
+import { AiMessageModal } from './ai/AiMessageModal';
+import { AiMessageButton } from './ai/AiMessageButton';
 
 export const TourChat = () => {
   const { proTripId, tourId } = useParams();
@@ -12,6 +14,7 @@ export const TourChat = () => {
   const { getMessagesForTour, addMessage } = useMessages();
   const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
   const { accentColors } = useTripVariant();
 
   // Get tour data for context
@@ -105,6 +108,22 @@ export const TourChat = () => {
           </button>
         </div>
       </div>
+
+      {/* AI Message Assistant for Pro */}
+      <AiMessageButton onClick={() => setShowAiModal(true)} />
+
+      {/* AI Message Modal */}
+      <AiMessageModal
+        isOpen={showAiModal}
+        onClose={() => setShowAiModal(false)}
+        tourId={finalTourId}
+        tripContext={{
+          id: finalTourId,
+          title: tourData?.title,
+          category: tourData?.category,
+          isPro: true
+        }}
+      />
     </div>
   );
 };
