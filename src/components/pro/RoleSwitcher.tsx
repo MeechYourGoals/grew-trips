@@ -99,7 +99,7 @@ export const RoleSwitcher = ({ category }: RoleSwitcherProps) => {
 
   return (
     <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6 mb-6">
-      <h3 className="text-lg font-bold text-white mb-2">Role Testing - {config.name}</h3>
+      <h3 className="text-lg font-bold text-white mb-2">Roles - {config.name}</h3>
       <p className="text-gray-400 text-sm mb-4">
         Current role: <span className="text-white font-medium">{user.proRole}</span>
       </p>
