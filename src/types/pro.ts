@@ -290,7 +290,14 @@ export interface ProTripData {
   location: string;
   dateRange: string;
   category: string;
-  proTripCategory?: 'Sports & Athletics' | 'Music & Entertainment Tours' | 'Corporate & Business' | 'School' | 'TV/Film Production' | 'Startup & Tech';
+  // Updated category options - removed "Education & Academic" in favor of "School"
+  proTripCategory?:
+    | 'Sports & Athletics'
+    | 'Music & Entertainment Tours'
+    | 'Corporate & Business'
+    | 'School'
+    | 'TV/Film Production'
+    | 'Startup & Tech';
   tags: string[];
   participants: ProTripParticipant[];
   budget: {
