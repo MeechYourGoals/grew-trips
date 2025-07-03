@@ -9,6 +9,7 @@ interface BroadcastProps {
   timestamp: Date;
   location?: string;
   category: 'chill' | 'logistics' | 'urgent';
+  recipients: string;
   responses: {
     coming: number;
     wait: number;
@@ -22,12 +23,13 @@ export const Broadcast = ({
   id, 
   sender, 
   message, 
-  timestamp, 
-  location, 
-  category, 
-  responses, 
+  timestamp,
+  location,
+  category,
+  recipients,
+  responses,
   userResponse,
-  onRespond 
+  onRespond
 }: BroadcastProps) => {
   const getCategoryColors = () => {
     switch (category) {
@@ -59,10 +61,17 @@ export const Broadcast = ({
     onRespond(id, response);
   };
 
+  const formatRecipients = () => {
+    if (recipients === 'everyone') return 'Everyone';
+    if (recipients.startsWith('role:')) return recipients.slice(5);
+    if (recipients.startsWith('user:')) return 'Direct';
+    return recipients;
+  };
+
   return (
     <div className={`border rounded-lg p-4 ${getCategoryColors()}`}>
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
             <span className="text-xs font-medium text-white">
@@ -76,6 +85,10 @@ export const Broadcast = ({
           <Clock size={12} />
           {formatTime(timestamp)}
         </div>
+      </div>
+      <div className="flex items-center gap-1 text-slate-400 text-xs mb-3 mt-1">
+        <Users size={12} />
+        Sent to: {formatRecipients()}
       </div>
 
       {/* Message */}
