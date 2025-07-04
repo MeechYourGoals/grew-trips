@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Send, Search, MessageCircle, User, Settings } from 'lucide-react';
 import { useMessages } from '../hooks/useMessages';
 import { useParams } from 'react-router-dom';
+import { VoiceAssistant } from './VoiceAssistant';
 
 interface TripChatProps {
   groupChatEnabled?: boolean;
@@ -77,6 +78,15 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Voice Assistant */}
+      <div className="mb-6 p-4 bg-gray-800/50 border border-gray-700 rounded-xl">
+        <div className="mb-3">
+          <h4 className="text-sm font-medium text-gray-300 mb-1">AI Voice Assistant</h4>
+          <p className="text-xs text-gray-500">Ask about trip details, schedule, or confirmations</p>
+        </div>
+        <VoiceAssistant isProTrip={false} />
       </div>
 
       {/* Search Bar */}

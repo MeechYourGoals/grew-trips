@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Send, Radio, Users, MessageCircle } from 'lucide-react';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useMessages } from '../hooks/useMessages';
+import { VoiceAssistant } from './VoiceAssistant';
 import { useParams } from 'react-router-dom';
 import { proTripMockData } from '../data/proTripMockData';
 import { AiMessageModal } from './ai/AiMessageModal';
@@ -50,6 +51,15 @@ export const TourChat = () => {
           <h3 className="text-lg font-semibold text-white">Event Chat</h3>
           <p className="text-gray-400 text-sm">Messages across the event</p>
         </div>
+      </div>
+
+      {/* Voice Assistant for Pro */}
+      <div className="mb-6 p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl">
+        <div className="mb-3">
+          <h4 className="text-sm font-medium text-white mb-1">AI Voice Assistant</h4>
+          <p className="text-xs text-gray-400">Ask about event details, schedule, or confirmations</p>
+        </div>
+        <VoiceAssistant isProTrip={true} />
       </div>
 
       {/* Messages */}
