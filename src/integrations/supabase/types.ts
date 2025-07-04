@@ -131,6 +131,69 @@ export type Database = {
         }
         Relationships: []
       }
+      mock_broadcasts: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          location: string | null
+          sender_name: string
+          tag: string | null
+          trip_type: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          sender_name: string
+          tag?: string | null
+          trip_type: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          sender_name?: string
+          tag?: string | null
+          trip_type?: string
+        }
+        Relationships: []
+      }
+      mock_messages: {
+        Row: {
+          created_at: string
+          delay_seconds: number | null
+          id: string
+          message_content: string
+          sender_name: string
+          tags: string[] | null
+          timestamp_offset_days: number | null
+          trip_type: string
+        }
+        Insert: {
+          created_at?: string
+          delay_seconds?: number | null
+          id?: string
+          message_content: string
+          sender_name: string
+          tags?: string[] | null
+          timestamp_offset_days?: number | null
+          trip_type: string
+        }
+        Update: {
+          created_at?: string
+          delay_seconds?: number | null
+          id?: string
+          message_content?: string
+          sender_name?: string
+          tags?: string[] | null
+          timestamp_offset_days?: number | null
+          trip_type?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

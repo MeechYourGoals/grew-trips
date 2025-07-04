@@ -1,9 +1,12 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Broadcast } from './Broadcast';
 import { BroadcastComposer } from './BroadcastComposer';
 import { Radio, Clock } from 'lucide-react';
 import { taylorSwiftErasTour } from '../data/pro-trips/taylorSwiftErasTour';
+import { demoModeService } from '@/services/demoModeService';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { useParams } from 'react-router-dom';
 
 const participants = taylorSwiftErasTour.participants;
 
@@ -56,8 +59,50 @@ const mockBroadcasts: BroadcastData[] = [
 ];
 
 export const Broadcasts = () => {
+  const { tripId, eventId, proTripId } = useParams();
+  const { isDemoMode } = useDemoMode();
   const [broadcasts, setBroadcasts] = useState<BroadcastData[]>(mockBroadcasts);
   const [userResponses, setUserResponses] = useState<Record<string, 'coming' | 'wait' | 'cant'>>({});
+  const [mockBroadcastsLoaded, setMockBroadcastsLoaded] = useState(false);
+
+  const currentTripId = tripId || eventId || proTripId || 'default-trip';
+
+  // Load mock broadcasts in demo mode
+  useEffect(() => {
+    const loadMockBroadcasts = async () => {
+      if (isDemoMode && !mockBroadcastsLoaded) {
+        const tripType = demoModeService.getTripType({ 
+          title: currentTripId,
+          category: currentTripId.includes('pro-') ? 'pro' : 'consumer'
+        });
+        
+        const mockBroadcasts = await demoModeService.getMockBroadcasts(tripType);
+        
+        if (mockBroadcasts.length > 0) {
+          const demoBroadcasts: BroadcastData[] = mockBroadcasts.map((mock, index) => ({
+            id: mock.id,
+            sender: mock.sender_name,
+            message: mock.content,
+            timestamp: new Date(Date.now() - (index + 1) * 60 * 60 * 1000), // 1 hour intervals
+            location: mock.location || undefined,
+            category: mock.tag,
+            recipients: 'everyone',
+            responses: { 
+              coming: Math.floor(Math.random() * 8) + 2, 
+              wait: Math.floor(Math.random() * 3), 
+              cant: Math.floor(Math.random() * 2) 
+            }
+          }));
+          
+          setBroadcasts([...demoBroadcasts, ...broadcasts]);
+        }
+        
+        setMockBroadcastsLoaded(true);
+      }
+    };
+
+    loadMockBroadcasts();
+  }, [isDemoMode, mockBroadcastsLoaded, currentTripId, broadcasts]);
 
   const handleNewBroadcast = (newBroadcast: {
     message: string;
@@ -120,7 +165,10 @@ export const Broadcasts = () => {
         <Radio size={24} className="text-blue-400" />
         <div>
           <h2 className="text-xl font-semibold text-white">Broadcasts</h2>
-          <p className="text-slate-400 text-sm">Quick updates and alerts for the group</p>
+          <p className="text-slate-400 text-sm">
+            Quick updates and alerts for the group
+            {isDemoMode && <span className="ml-2 px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-md">DEMO</span>}
+          </p>
         </div>
       </div>
 

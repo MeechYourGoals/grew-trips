@@ -5,6 +5,8 @@ import { Channel, MessageList, MessageInput, Thread, Window } from 'stream-chat-
 import { useGetStream } from '../hooks/useGetStream';
 import { useParams } from 'react-router-dom';
 import { VoiceAssistant } from './VoiceAssistant';
+import { demoModeService } from '@/services/demoModeService';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 import 'stream-chat-react/dist/css/v2/index.css';
 
@@ -15,8 +17,10 @@ interface TripChatProps {
 export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
   const { tripId, eventId } = useParams();
   const { client, getTripChannel, isReady, isConnecting, error } = useGetStream();
+  const { isDemoMode } = useDemoMode();
   const [channel, setChannel] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [mockMessagesInjected, setMockMessagesInjected] = useState(false);
 
   const currentTripId = tripId || eventId || 'default-trip';
 
@@ -28,6 +32,18 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
         setLoading(true);
         const tripChannel = await getTripChannel(currentTripId);
         setChannel(tripChannel);
+        
+        // Inject mock messages in demo mode
+        if (isDemoMode && tripChannel && !mockMessagesInjected) {
+          // Determine trip type from URL or default
+          const tripType = demoModeService.getTripType({ 
+            title: currentTripId,
+            category: currentTripId.includes('pro-') ? 'pro' : 'consumer'
+          });
+          
+          await demoModeService.injectMockMessages(tripChannel, tripType);
+          setMockMessagesInjected(true);
+        }
       } catch (err) {
         console.error('Failed to initialize chat channel:', err);
       } finally {
@@ -36,7 +52,7 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
     };
 
     initializeChannel();
-  }, [isReady, currentTripId, getTripChannel]);
+  }, [isReady, currentTripId, getTripChannel, isDemoMode, mockMessagesInjected]);
 
   // Show disabled chat notice for large events
   if (!groupChatEnabled) {
@@ -119,7 +135,10 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
           <MessageCircle size={24} className="text-blue-400" />
           <div>
             <h3 className="text-lg font-semibold text-white">Event Chat</h3>
-            <p className="text-gray-400 text-sm">Real-time group conversation</p>
+            <p className="text-gray-400 text-sm">
+              Real-time group conversation
+              {isDemoMode && <span className="ml-2 px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-md">DEMO</span>}
+            </p>
           </div>
         </div>
       </div>

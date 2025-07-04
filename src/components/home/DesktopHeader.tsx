@@ -5,6 +5,7 @@ import { NotificationBell } from '../NotificationBell';
 import { SearchBar } from '../SearchBar';
 import { GlobalSearchModal } from '../GlobalSearchModal';
 import { AuthModal } from '../AuthModal';
+import { DemoModeToggle } from '../DemoModeToggle';
 import { useGlobalSearch } from '../../hooks/useGlobalSearch';
 import { useAuth } from '../../hooks/useAuth';
 import {
@@ -58,6 +59,9 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
         </div>
         
         <div className="flex items-center gap-3">
+          {/* Demo Mode Toggle */}
+          <DemoModeToggle />
+          
           {/* Global Search Bar */}
           <div className="w-80">
             <SearchBar
