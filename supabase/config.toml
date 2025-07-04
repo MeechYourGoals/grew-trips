@@ -1,1 +1,13 @@
 project_id = "yiitqkjrbskxumriujrh"
+
+[functions.getstream-token]
+verify_jwt = false
+
+[functions.broadcasts-create]
+verify_jwt = true
+
+[functions.broadcasts-react]
+verify_jwt = true
+
+[functions.broadcasts-fetch]
+verify_jwt = true

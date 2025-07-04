@@ -9,6 +9,83 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      broadcast_reactions: {
+        Row: {
+          broadcast_id: string
+          created_at: string
+          id: string
+          reaction_type: string
+          user_id: string
+          user_name: string
+        }
+        Insert: {
+          broadcast_id: string
+          created_at?: string
+          id?: string
+          reaction_type: string
+          user_id: string
+          user_name: string
+        }
+        Update: {
+          broadcast_id?: string
+          created_at?: string
+          id?: string
+          reaction_type?: string
+          user_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broadcast_reactions_broadcast_id_fkey"
+            columns: ["broadcast_id"]
+            isOneToOne: false
+            referencedRelation: "broadcasts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      broadcasts: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          location: string | null
+          scheduled_time: string | null
+          sender_avatar: string
+          sender_id: string
+          sender_name: string
+          tag: string | null
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          scheduled_time?: string | null
+          sender_avatar: string
+          sender_id: string
+          sender_name: string
+          tag?: string | null
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          scheduled_time?: string | null
+          sender_avatar?: string
+          sender_id?: string
+          sender_name?: string
+          tag?: string | null
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           address: string | null
