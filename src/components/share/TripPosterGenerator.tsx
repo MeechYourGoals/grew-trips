@@ -15,11 +15,18 @@ interface Trip {
   participants: Participant[];
 }
 
-interface TripPosterGeneratorProps {
-  trip: Trip;
+export interface ColorTheme {
+  name: string;
+  background: string;
+  overlay: string;
 }
 
-export const TripPosterGenerator = ({ trip }: TripPosterGeneratorProps) => {
+interface TripPosterGeneratorProps {
+  trip: Trip;
+  colorTheme?: ColorTheme;
+}
+
+export const TripPosterGenerator = ({ trip, colorTheme }: TripPosterGeneratorProps) => {
   const taglines = [
     "Let's make memories!",
     "Adventure awaits!",
@@ -29,17 +36,26 @@ export const TripPosterGenerator = ({ trip }: TripPosterGeneratorProps) => {
   
   const randomTagline = taglines[Math.floor(Math.random() * taglines.length)];
 
+  // Default theme if none provided
+  const defaultTheme: ColorTheme = {
+    name: 'gold',
+    background: 'linear-gradient(135deg, hsl(45 93% 58%) 0%, hsl(43 89% 38%) 50%, hsl(41 85% 28%) 100%)',
+    overlay: 'bg-gradient-to-b from-black/20 via-black/30 to-black/40'
+  };
+
+  const theme = colorTheme || defaultTheme;
+
   return (
     <div 
       id="trip-poster"
-      className="relative w-[540px] h-[675px] bg-gradient-to-br from-primary/30 via-secondary/20 to-accent/30 rounded-3xl p-8 overflow-hidden"
+      className="relative w-[540px] h-[675px] rounded-3xl p-8 overflow-hidden animate-scale-in"
       style={{
-        background: 'linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--secondary)) 50%, hsl(var(--accent)) 100%)',
+        background: theme.background,
         boxShadow: '0px 8px 32px rgba(0,0,0,0.25)'
       }}
     >
       {/* Background overlay for text readability */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/40 rounded-3xl" />
+      <div className={`absolute inset-0 ${theme.overlay} rounded-3xl`} />
       
       {/* Content */}
       <div className="relative z-10 h-full flex flex-col justify-between text-white">
