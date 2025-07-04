@@ -122,9 +122,9 @@ export const ShareTripModal = ({ isOpen, onClose, trip }: ShareTripModalProps) =
               variant="ghost" 
               size="icon" 
               title="Close"
-              className="hover:bg-destructive/20 hover:text-destructive text-muted-foreground w-10 h-10"
+              className="hover:bg-destructive/20 hover:text-destructive text-white w-12 h-12 bg-black/20 border border-white/20"
             >
-              <X size={24} />
+              <X size={28} />
             </Button>
           </div>
         </div>
@@ -187,7 +187,7 @@ export const ShareTripModal = ({ isOpen, onClose, trip }: ShareTripModalProps) =
             onClick={handleShare}
             disabled={isGenerating || !posterUrl}
             variant="outline"
-            className="flex-1"
+            className="flex-1 text-white border-white/40 hover:bg-white/10 hover:text-white"
           >
             <Share2 size={20} className="mr-2" />
             Share Poster
