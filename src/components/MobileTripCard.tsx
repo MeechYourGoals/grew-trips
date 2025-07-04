@@ -1,8 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, User, MoreHorizontal } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import { ShareTripModal } from './share/ShareTripModal';
 
 interface Participant {
   id: number;
@@ -25,6 +26,7 @@ interface MobileTripCardProps {
 export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const handleViewTrip = () => {
     navigate(`/trip/${trip.id}`);
@@ -126,12 +128,21 @@ export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
             >
               Edit Itinerary
             </button>
-            <button className="bg-gray-800/50 hover:bg-gray-700/50 text-white py-3 px-4 rounded-lg transition-all duration-200 font-medium border border-gray-700 hover:border-gray-600 text-sm">
+            <button 
+              onClick={() => setShowShareModal(true)}
+              className="bg-gray-800/50 hover:bg-gray-700/50 text-white py-3 px-4 rounded-lg transition-all duration-200 font-medium border border-gray-700 hover:border-gray-600 text-sm"
+            >
               Share Trip
             </button>
           </div>
         </div>
       </div>
+
+      <ShareTripModal 
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        trip={trip}
+      />
     </div>
   );
 };

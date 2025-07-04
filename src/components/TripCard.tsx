@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Trash, User, Plus, MoreHorizontal } from 'lucide-react';
 import { InviteModal } from './InviteModal';
+import { ShareTripModal } from './share/ShareTripModal';
 
 interface Participant {
   id: number;
@@ -25,6 +26,7 @@ interface TripCardProps {
 export const TripCard = ({ trip }: TripCardProps) => {
   const navigate = useNavigate();
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const handleViewTrip = () => {
     navigate(`/trip/${trip.id}`);
@@ -135,7 +137,10 @@ export const TripCard = ({ trip }: TripCardProps) => {
             >
               Edit Itinerary
             </button>
-            <button className="bg-gray-800/50 hover:bg-gray-700/50 text-white py-3 rounded-xl transition-all duration-200 font-medium border border-gray-700 hover:border-gray-600">
+            <button 
+              onClick={() => setShowShareModal(true)}
+              className="bg-gray-800/50 hover:bg-gray-700/50 text-white py-3 rounded-xl transition-all duration-200 font-medium border border-gray-700 hover:border-gray-600"
+            >
               Share Trip
             </button>
           </div>
@@ -147,6 +152,12 @@ export const TripCard = ({ trip }: TripCardProps) => {
         onClose={() => setShowInviteModal(false)}
         tripName={trip.title}
         tripId={trip.id.toString()}
+      />
+
+      <ShareTripModal 
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        trip={trip}
       />
     </div>
   );
