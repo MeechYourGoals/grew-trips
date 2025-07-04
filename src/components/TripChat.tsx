@@ -102,13 +102,20 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
                 className="w-10 h-10 rounded-full"
               />
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-white font-medium">{msg.senderName}</span>
-                  <span className="text-gray-400 text-xs">{formatTime(msg.timestamp)}</span>
-                  {!msg.isRead && (
-                    <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                  )}
-                </div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-white font-medium">{msg.senderName}</span>
+                <span className="text-gray-400 text-xs">{formatTime(msg.timestamp)}</span>
+                {msg.priority && (
+                  <span className={`w-2 h-2 rounded-full ${
+                    msg.priority === 'urgent' ? 'bg-red-400' :
+                    msg.priority === 'reminder' ? 'bg-yellow-400' : 
+                    'bg-blue-400'
+                  }`} title={msg.priority}></span>
+                )}
+                {!msg.isRead && (
+                  <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                )}
+              </div>
                 <p className="text-gray-300">{msg.content}</p>
                 {msg.mentions && msg.mentions.includes('everyone') && (
                   <div className="mt-2">

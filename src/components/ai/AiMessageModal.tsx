@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Send, Sparkles, X } from 'lucide-react';
+import { Send, Sparkles, Clock, Calendar, FileText, Lightbulb } from 'lucide-react';
 import { useMessages } from '../../hooks/useMessages';
 import { OpenAIService } from '../../services/OpenAIService';
+import { MessageService, MessageTemplate } from '../../services/MessageService';
+import { MessageTemplateLibrary } from '../MessageTemplateLibrary';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogClose,
 } from '../ui/dialog';
 import { Button } from '../ui/button';
 
@@ -26,12 +27,19 @@ export const AiMessageModal = ({
   tourId, 
   tripContext 
 }: AiMessageModalProps) => {
-  const { addMessage } = useMessages();
+  const { addMessage, scheduleMessage } = useMessages();
+  const [currentView, setCurrentView] = useState<'composer' | 'templates' | 'scheduling'>('composer');
   const [prompt, setPrompt] = useState('');
   const [tone, setTone] = useState<'friendly' | 'professional' | 'urgent' | 'direct' | 'cheerful'>('professional');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedMessage, setGeneratedMessage] = useState('');
   const [showPreview, setShowPreview] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<MessageTemplate | null>(null);
+  const [templateContext, setTemplateContext] = useState<Record<string, string>>({});
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [showScheduling, setShowScheduling] = useState(false);
+  const [suggestedTimes, setSuggestedTimes] = useState<string[]>([]);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
 
   const toneOptions = [
     { value: 'friendly', label: 'Friendly' },
@@ -41,7 +49,7 @@ export const AiMessageModal = ({
     { value: 'cheerful', label: 'Cheerful' }
   ];
 
-  const buildContextualPrompt = (userPrompt: string) => {
+  const buildContextualPrompt = (userPrompt: string, templateContent?: string) => {
     const contextPrefix = tripContext?.isPro 
       ? `You are helping a ${tripContext.category || 'professional'} team manager craft a message for their team. `
       : 'You are helping craft a professional message for an event or team. ';
@@ -49,7 +57,48 @@ export const AiMessageModal = ({
     const toneInstruction = `Use a ${tone} tone. `;
     const lengthInstruction = 'Keep it concise and actionable. ';
     
+    if (templateContent) {
+      return `${contextPrefix}${toneInstruction}${lengthInstruction}Fill this template with appropriate content: ${templateContent}. User context: ${userPrompt}`;
+    }
+    
     return `${contextPrefix}${toneInstruction}${lengthInstruction}User request: ${userPrompt}`;
+  };
+
+  const handleTemplateSelect = (template: MessageTemplate) => {
+    if (template.id === 'custom') {
+      setCurrentView('composer');
+      return;
+    }
+    
+    setSelectedTemplate(template);
+    setPrompt(`Fill template: ${template.name}`);
+    
+    // Initialize template context with placeholders
+    const initialContext: Record<string, string> = {};
+    template.placeholders.forEach(placeholder => {
+      initialContext[placeholder] = '';
+    });
+    setTemplateContext(initialContext);
+    setCurrentView('composer');
+  };
+
+  const getSuggestedSendTimes = async () => {
+    if (!generatedMessage) return;
+    
+    setLoadingSuggestions(true);
+    try {
+      // Mock AI-suggested times - in production, this would call an AI service
+      const suggestions = [
+        new Date(Date.now() + 30 * 60 * 1000).toISOString().slice(0, 16), // 30 min from now
+        new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString().slice(0, 16), // 2 hours from now
+        new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16), // 24 hours from now
+      ];
+      setSuggestedTimes(suggestions);
+    } catch (error) {
+      console.error('Failed to get suggested times:', error);
+    } finally {
+      setLoadingSuggestions(false);
+    }
   };
 
   const handleGenerate = async () => {
@@ -57,10 +106,26 @@ export const AiMessageModal = ({
     
     setIsGenerating(true);
     try {
-      const contextualPrompt = buildContextualPrompt(prompt);
-      const response = await OpenAIService.queryOpenAI(contextualPrompt, { tone });
-      setGeneratedMessage(response);
+      let finalContent = '';
+      
+      if (selectedTemplate) {
+        // Fill template with context
+        finalContent = MessageService.fillTemplate(selectedTemplate.content, templateContext);
+        if (prompt.includes('Fill template:')) {
+          // Let AI enhance the filled template
+          const contextualPrompt = buildContextualPrompt(prompt, finalContent);
+          finalContent = await OpenAIService.queryOpenAI(contextualPrompt, { tone });
+        }
+      } else {
+        const contextualPrompt = buildContextualPrompt(prompt);
+        finalContent = await OpenAIService.queryOpenAI(contextualPrompt, { tone });
+      }
+      
+      setGeneratedMessage(finalContent);
       setShowPreview(true);
+      
+      // Auto-generate suggested send times
+      getSuggestedSendTimes();
     } catch (error) {
       console.error('Failed to generate message:', error);
     } finally {
@@ -70,7 +135,11 @@ export const AiMessageModal = ({
 
   const handleInsertToChat = async () => {
     if (generatedMessage) {
-      await addMessage(generatedMessage, tripId, tourId);
+      if (scheduleDate) {
+        await scheduleMessage(generatedMessage, new Date(scheduleDate), tripId, tourId);
+      } else {
+        await addMessage(generatedMessage, tripId, tourId);
+      }
       handleClose();
     }
   };
@@ -79,6 +148,12 @@ export const AiMessageModal = ({
     setPrompt('');
     setGeneratedMessage('');
     setShowPreview(false);
+    setSelectedTemplate(null);
+    setTemplateContext({});
+    setScheduleDate('');
+    setShowScheduling(false);
+    setSuggestedTimes([]);
+    setCurrentView('composer');
     onClose();
   };
 
@@ -94,19 +169,83 @@ export const AiMessageModal = ({
           </DialogTitle>
         </DialogHeader>
 
+        {/* Navigation Tabs */}
+        <div className="flex gap-2 mb-4">
+          <button
+            onClick={() => setCurrentView('composer')}
+            className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+              currentView === 'composer'
+                ? 'bg-white/20 text-white'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <Sparkles size={14} className="inline mr-1" />
+            Composer
+          </button>
+          <button
+            onClick={() => setCurrentView('templates')}
+            className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+              currentView === 'templates'
+                ? 'bg-white/20 text-white'
+                : 'text-gray-400 hover:text-white hover:bg-white/10'
+            }`}
+          >
+            <FileText size={14} className="inline mr-1" />
+            Templates
+          </button>
+        </div>
+
         <div className="space-y-4">
-          {!showPreview ? (
+          {currentView === 'templates' ? (
+            <MessageTemplateLibrary
+              onSelectTemplate={handleTemplateSelect}
+              tripType={tripContext?.category}
+              onClose={() => setCurrentView('composer')}
+            />
+          ) : !showPreview ? (
             <>
+              {/* Selected Template Context */}
+              {selectedTemplate && selectedTemplate.placeholders.length > 0 && (
+                <div className="space-y-3 bg-purple-500/10 border border-purple-500/20 rounded-xl p-4">
+                  <div className="flex items-center gap-2">
+                    <FileText size={16} className="text-purple-400" />
+                    <span className="font-medium text-purple-300">Template: {selectedTemplate.name}</span>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3">
+                    {selectedTemplate.placeholders.map(placeholder => (
+                      <div key={placeholder}>
+                        <label className="text-sm font-medium text-gray-300 capitalize">
+                          {placeholder.replace('_', ' ')}
+                        </label>
+                        <input
+                          type="text"
+                          value={templateContext[placeholder] || ''}
+                          onChange={(e) => setTemplateContext(prev => ({
+                            ...prev,
+                            [placeholder]: e.target.value
+                          }))}
+                          placeholder={`Enter ${placeholder}...`}
+                          className="w-full bg-white/5 border border-white/20 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-purple-500"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Input Section */}
               <div className="space-y-3">
                 <label className="text-sm font-medium text-gray-300">
-                  What message should the AI help you write?
+                  {selectedTemplate ? 'Additional instructions for AI (optional)' : 'What message should the AI help you write?'}
                 </label>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   rows={4}
-                  placeholder="e.g., Politely remind team that checkout is at 10am and we need bags in lobby by 9:30am..."
+                  placeholder={selectedTemplate 
+                    ? "e.g., Make it more urgent, add team spirit elements..." 
+                    : "e.g., Politely remind team that checkout is at 10am and we need bags in lobby by 9:30am..."
+                  }
                   className="w-full bg-white/5 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 resize-none backdrop-blur-sm"
                 />
               </div>
@@ -158,14 +297,87 @@ export const AiMessageModal = ({
                 </div>
               </div>
 
+              {/* Scheduling Options */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-gray-300">Send Options</label>
+                  <Button
+                    onClick={() => setShowScheduling(!showScheduling)}
+                    variant="outline"
+                    size="sm"
+                    className="border-white/20 text-white hover:bg-white/10"
+                  >
+                    <Clock size={14} className="mr-1" />
+                    {showScheduling ? 'Send Now' : 'Schedule'}
+                  </Button>
+                </div>
+
+                {showScheduling && (
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-4 space-y-3">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Lightbulb size={16} className="text-yellow-400" />
+                      <span className="text-sm font-medium text-yellow-300">AI Suggested Times</span>
+                    </div>
+                    
+                    {loadingSuggestions ? (
+                      <div className="flex items-center gap-2 text-gray-400">
+                        <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin" />
+                        <span className="text-xs">Analyzing optimal send times...</span>
+                      </div>
+                    ) : (
+                      <div className="flex gap-2 flex-wrap">
+                        {suggestedTimes.map((time, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setScheduleDate(time)}
+                            className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                              scheduleDate === time
+                                ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30'
+                                : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                            }`}
+                          >
+                            {new Date(time).toLocaleString([], { 
+                              month: 'short', 
+                              day: 'numeric', 
+                              hour: '2-digit', 
+                              minute: '2-digit' 
+                            })}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="text-xs text-gray-400 block mb-1">Custom Date & Time</label>
+                      <input
+                        type="datetime-local"
+                        value={scheduleDate}
+                        onChange={(e) => setScheduleDate(e.target.value)}
+                        min={new Date().toISOString().slice(0, 16)}
+                        className="w-full bg-white/5 border border-white/20 rounded-lg px-3 py-2 text-white focus:outline-none focus:border-blue-500 text-sm"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {/* Action Buttons */}
               <div className="flex gap-3">
                 <Button
                   onClick={handleInsertToChat}
                   className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white"
                 >
-                  <Send size={16} className="mr-2" />
-                  Insert into Chat
+                  {scheduleDate ? (
+                    <>
+                      <Calendar size={16} className="mr-2" />
+                      Schedule Message
+                    </>
+                  ) : (
+                    <>
+                      <Send size={16} className="mr-2" />
+                      Send Now
+                    </>
+                  )}
                 </Button>
                 <Button
                   onClick={() => setShowPreview(false)}
