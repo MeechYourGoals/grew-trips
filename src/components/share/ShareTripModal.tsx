@@ -100,7 +100,7 @@ export const ShareTripModal = ({ isOpen, onClose, trip }: ShareTripModalProps) =
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-background/95 backdrop-blur-md border border-border rounded-3xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
+      <div className="bg-background/95 backdrop-blur-md border border-border rounded-3xl p-6 max-w-lg w-full max-h-fit animate-scale-in">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -117,7 +117,13 @@ export const ShareTripModal = ({ isOpen, onClose, trip }: ShareTripModalProps) =
             >
               <Palette size={20} />
             </Button>
-            <Button onClick={handleClose} variant="ghost" size="icon" title="Close">
+            <Button 
+              onClick={handleClose} 
+              variant="ghost" 
+              size="icon" 
+              title="Close"
+              className="hover:bg-destructive/20 hover:text-destructive text-muted-foreground w-10 h-10"
+            >
               <X size={24} />
             </Button>
           </div>
@@ -131,8 +137,10 @@ export const ShareTripModal = ({ isOpen, onClose, trip }: ShareTripModalProps) =
           </div>
           
           {/* Visible scaled preview */}
-          <div className="transform scale-75 origin-center mb-4">
-            <TripPosterGenerator trip={trip} colorTheme={selectedTheme} />
+          <div className="flex justify-center w-full mb-4">
+            <div className="transform scale-50 sm:scale-60 origin-center max-w-fit">
+              <TripPosterGenerator trip={trip} colorTheme={selectedTheme} />
+            </div>
           </div>
           
           {/* Theme indicator */}
