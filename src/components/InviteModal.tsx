@@ -20,99 +20,38 @@ export const InviteModal = ({ isOpen, onClose, tripName, tripId }: InviteModalPr
   const [expireIn7Days, setExpireIn7Days] = useState(false);
   const { user } = useAuth();
 
-  // Generate or fetch invite token when modal opens
+  // Generate mock invite link immediately when modal opens
   useEffect(() => {
-    if (isOpen && user) {
-      generateInviteToken();
+    if (isOpen) {
+      generateMockInviteLink();
     }
-  }, [isOpen, user]);
+  }, [isOpen, requireApproval, expireIn7Days]);
 
-  const generateInviteToken = async () => {
-    if (!user) return;
+  const generateMockInviteLink = () => {
+    const mockToken = crypto.randomUUID();
+    let baseUrl = 'https://tryps.app/join';
     
-    setLoading(true);
-    try {
-      // Check if there's already an active invite for this trip
-      const { data: existingInvite } = await supabase
-        .from('trip_invites')
-        .select('invite_token')
-        .eq('trip_id', tripId)
-        .eq('created_by', user.id)
-        .eq('is_active', true)
-        .maybeSingle();
-
-      let token;
-      if (existingInvite) {
-        token = existingInvite.invite_token;
-      } else {
-        // Generate new invite token
-        token = crypto.randomUUID();
-        
-        const { error } = await supabase
-          .from('trip_invites')
-          .insert({
-            trip_id: tripId,
-            invite_token: token,
-            created_by: user.id,
-            require_approval: requireApproval,
-            expires_at: expireIn7Days ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null
-          });
-
-        if (error) {
-          console.error('Error creating invite:', error);
-          toast.error('Failed to generate invite link');
-          return;
-        }
-      }
-
-      setInviteLink(`${window.location.origin}/join/${token}`);
-    } catch (error) {
-      console.error('Error generating invite:', error);
-      toast.error('Failed to generate invite link');
-    } finally {
-      setLoading(false);
+    // Create universal link that handles both app and web
+    let inviteUrl = `${baseUrl}/${mockToken}`;
+    
+    // Add parameters for settings
+    const params = new URLSearchParams();
+    if (requireApproval) params.append('approval', 'true');
+    if (expireIn7Days) params.append('expires', '7d');
+    
+    if (params.toString()) {
+      inviteUrl += `?${params.toString()}`;
     }
+
+    setInviteLink(inviteUrl);
+    setLoading(false);
   };
 
-  const regenerateInviteToken = async () => {
-    if (!user) return;
-    
+  const regenerateInviteToken = () => {
     setLoading(true);
-    try {
-      // Deactivate old invites
-      await supabase
-        .from('trip_invites')
-        .update({ is_active: false })
-        .eq('trip_id', tripId)
-        .eq('created_by', user.id);
-
-      // Generate new token
-      const token = crypto.randomUUID();
-      
-      const { error } = await supabase
-        .from('trip_invites')
-        .insert({
-          trip_id: tripId,
-          invite_token: token,
-          created_by: user.id,
-          require_approval: requireApproval,
-          expires_at: expireIn7Days ? new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null
-        });
-
-      if (error) {
-        console.error('Error regenerating invite:', error);
-        toast.error('Failed to regenerate invite link');
-        return;
-      }
-
-      setInviteLink(`${window.location.origin}/join/${token}`);
-      toast.success('New invite link generated!');
-    } catch (error) {
-      console.error('Error regenerating invite:', error);
-      toast.error('Failed to regenerate invite link');
-    } finally {
-      setLoading(false);
-    }
+    // Generate new mock link
+    generateMockInviteLink();
+    toast.success('New invite link generated!');
   };
 
   if (!isOpen) return null;
@@ -154,7 +93,10 @@ export const InviteModal = ({ isOpen, onClose, tripName, tripId }: InviteModalPr
     
     const subject = encodeURIComponent(`Join my trip: ${tripName}`);
     const body = encodeURIComponent(
-      `Hi there!\n\nYou're invited to join my trip "${tripName}"!\n\nClick here to join: ${inviteLink}\n\nSee you there!`
+      `Hi there!\n\nYou're invited to join my trip "${tripName}"!\n\n` +
+      `Click here to join: ${inviteLink}\n\n` +
+      `If you have the Tryps app installed, this link will open it directly. ` +
+      `Otherwise, you can join through your browser!\n\nSee you there!`
     );
     window.open(`mailto:?subject=${subject}&body=${body}`);
   };
@@ -163,7 +105,7 @@ export const InviteModal = ({ isOpen, onClose, tripName, tripId }: InviteModalPr
     if (!inviteLink) return;
     
     const message = encodeURIComponent(
-      `You're invited to join my trip "${tripName}"! ${inviteLink}`
+      `You're invited to join my trip "${tripName}"! ${inviteLink} (Opens in Tryps app if installed)`
     );
     window.open(`sms:?body=${message}`);
   };
@@ -196,12 +138,12 @@ export const InviteModal = ({ isOpen, onClose, tripName, tripId }: InviteModalPr
           </div>
           <div className="flex gap-2">
             <div className="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-gray-300 text-sm font-mono truncate">
-              {loading ? 'Generating link...' : inviteLink || 'No link generated'}
+              {loading ? 'Loading invite link...' : inviteLink || 'Generating link...'}
             </div>
             <button
               onClick={handleCopyLink}
               disabled={loading || !inviteLink}
-              className="bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-3 rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               {copied ? <Check size={16} /> : <Copy size={16} />}
               <span className="hidden sm:inline">{copied ? 'Copied!' : 'Copy'}</span>

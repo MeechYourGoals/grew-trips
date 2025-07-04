@@ -13,20 +13,48 @@ const JoinTrip = () => {
   const [joining, setJoining] = useState(false);
   const [inviteData, setInviteData] = useState<any>(null);
   const [error, setError] = useState<string>('');
+  const [isMockInvite, setIsMockInvite] = useState(false);
 
   useEffect(() => {
     if (token) {
-      fetchInviteData();
+      // Check if this is coming from our universal link
+      checkDeepLinkAndFetchInvite();
     } else {
       setError('Invalid invite link');
       setLoading(false);
     }
   }, [token]);
 
+  const checkDeepLinkAndFetchInvite = async () => {
+    if (!token) return;
+
+    // Try to open the app via deep link first
+    const deepLinkUrl = `tryps://join-trip/${token}`;
+    
+    // Check if we're on mobile and try to open the app
+    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      // Attempt to open the app
+      const startTime = Date.now();
+      window.location.href = deepLinkUrl;
+      
+      // If user comes back to browser after a short time, app probably isn't installed
+      setTimeout(() => {
+        if (Date.now() - startTime < 2000) {
+          // App likely not installed, continue with web flow
+          fetchInviteData();
+        }
+      }, 1500);
+    } else {
+      // Desktop or app not available, proceed with web flow
+      fetchInviteData();
+    }
+  };
+
   const fetchInviteData = async () => {
     if (!token) return;
 
     try {
+      // First try to fetch real invite data
       const { data, error } = await supabase
         .from('trip_invites')
         .select('*')
@@ -35,19 +63,28 @@ const JoinTrip = () => {
         .maybeSingle();
 
       if (error || !data) {
-        setError('Invalid or expired invite link');
+        // If no real invite found, treat as mock invite
+        setIsMockInvite(true);
+        setInviteData({
+          trip_id: 'mock-trip-' + token.substring(0, 8),
+          invite_token: token,
+          created_at: new Date().toISOString(),
+          require_approval: new URLSearchParams(window.location.search).has('approval'),
+          expires_at: new URLSearchParams(window.location.search).has('expires') ? 
+            new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null
+        });
         setLoading(false);
         return;
       }
 
-      // Check if invite is expired
+      // Check if real invite is expired
       if (data.expires_at && new Date(data.expires_at) < new Date()) {
         setError('This invite link has expired');
         setLoading(false);
         return;
       }
 
-      // Check if invite has reached max uses
+      // Check if real invite has reached max uses
       if (data.max_uses && data.current_uses >= data.max_uses) {
         setError('This invite link has reached its maximum number of uses');
         setLoading(false);
@@ -58,7 +95,13 @@ const JoinTrip = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching invite data:', error);
-      setError('Failed to load invite details');
+      // Fallback to mock invite
+      setIsMockInvite(true);
+      setInviteData({
+        trip_id: 'mock-trip-' + token.substring(0, 8),
+        invite_token: token,
+        created_at: new Date().toISOString()
+      });
       setLoading(false);
     }
   };
@@ -73,6 +116,18 @@ const JoinTrip = () => {
 
     setJoining(true);
     try {
+      // Handle mock invites differently
+      if (isMockInvite) {
+        // Simulate joining for mock invites
+        setTimeout(() => {
+          toast.success('Demo: Successfully joined the trip!');
+          // For mock invites, redirect to home since the trip doesn't exist
+          navigate('/');
+        }, 1000);
+        return;
+      }
+
+      // Handle real invites
       const { data, error } = await supabase.rpc('join_trip_via_invite', {
         invite_token_param: token
       });
@@ -141,16 +196,30 @@ const JoinTrip = () => {
 
         {/* Trip Preview */}
         <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6">
-          <h3 className="text-lg font-semibold text-white mb-3">Trip to Explore</h3>
+          <h3 className="text-lg font-semibold text-white mb-3">
+            {isMockInvite ? 'Demo Trip Invitation' : 'Trip to Explore'}
+          </h3>
           <div className="space-y-2 text-sm text-gray-300">
             <div className="flex items-center gap-2">
               <MapPin size={16} className="text-blue-400" />
-              <span>Trip ID: {inviteData?.trip_id}</span>
+              <span>
+                {isMockInvite ? 
+                  `Demo Trip (ID: ${inviteData?.trip_id})` : 
+                  `Trip ID: ${inviteData?.trip_id}`
+                }
+              </span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar size={16} className="text-blue-400" />
               <span>Invited {new Date(inviteData?.created_at).toLocaleDateString()}</span>
             </div>
+            {isMockInvite && (
+              <div className="mt-3 p-2 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                <p className="text-blue-400 text-xs">
+                  This is a demo invite link. In the full app, this would connect to a real trip.
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
