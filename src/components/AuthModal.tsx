@@ -9,58 +9,117 @@ interface AuthModalProps {
 }
 
 export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
-  const { signIn, signInWithPhone, signUp, isLoading } = useAuth();
+  const { signIn, signInWithPhone, signInWithGoogle, signInWithApple, signUp, isLoading } = useAuth();
   const [mode, setMode] = useState<'signin' | 'signup' | 'phone'>('signin');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [verificationCode, setVerificationCode] = useState('');
+  const [error, setError] = useState('');
 
   if (!isOpen) return null;
 
   const handleEmailAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     try {
+      let result;
       if (mode === 'signup') {
-        await signUp(email, password, displayName);
+        result = await signUp(email, password, firstName, lastName);
       } else {
-        await signIn(email, password);
+        result = await signIn(email, password);
       }
+      
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+      
       onClose();
     } catch (error) {
       console.error('Auth error:', error);
+      setError('An unexpected error occurred');
     }
   };
 
   const handlePhoneAuth = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError('');
     try {
-      await signInWithPhone(phone, verificationCode);
-      onClose();
+      const result = await signInWithPhone(phone);
+      
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+      
+      // Show success message for OTP
+      setError('Verification code sent to your phone!');
     } catch (error) {
       console.error('Phone auth error:', error);
+      setError('An unexpected error occurred');
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    setError('');
+    try {
+      const result = await signInWithGoogle();
+      if (result.error) {
+        setError(result.error);
+      }
+      // Note: OAuth will redirect, so no need to close modal here
+    } catch (error) {
+      console.error('Google auth error:', error);
+      setError('An unexpected error occurred');
+    }
+  };
+
+  const handleAppleAuth = async () => {
+    setError('');
+    try {
+      const result = await signInWithApple();
+      if (result.error) {
+        setError(result.error);
+      }
+      // Note: OAuth will redirect, so no need to close modal here
+    } catch (error) {
+      console.error('Apple auth error:', error);
+      setError('An unexpected error occurred');
     }
   };
 
   const renderEmailForm = () => (
     <form onSubmit={handleEmailAuth} className="space-y-4">
       {mode === 'signup' && (
-        <div>
-          <label className="block text-gray-300 text-sm mb-2">Display Name</label>
-          <div className="relative">
-            <User size={20} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-              placeholder="Your name"
-              required
-              className="w-full bg-white/10 border border-white/20 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-glass-orange"
-            />
+        <>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-300 text-sm mb-2">First Name</label>
+              <input
+                type="text"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                placeholder="John"
+                required
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-glass-orange"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-300 text-sm mb-2">Last Name</label>
+              <input
+                type="text"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Doe"
+                required
+                className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-glass-orange"
+              />
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       <div>
@@ -106,6 +165,24 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       >
         {isLoading ? 'Loading...' : mode === 'signup' ? 'Create Account' : 'Sign In'}
       </button>
+
+      {/* Social Authentication */}
+      <div className="flex gap-2 mt-4">
+        <button
+          type="button"
+          onClick={handleGoogleAuth}
+          className="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium py-3 rounded-xl transition-colors"
+        >
+          Google
+        </button>
+        <button
+          type="button"
+          onClick={handleAppleAuth}
+          className="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-medium py-3 rounded-xl transition-colors"
+        >
+          Apple
+        </button>
+      </div>
     </form>
   );
 
@@ -126,24 +203,12 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         </div>
       </div>
 
-      <div>
-        <label className="block text-gray-300 text-sm mb-2">Verification Code</label>
-        <input
-          type="text"
-          value={verificationCode}
-          onChange={(e) => setVerificationCode(e.target.value)}
-          placeholder="123456"
-          required
-          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-glass-orange text-center text-lg tracking-widest"
-        />
-      </div>
-
       <button
         type="submit"
         disabled={isLoading}
         className="w-full bg-gradient-to-r from-glass-orange to-glass-yellow text-white font-medium py-3 rounded-xl hover:scale-105 transition-transform disabled:opacity-50"
       >
-        {isLoading ? 'Verifying...' : 'Verify & Sign In'}
+        {isLoading ? 'Sending...' : 'Send OTP'}
       </button>
     </form>
   );

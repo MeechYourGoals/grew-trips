@@ -5,17 +5,14 @@ import { useAuth } from '../../hooks/useAuth';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 
 export const NotificationsSection = () => {
-  const { user, updateProfile } = useAuth();
+  const { user, updateNotificationSettings } = useAuth();
   const { accentColors } = useTripVariant();
 
   if (!user) return null;
 
   const handleNotificationToggle = (setting: string) => {
-    updateProfile({
-      notificationSettings: {
-        ...user.notificationSettings,
-        [setting]: !user.notificationSettings[setting as keyof typeof user.notificationSettings]
-      }
+    updateNotificationSettings({
+      [setting]: !user.notificationSettings[setting as keyof typeof user.notificationSettings]
     });
   };
 
