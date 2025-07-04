@@ -5,46 +5,52 @@ export interface WhisperTranscriptionResult {
 }
 
 export class WhisperService {
-  private static readonly WHISPER_ENDPOINT = 'https://api.openai.com/v1/audio/transcriptions';
-
+  // Now handled by Supabase Edge Function
   static async transcribeAudio(audioBlob: Blob): Promise<WhisperTranscriptionResult> {
     try {
-      // Convert WebM to WAV for better compatibility
-      const formData = new FormData();
-      formData.append('file', audioBlob, 'audio.webm');
-      formData.append('model', 'whisper-1');
-      formData.append('language', 'en');
-      formData.append('response_format', 'json');
-
-      const response = await fetch(this.WHISPER_ENDPOINT, {
+      // Convert blob to base64 for edge function
+      const arrayBuffer = await audioBlob.arrayBuffer();
+      const base64Audio = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      
+      const response = await fetch('/functions/v1/voice-assistant', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+          'Content-Type': 'application/json',
         },
-        body: formData,
+        body: JSON.stringify({
+          audioBlob: base64Audio,
+          tripId: '1',
+          isProTrip: false,
+          tripContext: {}
+        }),
       });
 
       if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Whisper API error: ${response.status} - ${errorText}`);
+        throw new Error(`Voice API error: ${response.status}`);
       }
 
       const data = await response.json();
+      
+      if (!data.success) {
+        throw new Error(data.error || 'Transcription failed');
+      }
+
       return {
-        text: data.text?.trim() || '',
+        text: data.transcription?.trim() || '',
         success: true,
       };
     } catch (error) {
-      console.error('Whisper transcription error:', error);
+      console.error('Voice transcription error:', error);
       return {
         text: '',
         success: false,
-        error: error instanceof Error ? error.message : 'Transcription failed',
+        error: 'Something went wrong. Please try again.',
       };
     }
   }
 
   static async isApiKeyConfigured(): Promise<boolean> {
-    return !!import.meta.env.VITE_OPENAI_API_KEY;
+    // Always return true since backend handles API keys
+    return true;
   }
 }

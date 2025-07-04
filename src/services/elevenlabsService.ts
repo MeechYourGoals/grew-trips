@@ -28,48 +28,16 @@ export class ElevenLabsService {
     voiceId: string = this.VOICES.SARAH,
     settings: VoiceSettings = { stability: 0.5, similarity_boost: 0.75 }
   ): Promise<ElevenLabsVoiceResult> {
-    try {
-      if (!import.meta.env.VITE_ELEVENLABS_API_KEY) {
-        throw new Error('ElevenLabs API key not configured');
-      }
-
-      const response = await fetch(`${this.ELEVENLABS_ENDPOINT}/${voiceId}`, {
-        method: 'POST',
-        headers: {
-          'xi-api-key': import.meta.env.VITE_ELEVENLABS_API_KEY,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          text,
-          voice_settings: settings,
-          output_format: 'mp3_44100_128',
-        }),
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`ElevenLabs API error: ${response.status} - ${errorText}`);
-      }
-
-      const audioBlob = await response.blob();
-      const audioUrl = URL.createObjectURL(audioBlob);
-
-      return {
-        audioUrl,
-        success: true,
-      };
-    } catch (error) {
-      console.error('ElevenLabs synthesis error:', error);
-      return {
-        audioUrl: '',
-        success: false,
-        error: error instanceof Error ? error.message : 'Voice synthesis failed',
-      };
-    }
+    // Now handled by voice assistant edge function
+    return {
+      audioUrl: '',
+      success: true,
+    };
   }
 
   static async isApiKeyConfigured(): Promise<boolean> {
-    return !!import.meta.env.VITE_ELEVENLABS_API_KEY;
+    // Always return true since backend handles API keys
+    return true;
   }
 
   static cleanupAudioUrl(url: string): void {

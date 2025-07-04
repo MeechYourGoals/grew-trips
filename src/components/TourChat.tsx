@@ -53,14 +53,7 @@ export const TourChat = () => {
         </div>
       </div>
 
-      {/* Voice Assistant for Pro */}
-      <div className="mb-6 p-4 bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl">
-        <div className="mb-3">
-          <h4 className="text-sm font-medium text-white mb-1">AI Voice Assistant</h4>
-          <p className="text-xs text-gray-400">Ask about event details, schedule, or confirmations</p>
-        </div>
-        <VoiceAssistant isProTrip={true} />
-      </div>
+      {/* Voice Assistant removed - now integrated in message input */}
 
       {/* Messages */}
       <div className="space-y-4 mb-6 max-h-80 overflow-y-auto">
@@ -107,15 +100,18 @@ export const TourChat = () => {
             onKeyPress={handleKeyPress}
             placeholder=""
             rows={2}
-            className={`w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-400 focus:outline-none focus:border-${accentColors.primary} resize-none`}
+            className={`w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 pr-20 text-white placeholder-gray-400 focus:outline-none focus:border-${accentColors.primary} resize-none`}
           />
-          <button
-            onClick={handleSendMessage}
-            disabled={!message.trim()}
-            className={`absolute right-2 bottom-2 bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-all duration-200`}
-          >
-            <Send size={16} />
-          </button>
+          <div className="absolute right-2 bottom-2 flex items-center gap-2">
+            <VoiceAssistant isProTrip={true} />
+            <button
+              onClick={handleSendMessage}
+              disabled={!message.trim()}
+              className={`bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-all duration-200`}
+            >
+              <Send size={16} />
+            </button>
+          </div>
         </div>
       </div>
 

@@ -80,14 +80,7 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
         </div>
       </div>
 
-      {/* Voice Assistant */}
-      <div className="mb-6 p-4 bg-gray-800/50 border border-gray-700 rounded-xl">
-        <div className="mb-3">
-          <h4 className="text-sm font-medium text-gray-300 mb-1">AI Voice Assistant</h4>
-          <p className="text-xs text-gray-500">Ask about trip details, schedule, or confirmations</p>
-        </div>
-        <VoiceAssistant isProTrip={false} />
-      </div>
+      {/* Voice Assistant removed - now integrated in message input */}
 
       {/* Search Bar */}
       <div className="relative mb-6">
@@ -164,15 +157,18 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
             onKeyPress={handleKeyPress}
             placeholder="Type your message..."
             rows={2}
-            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 pr-12 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
+            className="w-full bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 pr-20 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 resize-none"
           />
-          <button
-            onClick={handleSendMessage}
-            disabled={!message.trim()}
-            className="absolute right-2 bottom-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-colors"
-          >
-            <Send size={16} />
-          </button>
+          <div className="absolute right-2 bottom-2 flex items-center gap-2">
+            <VoiceAssistant isProTrip={false} />
+            <button
+              onClick={handleSendMessage}
+              disabled={!message.trim()}
+              className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-colors"
+            >
+              <Send size={16} />
+            </button>
+          </div>
         </div>
       </div>
     </div>
