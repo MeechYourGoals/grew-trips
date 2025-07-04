@@ -7,6 +7,7 @@ import { useParams } from 'react-router-dom';
 import { VoiceAssistant } from './VoiceAssistant';
 import { demoModeService } from '@/services/demoModeService';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { getTripById } from '@/data/tripsData';
 
 import 'stream-chat-react/dist/css/v2/index.css';
 
@@ -24,6 +25,13 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
 
   const currentTripId = tripId || eventId || 'default-trip';
 
+  // Reset mock messages when demo mode changes
+  useEffect(() => {
+    if (!isDemoMode) {
+      setMockMessagesInjected(false);
+    }
+  }, [isDemoMode]);
+
   useEffect(() => {
     const initializeChannel = async () => {
       if (!isReady || !currentTripId) return;
@@ -35,11 +43,14 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
         
         // Inject mock messages in demo mode
         if (isDemoMode && tripChannel && !mockMessagesInjected) {
-          // Determine trip type from URL or default
-          const tripType = demoModeService.getTripType({ 
-            title: currentTripId,
-            category: currentTripId.includes('pro-') ? 'pro' : 'consumer'
-          });
+          // Get actual trip data by ID
+          const tripIdNum = parseInt(currentTripId, 10);
+          const trip = tripIdNum ? getTripById(tripIdNum) : null;
+          
+          // Determine trip type from actual trip data
+          const tripType = demoModeService.getTripType(trip);
+          
+          console.log('Demo Mode - Trip:', trip?.title, 'Type:', tripType);
           
           await demoModeService.injectMockMessages(tripChannel, tripType);
           setMockMessagesInjected(true);

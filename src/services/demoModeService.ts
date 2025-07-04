@@ -104,6 +104,8 @@ export class DemoModeService {
     const title = tripData.title?.toLowerCase() || '';
     const category = tripData.category?.toLowerCase() || '';
 
+    console.log('getTripType - Title:', title, 'Category:', category);
+
     // Professional trip types
     if (category.includes('pro') || tripData.isPro) {
       if (title.includes('lakers') || title.includes('sports')) return 'sports-pro';
@@ -115,9 +117,9 @@ export class DemoModeService {
 
     // Consumer trip types
     if (title.includes('bachelorette') || title.includes('bachelor')) return 'bachelorette';
-    if (title.includes('family') || title.includes('vacation')) return 'family-vacation';
+    if (title.includes('family') || title.includes('vacation') || title.includes('vacay')) return 'family-vacation';
     if (title.includes('coachella') || title.includes('festival')) return 'festival';
-    if (title.includes('bali') || title.includes('getaway')) return 'leisure-group';
+    if (title.includes('bali') || title.includes('getaway') || title.includes('spring break') || title.includes('cancun')) return 'leisure-group';
     if (title.includes('school') || title.includes('field trip')) return 'school-trip';
     if (title.includes('golf') || title.includes('fantasy')) return 'friends-trip';
 
@@ -128,10 +130,17 @@ export class DemoModeService {
     if (!this.isDemoMode) return;
 
     try {
+      console.log('Injecting mock messages for trip type:', tripType);
       const mockMessages = await this.getMockMessages(tripType);
+      console.log('Found mock messages:', mockMessages.length);
+      
+      if (mockMessages.length === 0) {
+        console.warn('No mock messages found for trip type:', tripType);
+        return;
+      }
       
       for (const mock of mockMessages) {
-        const messageId = `mock_${mock.id}_${Date.now()}`;
+        const messageId = `mock_${mock.id}_${Date.now()}_${Math.random()}`;
         const createdAt = new Date();
         createdAt.setDate(createdAt.getDate() - mock.timestamp_offset_days);
         createdAt.setHours(createdAt.getHours() - Math.floor(Math.random() * 12));
@@ -152,11 +161,17 @@ export class DemoModeService {
           isMock: true  // Visible flag for dev tools
         };
 
+        console.log('Adding mock message:', mockMessage.text, 'from', mockMessage.user.name);
+        
         // Add message to channel state without sending to server
-        channel.state.addMessageSorted(mockMessage as any, true);
+        try {
+          channel.state.addMessageSorted(mockMessage as any, true);
+        } catch (streamError) {
+          console.error('Error adding message to GetStream:', streamError);
+        }
       }
 
-      // Messages added to channel state will trigger UI update
+      console.log('Mock messages injection completed. Channel message count:', channel.state.messages.length);
 
     } catch (error) {
       console.error('Error injecting mock messages:', error);
