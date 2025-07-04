@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Mic, MicOff, Volume2, X } from 'lucide-react';
 import { useAudioRecorder } from '../hooks/useAudioRecorder';
 import { TripContextService } from '../services/tripContextService';
+import { supabase } from '@/integrations/supabase/client';
 
 interface VoiceSession {
   transcription: string;
@@ -55,28 +56,46 @@ export const VoiceAssistantModal = ({
       const arrayBuffer = await audioBlob.arrayBuffer();
       const base64Audio = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
       
-      // Call voice assistant edge function
-      const response = await fetch('/functions/v1/voice-assistant', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Call voice assistant edge function using Supabase client
+      const { data, error } = await supabase.functions.invoke('voice-assistant', {
+        body: {
           audioBlob: base64Audio,
           tripId,
           isProTrip,
           tripContext: context
-        }),
+        }
       });
 
-      if (!response.ok) {
-        throw new Error('Voice processing failed');
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error('Network error - please check your connection and try again');
       }
-
-      const data = await response.json();
       
       if (!data.success) {
-        throw new Error(data.error || 'Voice processing failed');
+        // Handle specific error types with user-friendly messages
+        let errorMessage = data.error || 'Voice processing failed';
+        
+        switch (data.errorType) {
+          case 'validation':
+            errorMessage = data.error || 'Please check your audio and try again';
+            break;
+          case 'whisper':
+            errorMessage = 'Could not understand your audio - please speak more clearly and try again';
+            break;
+          case 'gpt':
+            errorMessage = 'AI assistant is temporarily busy - please try again in a moment';
+            break;
+          case 'elevenlabs':
+            errorMessage = 'Voice synthesis unavailable - but I can still help with text responses';
+            break;
+          case 'network':
+            errorMessage = 'Connection issue - please check your internet and try again';
+            break;
+          default:
+            errorMessage = 'Voice assistant is temporarily unavailable - please try again';
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const newSession: VoiceSession = {
@@ -90,15 +109,24 @@ export const VoiceAssistantModal = ({
 
       // Auto-play response if audio is available
       if (data.audioUrl) {
-        const audio = new Audio(data.audioUrl);
-        audio.play().catch(console.error);
+        try {
+          const audio = new Audio(data.audioUrl);
+          await audio.play();
+        } catch (audioError) {
+          console.log('Audio playback failed:', audioError);
+          // Don't throw error for audio playback issues
+        }
       }
 
     } catch (error) {
       console.error('Voice processing error:', error);
+      
+      // Provide user-friendly error message
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+      
       setSession({
         transcription: '',
-        response: 'Sorry, something went wrong. Please try again.',
+        response: errorMessage,
         isComplete: true
       });
     } finally {

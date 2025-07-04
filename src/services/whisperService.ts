@@ -1,3 +1,5 @@
+import { supabase } from '@/integrations/supabase/client';
+
 export interface WhisperTranscriptionResult {
   text: string;
   success: boolean;
@@ -12,27 +14,22 @@ export class WhisperService {
       const arrayBuffer = await audioBlob.arrayBuffer();
       const base64Audio = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
       
-      const response = await fetch('/functions/v1/voice-assistant', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('voice-assistant', {
+        body: {
           audioBlob: base64Audio,
           tripId: '1',
           isProTrip: false,
           tripContext: {}
-        }),
+        }
       });
 
-      if (!response.ok) {
-        throw new Error(`Voice API error: ${response.status}`);
+      if (error) {
+        console.error('Supabase function error:', error);
+        throw new Error('Network error - please check your connection and try again');
       }
-
-      const data = await response.json();
       
       if (!data.success) {
-        throw new Error(data.error || 'Transcription failed');
+        throw new Error(data.error || 'Voice processing failed');
       }
 
       return {
@@ -41,10 +38,13 @@ export class WhisperService {
       };
     } catch (error) {
       console.error('Voice transcription error:', error);
+      
+      const errorMessage = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
+      
       return {
         text: '',
         success: false,
-        error: 'Something went wrong. Please try again.',
+        error: errorMessage,
       };
     }
   }
