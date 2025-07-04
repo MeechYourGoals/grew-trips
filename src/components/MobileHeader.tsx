@@ -36,6 +36,7 @@ export const MobileHeader = ({
           <button
             onClick={onCreateTrip}
             className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black p-3 rounded-xl transition-all duration-300 shadow-lg"
+            title="New Trip"
           >
             <Plus size={20} />
           </button>

@@ -1,10 +1,12 @@
 
 import React, { useState } from 'react';
-import { Crown, Plus, Settings, User, Search } from 'lucide-react';
+import { Crown, Plus, Settings, User, LogIn } from 'lucide-react';
 import { NotificationBell } from '../NotificationBell';
 import { SearchBar } from '../SearchBar';
 import { GlobalSearchModal } from '../GlobalSearchModal';
+import { AuthModal } from '../AuthModal';
 import { useGlobalSearch } from '../../hooks/useGlobalSearch';
+import { useAuth } from '../../hooks/useAuth';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,7 +23,9 @@ interface DesktopHeaderProps {
 
 export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }: DesktopHeaderProps) => {
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const { search } = useGlobalSearch();
+  const { user, signOut } = useAuth();
 
   const handleSearchClick = () => {
     setShowSearchModal(true);
@@ -32,6 +36,10 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
       search(query);
       setShowSearchModal(true);
     }
+  };
+
+  const handleAuthClick = () => {
+    setShowAuthModal(true);
   };
 
   return (
@@ -49,7 +57,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
           </p>
         </div>
         
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           {/* Global Search Bar */}
           <div className="w-80">
             <SearchBar
@@ -67,48 +75,77 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
             Upgrade to Plus/Pro
           </button>
           
-          <button
-            onClick={onCreateTrip}
-            className="bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:bg-gray-800/80 hover:border-gray-600 text-white px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl font-medium"
-          >
-            <Plus size={20} />
-            Create New Trip
-          </button>
-
-          <NotificationBell />
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:bg-gray-800/80 hover:border-gray-600 text-white p-3 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
-                <Settings size={20} />
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent 
-              align="end" 
-              className="bg-gray-900/95 backdrop-blur-md border border-gray-700 text-white min-w-[200px] z-50"
+          {/* Consistent sized buttons container */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onCreateTrip}
+              className="w-12 h-12 bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:bg-gray-800/80 hover:border-gray-600 text-white rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+              title="New Trip"
             >
-              <DropdownMenuItem 
-                onClick={onSettings}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
+              <Plus size={20} />
+            </button>
+
+            <div className="w-12 h-12">
+              <NotificationBell />
+            </div>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="w-12 h-12 bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:bg-gray-800/80 hover:border-gray-600 text-white rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
+                  <Settings size={20} />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent 
+                align="end" 
+                sideOffset={8}
+                className="bg-gray-900/95 backdrop-blur-md border border-gray-700 text-white min-w-[200px] z-50 rounded-xl shadow-lg"
               >
-                <User size={16} />
-                Account Settings
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                onClick={onUpgrade}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
-              >
-                <Crown size={16} className="text-yellow-500" />
-                Upgrade to Plus/Pro
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+                {!user && (
+                  <DropdownMenuItem 
+                    onClick={handleAuthClick}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
+                  >
+                    <LogIn size={16} />
+                    Log In / Sign Up
+                  </DropdownMenuItem>
+                )}
+                <DropdownMenuItem 
+                  onClick={onSettings}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
+                >
+                  <User size={16} />
+                  Account Settings
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={onUpgrade}
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
+                >
+                  <Crown size={16} className="text-yellow-500" />
+                  Upgrade to Plus/Pro
+                </DropdownMenuItem>
+                {user && (
+                  <DropdownMenuItem 
+                    onClick={signOut}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer text-red-400"
+                  >
+                    <LogIn size={16} />
+                    Sign Out
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
 
       <GlobalSearchModal 
         isOpen={showSearchModal}
         onClose={() => setShowSearchModal(false)}
+      />
+      
+      <AuthModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
       />
     </>
   );
