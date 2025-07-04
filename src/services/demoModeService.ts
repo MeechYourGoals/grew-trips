@@ -115,13 +115,14 @@ export class DemoModeService {
       return 'sports-pro';
     }
 
-    // Consumer trip types
-    if (title.includes('bachelorette') || title.includes('bachelor')) return 'bachelorette';
-    if (title.includes('family') || title.includes('vacation') || title.includes('vacay')) return 'family-vacation';
-    if (title.includes('coachella') || title.includes('festival')) return 'festival';
-    if (title.includes('bali') || title.includes('getaway') || title.includes('spring break') || title.includes('cancun')) return 'leisure-group';
-    if (title.includes('school') || title.includes('field trip')) return 'school-trip';
-    if (title.includes('golf') || title.includes('fantasy')) return 'friends-trip';
+    // Consumer trip types - Enhanced mapping
+    if (title.includes('bachelorette') || title.includes('bachelor') || title.includes('kristen')) return 'bachelorette';
+    if (title.includes('family') || title.includes('vacation') || title.includes('vacay') || title.includes('johnson')) return 'family-vacation';
+    if (title.includes('coachella') || title.includes('festival') || title.includes('squad')) return 'festival';
+    if (title.includes('bali') || title.includes('getaway') || title.includes('spring break') || title.includes('cancun') || title.includes('kappa alpha psi')) return 'leisure-group';
+    if (title.includes('school') || title.includes('field trip') || title.includes('harris') || title.includes('8th grade') || title.includes('washington dc')) return 'school-trip';
+    if (title.includes('golf') || title.includes('fantasy') || title.includes('outing') || title.includes('phoenix') || title.includes('commissioner')) return 'friends-trip';
+    if (title.includes('tokyo') || title.includes('adventure') || title.includes('japan')) return 'leisure-group';
 
     return 'friends-trip';
   }

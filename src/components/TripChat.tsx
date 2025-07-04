@@ -8,6 +8,7 @@ import { VoiceAssistant } from './VoiceAssistant';
 import { demoModeService } from '@/services/demoModeService';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { getTripById } from '@/data/tripsData';
+import { DemoChat } from './DemoChat';
 
 import 'stream-chat-react/dist/css/v2/index.css';
 
@@ -24,6 +25,11 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
   const [mockMessagesInjected, setMockMessagesInjected] = useState(false);
 
   const currentTripId = tripId || eventId || 'default-trip';
+
+  // If demo mode is enabled, show demo chat immediately
+  if (isDemoMode) {
+    return <DemoChat tripId={currentTripId} />;
+  }
 
   // Reset mock messages when demo mode changes
   useEffect(() => {
