@@ -14,6 +14,7 @@ import EventDetail from "./pages/EventDetail";
 import ReviewAnalysis from "./pages/ReviewAnalysis";
 import AudioOverviews from "./pages/AudioOverviews";
 import NotFound from "./pages/NotFound";
+import JoinTrip from "./pages/JoinTrip";
 import { AdminDashboard } from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,8 @@ const App = () => (
               <Route path="/" element={<Index />} />
               <Route path="/trip/:tripId" element={<TripDetail />} />
               <Route path="/trip/:tripId/edit-itinerary" element={<ItineraryAssignmentPage />} />
+              {/* Join trip route */}
+              <Route path="/join/:token" element={<JoinTrip />} />
               {/* Pro trip routes - Fixed pattern to properly match URLs like /tour/pro-2 */}
               <Route path="/tour/pro/:proTripId" element={<ProTripDetail />} />
               {/* Events routes - New routes for Events functionality */}

@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Trash, User, Plus, MoreHorizontal } from 'lucide-react';
+import { InviteModal } from './InviteModal';
 
 interface Participant {
   id: number;
@@ -23,6 +24,7 @@ interface TripCardProps {
 
 export const TripCard = ({ trip }: TripCardProps) => {
   const navigate = useNavigate();
+  const [showInviteModal, setShowInviteModal] = useState(false);
 
   const handleViewTrip = () => {
     navigate(`/trip/${trip.id}`);
@@ -80,7 +82,11 @@ export const TripCard = ({ trip }: TripCardProps) => {
           <div className="flex items-center justify-between mb-3">
             <span className="text-sm text-gray-400 font-medium">Travelers</span>
             <div className="flex gap-2">
-              <button className="text-yellow-400 hover:text-yellow-300 transition-colors p-1 hover:bg-yellow-400/10 rounded-lg">
+              <button 
+                onClick={() => setShowInviteModal(true)}
+                className="text-yellow-400 hover:text-yellow-300 transition-colors p-1 hover:bg-yellow-400/10 rounded-lg"
+                title="Invite people to trip"
+              >
                 <Plus size={16} />
               </button>
               <button className="text-gray-400 hover:text-gray-300 transition-colors p-1 hover:bg-white/10 rounded-lg">
@@ -135,6 +141,13 @@ export const TripCard = ({ trip }: TripCardProps) => {
           </div>
         </div>
       </div>
+
+      <InviteModal 
+        isOpen={showInviteModal}
+        onClose={() => setShowInviteModal(false)}
+        tripName={trip.title}
+        tripId={trip.id.toString()}
+      />
     </div>
   );
 };

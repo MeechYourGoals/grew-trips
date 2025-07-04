@@ -156,6 +156,75 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_invites: {
+        Row: {
+          created_at: string
+          created_by: string
+          current_uses: number
+          expires_at: string | null
+          id: string
+          invite_token: string
+          is_active: boolean
+          max_uses: number | null
+          require_approval: boolean
+          trip_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          current_uses?: number
+          expires_at?: string | null
+          id?: string
+          invite_token: string
+          is_active?: boolean
+          max_uses?: number | null
+          require_approval?: boolean
+          trip_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          current_uses?: number
+          expires_at?: string | null
+          id?: string
+          invite_token?: string
+          is_active?: boolean
+          max_uses?: number | null
+          require_approval?: boolean
+          trip_id?: string
+        }
+        Relationships: []
+      }
+      trip_members: {
+        Row: {
+          id: string
+          joined_at: string
+          joined_via_invite_token: string | null
+          role: string
+          status: string
+          trip_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          joined_at?: string
+          joined_via_invite_token?: string | null
+          role?: string
+          status?: string
+          trip_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          joined_at?: string
+          joined_via_invite_token?: string | null
+          role?: string
+          status?: string
+          trip_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       trip_message_reactions: {
         Row: {
           created_at: string
@@ -535,6 +604,10 @@ export type Database = {
       cleanup_expired_reviews: {
         Args: Record<PropertyKey, never>
         Returns: undefined
+      }
+      join_trip_via_invite: {
+        Args: { invite_token_param: string }
+        Returns: Json
       }
     }
     Enums: {
