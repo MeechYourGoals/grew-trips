@@ -86,6 +86,150 @@ export type Database = {
         }
         Relationships: []
       }
+      calendar_integrations: {
+        Row: {
+          access_token: string | null
+          calendar_provider: string
+          created_at: string
+          expires_at: string | null
+          id: string
+          refresh_token: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          calendar_provider: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          refresh_token?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          calendar_provider?: string
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          refresh_token?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      event_attendees: {
+        Row: {
+          attendance_status: string | null
+          created_at: string
+          event_id: string | null
+          id: string
+          rsvp_time: string | null
+          user_id: string
+        }
+        Insert: {
+          attendance_status?: string | null
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          rsvp_time?: string | null
+          user_id: string
+        }
+        Update: {
+          attendance_status?: string | null
+          created_at?: string
+          event_id?: string | null
+          id?: string
+          rsvp_time?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_attendees_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "trip_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      expense_splits: {
+        Row: {
+          amount_owed: number
+          created_at: string
+          id: string
+          payment_method: string | null
+          payment_status: string | null
+          receipt_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount_owed: number
+          created_at?: string
+          id?: string
+          payment_method?: string | null
+          payment_status?: string | null
+          receipt_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount_owed?: number
+          created_at?: string
+          id?: string
+          payment_method?: string | null
+          payment_status?: string | null
+          receipt_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expense_splits_receipt_id_fkey"
+            columns: ["receipt_id"]
+            isOneToOne: false
+            referencedRelation: "trip_receipts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      file_ai_extractions: {
+        Row: {
+          confidence_score: number | null
+          created_at: string
+          extracted_data: Json
+          extraction_type: string
+          file_id: string | null
+          id: string
+        }
+        Insert: {
+          confidence_score?: number | null
+          created_at?: string
+          extracted_data?: Json
+          extraction_type: string
+          file_id?: string | null
+          id?: string
+        }
+        Update: {
+          confidence_score?: number | null
+          created_at?: string
+          extracted_data?: Json
+          extraction_type?: string
+          file_id?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "file_ai_extractions_file_id_fkey"
+            columns: ["file_id"]
+            isOneToOne: false
+            referencedRelation: "trip_files"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       locations: {
         Row: {
           address: string | null
@@ -194,6 +338,79 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_requests: {
+        Row: {
+          created_at: string
+          expense_split_id: string | null
+          id: string
+          payment_link: string | null
+          request_status: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          expense_split_id?: string | null
+          id?: string
+          payment_link?: string | null
+          request_status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          expense_split_id?: string | null
+          id?: string
+          payment_link?: string | null
+          request_status?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_requests_expense_split_id_fkey"
+            columns: ["expense_split_id"]
+            isOneToOne: false
+            referencedRelation: "expense_splits"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      photo_albums: {
+        Row: {
+          album_name: string
+          cover_photo_id: string | null
+          created_at: string
+          created_by: string
+          id: string
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          album_name: string
+          cover_photo_id?: string | null
+          created_at?: string
+          created_by: string
+          id?: string
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          album_name?: string
+          cover_photo_id?: string | null
+          created_at?: string
+          created_by?: string
+          id?: string
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "photo_albums_cover_photo_id_fkey"
+            columns: ["cover_photo_id"]
+            isOneToOne: false
+            referencedRelation: "trip_photos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -293,6 +510,90 @@ export type Database = {
           keyword?: string
           location_name?: string
           source?: string
+        }
+        Relationships: []
+      }
+      trip_events: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          end_time: string | null
+          google_event_id: string | null
+          id: string
+          location: string | null
+          metadata: Json | null
+          start_time: string
+          title: string
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_time?: string | null
+          google_event_id?: string | null
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          start_time: string
+          title: string
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_time?: string | null
+          google_event_id?: string | null
+          id?: string
+          location?: string | null
+          metadata?: Json | null
+          start_time?: string
+          title?: string
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trip_files: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_path: string
+          file_size: number | null
+          file_type: string
+          id: string
+          metadata: Json | null
+          trip_id: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          file_name: string
+          file_path: string
+          file_size?: number | null
+          file_type: string
+          id?: string
+          metadata?: Json | null
+          trip_id: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_path?: string
+          file_size?: number | null
+          file_type?: string
+          id?: string
+          metadata?: Json | null
+          trip_id?: string
+          updated_at?: string
+          uploaded_by?: string
         }
         Relationships: []
       }
@@ -433,6 +734,78 @@ export type Database = {
           user_avatar?: string
           user_id?: string
           user_name?: string
+        }
+        Relationships: []
+      }
+      trip_photos: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          photo_path: string
+          thumbnail_path: string | null
+          trip_id: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          photo_path: string
+          thumbnail_path?: string | null
+          trip_id: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          photo_path?: string
+          thumbnail_path?: string | null
+          trip_id?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
+      trip_receipts: {
+        Row: {
+          created_at: string
+          currency: string | null
+          id: string
+          parsed_data: Json | null
+          receipt_image_path: string
+          total_amount: number | null
+          trip_id: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          created_at?: string
+          currency?: string | null
+          id?: string
+          parsed_data?: Json | null
+          receipt_image_path: string
+          total_amount?: number | null
+          trip_id: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string | null
+          id?: string
+          parsed_data?: Json | null
+          receipt_image_path?: string
+          total_amount?: number | null
+          trip_id?: string
+          updated_at?: string
+          uploaded_by?: string
         }
         Relationships: []
       }

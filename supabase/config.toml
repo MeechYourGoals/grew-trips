@@ -11,3 +11,21 @@ verify_jwt = true
 
 [functions.broadcasts-fetch]
 verify_jwt = true
+
+[functions.file-upload]
+verify_jwt = true
+
+[functions.photo-upload]
+verify_jwt = true
+
+[functions.receipt-parser]
+verify_jwt = true
+
+[functions.calendar-sync]
+verify_jwt = true
+
+[functions.venue-enricher]
+verify_jwt = true
+
+[functions.file-ai-parser]
+verify_jwt = true
