@@ -1,144 +1,110 @@
 
 import React, { useState, useEffect } from 'react';
-import { Send, Search, MessageCircle, User, Settings } from 'lucide-react';
-import { Channel, MessageList, MessageInput, Thread, Window } from 'stream-chat-react';
-import { useGetStream } from '../hooks/useGetStream';
+import { Send, MessageCircle } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import { VoiceAssistant } from './VoiceAssistant';
 import { demoModeService } from '@/services/demoModeService';
-import { useDemoMode } from '@/hooks/useDemoMode';
 import { getTripById } from '@/data/tripsData';
-import { DemoChat } from './DemoChat';
-
-import 'stream-chat-react/dist/css/v2/index.css';
 
 interface TripChatProps {
   groupChatEnabled?: boolean;
 }
 
+interface MockMessage {
+  id: string;
+  text: string;
+  user: {
+    id: string;
+    name: string;
+    image: string;
+  };
+  created_at: string;
+  isMock: boolean;
+}
+
 export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
   const { tripId, eventId } = useParams();
-  const { client, getTripChannel, isReady, isConnecting, error } = useGetStream();
-  const { isDemoMode } = useDemoMode();
-  const [channel, setChannel] = useState<any>(null);
+  const [messages, setMessages] = useState<MockMessage[]>([]);
+  const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
-  const [mockMessagesInjected, setMockMessagesInjected] = useState(false);
 
   const currentTripId = tripId || eventId || 'default-trip';
 
-  // If demo mode is enabled, show demo chat immediately
-  if (isDemoMode) {
-    return <DemoChat tripId={currentTripId} />;
-  }
-
-  // Reset mock messages when demo mode changes
   useEffect(() => {
-    if (!isDemoMode) {
-      setMockMessagesInjected(false);
-    }
-  }, [isDemoMode]);
-
-  useEffect(() => {
-    const initializeChannel = async () => {
-      if (!isReady || !currentTripId) return;
-
-      try {
-        setLoading(true);
-        const tripChannel = await getTripChannel(currentTripId);
-        setChannel(tripChannel);
+    const loadMockMessages = async () => {
+      setLoading(true);
+      
+      const tripIdNum = parseInt(currentTripId, 10);
+      const trip = tripIdNum ? getTripById(tripIdNum) : null;
+      const tripType = demoModeService.getTripType(trip);
+      
+      const mockMessages = await demoModeService.getMockMessages(tripType);
+      
+      const formattedMessages: MockMessage[] = mockMessages.map((mock, index) => {
+        const createdAt = new Date();
+        createdAt.setDate(createdAt.getDate() - (mock.timestamp_offset_days || 1));
+        createdAt.setHours(createdAt.getHours() - Math.floor(Math.random() * 12));
         
-        // Inject mock messages in demo mode
-        if (isDemoMode && tripChannel && !mockMessagesInjected) {
-          // Get actual trip data by ID
-          const tripIdNum = parseInt(currentTripId, 10);
-          const trip = tripIdNum ? getTripById(tripIdNum) : null;
-          
-          // Determine trip type from actual trip data
-          const tripType = demoModeService.getTripType(trip);
-          
-          console.log('Demo Mode - Trip:', trip?.title, 'Type:', tripType);
-          
-          await demoModeService.injectMockMessages(tripChannel, tripType);
-          setMockMessagesInjected(true);
-        }
-      } catch (err) {
-        console.error('Failed to initialize chat channel:', err);
-      } finally {
-        setLoading(false);
-      }
+        return {
+          id: `mock_${mock.id}_${index}`,
+          text: mock.message_content,
+          user: {
+            id: `user_${mock.sender_name.replace(/\s+/g, '_').toLowerCase()}`,
+            name: mock.sender_name,
+            image: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 100000)}?w=40&h=40&fit=crop&crop=face`
+          },
+          created_at: createdAt.toISOString(),
+          isMock: true
+        };
+      });
+
+      // Sort messages by date (oldest first)
+      formattedMessages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+      
+      setMessages(formattedMessages);
+      setLoading(false);
     };
 
-    initializeChannel();
-  }, [isReady, currentTripId, getTripChannel, isDemoMode, mockMessagesInjected]);
+    loadMockMessages();
+  }, [currentTripId]);
 
-  // Show disabled chat notice for large events
-  if (!groupChatEnabled) {
-    return (
-      <div className="p-6">
-        <div className="text-center py-12">
-          <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-8 max-w-md mx-auto">
-            <Settings size={48} className="text-gray-500 mx-auto mb-4" />
-            <h4 className="text-lg font-medium text-gray-300 mb-2">
-              Group Chat Disabled
-            </h4>
-            <p className="text-gray-500 text-sm mb-4">
-              Group chat has been disabled for this event to manage large-scale communication. 
-              You can still access broadcasts, calendar updates, and other event information.
-            </p>
-            <div className="flex items-center justify-center gap-2 text-blue-400 text-sm">
-              <MessageCircle size={16} />
-              <span>Check Broadcasts for important updates</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const handleSendMessage = () => {
+    if (!inputValue.trim()) return;
+    
+    const newMessage: MockMessage = {
+      id: `user_${Date.now()}`,
+      text: inputValue,
+      user: {
+        id: 'current_user',
+        name: 'You',
+        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'
+      },
+      created_at: new Date().toISOString(),
+      isMock: false
+    };
+    
+    setMessages(prev => [...prev, newMessage]);
+    setInputValue('');
+  };
 
-  // Show loading state
-  if (isConnecting || loading) {
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
+    }
+  };
+
+  const formatTime = (timestamp: string) => {
+    const date = new Date(timestamp);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  if (loading) {
     return (
       <div className="p-6">
         <div className="text-center py-12">
           <MessageCircle size={48} className="text-blue-400 mx-auto mb-4 animate-pulse" />
-          <h4 className="text-lg font-medium text-gray-300 mb-2">Connecting to Chat...</h4>
-          <p className="text-gray-500 text-sm">Setting up real-time messaging</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Show error state
-  if (error) {
-    return (
-      <div className="p-6">
-        <div className="text-center py-12">
-          <div className="bg-red-900/20 border border-red-500/30 rounded-xl p-8 max-w-md mx-auto">
-            <MessageCircle size={48} className="text-red-400 mx-auto mb-4" />
-            <h4 className="text-lg font-medium text-red-300 mb-2">
-              Chat Connection Failed
-            </h4>
-            <p className="text-red-400 text-sm mb-4">{error}</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm"
-            >
-              Retry Connection
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  // Show GetStream chat interface
-  if (!client || !channel) {
-    return (
-      <div className="p-6">
-        <div className="text-center py-12">
-          <MessageCircle size={48} className="text-gray-600 mx-auto mb-4" />
-          <h4 className="text-lg font-medium text-gray-400 mb-2">No Chat Available</h4>
-          <p className="text-gray-500 text-sm">Unable to load chat for this trip</p>
+          <h4 className="text-lg font-medium text-gray-300 mb-2">Loading Chat...</h4>
+          <p className="text-gray-500 text-sm">Setting up messages</p>
         </div>
       </div>
     );
@@ -151,30 +117,69 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
         <div className="flex items-center gap-3">
           <MessageCircle size={24} className="text-blue-400" />
           <div>
-            <h3 className="text-lg font-semibold text-white">Event Chat</h3>
+            <h3 className="text-lg font-semibold text-white">Trip Chat</h3>
             <p className="text-gray-400 text-sm">
-              Real-time group conversation
-              {isDemoMode && <span className="ml-2 px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-md">DEMO</span>}
+              Group conversation
             </p>
           </div>
         </div>
       </div>
 
-      {/* GetStream Chat Interface */}
+      {/* Chat Interface */}
       <div className="bg-gray-900/50 rounded-xl overflow-hidden">
-        <Channel channel={channel}>
-          <Window>
-            <MessageList />
-            <MessageInput 
-              focus
-              additionalTextareaProps={{
-                placeholder: "Type your message...",
-                className: "bg-gray-800 text-white placeholder-gray-400"
-              }}
+        {/* Messages Container */}
+        <div className="h-96 overflow-y-auto p-4 space-y-4">
+          {messages.length === 0 ? (
+            <div className="text-center py-8">
+              <MessageCircle size={32} className="text-gray-600 mx-auto mb-2" />
+              <p className="text-gray-500 text-sm">No messages yet</p>
+            </div>
+          ) : (
+            messages.map((message) => (
+              <div key={message.id} className="flex items-start gap-3">
+                <img
+                  src={message.user.image}
+                  alt={message.user.name}
+                  className="w-8 h-8 rounded-full flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-sm font-medium text-gray-300">
+                      {message.user.name}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {formatTime(message.created_at)}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-200 leading-relaxed">
+                    {message.text}
+                  </div>
+                </div>
+              </div>
+            ))
+          )}
+        </div>
+
+        {/* Message Input */}
+        <div className="border-t border-gray-700 p-4">
+          <div className="flex items-center gap-3">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={handleKeyPress}
+              placeholder="Type your message..."
+              className="flex-1 bg-gray-800 text-white placeholder-gray-400 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-700"
             />
-          </Window>
-          <Thread />
-        </Channel>
+            <button
+              onClick={handleSendMessage}
+              disabled={!inputValue.trim()}
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-700 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-colors flex items-center justify-center"
+            >
+              <Send size={16} />
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
