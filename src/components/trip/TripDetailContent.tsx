@@ -33,7 +33,7 @@ export const TripDetailContent = ({
   const { variant, accentColors } = useTripVariant();
 
   const tabs = [
-    { id: 'chat', label: 'Chat' },
+    { id: 'chat', label: 'Home' },
     { id: 'places', label: 'Places' },
     { id: 'preferences', label: 'Preferences', premium: variant === 'consumer' }, // Always available for Pro
     { id: 'ai-chat', label: 'AI Assistant', premium: variant === 'consumer' }, // Always available for Pro
@@ -70,7 +70,7 @@ export const TripDetailContent = ({
 
   return (
     <>
-      {/* Tab Navigation - Updated order: Chat | Places | Preferences | AI Assistant | Search */}
+      {/* Tab Navigation - Updated order: Home | Places | Preferences | AI Assistant | Search */}
       <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
         {tabs.map((tab) => (
           <button

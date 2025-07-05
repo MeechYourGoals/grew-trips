@@ -40,7 +40,7 @@ export const EventDetailContent = ({
   const { accentColors } = useTripVariant();
 
   const tabs = [
-    { id: 'chat', label: 'Chat', icon: null },
+    { id: 'chat', label: 'Home', icon: null },
     { id: 'registration', label: 'Registration', icon: UserCheck, eventOnly: true },
     { id: 'agenda', label: 'Agenda', icon: Calendar, eventOnly: true },
     { id: 'speakers', label: 'Speakers', icon: Users, eventOnly: true },

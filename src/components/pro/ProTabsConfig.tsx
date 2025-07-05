@@ -14,7 +14,7 @@ export interface ProTab {
 }
 
 export const proTabs: ProTab[] = [
-  { id: 'chat', label: 'Chat', icon: null },
+  { id: 'chat', label: 'Home', icon: null },
   { id: 'places', label: 'Places', icon: null },
   { id: 'roster', label: 'Roster', icon: Users, proOnly: true, requiredPermissions: ['read'] },
   { id: 'equipment', label: 'Equipment', icon: Package, proOnly: true, requiredPermissions: ['read'] },
