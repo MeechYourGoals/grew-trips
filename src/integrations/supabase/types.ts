@@ -486,6 +486,78 @@ export type Database = {
         }
         Relationships: []
       }
+      search_index: {
+        Row: {
+          category: string | null
+          city: string | null
+          country: string | null
+          created_at: string | null
+          date_range: string | null
+          description: string | null
+          embedding: string | null
+          end_date: string | null
+          formatted_date: string | null
+          full_text: string
+          id: string
+          location: string | null
+          participant_names: string[] | null
+          participant_roles: string[] | null
+          start_date: string | null
+          state: string | null
+          tags: string[] | null
+          title: string
+          trip_id: string
+          trip_type: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          date_range?: string | null
+          description?: string | null
+          embedding?: string | null
+          end_date?: string | null
+          formatted_date?: string | null
+          full_text: string
+          id?: string
+          location?: string | null
+          participant_names?: string[] | null
+          participant_roles?: string[] | null
+          start_date?: string | null
+          state?: string | null
+          tags?: string[] | null
+          title: string
+          trip_id: string
+          trip_type: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          date_range?: string | null
+          description?: string | null
+          embedding?: string | null
+          end_date?: string | null
+          formatted_date?: string | null
+          full_text?: string
+          id?: string
+          location?: string | null
+          participant_names?: string[] | null
+          participant_roles?: string[] | null
+          start_date?: string | null
+          state?: string | null
+          tags?: string[] | null
+          title?: string
+          trip_id?: string
+          trip_type?: string
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       trend_keywords: {
         Row: {
           fetched_at: string | null
@@ -1114,13 +1186,141 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      binary_quantize: {
+        Args: { "": string } | { "": unknown }
+        Returns: unknown
+      }
       cleanup_expired_reviews: {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      gtrgm_compress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_decompress: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_in: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      gtrgm_options: {
+        Args: { "": unknown }
+        Returns: undefined
+      }
+      gtrgm_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      halfvec_avg: {
+        Args: { "": number[] }
+        Returns: unknown
+      }
+      halfvec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      halfvec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      halfvec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
+      hnsw_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnsw_sparsevec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      hnswhandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflat_bit_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflat_halfvec_support: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      ivfflathandler: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
       join_trip_via_invite: {
         Args: { invite_token_param: string }
         Returns: Json
+      }
+      l2_norm: {
+        Args: { "": unknown } | { "": unknown }
+        Returns: number
+      }
+      l2_normalize: {
+        Args: { "": string } | { "": unknown } | { "": unknown }
+        Returns: string
+      }
+      refresh_search_index: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      set_limit: {
+        Args: { "": number }
+        Returns: number
+      }
+      show_limit: {
+        Args: Record<PropertyKey, never>
+        Returns: number
+      }
+      show_trgm: {
+        Args: { "": string }
+        Returns: string[]
+      }
+      sparsevec_out: {
+        Args: { "": unknown }
+        Returns: unknown
+      }
+      sparsevec_send: {
+        Args: { "": unknown }
+        Returns: string
+      }
+      sparsevec_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
+      }
+      vector_avg: {
+        Args: { "": number[] }
+        Returns: string
+      }
+      vector_dims: {
+        Args: { "": string } | { "": unknown }
+        Returns: number
+      }
+      vector_norm: {
+        Args: { "": string }
+        Returns: number
+      }
+      vector_out: {
+        Args: { "": string }
+        Returns: unknown
+      }
+      vector_send: {
+        Args: { "": string }
+        Returns: string
+      }
+      vector_typmod_in: {
+        Args: { "": unknown[] }
+        Returns: number
       }
     }
     Enums: {

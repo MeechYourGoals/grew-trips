@@ -13,6 +13,7 @@ export interface SearchResult {
   snippet: string;
   score: number;
   deepLink?: string;
+  matchReason?: string; // New field for showing how the result matched
 }
 
 interface SearchResultsProps {
@@ -114,6 +115,11 @@ export const SearchResults = ({ results, onResultClick, isLoading }: SearchResul
                       <span className="text-xs text-gray-500">
                         Score: {Math.round(result.score * 100)}%
                       </span>
+                      {result.matchReason && (
+                        <span className="text-xs text-yellow-400">
+                          {result.matchReason}
+                        </span>
+                      )}
                     </div>
                     
                     <p className="text-white text-sm line-clamp-2">

@@ -29,3 +29,9 @@ verify_jwt = true
 
 [functions.file-ai-parser]
 verify_jwt = true
+
+[functions.search]
+verify_jwt = false
+
+[functions.populate-search-index]
+verify_jwt = false

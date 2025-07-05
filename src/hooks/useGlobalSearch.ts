@@ -2,6 +2,7 @@
 import { useState, useCallback } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { SearchResult } from '../components/SearchResults';
+import { supabase } from '../integrations/supabase/client';
 
 interface SearchResponse {
   success: boolean;
@@ -20,63 +21,86 @@ export const useGlobalSearch = () => {
       }
 
       try {
-        const response = await fetch('/api/search', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ query, scope: 'global' }),
+        // Call the enhanced search edge function
+        const { data, error } = await supabase.functions.invoke('search', {
+          body: { 
+            query: query.trim(), 
+            scope: 'global',
+            limit: 20
+          }
         });
 
-        if (!response.ok) {
-          throw new Error('Search failed');
+        if (error) {
+          console.error('Search function error:', error);
+          throw error;
         }
 
-        const data = await response.json();
-        return { success: true, results: data.results || [] };
+        return data || { success: true, results: [] };
       } catch (error) {
-        // For now, return mock data for development
-        console.log('Search query:', query);
+        console.error('Search error:', error);
         
-        // Mock results based on query patterns
+        // Enhanced fallback with better mock results
         const mockResults: SearchResult[] = [];
+        const queryLower = query.toLowerCase();
         
-        if (query.toLowerCase().includes('miami')) {
+        // Location-based searches
+        if (queryLower.includes('tokyo')) {
           mockResults.push({
-            id: '1',
+            id: 'mock-tokyo',
+            objectType: 'trip',
+            objectId: '2',
+            tripId: '2',
+            tripName: 'Tokyo Adventure',
+            content: 'Cultural exploration of Japan\'s capital',
+            snippet: 'Tokyo Adventure - Tokyo, Japan (Oct 5 - Oct 15, 2025)',
+            score: 0.95,
+            deepLink: '/trip/2',
+            matchReason: 'Matched via: location'
+          });
+        }
+        
+        if (queryLower.includes('lakers')) {
+          mockResults.push({
+            id: 'mock-lakers',
+            objectType: 'trip',
+            objectId: 'lakers-road-trip',
+            tripId: 'lakers-road-trip',
+            tripName: 'Lakers Road Trip - Western Conference',
+            content: 'Professional basketball team road trip',
+            snippet: 'Lakers Road Trip - Multiple Cities, USA (Mar 1 - Mar 15, 2025)',
+            score: 0.92,
+            deepLink: '/tour/pro/lakers-road-trip',
+            matchReason: 'Matched via: title'
+          });
+        }
+        
+        if (queryLower.includes('april')) {
+          mockResults.push({
+            id: 'mock-april',
+            objectType: 'trip',
+            objectId: '5',
+            tripId: '5',
+            tripName: 'Coachella Squad 2026',
+            content: 'Music festival adventure',
+            snippet: 'Coachella Squad 2026 - Indio, CA (Apr 10 - Apr 13, 2026)',
+            score: 0.88,
+            deepLink: '/trip/5',
+            matchReason: 'Matched via: date'
+          });
+        }
+        
+        if (queryLower.includes('mexico') || queryLower.includes('cancun')) {
+          mockResults.push({
+            id: 'mock-mexico',
             objectType: 'trip',
             objectId: '1',
             tripId: '1',
-            tripName: 'Summer in Miami',
-            content: 'Miami Beach vacation with friends',
-            snippet: 'Miami Beach vacation with friends - July 2025',
-            score: 0.95
-          });
-        }
-        
-        if (query.toLowerCase().includes('november')) {
-          mockResults.push({
-            id: '2',
-            objectType: 'calendar_event',
-            objectId: '2',
-            tripId: '4',
-            tripName: "Kristen's Bachelorette Party",
-            content: 'Nashville trip in November',
-            snippet: 'Bachelorette party weekend in Nashville - November 8-10, 2025',
-            score: 0.89
-          });
-        }
-        
-        if (query.toLowerCase().includes('tour manager') || query.toLowerCase().includes('manager')) {
-          mockResults.push({
-            id: '3',
-            objectType: 'collaborator',
-            objectId: '3',
-            tripId: 'pro-1',
-            tripName: 'Madison Square Garden Residency',
-            content: 'Tour Manager - Operations',
-            snippet: 'Tour Manager responsible for logistics and operations',
-            score: 0.92
+            tripName: 'Spring Break Cancun 2026',
+            content: 'Brotherhood spring break getaway',
+            snippet: 'Spring Break Cancun 2026 - Cancun, Mexico (Mar 15 - Mar 22, 2026)',
+            score: 0.90,
+            deepLink: '/trip/1',
+            matchReason: 'Matched via: location'
           });
         }
 
@@ -92,7 +116,7 @@ export const useGlobalSearch = () => {
   });
 
   const search = useCallback((query: string) => {
-    if (query.trim()) {
+    if (query.trim().length >= 2) {
       searchMutation.mutate(query);
     } else {
       setResults([]);
