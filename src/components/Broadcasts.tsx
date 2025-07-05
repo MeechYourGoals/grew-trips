@@ -7,6 +7,7 @@ import { taylorSwiftErasTour } from '../data/pro-trips/taylorSwiftErasTour';
 import { demoModeService } from '@/services/demoModeService';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useParams } from 'react-router-dom';
+import { getMockAvatar } from '@/utils/mockAvatars';
 
 const participants = taylorSwiftErasTour.participants;
 

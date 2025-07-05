@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 import { proTripMockData } from '../data/proTripMockData';
 import { AiMessageModal } from './ai/AiMessageModal';
 import { AiMessageButton } from './ai/AiMessageButton';
+import { getMockAvatar } from '@/utils/mockAvatars';
 
 export const TourChat = () => {
   const { proTripId, tourId } = useParams();
@@ -61,9 +62,9 @@ export const TourChat = () => {
           tourMessages.map((msg) => (
             <div key={msg.id} className="flex items-start gap-3">
               <img
-                src={msg.senderAvatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'}
+                src={msg.senderAvatar || getMockAvatar(msg.senderName)}
                 alt={msg.senderName}
-                className="w-8 h-8 rounded-full"
+                className="w-8 h-8 rounded-full object-cover border border-gray-600/50"
               />
               <div className="flex-1">
                 <div className="flex items-center gap-2 mb-1">

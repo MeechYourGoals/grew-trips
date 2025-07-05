@@ -4,6 +4,7 @@ import { Send, MessageCircle } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { demoModeService } from '@/services/demoModeService';
 import { getTripById } from '@/data/tripsData';
+import { getMockAvatar, currentUserAvatar } from '@/utils/mockAvatars';
 
 interface TripChatProps {
   groupChatEnabled?: boolean;
@@ -50,7 +51,7 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
           user: {
             id: `user_${mock.sender_name.replace(/\s+/g, '_').toLowerCase()}`,
             name: mock.sender_name,
-            image: `https://images.unsplash.com/photo-${1500000000000 + Math.floor(Math.random() * 100000)}?w=40&h=40&fit=crop&crop=face`
+            image: getMockAvatar(mock.sender_name)
           },
           created_at: createdAt.toISOString(),
           isMock: true
@@ -76,7 +77,7 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
       user: {
         id: 'current_user',
         name: 'You',
-        image: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'
+        image: currentUserAvatar
       },
       created_at: new Date().toISOString(),
       isMock: false
@@ -140,7 +141,7 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
                 <img
                   src={message.user.image}
                   alt={message.user.name}
-                  className="w-8 h-8 rounded-full flex-shrink-0"
+                  className="w-8 h-8 rounded-full flex-shrink-0 object-cover border border-gray-600"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
