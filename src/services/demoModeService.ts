@@ -63,14 +63,54 @@ export class DemoModeService {
 
       if (error) {
         console.error('Error fetching mock messages:', error);
-        return [];
+        return this.getFallbackMessages(tripType);
+      }
+
+      if (!data || data.length === 0) {
+        return this.getFallbackMessages(tripType);
       }
 
       return data || [];
     } catch (error) {
       console.error('Error in getMockMessages:', error);
-      return [];
+      return this.getFallbackMessages(tripType);
     }
+  }
+
+  private getFallbackMessages(tripType: string): MockMessage[] {
+    if (tripType === 'destination-wedding') {
+      return [
+        {
+          id: 'wedding-1',
+          trip_type: 'destination-wedding',
+          sender_name: 'Emma',
+          message_content: "can't wait for the photos to get dropped in here",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['excitement']
+        },
+        {
+          id: 'wedding-2', 
+          trip_type: 'destination-wedding',
+          sender_name: 'Lisa',
+          message_content: "so glad you broadcast that the reception moved back an hour, I was going to be late anyway lol",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['logistics']
+        },
+        {
+          id: 'wedding-3',
+          trip_type: 'destination-wedding', 
+          sender_name: 'Mike',
+          message_content: "shout out to cousin Steve, I have your tie from last night if you want to meet by the bar at 4pm. Don't have your number, otherwise would've text you direct.",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['coordination']
+        }
+      ];
+    }
+    
+    return [];
   }
 
   async getMockBroadcasts(tripType: string): Promise<MockBroadcast[]> {
@@ -119,6 +159,7 @@ export class DemoModeService {
     if (title.includes('bachelorette') || title.includes('bachelor') || title.includes('kristen')) return 'bachelorette';
     if (title.includes('family') || title.includes('vacation') || title.includes('vacay') || title.includes('johnson')) return 'family-vacation';
     if (title.includes('coachella') || title.includes('festival') || title.includes('squad')) return 'festival';
+    if (title.includes('wedding') || title.includes('jack and jill')) return 'destination-wedding';
     if (title.includes('bali') || title.includes('getaway') || title.includes('spring break') || title.includes('cancun') || title.includes('kappa alpha psi')) return 'leisure-group';
     if (title.includes('school') || title.includes('field trip') || title.includes('harris') || title.includes('8th grade') || title.includes('washington dc')) return 'school-trip';
     if (title.includes('golf') || title.includes('fantasy') || title.includes('outing') || title.includes('phoenix') || title.includes('commissioner')) return 'friends-trip';

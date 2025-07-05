@@ -66,7 +66,7 @@ export const TripCard = ({ trip }: TripCardProps) => {
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-white">{trip.participants.length}</div>
+            <div className="text-2xl font-bold text-white">{trip.id === 3 ? '200' : trip.participants.length}</div>
             <div className="text-sm text-gray-400">People</div>
           </div>
           <div className="text-center">
@@ -74,7 +74,7 @@ export const TripCard = ({ trip }: TripCardProps) => {
             <div className="text-sm text-gray-400">Days</div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-white">12</div>
+            <div className="text-2xl font-bold text-white">{trip.id === 3 ? '3' : '12'}</div>
             <div className="text-sm text-gray-400">Places</div>
           </div>
         </div>

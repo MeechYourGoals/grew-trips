@@ -68,7 +68,7 @@ export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
         {/* Stats Row */}
         <div className="flex justify-between items-center mb-4">
           <div className="text-center">
-            <div className="text-xl font-bold text-white">{trip.participants.length}</div>
+            <div className="text-xl font-bold text-white">{trip.id === 3 ? '200' : trip.participants.length}</div>
             <div className="text-xs text-gray-400">People</div>
           </div>
           <div className="text-center">
@@ -76,7 +76,7 @@ export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
             <div className="text-xs text-gray-400">Days</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-bold text-white">12</div>
+            <div className="text-xl font-bold text-white">{trip.id === 3 ? '3' : '12'}</div>
             <div className="text-xs text-gray-400">Places</div>
           </div>
         </div>

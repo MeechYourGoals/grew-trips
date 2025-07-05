@@ -42,14 +42,15 @@ export const tripsData: Trip[] = [
   },
   {
     id: 3,
-    title: "Bali Getaway",
+    title: "Jack and Jill's destination wedding",
     location: "Bali, Indonesia",
     dateRange: "Dec 10 - Dec 20, 2025",
-    description: "Tropical paradise retreat with yoga, beach time, and temple visits",
+    description: "Romantic destination wedding celebration with family and friends in paradise",
     participants: [
-      { id: 7, name: "Lisa", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face" },
-      { id: 8, name: "Ryan", avatar: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=40&h=40&fit=crop&crop=face" },
-      { id: 9, name: "Nina", avatar: "https://images.unsplash.com/photo-1544725176-7c40e5a71c5e?w=40&h=40&fit=crop&crop=face" }
+      { id: 7, name: "Jack", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
+      { id: 8, name: "Jill", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face" },
+      { id: 9, name: "Steve", avatar: "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=40&h=40&fit=crop&crop=face" },
+      { id: 10, name: "Emma", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face" }
     ]
   },
   {
