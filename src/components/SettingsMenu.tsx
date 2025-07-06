@@ -23,7 +23,20 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise' | 'events'>('consumer');
   const { accentColors } = useTripVariant();
 
-  if (!isOpen || !user) return null;
+  // Create mock user for demo mode when no real user is authenticated
+  const mockUser = {
+    id: 'demo-user-123',
+    email: 'demo@example.com',
+    user_metadata: {
+      full_name: 'Demo User',
+      avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'
+    }
+  };
+
+  const currentUser = user || mockUser;
+  const currentSignOut = user ? signOut : () => console.log('Demo mode - sign out clicked');
+
+  if (!isOpen) return null;
 
   // Mock organization data - would come from your auth context
   const userOrganization = {
@@ -46,7 +59,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
           </div>
           <EnterpriseSettings 
             organizationId={userOrganization.id} 
-            currentUserId={user.id} 
+            currentUserId={currentUser.id} 
           />
         </div>
       </div>
@@ -129,18 +142,18 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
           {/* Render appropriate settings based on toggle */}
           {settingsType === 'consumer' ? (
             <div className="h-full">
-              <ConsumerSettings currentUserId={user.id} />
+              <ConsumerSettings currentUserId={currentUser.id} />
             </div>
           ) : settingsType === 'enterprise' ? (
             <div className="h-full">
               <EnterpriseSettings 
                 organizationId={userOrganization?.id || 'default-org'} 
-                currentUserId={user.id} 
+                currentUserId={currentUser.id} 
               />
             </div>
           ) : (
             <div className="h-full">
-              <EventsSettings currentUserId={user.id} />
+              <EventsSettings currentUserId={currentUser.id} />
             </div>
           )}
 
@@ -148,7 +161,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
           {settingsType === 'consumer' && (
             <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/5 border-t border-white/20">
               <button
-                onClick={signOut}
+                onClick={currentSignOut}
                 className="w-full flex items-center justify-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium py-3 rounded-xl transition-colors"
               >
                 <LogOut size={16} />
