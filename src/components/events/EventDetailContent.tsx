@@ -10,6 +10,10 @@ import { RegistrationTab } from './RegistrationTab';
 import { AgendaBuilder } from './AgendaBuilder';
 import { NetworkingHub } from './NetworkingHub';
 import { SpeakerDirectory } from './SpeakerDirectory';
+import { LiveQAPanel } from './LiveQAPanel';
+import { PersonalizedAgenda } from './PersonalizedAgenda';
+import { AIRecommendations } from './AIRecommendations';
+import { EnhancedNetworkingHub } from './EnhancedNetworkingHub';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { EventData } from '../../types/events';
 import { useTripVariant } from '../../contexts/TripVariantContext';
@@ -43,8 +47,11 @@ export const EventDetailContent = ({
     { id: 'chat', label: 'Home', icon: null },
     { id: 'registration', label: 'Registration', icon: UserCheck, eventOnly: true },
     { id: 'agenda', label: 'Agenda', icon: Calendar, eventOnly: true },
+    { id: 'my-agenda', label: 'My Agenda', icon: Calendar, eventOnly: true },
+    { id: 'recommendations', label: 'AI Recommendations', icon: Sparkles, eventOnly: true },
     { id: 'speakers', label: 'Speakers', icon: Users, eventOnly: true },
     { id: 'networking', label: 'Networking', icon: Network, eventOnly: true },
+    { id: 'live-qa', label: 'Live Q&A', icon: null, eventOnly: true },
     { id: 'places', label: 'Places', icon: null },
     { id: 'preferences', label: 'Preferences', icon: null },
     { id: 'ai-chat', label: 'AI Assistant', icon: null },
@@ -81,6 +88,21 @@ export const EventDetailContent = ({
             userRole={eventData.userRole || 'attendee'}
           />
         );
+      case 'my-agenda':
+        return (
+          <PersonalizedAgenda
+            eventId={tripId}
+            sessions={eventData.sessions || []}
+          />
+        );
+      case 'recommendations':
+        return (
+          <AIRecommendations
+            sessions={eventData.sessions || []}
+            speakers={eventData.speakers || []}
+            userInterests={['technology', 'innovation', 'networking']}
+          />
+        );
       case 'speakers':
         return (
           <SpeakerDirectory
@@ -90,9 +112,25 @@ export const EventDetailContent = ({
         );
       case 'networking':
         return (
-          <NetworkingHub
+          <EnhancedNetworkingHub
             eventId={tripId}
-            userRole={eventData.userRole || 'attendee'}
+            attendees={eventData.participants.map(p => ({
+              id: p.id.toString(),
+              name: p.name,
+              avatar: p.avatar,
+              role: p.role,
+              company: 'Sample Company',
+              bio: 'Passionate about innovation and networking.',
+              interests: ['technology', 'innovation', 'startups']
+            }))}
+          />
+        );
+      case 'live-qa':
+        return (
+          <LiveQAPanel
+            sessionId="current-session"
+            eventId={tripId}
+            userRole={(eventData.userRole === 'exhibitor' ? 'attendee' : eventData.userRole) || 'attendee'}
           />
         );
       case 'places':
