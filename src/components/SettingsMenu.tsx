@@ -140,35 +140,37 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
           </div>
 
           {/* Render appropriate settings based on toggle */}
-          {settingsType === 'consumer' ? (
-            <div className="h-full">
-              <ConsumerSettings currentUserId={currentUser.id} />
-            </div>
-          ) : settingsType === 'enterprise' ? (
-            <div className="h-full">
-              <EnterpriseSettings 
-                organizationId={userOrganization?.id || 'default-org'} 
-                currentUserId={currentUser.id} 
-              />
-            </div>
-          ) : (
-            <div className="h-full">
-              <EventsSettings currentUserId={currentUser.id} />
-            </div>
-          )}
+          <div className="flex-1 flex flex-col min-h-0">
+            {settingsType === 'consumer' ? (
+              <div className="flex-1 overflow-hidden">
+                <ConsumerSettings currentUserId={currentUser.id} />
+              </div>
+            ) : settingsType === 'enterprise' ? (
+              <div className="flex-1 overflow-hidden">
+                <EnterpriseSettings 
+                  organizationId={userOrganization?.id || 'default-org'} 
+                  currentUserId={currentUser.id} 
+                />
+              </div>
+            ) : (
+              <div className="flex-1 overflow-hidden">
+                <EventsSettings currentUserId={currentUser.id} />
+              </div>
+            )}
 
-          {/* Sign Out Button - Only show for consumer settings */}
-          {settingsType === 'consumer' && (
-            <div className="absolute bottom-0 left-0 right-0 p-6 bg-white/5 border-t border-white/20">
-              <button
-                onClick={currentSignOut}
-                className="w-full flex items-center justify-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium py-3 rounded-xl transition-colors"
-              >
-                <LogOut size={16} />
-                Sign Out
-              </button>
-            </div>
-          )}
+            {/* Sign Out Button - Only show for consumer settings */}
+            {settingsType === 'consumer' && (
+              <div className="flex-shrink-0 p-6 bg-white/5 border-t border-white/20">
+                <button
+                  onClick={currentSignOut}
+                  className="w-full flex items-center justify-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium py-3 rounded-xl transition-colors"
+                >
+                  <LogOut size={16} />
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

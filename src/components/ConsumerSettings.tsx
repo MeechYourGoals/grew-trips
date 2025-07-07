@@ -45,7 +45,7 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
   return (
     <div className="flex h-full w-full min-w-0">
       {/* Sidebar */}
-      <div className="w-80 flex-shrink-0 bg-white/5 backdrop-blur-md border-r border-white/10 p-6">
+      <div className="w-80 flex-shrink-0 bg-white/5 backdrop-blur-md border-r border-white/10 p-6 overflow-y-auto">
         <h2 className="text-xl font-bold text-white mb-6">Consumer Settings</h2>
         <div className="space-y-2">
           {sections.map((section) => {
@@ -69,8 +69,10 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 min-w-0 overflow-y-auto p-8">
-        {renderSection()}
+      <div className="flex-1 min-w-0 overflow-y-auto">
+        <div className="p-8 pb-24">
+          {renderSection()}
+        </div>
       </div>
     </div>
   );
