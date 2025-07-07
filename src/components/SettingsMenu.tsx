@@ -94,9 +94,9 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   return (
     <>
       <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50">
-        <div className="h-full bg-white/10 backdrop-blur-md border-r border-white/20 w-full">
+        <div className="h-screen flex flex-col bg-white/10 backdrop-blur-md border-r border-white/20 w-full">
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-white/20">
+          <div className="flex-shrink-0 flex items-center justify-between p-6 border-b border-white/20">
             <h2 className="text-xl font-semibold text-white">Settings</h2>
             <button onClick={onClose} className="text-gray-400 hover:text-white">
               <X size={24} />
@@ -104,7 +104,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
           </div>
 
           {/* Settings Type Toggle - Updated to include Events */}
-          <div className="p-6 border-b border-white/20">
+          <div className="flex-shrink-0 p-6 border-b border-white/20">
             <div className="bg-white/10 rounded-xl p-1 flex">
               <button
                 onClick={() => setSettingsType('consumer')}
@@ -142,18 +142,18 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
           {/* Render appropriate settings based on toggle */}
           <div className="flex-1 flex flex-col min-h-0">
             {settingsType === 'consumer' ? (
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 min-h-0">
                 <ConsumerSettings currentUserId={currentUser.id} />
               </div>
             ) : settingsType === 'enterprise' ? (
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 min-h-0">
                 <EnterpriseSettings 
                   organizationId={userOrganization?.id || 'default-org'} 
                   currentUserId={currentUser.id} 
                 />
               </div>
             ) : (
-              <div className="flex-1 overflow-hidden">
+              <div className="flex-1 min-h-0">
                 <EventsSettings currentUserId={currentUser.id} />
               </div>
             )}
