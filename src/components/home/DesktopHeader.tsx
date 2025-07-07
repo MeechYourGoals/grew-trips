@@ -48,12 +48,14 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
-            {viewMode === 'myTrips' ? 'My Trips' : 'Trips Pro'}
+            TRIV
           </h1>
           <p className="text-gray-400">
             {viewMode === 'myTrips' 
               ? 'Plan, organize, and share your perfect trips' 
-              : 'Professional trip management with advanced features'
+              : viewMode === 'tripsPro'
+              ? 'Professional trip management with advanced features'
+              : 'Professional event management and coordination'
             }
           </p>
         </div>

@@ -14,6 +14,7 @@ import { useIsMobile } from '../hooks/use-mobile';
 import { proTripMockData } from '../data/proTripMockData';
 import { eventsMockData } from '../data/eventsMockData';
 import { tripsData } from '../data/tripsData';
+import { calculateTripStats, calculateProTripStats, calculateEventStats } from '../utils/tripStatsCalculator';
 
 const Index = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -28,6 +29,20 @@ const Index = () => {
 
   console.log('Index - proTripMockData IDs:', Object.keys(proTripMockData));
   console.log('Index - eventsMockData IDs:', Object.keys(eventsMockData));
+
+  // Calculate stats for each view mode
+  const tripStats = calculateTripStats(trips);
+  const proTripStats = calculateProTripStats(proTripMockData);
+  const eventStats = calculateEventStats(eventsMockData);
+
+  const getCurrentStats = () => {
+    switch (viewMode) {
+      case 'myTrips': return tripStats;
+      case 'tripsPro': return proTripStats;
+      case 'events': return eventStats;
+      default: return tripStats;
+    }
+  };
 
   const hasTrips = viewMode === 'myTrips' 
     ? trips.length > 0 
@@ -71,8 +86,8 @@ const Index = () => {
         />
 
         {/* Trip Stats Overview */}
-        {viewMode === 'myTrips' && !isMobile && (
-          <TripStatsOverview totalTrips={trips.length} />
+        {!isMobile && (
+          <TripStatsOverview stats={getCurrentStats()} viewMode={viewMode} />
         )}
 
         {/* Main Content - Trip Cards */}
