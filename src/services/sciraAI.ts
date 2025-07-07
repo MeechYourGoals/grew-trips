@@ -63,7 +63,7 @@ TRIP OVERVIEW:
 USER PREFERENCES:
 - Dietary: ${tripContext.preferences.dietary?.join(', ') || 'None specified'}
 - Activities: ${tripContext.preferences.vibe?.join(', ') || 'None specified'}
-- Budget: ${tripContext.preferences.budget || 'Not specified'}
+- Budget: $${tripContext.preferences.budgetMin || 0} - $${tripContext.preferences.budgetMax || 1000}
 - Time Preference: ${tripContext.preferences.timePreference || 'Not specified'}`;
     }
 

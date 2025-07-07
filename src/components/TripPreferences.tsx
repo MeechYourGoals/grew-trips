@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
 import { Settings, Sparkles, Crown } from 'lucide-react';
-import { TripPreferences as TripPreferencesType, DIETARY_OPTIONS, VIBE_OPTIONS } from '../types/consumer';
+import { TripPreferences as TripPreferencesType, DIETARY_OPTIONS, VIBE_OPTIONS, ACCESSIBILITY_OPTIONS, BUSINESS_OPTIONS, ENTERTAINMENT_OPTIONS, LIFESTYLE_OPTIONS } from '../types/consumer';
+import { Input } from './ui/input';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { useTripVariant } from '../contexts/TripVariantContext';
 
@@ -16,7 +17,12 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
   const [preferences, setPreferences] = useState<TripPreferencesType>({
     dietary: [],
     vibe: [],
-    budget: 'mid-range',
+    accessibility: [],
+    business: [],
+    entertainment: [],
+    lifestyle: [],
+    budgetMin: 0,
+    budgetMax: 1000,
     timePreference: 'flexible'
   });
 
@@ -40,8 +46,22 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
     onPreferencesChange(newPreferences);
   };
 
-  const handleBudgetChange = (budget: 'budget' | 'mid-range' | 'luxury') => {
-    const newPreferences = { ...preferences, budget };
+  const handleCategoryChange = (category: keyof TripPreferencesType, option: string) => {
+    if (typeof preferences[category] === 'object' && Array.isArray(preferences[category])) {
+      const currentArray = preferences[category] as string[];
+      const newArray = currentArray.includes(option)
+        ? currentArray.filter(item => item !== option)
+        : [...currentArray, option];
+      
+      const newPreferences = { ...preferences, [category]: newArray };
+      setPreferences(newPreferences);
+      onPreferencesChange(newPreferences);
+    }
+  };
+
+  const handleBudgetChange = (field: 'budgetMin' | 'budgetMax', value: string) => {
+    const numValue = parseInt(value) || 0;
+    const newPreferences = { ...preferences, [field]: numValue };
     setPreferences(newPreferences);
     onPreferencesChange(newPreferences);
   };
@@ -126,7 +146,7 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
           </div>
         </div>
 
-        {/* Vibe Preferences */}
+        {/* Vibe & Activities */}
         <div>
           <h4 className="text-white font-medium mb-3">Vibe & Activities</h4>
           <div className="flex flex-wrap gap-2">
@@ -146,23 +166,110 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
           </div>
         </div>
 
-        {/* Budget Preference */}
+        {/* Accessibility Preferences */}
         <div>
-          <h4 className="text-white font-medium mb-3">Budget Range</h4>
-          <div className="flex gap-2">
-            {['budget', 'mid-range', 'luxury'].map((option) => (
+          <h4 className="text-white font-medium mb-3">Accessibility & Inclusivity</h4>
+          <div className="flex flex-wrap gap-2">
+            {ACCESSIBILITY_OPTIONS.map((option) => (
               <button
                 key={option}
-                onClick={() => handleBudgetChange(option as any)}
-                className={`px-4 py-2 rounded-xl text-sm transition-colors capitalize ${
-                  preferences.budget === option
+                onClick={() => handleCategoryChange('accessibility', option)}
+                className={`px-3 py-2 rounded-full text-sm transition-colors ${
+                  preferences.accessibility.includes(option)
                     ? `bg-${accentColors.primary} text-white`
                     : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
                 }`}
               >
-                {option === 'mid-range' ? 'Mid-Range' : option}
+                {option}
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Business Preferences */}
+        <div>
+          <h4 className="text-white font-medium mb-3">Business & Professional</h4>
+          <div className="flex flex-wrap gap-2">
+            {BUSINESS_OPTIONS.map((option) => (
+              <button
+                key={option}
+                onClick={() => handleCategoryChange('business', option)}
+                className={`px-3 py-2 rounded-full text-sm transition-colors ${
+                  preferences.business.includes(option)
+                    ? `bg-${accentColors.primary} text-white`
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Entertainment Preferences */}
+        <div>
+          <h4 className="text-white font-medium mb-3">Entertainment & Culture</h4>
+          <div className="flex flex-wrap gap-2">
+            {ENTERTAINMENT_OPTIONS.map((option) => (
+              <button
+                key={option}
+                onClick={() => handleCategoryChange('entertainment', option)}
+                className={`px-3 py-2 rounded-full text-sm transition-colors ${
+                  preferences.entertainment.includes(option)
+                    ? `bg-${accentColors.primary} text-white`
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Lifestyle Preferences */}
+        <div>
+          <h4 className="text-white font-medium mb-3">Lifestyle & Timing</h4>
+          <div className="flex flex-wrap gap-2">
+            {LIFESTYLE_OPTIONS.map((option) => (
+              <button
+                key={option}
+                onClick={() => handleCategoryChange('lifestyle', option)}
+                className={`px-3 py-2 rounded-full text-sm transition-colors ${
+                  preferences.lifestyle.includes(option)
+                    ? `bg-${accentColors.primary} text-white`
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {option}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Budget Range */}
+        <div>
+          <h4 className="text-white font-medium mb-3">Budget Range (USD)</h4>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-gray-400 text-sm mb-2">Minimum</label>
+              <Input
+                type="number"
+                placeholder="0"
+                value={preferences.budgetMin}
+                onChange={(e) => handleBudgetChange('budgetMin', e.target.value)}
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+              />
+            </div>
+            <div>
+              <label className="block text-gray-400 text-sm mb-2">Maximum</label>
+              <Input
+                type="number"
+                placeholder="1000"
+                value={preferences.budgetMax}
+                onChange={(e) => handleBudgetChange('budgetMax', e.target.value)}
+                className="bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+              />
+            </div>
           </div>
         </div>
 

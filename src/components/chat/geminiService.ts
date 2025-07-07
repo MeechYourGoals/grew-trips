@@ -17,7 +17,7 @@ export class GeminiService {
       if (preferences.vibe.length > 0) {
         contextInfo += `\nPreferred activities/vibe: ${preferences.vibe.join(', ')}`;
       }
-      contextInfo += `\nBudget range: ${preferences.budget}`;
+      contextInfo += `\nBudget range: $${preferences.budgetMin} - $${preferences.budgetMax}`;
       contextInfo += `\nTime preference: ${preferences.timePreference}`;
     }
     
