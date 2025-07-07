@@ -9,6 +9,8 @@ import { EnterpriseProfileSection } from './enterprise/EnterpriseProfileSection'
 import { EnterpriseNotificationsSection } from './enterprise/EnterpriseNotificationsSection';
 import { EnterprisePrivacySection } from './enterprise/EnterprisePrivacySection';
 import { EnterpriseGeneralSettings } from './enterprise/EnterpriseGeneralSettings';
+import { IntegrationsSection } from './enterprise/IntegrationsSection';
+import { SecurityComplianceSection } from './enterprise/SecurityComplianceSection';
 import { GameSchedule } from './enterprise/GameSchedule';
 import { ShowSchedule } from './enterprise/ShowSchedule';
 import { EquipmentManager } from './enterprise/EquipmentManager';
@@ -48,6 +50,8 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
   const getSidebarSections = (category: TripCategory) => {
     const baseSections = [
       { id: 'organization', label: 'Organization Profile', icon: Building },
+      { id: 'integrations', label: 'Integrations', icon: Settings },
+      { id: 'security', label: 'Security & Compliance', icon: Shield },
       { id: 'billing', label: 'Billing & Subscription', icon: CreditCard }
     ];
 
@@ -195,6 +199,8 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
   const renderSection = () => {
     switch (activeSection) {
       case 'organization': return <OrganizationSection organization={organization} />;
+      case 'integrations': return <IntegrationsSection />;
+      case 'security': return <SecurityComplianceSection />;
       case 'billing': return <BillingSection organization={organization} />;
       case 'seats': return <SeatManagementSection organization={organization} />;
       case 'profile': return <EnterpriseProfileSection />;

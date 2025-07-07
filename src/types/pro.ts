@@ -332,62 +332,54 @@ export interface ProTripData {
 }
 
 export const SUBSCRIPTION_TIERS = {
-  starter: {
-    name: 'Starter Team',
-    price: 19.99,
-    seatLimit: 10,
-    features: [
-      'Up to 10 team members',
-      'Multi-city tour management',
-      'Basic team roles & permissions',
-      'Group chat & messaging',
-      'Shared itinerary building',
-      'Travel wallet integration',
-      'Email support'
-    ]
-  },
-  growing: {
-    name: 'Growing Team',
-    price: 39.99,
+  'starter-pro': {
+    name: 'Starter Pro',
+    price: 49,
     seatLimit: 25,
     features: [
       'Up to 25 team members',
+      'Multi-city tour management',
+      'Advanced team roles & permissions',
+      'Broadcast messaging with translation',
+      'Shared itinerary building',
+      'Travel wallet integration',
+      'Equipment tracking',
+      'Basic compliance tools',
+      'Email support'
+    ]
+  },
+  'growth-pro': {
+    name: 'Growth Pro',
+    price: 199,
+    seatLimit: 100,
+    features: [
+      'Up to 100 team members',
       'Advanced role management',
-      'Broadcast messaging system',
+      'Multi-language broadcast system',
+      'Travel booking integrations (Saber, Concur)',
+      'Financial tools integration',
       'Travel wallet & rewards tracking',
-      'Priority email support',
+      'Equipment QR code tracking',
+      'Advanced compliance & reporting',
+      'Priority phone support',
       'Custom branding options',
-      'Enhanced security features',
       'Usage analytics & reporting'
     ]
   },
-  enterprise: {
-    name: 'Enterprise Team',
-    price: 59.99,
-    seatLimit: 50,
-    features: [
-      'Up to 50 team members',
-      'Advanced admin controls',
-      'SSO integration',
-      'Custom integrations',
-      'Dedicated account manager',
-      'Advanced compliance features',
-      'Priority phone support',
-      'Custom onboarding',
-      'Advanced analytics dashboard'
-    ]
-  },
-  'enterprise-plus': {
-    name: 'Enterprise Plus',
-    price: 79.99,
+  'enterprise-custom': {
+    name: 'Enterprise Custom',
+    price: 'Contact Sales',
     seatLimit: 999,
     features: [
       'Unlimited team members',
+      'Full SSO/MFA integration',
+      'Custom integrations & APIs',
+      'GDPR compliance suite',
       'White-label options',
+      'Advanced security features',
       'Custom feature development',
       '24/7 dedicated support',
       'On-premise deployment options',
-      'Advanced security & compliance',
       'Custom SLA agreements',
       'Quarterly business reviews',
       'Executive support line'

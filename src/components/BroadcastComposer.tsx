@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { Send, MapPin } from 'lucide-react';
+import { Send, MapPin, Languages } from 'lucide-react';
 import { Button } from './ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 
 interface Participant {
   id: string | number;
@@ -25,6 +26,20 @@ export const BroadcastComposer = ({ participants, onSend }: BroadcastComposerPro
   const [category, setCategory] = useState<'chill' | 'logistics' | 'urgent'>('chill');
   const [showDetails, setShowDetails] = useState(false);
   const [recipient, setRecipient] = useState('everyone');
+  const [translateTo, setTranslateTo] = useState<string>('none');
+
+  const languages = [
+    { code: 'none', name: 'No Translation' },
+    { code: 'es', name: 'Spanish' },
+    { code: 'fr', name: 'French' },
+    { code: 'de', name: 'German' },
+    { code: 'it', name: 'Italian' },
+    { code: 'pt', name: 'Portuguese' },
+    { code: 'zh', name: 'Chinese' },
+    { code: 'ja', name: 'Japanese' },
+    { code: 'ko', name: 'Korean' },
+    { code: 'ar', name: 'Arabic' }
+  ];
 
   const roleOptions = Array.from(new Set(participants.map(p => p.role)));
 
@@ -80,6 +95,21 @@ export const BroadcastComposer = ({ participants, onSend }: BroadcastComposerPro
                 <MapPin size={14} />
                 Add details
               </button>
+              <div className="flex items-center gap-2 ml-4">
+                <Languages size={14} className="text-slate-400" />
+                <Select value={translateTo} onValueChange={setTranslateTo}>
+                  <SelectTrigger className="w-32 h-6 bg-slate-700 border-slate-600 text-white text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {languages.map((lang) => (
+                      <SelectItem key={lang.code} value={lang.code} className="text-xs">
+                        {lang.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <span className="text-xs text-slate-500">
                 {message.length}/140
               </span>

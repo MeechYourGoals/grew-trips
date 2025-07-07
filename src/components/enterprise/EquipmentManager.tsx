@@ -1,8 +1,10 @@
 
 import React, { useState } from 'react';
-import { Package, DollarSign, Truck, Plus, AlertTriangle } from 'lucide-react';
+import { Package, DollarSign, Truck, Plus, AlertTriangle, QrCode, MapPin } from 'lucide-react';
+import { QRCodeManager } from './QRCodeManager';
 
 export const EquipmentManager = () => {
+  const [activeTab, setActiveTab] = useState('inventory');
   const [equipment] = useState([
     {
       id: '1',
@@ -46,21 +48,30 @@ export const EquipmentManager = () => {
 
   const totalValue = equipment.reduce((sum, item) => sum + item.insuredValue, 0);
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-white flex items-center gap-2">
-          <Package size={24} className="text-glass-orange" />
-          Equipment & Freight
-        </h3>
-        <button className="bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
-          <Plus size={16} />
-          Add Equipment
-        </button>
-      </div>
+  const tabs = [
+    { id: 'inventory', label: 'Inventory', icon: Package },
+    { id: 'tracking', label: 'Live Tracking', icon: MapPin },
+    { id: 'freight', label: 'Freight & Shipping', icon: Truck },
+    { id: 'qr-codes', label: 'QR Codes', icon: QrCode }
+  ];
 
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case 'qr-codes':
+        return <QRCodeManager />;
+      case 'tracking':
+        return <div className="text-white">Live tracking content coming soon...</div>;
+      case 'freight':
+        return <div className="text-white">Freight management content coming soon...</div>;
+      default:
+        return renderInventoryContent();
+    }
+  };
+
+  const renderInventoryContent = () => (
+    <>
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white/5 border border-white/10 rounded-lg p-4">
           <div className="text-2xl font-bold text-white">{equipment.length}</div>
           <div className="text-sm text-gray-400">Total Items</div>
@@ -98,6 +109,10 @@ export const EquipmentManager = () => {
                 </div>
                 <div className="flex gap-2">
                   <button className="text-glass-orange hover:text-glass-orange/80 text-sm">Track</button>
+                  <button className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1">
+                    <QrCode size={12} />
+                    QR
+                  </button>
                   <button className="text-gray-400 hover:text-white text-sm">Edit</button>
                 </div>
               </div>
@@ -122,6 +137,45 @@ export const EquipmentManager = () => {
           ))}
         </div>
       </div>
+    </>
+  );
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+          <Package size={24} className="text-glass-orange" />
+          Equipment & Freight
+        </h3>
+        <button className="bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
+          <Plus size={16} />
+          Add Equipment
+        </button>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6">
+        {tabs.map((tab) => {
+          const Icon = tab.icon;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-colors ${
+                activeTab === tab.id
+                  ? 'bg-glass-orange/20 text-glass-orange border border-glass-orange/30'
+                  : 'text-gray-300 hover:text-white hover:bg-white/10'
+              }`}
+            >
+              <Icon size={16} />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* Tab Content */}
+      {renderTabContent()}
     </div>
   );
 };
