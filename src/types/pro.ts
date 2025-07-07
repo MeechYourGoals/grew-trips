@@ -332,7 +332,7 @@ export interface ProTripData {
 }
 
 export const SUBSCRIPTION_TIERS = {
-  'starter-pro': {
+  'starter': {
     name: 'Starter Pro',
     price: 49,
     seatLimit: 25,
@@ -348,7 +348,7 @@ export const SUBSCRIPTION_TIERS = {
       'Email support'
     ]
   },
-  'growth-pro': {
+  'growing': {
     name: 'Growth Pro',
     price: 199,
     seatLimit: 100,
@@ -366,8 +366,25 @@ export const SUBSCRIPTION_TIERS = {
       'Usage analytics & reporting'
     ]
   },
-  'enterprise-custom': {
-    name: 'Enterprise Custom',
+  'enterprise': {
+    name: 'Enterprise Pro',
+    price: 499,
+    seatLimit: 500,
+    features: [
+      'Up to 500 team members',
+      'Full SSO/MFA integration',
+      'Advanced integrations & APIs',
+      'GDPR compliance suite',
+      'White-label options',
+      'Advanced security features',
+      'Priority support',
+      'Custom branding',
+      'Advanced analytics',
+      'Dedicated account manager'
+    ]
+  },
+  'enterprise-plus': {
+    name: 'Enterprise Plus',
     price: 'Contact Sales',
     seatLimit: 999,
     features: [
