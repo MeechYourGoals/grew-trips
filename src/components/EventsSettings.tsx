@@ -11,16 +11,22 @@ import { NetworkingRulesSection } from './events/NetworkingRulesSection';
 import { SegmentedBroadcastsSection } from './events/SegmentedBroadcastsSection';
 import { LiveEngagementSection } from './events/LiveEngagementSection';
 import { EventAnalyticsSection } from './events/EventAnalyticsSection';
+import { ChatControlsSection } from './events/ChatControlsSection';
+import { HeatMapDashboard } from './events/HeatMapDashboard';
+import { EmergencyBroadcast } from './events/EmergencyBroadcast';
+import { EventSetupWizard } from './events/EventSetupWizard';
 
 interface EventsSettingsProps {
   currentUserId: string;
 }
 
 export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
-  const [activeSection, setActiveSection] = useState('profile');
+  const [activeSection, setActiveSection] = useState('setup');
 
   const sections = [
+    { id: 'setup', label: 'Event Setup', icon: Calendar },
     { id: 'profile', label: 'Event Profile', icon: Calendar },
+    { id: 'chat', label: 'Chat Controls', icon: Users },
     { id: 'ticketing', label: 'Ticketing & Billing', icon: CreditCard },
     { id: 'attendees', label: 'Attendee Types', icon: Users },
     { id: 'agenda', label: 'Agenda Builder', icon: Clock },
@@ -28,13 +34,17 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
     { id: 'badges', label: 'Badge & Access', icon: Badge },
     { id: 'networking', label: 'Networking Rules', icon: Network },
     { id: 'broadcasts', label: 'Segmented Broadcasts', icon: Megaphone },
+    { id: 'emergency', label: 'Emergency Broadcast', icon: Activity },
     { id: 'engagement', label: 'Live Engagement', icon: Activity },
+    { id: 'heatmap', label: 'Heat Map Dashboard', icon: BarChart },
     { id: 'analytics', label: 'Event Analytics', icon: BarChart }
   ];
 
   const renderSection = () => {
     switch (activeSection) {
+      case 'setup': return <EventSetupWizard onComplete={() => {}} onCancel={() => {}} />;
       case 'profile': return <EventProfileSection />;
+      case 'chat': return <ChatControlsSection />;
       case 'ticketing': return <TicketingBillingSection />;
       case 'attendees': return <AttendeeTypesSection />;
       case 'agenda': return <AgendaBuilderSection />;
@@ -42,7 +52,9 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
       case 'badges': return <BadgeAccessSection />;
       case 'networking': return <NetworkingRulesSection />;
       case 'broadcasts': return <SegmentedBroadcastsSection />;
+      case 'emergency': return <EmergencyBroadcast />;
       case 'engagement': return <LiveEngagementSection />;
+      case 'heatmap': return <HeatMapDashboard />;
       case 'analytics': return <EventAnalyticsSection />;
       default: return <EventProfileSection />;
     }
