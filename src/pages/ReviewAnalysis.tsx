@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { BarChart3, MessageSquare, Sparkles, RefreshCw } from 'lucide-react';
+import { BarChart3, MessageSquare, Sparkles, RefreshCw, Check, X, Edit2 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { useReviewAnalysis } from '../hooks/useAiFeatures';
 import { ReviewAnalysisHeader } from '../components/review/ReviewAnalysisHeader';
@@ -24,6 +24,9 @@ const ReviewAnalysis = () => {
   const [chatInput, setChatInput] = useState('');
   const [venueName, setVenueName] = useState('Artisan Coffee House');
   const [activeView, setActiveView] = useState<'overview' | 'platform'>('overview');
+  const [isEditingVenue, setIsEditingVenue] = useState(false);
+  const [tempVenueName, setTempVenueName] = useState('');
+  const [venueUrl, setVenueUrl] = useState('');
 
   const handleAnalyze = () => {
     const allUrls = Object.values(urls).filter(url => url.trim());
@@ -46,6 +49,23 @@ const ReviewAnalysis = () => {
     }, 1000);
     
     setChatInput('');
+  };
+
+  const handleEditVenue = () => {
+    setTempVenueName(venueName);
+    setIsEditingVenue(true);
+  };
+
+  const handleSaveVenue = () => {
+    if (tempVenueName.trim()) {
+      setVenueName(tempVenueName.trim());
+    }
+    setIsEditingVenue(false);
+  };
+
+  const handleCancelEdit = () => {
+    setTempVenueName('');
+    setIsEditingVenue(false);
   };
 
   // Mock data matching the screenshots
@@ -136,13 +156,59 @@ const ReviewAnalysis = () => {
         {/* Venue Name Section */}
         <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-700 rounded-2xl p-6 mb-6">
           <h3 className="text-gray-400 text-sm mb-2">Venue Name for Analysis</h3>
-          <div className="flex items-center gap-3">
-            <h2 className="text-2xl font-bold text-white">{venueName}</h2>
-            <button className="text-gray-400 hover:text-white">
-              ✏️
-            </button>
+          
+          {!isEditingVenue ? (
+            <div className="flex items-center gap-3 mb-4">
+              <h2 className="text-2xl font-bold text-white">{venueName}</h2>
+              <button 
+                onClick={handleEditVenue}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <Edit2 size={18} />
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4 mb-4">
+              <div className="flex items-center gap-3">
+                <input
+                  type="text"
+                  value={tempVenueName}
+                  onChange={(e) => setTempVenueName(e.target.value)}
+                  className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-purple-500 focus:outline-none"
+                  placeholder="Enter venue name"
+                  autoFocus
+                />
+                <button
+                  onClick={handleSaveVenue}
+                  className="text-green-400 hover:text-green-300 transition-colors"
+                >
+                  <Check size={18} />
+                </button>
+                <button
+                  onClick={handleCancelEdit}
+                  className="text-red-400 hover:text-red-300 transition-colors"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* URL Input Field */}
+          <div className="mb-4">
+            <label className="block text-gray-400 text-sm mb-2">
+              Review URL (optional)
+            </label>
+            <input
+              type="url"
+              value={venueUrl}
+              onChange={(e) => setVenueUrl(e.target.value)}
+              className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
+              placeholder="https://example.com/venue-reviews"
+            />
           </div>
-          <p className="text-gray-400 text-sm mt-2">Change the venue name to analyze competitor sentiment or compare different locations</p>
+          
+          <p className="text-gray-400 text-sm">Change the venue name to analyze competitor sentiment or compare different locations</p>
         </div>
 
         {/* Platform Toggle */}
