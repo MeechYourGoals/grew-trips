@@ -6,11 +6,26 @@ import { useAuth } from '../../hooks/useAuth';
 export const ConsumerNotificationsSection = () => {
   const { user, updateNotificationSettings } = useAuth();
 
-  if (!user) return null;
+  // Create mock user for demo mode when no real user is authenticated
+  const mockUser = {
+    id: 'demo-user-123',
+    email: 'demo@example.com',
+    displayName: 'Demo User',
+    notificationSettings: {
+      messages: true,
+      broadcasts: true,
+      tripUpdates: true,
+      email: true,
+      push: false
+    }
+  };
+
+  const currentUser = user || mockUser;
+  const currentUpdateNotificationSettings = user ? updateNotificationSettings : () => console.log('Demo mode - notification settings update clicked');
 
   const handleNotificationToggle = (setting: string) => {
-    updateNotificationSettings({
-      [setting]: !user.notificationSettings[setting as keyof typeof user.notificationSettings]
+    currentUpdateNotificationSettings({
+      [setting]: !currentUser.notificationSettings[setting as keyof typeof currentUser.notificationSettings]
     });
   };
 
@@ -19,7 +34,7 @@ export const ConsumerNotificationsSection = () => {
       <h3 className="text-2xl font-bold text-white">Notification Preferences</h3>
       
       <div className="space-y-4">
-        {Object.entries(user.notificationSettings).map(([key, value]) => (
+        {Object.entries(currentUser.notificationSettings).map(([key, value]) => (
           <div key={key} className="flex items-center justify-between p-4 bg-white/5 rounded-xl">
             <div className="flex items-center gap-3">
               <Bell size={16} className="text-gray-400" />

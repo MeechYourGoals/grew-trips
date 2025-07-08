@@ -6,10 +6,19 @@ import { useAuth } from '../../hooks/useAuth';
 export const ConsumerProfileSection = () => {
   const { user, updateProfile } = useAuth();
 
-  if (!user) return null;
+  // Create mock user for demo mode when no real user is authenticated
+  const mockUser = {
+    id: 'demo-user-123',
+    email: 'demo@example.com',
+    displayName: 'Demo User',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'
+  };
+
+  const currentUser = user || mockUser;
+  const currentUpdateProfile = user ? updateProfile : () => console.log('Demo mode - profile update clicked');
 
   const handleProfileUpdate = (field: string, value: string) => {
-    updateProfile({ [field]: value });
+    currentUpdateProfile({ [field]: value });
   };
 
   return (
@@ -30,8 +39,8 @@ export const ConsumerProfileSection = () => {
         <div className="flex items-center gap-6">
           <div className="relative">
             <div className="w-24 h-24 bg-gradient-to-r from-glass-orange to-glass-yellow rounded-full flex items-center justify-center">
-              {user.avatar ? (
-                <img src={user.avatar} alt="Profile" className="w-full h-full rounded-full object-cover" />
+              {currentUser.avatar ? (
+                <img src={currentUser.avatar} alt="Profile" className="w-full h-full rounded-full object-cover" />
               ) : (
                 <User size={32} className="text-white" />
               )}
@@ -58,7 +67,7 @@ export const ConsumerProfileSection = () => {
             <label className="block text-sm text-gray-300 mb-2">Display Name</label>
             <input
               type="text"
-              value={user.displayName}
+              value={currentUser.displayName}
               onChange={(e) => handleProfileUpdate('displayName', e.target.value)}
               className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50"
             />
@@ -67,7 +76,7 @@ export const ConsumerProfileSection = () => {
             <label className="block text-sm text-gray-300 mb-2">Email</label>
             <input
               type="email"
-              value={user.email || ''}
+              value={currentUser.email || ''}
               disabled
               className="w-full bg-gray-700/50 border border-gray-600 text-gray-400 rounded-lg px-4 py-3"
             />
