@@ -4,10 +4,18 @@ import { MapPin, Plus, Home } from 'lucide-react';
 import { AddPlaceModal } from './AddPlaceModal';
 import { GoogleMapsEmbed } from './GoogleMapsEmbed';
 import { BasecampSelector } from './BasecampSelector';
+import { FindMyFriendsOverlay } from './FindMyFriendsOverlay';
 import { BasecampLocation, PlaceWithDistance, DistanceCalculationSettings } from '../types/basecamp';
 import { DistanceCalculator } from '../utils/distanceCalculator';
+import { useTripVariant } from '../contexts/TripVariantContext';
 
-export const PlacesSection = () => {
+interface PlacesSectionProps {
+  tripId?: string;
+  tripName?: string;
+}
+
+export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSectionProps) => {
+  const { variant } = useTripVariant();
   const [isAddPlaceModalOpen, setIsAddPlaceModalOpen] = useState(false);
   const [isBasecampModalOpen, setIsBasecampModalOpen] = useState(false);
   const [basecamp, setBasecamp] = useState<BasecampLocation | undefined>();
@@ -109,6 +117,17 @@ export const PlacesSection = () => {
               <p className="text-green-300 text-sm">{basecamp.address}</p>
             </div>
           </div>
+        </div>
+      )}
+
+      {/* Find My Friends Feature for Consumer trips */}
+      {variant === 'consumer' && (
+        <div className="mb-8">
+          <FindMyFriendsOverlay 
+            tripId={tripId} 
+            tripName={tripName}
+            className="max-w-md"
+          />
         </div>
       )}
 

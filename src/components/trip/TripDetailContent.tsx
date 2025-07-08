@@ -15,6 +15,7 @@ interface TripDetailContentProps {
   onTabChange: (tab: string) => void;
   onShowTripsPlusModal: () => void;
   tripId: string;
+  tripName?: string;
   basecamp: { name: string; address: string };
   tripPreferences: TripPreferencesType | undefined;
   onPreferencesChange: (preferences: TripPreferencesType) => void;
@@ -25,6 +26,7 @@ export const TripDetailContent = ({
   onTabChange,
   onShowTripsPlusModal,
   tripId,
+  tripName,
   basecamp,
   tripPreferences,
   onPreferencesChange
@@ -45,7 +47,7 @@ export const TripDetailContent = ({
       case 'chat':
         return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
       case 'places':
-        return <PlacesSection />;
+        return <PlacesSection tripId={tripId} tripName={tripName} />;
       case 'preferences':
         return (
           <TripPreferences 

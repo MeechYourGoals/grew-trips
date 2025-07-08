@@ -106,6 +106,7 @@ const TripDetail = () => {
           onTabChange={setActiveTab}
           onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
           tripId={tripId || '1'}
+          tripName={trip.title}
           basecamp={basecamp}
           tripPreferences={tripPreferences}
           onPreferencesChange={setTripPreferences}
