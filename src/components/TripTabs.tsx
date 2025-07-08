@@ -62,21 +62,21 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
   return (
     <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
       {/* Tab Navigation */}
-      <div className="grid grid-cols-8 gap-2 mb-8">
+      <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 mb-8 pb-2 -mx-2 px-2 md:grid md:grid-cols-8 md:overflow-visible md:whitespace-normal">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
+              className={`flex-shrink-0 min-w-max flex items-center justify-center gap-2 px-3 md:px-4 py-3 rounded-xl font-medium transition-all duration-200 ${
                 activeTab === tab.id
                   ? `bg-gradient-to-r ${accentColors.gradient} text-white`
                   : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
               }`}
             >
               <Icon size={16} />
-              <span className="hidden sm:inline text-xs">{tab.label}</span>
+              <span className="text-xs md:text-sm">{tab.label}</span>
             </button>
           );
         })}

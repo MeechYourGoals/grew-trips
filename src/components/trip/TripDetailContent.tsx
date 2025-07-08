@@ -71,7 +71,7 @@ export const TripDetailContent = ({
   return (
     <>
       {/* Tab Navigation - Updated order: Home | Places | Preferences | AI Assistant | Search */}
-      <div className="flex gap-2 mb-8 overflow-x-auto pb-2">
+      <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 mb-8 pb-2 -mx-2 px-2">
         {tabs.map((tab) => (
           <button
             key={tab.id}
@@ -82,7 +82,7 @@ export const TripDetailContent = ({
                 onTabChange(tab.id);
               }
             }}
-            className={`flex-shrink-0 px-4 md:px-6 py-3 rounded-xl font-medium transition-all duration-200 text-sm md:text-base flex items-center gap-2 ${
+            className={`flex-shrink-0 min-w-max px-4 md:px-6 py-3 rounded-xl font-medium transition-all duration-200 text-sm md:text-base flex items-center gap-2 ${
               activeTab === tab.id
                 ? `bg-gradient-to-r ${accentColors.gradient} text-white`
                 : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
