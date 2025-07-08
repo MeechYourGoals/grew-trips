@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { X, Calendar, MapPin, Users } from 'lucide-react';
+import { X, Calendar, MapPin, Users, Building, PartyPopper } from 'lucide-react';
+import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group';
 
 interface CreateTripModalProps {
   isOpen: boolean;
@@ -8,6 +9,7 @@ interface CreateTripModalProps {
 }
 
 export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
+  const [tripType, setTripType] = useState<'consumer' | 'pro' | 'event'>('consumer');
   const [formData, setFormData] = useState({
     title: '',
     location: '',
@@ -44,6 +46,41 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
           >
             <X size={24} />
           </button>
+        </div>
+
+        {/* Trip Type Toggle */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-slate-300 mb-3">
+            Trip Type
+          </label>
+          <ToggleGroup
+            type="single"
+            value={tripType}
+            onValueChange={(value) => value && setTripType(value as 'consumer' | 'pro' | 'event')}
+            className="grid grid-cols-3 gap-2 bg-slate-700/30 p-1 rounded-xl"
+          >
+            <ToggleGroupItem
+              value="consumer"
+              className="flex items-center gap-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white text-slate-300 hover:text-white"
+            >
+              <Users size={16} />
+              Consumer
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="pro"
+              className="flex items-center gap-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white text-slate-300 hover:text-white"
+            >
+              <Building size={16} />
+              Pro
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="event"
+              className="flex items-center gap-2 data-[state=on]:bg-blue-600 data-[state=on]:text-white text-slate-300 hover:text-white"
+            >
+              <PartyPopper size={16} />
+              Event
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
 
         {/* Form */}
