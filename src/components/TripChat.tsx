@@ -4,7 +4,6 @@ import { Send, MessageCircle } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { demoModeService } from '@/services/demoModeService';
 import { getTripById } from '@/data/tripsData';
-import { proTripMockData } from '@/data/proTripMockData';
 import { getMockAvatar, currentUserAvatar } from '@/utils/mockAvatars';
 import { MessageReactionBar } from './chat/MessageReactionBar';
 
@@ -38,55 +37,11 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
     const loadMockMessages = async () => {
       setLoading(true);
       
-      // DIRECT CHECK: If this is the Paul George trip, force the messages to show
-      if (currentTripId === 'paul-george-elite-aau-nationals-2025') {
-        console.log('🎯 DIRECT PAUL GEORGE CHECK - forcing youth-sports messages');
-        const mockMessages = await demoModeService.getMockMessages('youth-sports', currentTripId);
-        console.log('📨 Paul George messages loaded:', mockMessages.length);
-        
-        if (mockMessages.length > 0) {
-          const formattedMessages: MockMessage[] = mockMessages.map((mock, index) => {
-            const createdAt = new Date();
-            createdAt.setDate(createdAt.getDate() - (mock.timestamp_offset_days || 1));
-            createdAt.setHours(createdAt.getHours() - Math.floor(Math.random() * 12));
-            
-            return {
-              id: `mock_${mock.id}_${index}`,
-              text: mock.message_content,
-              user: {
-                id: `user_${mock.sender_name.replace(/\s+/g, '_').toLowerCase()}`,
-                name: mock.sender_name,
-                image: getMockAvatar(mock.sender_name)
-              },
-              created_at: createdAt.toISOString(),
-              isMock: true
-            };
-          });
-
-          formattedMessages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
-          setMessages(formattedMessages);
-          setLoading(false);
-          return;
-        }
-      }
+      const tripIdNum = parseInt(currentTripId, 10);
+      const trip = tripIdNum ? getTripById(tripIdNum) : null;
+      const tripType = demoModeService.getTripType(trip);
       
-      // Check if this is a Pro trip first
-      const proTrip = proTripMockData[currentTripId];
-      let tripType = 'friends-trip';
-      
-      if (proTrip) {
-        // Use Pro trip data for trip type detection
-        tripType = demoModeService.getTripType(proTrip);
-      } else {
-        // Fall back to consumer trip data
-        const tripIdNum = parseInt(currentTripId, 10);
-        const trip = tripIdNum ? getTripById(tripIdNum) : null;
-        tripType = demoModeService.getTripType(trip);
-      }
-      
-      console.log('🚀 Loading mock messages for tripType:', tripType, 'tripId:', currentTripId);
-      const mockMessages = await demoModeService.getMockMessages(tripType, currentTripId);
-      console.log('📨 Received mock messages:', mockMessages.length);
+      const mockMessages = await demoModeService.getMockMessages(tripType);
       
       const formattedMessages: MockMessage[] = mockMessages.map((mock, index) => {
         const createdAt = new Date();
@@ -201,8 +156,7 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
           {messages.length === 0 ? (
             <div className="text-center py-8">
               <MessageCircle size={32} className="text-gray-600 mx-auto mb-2" />
-              <p className="text-gray-500 text-sm">⚠️ Mock chat failed to load</p>
-              <p className="text-xs text-gray-600 mt-1">Reload or contact dev@triv.dev</p>
+              <p className="text-gray-500 text-sm">No messages yet</p>
             </div>
           ) : (
             messages.map((message) => (

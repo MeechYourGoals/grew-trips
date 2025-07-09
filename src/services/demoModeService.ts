@@ -28,12 +28,6 @@ export class DemoModeService {
     // Check for demo mode from localStorage or environment
     this.isDemoMode = localStorage.getItem('TRIPS_DEMO_MODE') === 'true' || 
                       window.location.search.includes('demo=true');
-    
-    // Auto-enable demo mode for Pro trip URLs
-    if (typeof window !== 'undefined' && window.location.pathname.includes('/tour/pro/')) {
-      console.log('🎯 Auto-enabling demo mode for Pro trip URL:', window.location.pathname);
-      this.enableDemoMode();
-    }
   }
 
   static getInstance(): DemoModeService {
@@ -58,26 +52,10 @@ export class DemoModeService {
   }
 
   async getMockMessages(tripType: string, tripId?: string): Promise<MockMessage[]> {
-    console.log('🔍 getMockMessages called with:', { tripType, tripId, demoMode: this.isDemoMode });
-    
-    // Direct check for Paul George trip - ALWAYS return the messages regardless of demo mode
-    if (tripId === 'paul-george-elite-aau-nationals-2025' || tripType === 'youth-sports') {
-      console.log('🎯 Paul George AAU trip detected - returning hardcoded messages');
-      return this.getFallbackMessages('youth-sports');
-    }
-    
-    // For Pro trips, bypass demo mode check completely
-    if (tripType === 'sports-pro' || tripType === 'entertainment-tour' || tripType === 'corporate-retreat') {
-      console.log('✅ Pro trip detected - bypassing demo mode check');
-      return this.getFallbackMessages(tripType);
-    }
-    
-    if (!this.isDemoMode) {
-      console.log('❌ Demo mode not enabled, returning empty array');
-      return [];
-    }
+    if (!this.isDemoMode) return [];
 
     try {
+      // Use fallback messages for now to avoid TypeScript issues
       return this.getFallbackMessages(tripType);
     } catch (error) {
       console.error('Error in getMockMessages:', error);
@@ -298,8 +276,7 @@ export class DemoModeService {
       if (title.includes('lakers') || title.includes('basketball') || title.includes('sports')) return 'sports-pro';
       if (title.includes('taylor') || title.includes('tour') || title.includes('eras') || title.includes('concert')) return 'entertainment-tour';
       if (title.includes('eli lilly') || title.includes('corporate') || title.includes('retreat') || title.includes('c-suite')) return 'corporate-retreat';
-      if (title.includes('volleyball') || title.includes('youth') || title.includes('aau') || title.includes('scarlet') || 
-          title.includes('paul george') || title.includes('elite aau') || title.includes('nationals')) return 'youth-sports';
+      if (title.includes('volleyball') || title.includes('youth') || title.includes('aau') || title.includes('scarlet')) return 'youth-sports';
       if (title.includes('real housewives') || title.includes('shoot') || title.includes('production')) return 'entertainment-tour';
       return 'sports-pro';
     }
