@@ -37,8 +37,8 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
     const loadMockMessages = async () => {
       setLoading(true);
       
-      // Check if this is the Paul George trip
-      if (currentTripId === 'paul-george-elite-aau-nationals-2025') {
+      // Check if this is the Paul George trip (flexible matching)
+      if (currentTripId.toLowerCase().includes('paul-george') || currentTripId.toLowerCase().includes('paul george')) {
         const paulGeorgeMessages = [
           {
             id: 'pg-1',
