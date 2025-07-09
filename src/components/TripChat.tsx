@@ -4,6 +4,7 @@ import { Send, MessageCircle } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { demoModeService } from '@/services/demoModeService';
 import { getTripById } from '@/data/tripsData';
+import { proTripMockData } from '@/data/proTripMockData';
 import { getMockAvatar, currentUserAvatar } from '@/utils/mockAvatars';
 import { MessageReactionBar } from './chat/MessageReactionBar';
 
@@ -25,21 +26,39 @@ interface MockMessage {
 }
 
 export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
-  const { tripId, eventId } = useParams();
+  const { tripId, eventId, proTripId } = useParams();
   const [messages, setMessages] = useState<MockMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
   const [reactions, setReactions] = useState<Record<string, Record<string, { count: number; userReacted: boolean }>>>({});
 
-  const currentTripId = tripId || eventId || 'default-trip';
+  const currentTripId = proTripId || tripId || eventId || 'default-trip';
 
   useEffect(() => {
     const loadMockMessages = async () => {
       setLoading(true);
       
-      const tripIdNum = parseInt(currentTripId, 10);
-      const trip = tripIdNum ? getTripById(tripIdNum) : null;
-      const tripType = demoModeService.getTripType(trip);
+      // Check if this is a pro trip first
+      const proTrip = proTripMockData[currentTripId];
+      let tripType: string;
+      
+      if (proTrip) {
+        // For pro trips, determine type based on category
+        if (proTrip.category?.includes('Sports')) {
+          tripType = 'sports-pro';
+        } else if (proTrip.category?.includes('Music') || proTrip.category?.includes('Entertainment')) {
+          tripType = 'entertainment-pro';
+        } else if (proTrip.category?.includes('Corporate')) {
+          tripType = 'corporate-pro';
+        } else {
+          tripType = 'entertainment-pro'; // default for pro trips
+        }
+      } else {
+        // Regular trip logic
+        const tripIdNum = parseInt(currentTripId, 10);
+        const trip = tripIdNum ? getTripById(tripIdNum) : null;
+        tripType = demoModeService.getTripType(trip);
+      }
       
       const mockMessages = await demoModeService.getMockMessages(tripType);
       
