@@ -52,7 +52,9 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
         tripType = demoModeService.getTripType(trip);
       }
       
-      const mockMessages = await demoModeService.getMockMessages(tripType);
+      console.log('🚀 Loading mock messages for tripType:', tripType, 'tripId:', currentTripId);
+      const mockMessages = await demoModeService.getMockMessages(tripType, currentTripId);
+      console.log('📨 Received mock messages:', mockMessages.length);
       
       const formattedMessages: MockMessage[] = mockMessages.map((mock, index) => {
         const createdAt = new Date();
@@ -167,7 +169,8 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
           {messages.length === 0 ? (
             <div className="text-center py-8">
               <MessageCircle size={32} className="text-gray-600 mx-auto mb-2" />
-              <p className="text-gray-500 text-sm">No messages yet</p>
+              <p className="text-gray-500 text-sm">⚠️ Mock chat failed to load</p>
+              <p className="text-xs text-gray-600 mt-1">Reload or contact dev@triv.dev</p>
             </div>
           ) : (
             messages.map((message) => (

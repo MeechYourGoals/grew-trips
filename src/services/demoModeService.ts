@@ -28,6 +28,12 @@ export class DemoModeService {
     // Check for demo mode from localStorage or environment
     this.isDemoMode = localStorage.getItem('TRIPS_DEMO_MODE') === 'true' || 
                       window.location.search.includes('demo=true');
+    
+    // Auto-enable demo mode for Pro trip URLs
+    if (typeof window !== 'undefined' && window.location.pathname.includes('/tour/pro/')) {
+      console.log('🎯 Auto-enabling demo mode for Pro trip URL:', window.location.pathname);
+      this.enableDemoMode();
+    }
   }
 
   static getInstance(): DemoModeService {
@@ -52,7 +58,12 @@ export class DemoModeService {
   }
 
   async getMockMessages(tripType: string, tripId?: string): Promise<MockMessage[]> {
-    if (!this.isDemoMode) return [];
+    console.log('🔍 getMockMessages called with:', { tripType, tripId, demoMode: this.isDemoMode });
+    
+    if (!this.isDemoMode) {
+      console.log('❌ Demo mode not enabled, returning empty array');
+      return [];
+    }
 
     try {
       // Use fallback messages for now to avoid TypeScript issues
