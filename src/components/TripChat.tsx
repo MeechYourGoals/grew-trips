@@ -38,6 +38,38 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
     const loadMockMessages = async () => {
       setLoading(true);
       
+      // DIRECT CHECK: If this is the Paul George trip, force the messages to show
+      if (currentTripId === 'paul-george-elite-aau-nats-25') {
+        console.log('🎯 DIRECT PAUL GEORGE CHECK - forcing youth-sports messages');
+        const mockMessages = await demoModeService.getMockMessages('youth-sports', currentTripId);
+        console.log('📨 Paul George messages loaded:', mockMessages.length);
+        
+        if (mockMessages.length > 0) {
+          const formattedMessages: MockMessage[] = mockMessages.map((mock, index) => {
+            const createdAt = new Date();
+            createdAt.setDate(createdAt.getDate() - (mock.timestamp_offset_days || 1));
+            createdAt.setHours(createdAt.getHours() - Math.floor(Math.random() * 12));
+            
+            return {
+              id: `mock_${mock.id}_${index}`,
+              text: mock.message_content,
+              user: {
+                id: `user_${mock.sender_name.replace(/\s+/g, '_').toLowerCase()}`,
+                name: mock.sender_name,
+                image: getMockAvatar(mock.sender_name)
+              },
+              created_at: createdAt.toISOString(),
+              isMock: true
+            };
+          });
+
+          formattedMessages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+          setMessages(formattedMessages);
+          setLoading(false);
+          return;
+        }
+      }
+      
       // Check if this is a Pro trip first
       const proTrip = proTripMockData[currentTripId];
       let tripType = 'friends-trip';

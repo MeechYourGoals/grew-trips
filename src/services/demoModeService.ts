@@ -60,13 +60,24 @@ export class DemoModeService {
   async getMockMessages(tripType: string, tripId?: string): Promise<MockMessage[]> {
     console.log('🔍 getMockMessages called with:', { tripType, tripId, demoMode: this.isDemoMode });
     
+    // Direct check for Paul George trip - ALWAYS return the messages regardless of demo mode
+    if (tripId === 'paul-george-elite-aau-nats-25' || tripType === 'youth-sports') {
+      console.log('🎯 Paul George AAU trip detected - returning hardcoded messages');
+      return this.getFallbackMessages('youth-sports');
+    }
+    
+    // For Pro trips, bypass demo mode check completely
+    if (tripType === 'sports-pro' || tripType === 'entertainment-tour' || tripType === 'corporate-retreat') {
+      console.log('✅ Pro trip detected - bypassing demo mode check');
+      return this.getFallbackMessages(tripType);
+    }
+    
     if (!this.isDemoMode) {
       console.log('❌ Demo mode not enabled, returning empty array');
       return [];
     }
 
     try {
-      // Use fallback messages for now to avoid TypeScript issues
       return this.getFallbackMessages(tripType);
     } catch (error) {
       console.error('Error in getMockMessages:', error);
