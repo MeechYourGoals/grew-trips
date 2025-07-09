@@ -197,31 +197,40 @@ export class DemoModeService {
     if (tripType === 'youth-sports') {
       return [
         {
-          id: 'youth-1',
+          id: 'pg-1',
           trip_type: 'youth-sports',
-          sender_name: 'Coach Sarah',
-          message_content: "🏐 Practice uniforms for warm-up, game jerseys for matches",
+          sender_name: 'Coach Chris',
+          message_content: '🚐 Bus departs the Anaheim Hyatt at 6:45 AM sharp. Wear the navy PG Elite warm-ups so we roll in looking unified.',
           delay_seconds: 0,
           timestamp_offset_days: 1,
-          tags: ['youth']
+          tags: ['logistics', 'transport']
         },
         {
-          id: 'youth-2',
+          id: 'pg-2',
           trip_type: 'youth-sports',
-          sender_name: 'Team Mom Lisa',
-          message_content: "Parents: pick-up location has changed to the north parking lot",
-          delay_seconds: 0,
+          sender_name: 'Team Manager Bria',
+          message_content: '👕 Jersey check: Game 1 – white, Game 2 – navy. Pack both plus shooting shirts in your carry-on so nothing gets lost.',
+          delay_seconds: 1800,
           timestamp_offset_days: 1,
-          tags: ['coordination']
+          tags: ['uniforms', 'preparation']
         },
         {
-          id: 'youth-3',
+          id: 'pg-3',
           trip_type: 'youth-sports',
-          sender_name: 'Athletic Director',
-          message_content: "Medical forms need to be submitted before tomorrow's games",
-          delay_seconds: 0,
-          timestamp_offset_days: 2,
-          tags: ['compliance']
+          sender_name: 'Athletic Trainer Jalen',
+          message_content: '⏰ Need ankles taped or ice packs? Swing by Room 409 between 6:15-6:35. Hydration packs will be in the hallway cooler outside PG\'s room.',
+          delay_seconds: 3600,
+          timestamp_offset_days: 0,
+          tags: ['medical', 'preparation']
+        },
+        {
+          id: 'pg-4',
+          trip_type: 'youth-sports',
+          sender_name: 'Captain RJ #23',
+          message_content: '🍽️ Team dinner locked for 7:30 PM at BJ\'s Brewhouse (walkable). Any allergies or diet restrictions, DM me so I can give the host a heads-up.',
+          delay_seconds: 7200,
+          timestamp_offset_days: 0,
+          tags: ['meals', 'coordination']
         }
       ];
     }
