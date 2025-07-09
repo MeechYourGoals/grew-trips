@@ -61,7 +61,7 @@ export class DemoModeService {
     console.log('🔍 getMockMessages called with:', { tripType, tripId, demoMode: this.isDemoMode });
     
     // Direct check for Paul George trip - ALWAYS return the messages regardless of demo mode
-    if (tripId === 'paul-george-elite-aau-nats-25' || tripType === 'youth-sports') {
+    if (tripId === 'paul-george-elite-aau-nationals-2025' || tripType === 'youth-sports') {
       console.log('🎯 Paul George AAU trip detected - returning hardcoded messages');
       return this.getFallbackMessages('youth-sports');
     }

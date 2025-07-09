@@ -39,7 +39,7 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
       setLoading(true);
       
       // DIRECT CHECK: If this is the Paul George trip, force the messages to show
-      if (currentTripId === 'paul-george-elite-aau-nats-25') {
+      if (currentTripId === 'paul-george-elite-aau-nationals-2025') {
         console.log('🎯 DIRECT PAUL GEORGE CHECK - forcing youth-sports messages');
         const mockMessages = await demoModeService.getMockMessages('youth-sports', currentTripId);
         console.log('📨 Paul George messages loaded:', mockMessages.length);
