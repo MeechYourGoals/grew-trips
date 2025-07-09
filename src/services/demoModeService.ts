@@ -276,7 +276,8 @@ export class DemoModeService {
       if (title.includes('lakers') || title.includes('basketball') || title.includes('sports')) return 'sports-pro';
       if (title.includes('taylor') || title.includes('tour') || title.includes('eras') || title.includes('concert')) return 'entertainment-tour';
       if (title.includes('eli lilly') || title.includes('corporate') || title.includes('retreat') || title.includes('c-suite')) return 'corporate-retreat';
-      if (title.includes('volleyball') || title.includes('youth') || title.includes('aau') || title.includes('scarlet')) return 'youth-sports';
+      if (title.includes('volleyball') || title.includes('youth') || title.includes('aau') || title.includes('scarlet') || 
+          title.includes('paul george') || title.includes('elite aau') || title.includes('nationals')) return 'youth-sports';
       if (title.includes('real housewives') || title.includes('shoot') || title.includes('production')) return 'entertainment-tour';
       return 'sports-pro';
     }

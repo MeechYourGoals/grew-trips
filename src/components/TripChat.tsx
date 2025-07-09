@@ -4,6 +4,7 @@ import { Send, MessageCircle } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { demoModeService } from '@/services/demoModeService';
 import { getTripById } from '@/data/tripsData';
+import { proTripMockData } from '@/data/proTripMockData';
 import { getMockAvatar, currentUserAvatar } from '@/utils/mockAvatars';
 import { MessageReactionBar } from './chat/MessageReactionBar';
 
@@ -37,9 +38,19 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
     const loadMockMessages = async () => {
       setLoading(true);
       
-      const tripIdNum = parseInt(currentTripId, 10);
-      const trip = tripIdNum ? getTripById(tripIdNum) : null;
-      const tripType = demoModeService.getTripType(trip);
+      // Check if this is a Pro trip first
+      const proTrip = proTripMockData[currentTripId];
+      let tripType = 'friends-trip';
+      
+      if (proTrip) {
+        // Use Pro trip data for trip type detection
+        tripType = demoModeService.getTripType(proTrip);
+      } else {
+        // Fall back to consumer trip data
+        const tripIdNum = parseInt(currentTripId, 10);
+        const trip = tripIdNum ? getTripById(tripIdNum) : null;
+        tripType = demoModeService.getTripType(trip);
+      }
       
       const mockMessages = await demoModeService.getMockMessages(tripType);
       
