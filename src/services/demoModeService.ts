@@ -51,12 +51,26 @@ export class DemoModeService {
     localStorage.removeItem('TRIPS_DEMO_MODE');
   }
 
-  async getMockMessages(tripType: string, tripId?: string): Promise<MockMessage[]> {
+  async getMockMessages(tripType: string): Promise<MockMessage[]> {
     if (!this.isDemoMode) return [];
 
     try {
-      // Use fallback messages for now to avoid TypeScript issues
-      return this.getFallbackMessages(tripType);
+      const { data, error } = await supabase
+        .from('mock_messages')
+        .select('*')
+        .eq('trip_type', tripType)
+        .order('timestamp_offset_days', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching mock messages:', error);
+        return this.getFallbackMessages(tripType);
+      }
+
+      if (!data || data.length === 0) {
+        return this.getFallbackMessages(tripType);
+      }
+
+      return data || [];
     } catch (error) {
       console.error('Error in getMockMessages:', error);
       return this.getFallbackMessages(tripType);
@@ -197,40 +211,31 @@ export class DemoModeService {
     if (tripType === 'youth-sports') {
       return [
         {
-          id: 'pg-1',
+          id: 'youth-1',
           trip_type: 'youth-sports',
-          sender_name: 'Coach Chris',
-          message_content: '🚐 Bus departs the Anaheim Hyatt at 6:45 AM sharp. Wear the navy PG Elite warm-ups so we roll in looking unified.',
+          sender_name: 'Coach Sarah',
+          message_content: "🏐 Practice uniforms for warm-up, game jerseys for matches",
           delay_seconds: 0,
           timestamp_offset_days: 1,
-          tags: ['logistics', 'transport']
+          tags: ['youth']
         },
         {
-          id: 'pg-2',
+          id: 'youth-2',
           trip_type: 'youth-sports',
-          sender_name: 'Team Manager Bria',
-          message_content: '👕 Jersey check: Game 1 – white, Game 2 – navy. Pack both plus shooting shirts in your carry-on so nothing gets lost.',
-          delay_seconds: 1800,
+          sender_name: 'Team Mom Lisa',
+          message_content: "Parents: pick-up location has changed to the north parking lot",
+          delay_seconds: 0,
           timestamp_offset_days: 1,
-          tags: ['uniforms', 'preparation']
+          tags: ['coordination']
         },
         {
-          id: 'pg-3',
+          id: 'youth-3',
           trip_type: 'youth-sports',
-          sender_name: 'Athletic Trainer Jalen',
-          message_content: '⏰ Need ankles taped or ice packs? Swing by Room 409 between 6:15-6:35. Hydration packs will be in the hallway cooler outside PG\'s room.',
-          delay_seconds: 3600,
-          timestamp_offset_days: 0,
-          tags: ['medical', 'preparation']
-        },
-        {
-          id: 'pg-4',
-          trip_type: 'youth-sports',
-          sender_name: 'Captain RJ #23',
-          message_content: '🍽️ Team dinner locked for 7:30 PM at BJ\'s Brewhouse (walkable). Any allergies or diet restrictions, DM me so I can give the host a heads-up.',
-          delay_seconds: 7200,
-          timestamp_offset_days: 0,
-          tags: ['meals', 'coordination']
+          sender_name: 'Athletic Director',
+          message_content: "Medical forms need to be submitted before tomorrow's games",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['compliance']
         }
       ];
     }
