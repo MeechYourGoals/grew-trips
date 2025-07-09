@@ -9,6 +9,7 @@ import { proTripMockData } from '../data/proTripMockData';
 import { AiMessageModal } from './ai/AiMessageModal';
 import { AiMessageButton } from './ai/AiMessageButton';
 import { getMockAvatar } from '@/utils/mockAvatars';
+import { MessageReactionBar } from './chat/MessageReactionBar';
 
 export const TourChat = () => {
   const { proTripId, tourId } = useParams();
@@ -17,6 +18,7 @@ export const TourChat = () => {
   const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
+  const [reactions, setReactions] = useState<Record<string, Record<string, { count: number; userReacted: boolean }>>>({});
   const { accentColors } = useTripVariant();
 
   // Get tour data for context
@@ -40,6 +42,26 @@ export const TourChat = () => {
 
   const formatTime = (timestamp: string) => {
     return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const handleReaction = (messageId: string, reactionType: string) => {
+    setReactions(prev => {
+      const messageReactions = prev[messageId] || {};
+      const currentReaction = messageReactions[reactionType] || { count: 0, userReacted: false };
+      
+      const newReactions = {
+        ...prev,
+        [messageId]: {
+          ...messageReactions,
+          [reactionType]: {
+            count: currentReaction.userReacted ? currentReaction.count - 1 : currentReaction.count + 1,
+            userReacted: !currentReaction.userReacted
+          }
+        }
+      };
+      
+      return newReactions;
+    });
   };
 
   return (
@@ -72,6 +94,11 @@ export const TourChat = () => {
                   <span className="text-gray-400 text-xs">{formatTime(msg.timestamp)}</span>
                 </div>
                 <p className="text-gray-300 text-sm">{msg.content}</p>
+                <MessageReactionBar
+                  messageId={msg.id}
+                  reactions={reactions[msg.id]}
+                  onReaction={handleReaction}
+                />
               </div>
             </div>
           ))

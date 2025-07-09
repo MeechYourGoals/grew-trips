@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 import { demoModeService } from '@/services/demoModeService';
 import { getTripById } from '@/data/tripsData';
 import { getMockAvatar, currentUserAvatar } from '@/utils/mockAvatars';
+import { MessageReactionBar } from './chat/MessageReactionBar';
 
 interface TripChatProps {
   groupChatEnabled?: boolean;
@@ -20,6 +21,7 @@ interface MockMessage {
   };
   created_at: string;
   isMock: boolean;
+  reactions?: Record<string, { count: number; userReacted: boolean }>;
 }
 
 export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
@@ -27,6 +29,7 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
   const [messages, setMessages] = useState<MockMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
+  const [reactions, setReactions] = useState<Record<string, Record<string, { count: number; userReacted: boolean }>>>({});
 
   const currentTripId = tripId || eventId || 'default-trip';
 
@@ -99,6 +102,26 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
+  const handleReaction = (messageId: string, reactionType: string) => {
+    setReactions(prev => {
+      const messageReactions = prev[messageId] || {};
+      const currentReaction = messageReactions[reactionType] || { count: 0, userReacted: false };
+      
+      const newReactions = {
+        ...prev,
+        [messageId]: {
+          ...messageReactions,
+          [reactionType]: {
+            count: currentReaction.userReacted ? currentReaction.count - 1 : currentReaction.count + 1,
+            userReacted: !currentReaction.userReacted
+          }
+        }
+      };
+      
+      return newReactions;
+    });
+  };
+
   if (loading) {
     return (
       <div className="p-6">
@@ -155,6 +178,11 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
                   <div className="text-sm text-gray-200 leading-relaxed">
                     {message.text}
                   </div>
+                  <MessageReactionBar
+                    messageId={message.id}
+                    reactions={reactions[message.id]}
+                    onReaction={handleReaction}
+                  />
                 </div>
               </div>
             ))

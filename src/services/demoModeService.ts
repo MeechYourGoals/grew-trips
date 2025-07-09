@@ -78,6 +78,7 @@ export class DemoModeService {
   }
 
   private getFallbackMessages(tripType: string): MockMessage[] {
+    // Consumer trip messages
     if (tripType === 'destination-wedding') {
       return [
         {
@@ -106,6 +107,135 @@ export class DemoModeService {
           delay_seconds: 0,
           timestamp_offset_days: 1,
           tags: ['coordination']
+        }
+      ];
+    }
+
+    // Pro trip fallback messages
+    if (tripType === 'sports-pro') {
+      return [
+        {
+          id: 'sports-1',
+          trip_type: 'sports-pro',
+          sender_name: 'Coach Johnson',
+          message_content: "🚌 Bus call moved to 09:00 — lobby of the Marriott",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['logistics']
+        },
+        {
+          id: 'sports-2',
+          trip_type: 'sports-pro',
+          sender_name: 'Team Manager',
+          message_content: "Per-diems will be distributed after warm-ups",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['coordination']
+        },
+        {
+          id: 'sports-3',
+          trip_type: 'sports-pro',
+          sender_name: 'Athletic Director',
+          message_content: "Reminder: team meeting in Conference Room B at 6 PM",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['meeting']
+        }
+      ];
+    }
+
+    if (tripType === 'entertainment-tour') {
+      return [
+        {
+          id: 'tour-1',
+          trip_type: 'entertainment-tour',
+          sender_name: 'Tour Director',
+          message_content: "🎵 Load-in starts at 10 AM sharp — all crew report to loading dock",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['production']
+        },
+        {
+          id: 'tour-2',
+          trip_type: 'entertainment-tour',
+          sender_name: 'Production Manager',
+          message_content: "Sound check moved to 2:30 PM due to venue scheduling",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['logistics']
+        },
+        {
+          id: 'tour-3',
+          trip_type: 'entertainment-tour',
+          sender_name: 'Security Chief',
+          message_content: "Settlement meeting with venue at 11 PM post-show",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['business']
+        }
+      ];
+    }
+
+    if (tripType === 'corporate-retreat') {
+      return [
+        {
+          id: 'corp-1',
+          trip_type: 'corporate-retreat',
+          sender_name: 'Event Coordinator',
+          message_content: "📋 Updated agenda in the Files tab — review before tomorrow's session",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['business']
+        },
+        {
+          id: 'corp-2',
+          trip_type: 'corporate-retreat',
+          sender_name: 'Executive Assistant',
+          message_content: "Reminder: business casual attire for the client dinner tonight",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['coordination']
+        },
+        {
+          id: 'corp-3',
+          trip_type: 'corporate-retreat',
+          sender_name: 'Team Lead',
+          message_content: "Transportation to the golf course leaves at 8 AM from hotel lobby",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['logistics']
+        }
+      ];
+    }
+
+    if (tripType === 'youth-sports') {
+      return [
+        {
+          id: 'youth-1',
+          trip_type: 'youth-sports',
+          sender_name: 'Coach Sarah',
+          message_content: "🏐 Practice uniforms for warm-up, game jerseys for matches",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['youth']
+        },
+        {
+          id: 'youth-2',
+          trip_type: 'youth-sports',
+          sender_name: 'Team Mom Lisa',
+          message_content: "Parents: pick-up location has changed to the north parking lot",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['coordination']
+        },
+        {
+          id: 'youth-3',
+          trip_type: 'youth-sports',
+          sender_name: 'Athletic Director',
+          message_content: "Medical forms need to be submitted before tomorrow's games",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['compliance']
         }
       ];
     }
@@ -146,12 +276,13 @@ export class DemoModeService {
 
     console.log('getTripType - Title:', title, 'Category:', category);
 
-    // Professional trip types
-    if (category.includes('pro') || tripData.isPro) {
-      if (title.includes('lakers') || title.includes('sports')) return 'sports-pro';
-      if (title.includes('taylor') || title.includes('tour')) return 'entertainment-tour';
-      if (title.includes('eli lilly') || title.includes('corporate')) return 'corporate-retreat';
-      if (title.includes('volleyball') || title.includes('youth')) return 'youth-sports';
+    // Professional trip types with enhanced detection
+    if (category.includes('pro') || tripData.isPro || category.includes('sports') || category.includes('entertainment')) {
+      if (title.includes('lakers') || title.includes('basketball') || title.includes('sports')) return 'sports-pro';
+      if (title.includes('taylor') || title.includes('tour') || title.includes('eras') || title.includes('concert')) return 'entertainment-tour';
+      if (title.includes('eli lilly') || title.includes('corporate') || title.includes('retreat') || title.includes('c-suite')) return 'corporate-retreat';
+      if (title.includes('volleyball') || title.includes('youth') || title.includes('aau') || title.includes('scarlet')) return 'youth-sports';
+      if (title.includes('real housewives') || title.includes('shoot') || title.includes('production')) return 'entertainment-tour';
       return 'sports-pro';
     }
 
