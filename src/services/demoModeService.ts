@@ -117,8 +117,8 @@ export class DemoModeService {
         {
           id: 'sports-1',
           trip_type: 'sports-pro',
-          sender_name: 'Coach Johnson',
-          message_content: "🚌 Bus call moved to 09:00 — lobby of the Marriott",
+          sender_name: 'Coach Matt Barnes',
+          message_content: "🚌 Bus departs sharp at 7:00 AM from facility parking lot. Be there at 6:45.",
           delay_seconds: 0,
           timestamp_offset_days: 1,
           tags: ['logistics']
@@ -126,8 +126,8 @@ export class DemoModeService {
         {
           id: 'sports-2',
           trip_type: 'sports-pro',
-          sender_name: 'Team Manager',
-          message_content: "Per-diems will be distributed after warm-ups",
+          sender_name: 'Team Manager Bria',
+          message_content: "Jersey check tonight at team dinner - bring both red and white sets",
           delay_seconds: 0,
           timestamp_offset_days: 1,
           tags: ['coordination']
@@ -135,11 +135,29 @@ export class DemoModeService {
         {
           id: 'sports-3',
           trip_type: 'sports-pro',
-          sender_name: 'Athletic Director',
-          message_content: "Reminder: team meeting in Conference Room B at 6 PM",
+          sender_name: 'Athletic Trainer Jalen',
+          message_content: "Anyone need ankles taped meet me in room 302 after warm-ups",
           delay_seconds: 0,
           timestamp_offset_days: 2,
-          tags: ['meeting']
+          tags: ['medical']
+        },
+        {
+          id: 'sports-4',
+          trip_type: 'sports-pro',
+          sender_name: 'Captain RJ #23',
+          message_content: "Team dinner at 7 PM - bringing the training table setup. Who's got the speaker?",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['team']
+        },
+        {
+          id: 'sports-5',
+          trip_type: 'sports-pro',
+          sender_name: 'Brandon Lincoln',
+          message_content: "Tournament check-in complete. Pool play starts tomorrow 2 PM court 3 - RED jerseys",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['logistics']
         }
       ];
     }
@@ -278,10 +296,10 @@ export class DemoModeService {
 
     // Professional trip types with enhanced detection
     if (category.includes('pro') || tripData.isPro || category.includes('sports') || category.includes('entertainment')) {
-      if (title.includes('lakers') || title.includes('basketball') || title.includes('sports')) return 'sports-pro';
+      if (title.includes('lakers') || title.includes('basketball') || title.includes('sports') || title.includes('paul george') || title.includes('aau') || title.includes('nationals')) return 'sports-pro';
       if (title.includes('taylor') || title.includes('tour') || title.includes('eras') || title.includes('concert')) return 'entertainment-tour';
       if (title.includes('eli lilly') || title.includes('corporate') || title.includes('retreat') || title.includes('c-suite')) return 'corporate-retreat';
-      if (title.includes('volleyball') || title.includes('youth') || title.includes('aau') || title.includes('scarlet')) return 'youth-sports';
+      if (title.includes('volleyball') || title.includes('youth') || title.includes('scarlet')) return 'youth-sports';
       if (title.includes('real housewives') || title.includes('shoot') || title.includes('production')) return 'entertainment-tour';
       return 'sports-pro';
     }
