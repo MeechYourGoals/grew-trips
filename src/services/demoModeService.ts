@@ -117,8 +117,8 @@ export class DemoModeService {
         {
           id: 'sports-1',
           trip_type: 'sports-pro',
-          sender_name: 'Coach Matt Barnes',
-          message_content: "🚌 Bus departs sharp at 7:00 AM from facility parking lot. Be there at 6:45.",
+          sender_name: 'Coach Chris',
+          message_content: "🚐 Bus departs the Anaheim Hyatt at 6:45 AM sharp. Wear the navy PG Elite warm-ups so we roll in looking unified.",
           delay_seconds: 0,
           timestamp_offset_days: 1,
           tags: ['logistics']
@@ -127,7 +127,7 @@ export class DemoModeService {
           id: 'sports-2',
           trip_type: 'sports-pro',
           sender_name: 'Team Manager Bria',
-          message_content: "Jersey check tonight at team dinner - bring both red and white sets",
+          message_content: "👕 Jersey check: Game 1 – white, Game 2 – navy. Pack both plus shooting shirts in your carry-on so nothing gets lost.",
           delay_seconds: 0,
           timestamp_offset_days: 1,
           tags: ['coordination']
@@ -136,7 +136,7 @@ export class DemoModeService {
           id: 'sports-3',
           trip_type: 'sports-pro',
           sender_name: 'Athletic Trainer Jalen',
-          message_content: "Anyone need ankles taped meet me in room 302 after warm-ups",
+          message_content: "⏰ Need ankles taped or ice packs? Swing by Room 409 between 6:15-6:35. Hydration packs will be in the hallway cooler outside PG's room.",
           delay_seconds: 0,
           timestamp_offset_days: 2,
           tags: ['medical']
@@ -145,19 +145,10 @@ export class DemoModeService {
           id: 'sports-4',
           trip_type: 'sports-pro',
           sender_name: 'Captain RJ #23',
-          message_content: "Team dinner at 7 PM - bringing the training table setup. Who's got the speaker?",
+          message_content: "🍽️ Team dinner locked for 7:30 PM at BJ's Brewhouse (walkable). Any allergies or diet restrictions, DM me so I can give the host a heads-up.",
           delay_seconds: 0,
           timestamp_offset_days: 2,
           tags: ['team']
-        },
-        {
-          id: 'sports-5',
-          trip_type: 'sports-pro',
-          sender_name: 'Brandon Lincoln',
-          message_content: "Tournament check-in complete. Pool play starts tomorrow 2 PM court 3 - RED jerseys",
-          delay_seconds: 0,
-          timestamp_offset_days: 1,
-          tags: ['logistics']
         }
       ];
     }
