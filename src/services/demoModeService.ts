@@ -52,7 +52,9 @@ export class DemoModeService {
   }
 
   async getMockMessages(tripType: string): Promise<MockMessage[]> {
-    if (!this.isDemoMode) return [];
+    // Always show messages for pro trips, only check demo mode for consumer trips
+    const isProTrip = ['sports-pro', 'entertainment-tour', 'corporate-retreat', 'youth-sports'].includes(tripType);
+    if (!this.isDemoMode && !isProTrip) return [];
 
     try {
       const { data, error } = await supabase
