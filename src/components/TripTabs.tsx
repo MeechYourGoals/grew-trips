@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Users, Calendar, Camera, Radio, Link, MessageSquare, Receipt, FileText } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Camera, Radio, Link, MessageSquare, Receipt, FileText, ClipboardList } from 'lucide-react';
 import { TripChat } from './TripChat';
 import { GroupCalendar } from './GroupCalendar';
 import { PhotoAlbum } from './PhotoAlbum';
@@ -9,6 +9,7 @@ import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
 import { ReceiptsTab } from './receipts/ReceiptsTab';
 import { FilesTab } from './FilesTab';
+import { TripTasksTab } from './todo/TripTasksTab';
 import { useTripVariant } from '../contexts/TripVariantContext';
 
 interface TripTabsProps {
@@ -26,6 +27,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
     { id: 'broadcasts', label: 'Broadcasts', icon: Radio },
     { id: 'links', label: 'Links', icon: Link },
     { id: 'comments', label: 'Comments', icon: MessageSquare },
+    { id: 'todo', label: 'To-Do List', icon: ClipboardList },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'photos', label: 'Photos', icon: Camera },
     { id: 'receipts', label: 'Receipts', icon: Receipt },
@@ -46,6 +48,8 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
         return <VenueIdeas />;
       case 'comments':
         return <CommentsWall />;
+      case 'todo':
+        return <TripTasksTab tripId={tripId} />;
       case 'calendar':
         return <GroupCalendar />;
       case 'photos':
@@ -62,7 +66,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
   return (
     <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
       {/* Tab Navigation */}
-      <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 mb-8 pb-2 -mx-2 px-2 md:grid md:grid-cols-8 md:overflow-visible md:whitespace-normal">
+      <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 mb-8 pb-2 -mx-2 px-2 md:grid md:grid-cols-9 md:overflow-visible md:whitespace-normal">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           return (

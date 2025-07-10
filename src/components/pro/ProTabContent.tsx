@@ -7,6 +7,7 @@ import { GeminiAIChat } from '../GeminiAIChat';
 import { TripSearchTab } from '../TripSearchTab';
 import { RosterTab } from './RosterTab';
 import { EquipmentTracking } from './EquipmentTracking';
+import { TripTasksTab } from '../todo/TripTasksTab';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { ProTripData } from '../../types/pro';
 import { ProTripCategory } from '../../types/proCategories';
@@ -77,6 +78,8 @@ export const ProTabContent = ({
             isReadOnly={isReadOnly}
           />
         );
+      case 'todo':
+        return <TripTasksTab tripId={tripId} />;
       case 'calendar':
         return (
           <div className="space-y-6">
