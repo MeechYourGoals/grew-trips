@@ -1,0 +1,12 @@
+-- Add UNC Lacrosse mock messages for sports-pro trip type
+INSERT INTO mock_messages (trip_type, sender, message, timestamp, user_avatar) VALUES
+('sports-pro', 'Joe Breschi', 'Team, bus leaves Boshamer at 09:00 Friday for the Duke game.', '2025-03-20 14:00:00+00', 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face'),
+('sports-pro', 'Dewey Egan', 'Coach, pre-game meal locked for 07:30 at the hotel ballroom.', '2025-03-20 14:05:00+00', 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=40&h=40&fit=crop&crop=face'),
+('sports-pro', 'Athletic Trainer', 'Reminder: ice baths immediately after practice today.', '2025-03-20 14:10:00+00', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=40&h=40&fit=crop&crop=face'),
+('sports-pro', 'Owen Duffy', 'Anyone need sticks restrung? I''m heading to the equipment room.', '2025-03-20 14:15:00+00', 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?w=40&h=40&fit=crop&crop=face'),
+('sports-pro', 'Jon Thompson', 'Remember - white away jerseys for Duke. Game time is 3pm sharp.', '2025-03-20 14:20:00+00', 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face'),
+('sports-pro', 'Dave Pietramala', 'Defense meeting at 6pm tonight. Bring your playbooks.', '2025-03-20 14:25:00+00', 'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=40&h=40&fit=crop&crop=face'),
+('sports-pro', 'James Matan', 'Attack unit - extra stick work after dinner if anyone wants to join.', '2025-03-20 14:30:00+00', 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face'),
+('sports-pro', 'Peter Murphy', 'All players report to team room by 8pm for film session.', '2025-03-20 14:35:00+00', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=40&h=40&fit=crop&crop=face'),
+('sports-pro', 'Michael Gianforcaro', 'Goalies - bringing extra gloves in case of rain. See you at warm-ups.', '2025-03-20 14:40:00+00', 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face'),
+('sports-pro', 'Cooper Frankenheimer', 'Faceoff guys meet at 2:30 tomorrow for extra reps before the game.', '2025-03-20 14:45:00+00', 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=40&h=40&fit=crop&crop=face');

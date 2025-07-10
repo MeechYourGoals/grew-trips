@@ -5,7 +5,7 @@ import { taylorSwiftErasTour } from './pro-trips/taylorSwiftErasTour';
 import { eliLillyCsuiteRetreat } from './pro-trips/eliLillyCsuiteRetreat';
 import { paulGeorgeEliteAau } from './pro-trips/paulGeorgeEliteAau';
 import { harrisElementaryFieldTrip } from './pro-trips/harrisElementaryFieldTrip';
-import { indianaUniversityDebate } from './pro-trips/indianaUniversityDebate';
+import { uncMensLacrosse } from './pro-trips/uncMensLacrosse';
 import { yCombinatorCohort } from './pro-trips/yCombinatorCohort';
 import { realHousewivesAtlShoot } from './pro-trips/realHousewivesAtlShoot';
 
@@ -15,7 +15,7 @@ export const proTripMockData: Record<string, ProTripData> = {
   'eli-lilly-c-suite-retreat-2026': eliLillyCsuiteRetreat,
   'paul-george-elite-aau-nationals-2025': paulGeorgeEliteAau,
   'harris-elementary-dc-field-trip-2025': harrisElementaryFieldTrip,
-  'indiana-university-debate-championships-2025': indianaUniversityDebate,
+  'unc-lax-2025': uncMensLacrosse,
   'y-combinator-winter-2025-cohort': yCombinatorCohort,
   'real-housewives-atl-s9-shoot-2025': realHousewivesAtlShoot
 };
