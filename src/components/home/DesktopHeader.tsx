@@ -5,7 +5,6 @@ import { NotificationBell } from '../NotificationBell';
 import { SearchBar } from '../SearchBar';
 import { GlobalSearchModal } from '../GlobalSearchModal';
 import { AuthModal } from '../AuthModal';
-import { Logo } from '../Logo';
 
 import { useGlobalSearch } from '../../hooks/useGlobalSearch';
 import { useAuth } from '../../hooks/useAuth';
@@ -48,7 +47,9 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
     <>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <Logo size="lg" withBackground={true} className="mb-3" />
+          <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
+            TRIV
+          </h1>
           <p className="text-gray-400">
             {viewMode === 'myTrips' 
               ? 'Plan, organize, and share your perfect trips' 
