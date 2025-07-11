@@ -168,7 +168,6 @@ export const Broadcasts = () => {
           <h2 className="text-xl font-semibold text-white">Broadcasts</h2>
           <p className="text-slate-400 text-sm">
             Quick updates and alerts for the group
-            {isDemoMode && <span className="ml-2 px-2 py-1 bg-yellow-500/20 text-yellow-400 text-xs rounded-md">DEMO</span>}
           </p>
         </div>
       </div>
