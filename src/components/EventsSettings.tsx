@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Calendar, CreditCard, Users, Clock, Building, Badge, Network, Megaphone, Activity, BarChart } from 'lucide-react';
+import { Calendar, CreditCard, Users, Clock, Building, Badge, Network, Megaphone, Activity, BarChart, Settings, Send } from 'lucide-react';
 import { EventProfileSection } from './events/EventProfileSection';
 import { TicketingBillingSection } from './events/TicketingBillingSection';
 import { AttendeeTypesSection } from './events/AttendeeTypesSection';
@@ -15,16 +15,23 @@ import { ChatControlsSection } from './events/ChatControlsSection';
 import { HeatMapDashboard } from './events/HeatMapDashboard';
 import { EmergencyBroadcast } from './events/EmergencyBroadcast';
 import { EventSetupWizard } from './events/EventSetupWizard';
+import { EventBasicsSection } from './events/EventBasicsSection';
+import { EventScheduleSection } from './events/EventScheduleSection';
+import { EventInvitationsSection } from './events/EventInvitationsSection';
 
 interface EventsSettingsProps {
   currentUserId: string;
 }
 
 export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
-  const [activeSection, setActiveSection] = useState('setup');
+  const [activeSection, setActiveSection] = useState('basics');
+  const [eventData, setEventData] = useState({});
 
   const sections = [
-    { id: 'setup', label: 'Event Setup', icon: Calendar },
+    { id: 'basics', label: 'Event Basics', icon: Calendar },
+    { id: 'schedule', label: 'Setup & Schedule', icon: Settings },
+    { id: 'invitations', label: 'Invitations', icon: Send },
+    { id: 'setup', label: 'Event Setup Wizard', icon: Calendar },
     { id: 'profile', label: 'Event Profile', icon: Calendar },
     { id: 'chat', label: 'Chat Controls', icon: Users },
     { id: 'ticketing', label: 'Ticketing & Billing', icon: CreditCard },
@@ -40,8 +47,15 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
     { id: 'analytics', label: 'Event Analytics', icon: BarChart }
   ];
 
+  const handleEventDataChange = (data: any) => {
+    setEventData(prev => ({ ...prev, ...data }));
+  };
+
   const renderSection = () => {
     switch (activeSection) {
+      case 'basics': return <EventBasicsSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
+      case 'schedule': return <EventScheduleSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
+      case 'invitations': return <EventInvitationsSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
       case 'setup': return <EventSetupWizard onComplete={() => {}} onCancel={() => {}} />;
       case 'profile': return <EventProfileSection />;
       case 'chat': return <ChatControlsSection />;
@@ -56,7 +70,7 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
       case 'engagement': return <LiveEngagementSection />;
       case 'heatmap': return <HeatMapDashboard />;
       case 'analytics': return <EventAnalyticsSection />;
-      default: return <EventProfileSection />;
+      default: return <EventBasicsSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
     }
   };
 
