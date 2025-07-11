@@ -1,10 +1,10 @@
 
 import React, { useState } from 'react';
-import { MapPin, Plus, Home } from 'lucide-react';
+import { MapPin, Plus } from 'lucide-react';
 import { AddPlaceModal } from './AddPlaceModal';
 import { GoogleMapsEmbed } from './GoogleMapsEmbed';
-import { BasecampSelector } from './BasecampSelector';
-import { FindMyFriendsOverlay } from './FindMyFriendsOverlay';
+import { EnhancedFindMyFriends } from './EnhancedFindMyFriends';
+import { SetBasecampSquare } from './SetBasecampSquare';
 import { BasecampLocation, PlaceWithDistance, DistanceCalculationSettings } from '../types/basecamp';
 import { DistanceCalculator } from '../utils/distanceCalculator';
 import { useTripVariant } from '../contexts/TripVariantContext';
@@ -17,7 +17,6 @@ interface PlacesSectionProps {
 export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSectionProps) => {
   const { variant } = useTripVariant();
   const [isAddPlaceModalOpen, setIsAddPlaceModalOpen] = useState(false);
-  const [isBasecampModalOpen, setIsBasecampModalOpen] = useState(false);
   const [basecamp, setBasecamp] = useState<BasecampLocation | undefined>();
   const [places, setPlaces] = useState<PlaceWithDistance[]>([]);
   const [distanceSettings] = useState<DistanceCalculationSettings>({
@@ -78,62 +77,35 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
 
   return (
     <div className="mb-12">
-      <div className="flex justify-between items-center mb-8">
+      {/* Header */}
+      <div className="mb-8">
         <h2 className="text-3xl font-bold text-white">Places to Visit</h2>
-        <div className="flex gap-3">
-          {/* Basecamp Button */}
-          <button 
-            onClick={() => setIsBasecampModalOpen(true)}
-            className={`${
-              basecamp 
-                ? 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 shadow-green-500/25' 
-                : 'bg-gradient-to-r from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800 shadow-gray-500/25'
-            } text-white px-6 py-4 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-xl font-semibold border border-opacity-50`}
-          >
-            <Home size={20} />
-            {basecamp ? 'Update Basecamp' : 'Set Basecamp'}
-          </button>
-          
-          {/* Add Place Button */}
-          <button 
-            onClick={() => setIsAddPlaceModalOpen(true)}
-            className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-4 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-xl shadow-red-500/25 font-semibold border border-red-500/50"
-          >
-            <Plus size={20} />
-            Add Place
-          </button>
-        </div>
       </div>
 
-      {/* Basecamp Info Banner */}
-      {basecamp && (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-2xl p-4 mb-6">
-          <div className="flex items-center gap-3">
-            <Home size={20} className="text-green-400" />
-            <div>
-              <h4 className="text-white font-semibold">
-                Basecamp: {basecamp.name || 'Your Home Base'}
-              </h4>
-              <p className="text-green-300 text-sm">{basecamp.address}</p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Find My Friends Feature for Consumer trips */}
-      {variant === 'consumer' && (
-        <div className="mb-8">
-          <FindMyFriendsOverlay 
+      {/* 2x2 Grid Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Top Left - Enhanced Find My Friends (Consumer Only) */}
+        {variant === 'consumer' && (
+          <EnhancedFindMyFriends 
             tripId={tripId} 
             tripName={tripName}
-            className="max-w-md"
           />
-        </div>
-      )}
+        )}
+        
+        {/* Top Left - Alternative for Pro (could be different content) */}
+        {variant === 'pro' && (
+          <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6 shadow-2xl shadow-black/50 min-h-[500px] flex items-center justify-center">
+            <p className="text-gray-400">Pro Feature Placeholder</p>
+          </div>
+        )}
 
-      {/* Two Equal-Sized Squares Side by Side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Left Square - Places Section */}
+        {/* Top Right - Set Basecamp Square */}
+        <SetBasecampSquare 
+          basecamp={basecamp}
+          onBasecampSet={handleBasecampSet}
+        />
+
+        {/* Bottom Left - Add Places Square */}
         <div className="bg-gray-900 border border-gray-800 rounded-3xl p-8 flex flex-col shadow-2xl shadow-black/50 min-h-[500px]">
           {places.length === 0 ? (
             <div className="flex flex-col justify-center items-center text-center h-full">
@@ -156,7 +128,16 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
             </div>
           ) : (
             <div className="h-full overflow-y-auto">
-              <h3 className="text-lg font-semibold text-white mb-4">Added Places ({places.length})</h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-white">Added Places ({places.length})</h3>
+                <button 
+                  onClick={() => setIsAddPlaceModalOpen(true)}
+                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors text-sm font-medium"
+                >
+                  <Plus size={16} className="inline mr-1" />
+                  Add
+                </button>
+              </div>
               <div className="space-y-3">
                 {places.map((place) => (
                   <div key={place.id} className="bg-gray-800/50 rounded-xl p-4 border border-gray-700">
@@ -181,7 +162,7 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
           )}
         </div>
 
-        {/* Right Square - Google Maps */}
+        {/* Bottom Right - Google Maps Square */}
         <div className="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl shadow-black/50 min-h-[500px]">
           <GoogleMapsEmbed className="w-full h-full" />
         </div>
@@ -193,13 +174,6 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
         onClose={() => setIsAddPlaceModalOpen(false)}
         onPlaceAdded={handlePlaceAdded}
         basecamp={basecamp}
-      />
-      
-      <BasecampSelector
-        isOpen={isBasecampModalOpen}
-        onClose={() => setIsBasecampModalOpen(false)}
-        onBasecampSet={handleBasecampSet}
-        currentBasecamp={basecamp}
       />
     </div>
   );
