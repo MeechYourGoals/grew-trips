@@ -3,6 +3,7 @@ import React from 'react';
 import { CalendarIcon, DollarSign, Shield, FileCheck, Tv, Award } from 'lucide-react';
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
+import { CommentsWall } from '../CommentsWall';
 import { GeminiAIChat } from '../GeminiAIChat';
 import { TripSearchTab } from '../TripSearchTab';
 import { RosterTab } from './RosterTab';
@@ -61,6 +62,8 @@ export const ProTabContent = ({
         return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
       case 'places':
         return <PlacesSection />;
+      case 'polls':
+        return <CommentsWall />;
       case 'roster':
         return (
           <RosterTab

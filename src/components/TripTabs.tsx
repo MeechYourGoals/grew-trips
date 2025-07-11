@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Users, Calendar, Camera, Radio, Link, MessageSquare, Receipt, FileText, ClipboardList } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Camera, Radio, Link, BarChart3, Receipt, FileText, ClipboardList } from 'lucide-react';
 import { TripChat } from './TripChat';
 import { GroupCalendar } from './GroupCalendar';
 import { PhotoAlbum } from './PhotoAlbum';
@@ -26,7 +26,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
     { id: 'chat', label: 'Chat', icon: MessageCircle },
     { id: 'broadcasts', label: 'Broadcasts', icon: Radio },
     { id: 'links', label: 'Links', icon: Link },
-    { id: 'comments', label: 'Comments', icon: MessageSquare },
+    { id: 'polls', label: 'Polls', icon: BarChart3 },
     { id: 'todo', label: 'To-Do List', icon: ClipboardList },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'photos', label: 'Photos', icon: Camera },
@@ -46,7 +46,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
         return <Broadcasts />;
       case 'links':
         return <VenueIdeas />;
-      case 'comments':
+      case 'polls':
         return <CommentsWall />;
       case 'todo':
         return <TripTasksTab tripId={tripId} />;

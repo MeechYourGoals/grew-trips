@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Crown, Users, Package, Calendar as CalendarIcon, DollarSign, Shield, Tv, Award, FileCheck, ClipboardList } from 'lucide-react';
+import { Crown, Users, Package, Calendar as CalendarIcon, DollarSign, Shield, Tv, Award, FileCheck, ClipboardList, BarChart3 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 
@@ -16,6 +16,7 @@ export interface ProTab {
 export const proTabs: ProTab[] = [
   { id: 'chat', label: 'Home', icon: null },
   { id: 'places', label: 'Places', icon: null },
+  { id: 'polls', label: 'Polls', icon: BarChart3, requiredPermissions: ['read'] },
   { id: 'roster', label: 'Roster', icon: Users, proOnly: true, requiredPermissions: ['read'] },
   { id: 'equipment', label: 'Equipment', icon: Package, proOnly: true, requiredPermissions: ['read'] },
   { id: 'todo', label: 'To-Do List', icon: ClipboardList, requiredPermissions: ['read'] },
@@ -36,7 +37,7 @@ export const getVisibleTabs = (userRole: string, userPermissions: string[], cate
   if (category) {
     const categoryConfig = getCategoryConfig(category);
     availableTabs = proTabs.filter(tab => 
-      !tab.proOnly || categoryConfig.availableTabs.includes(tab.id) || ['chat', 'places', 'todo', 'ai-chat', 'search'].includes(tab.id)
+      !tab.proOnly || categoryConfig.availableTabs.includes(tab.id) || ['chat', 'places', 'polls', 'todo', 'ai-chat', 'search'].includes(tab.id)
     );
   }
   

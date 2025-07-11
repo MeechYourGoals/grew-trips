@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Crown, Sparkles, Users, Calendar, UserCheck, Network, TrendingUp, ClipboardList } from 'lucide-react';
+import { Crown, Sparkles, Users, Calendar, UserCheck, Network, TrendingUp, ClipboardList, BarChart3 } from 'lucide-react';
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
 import { TripPreferences } from '../TripPreferences';
@@ -15,6 +15,7 @@ import { PersonalizedAgenda } from './PersonalizedAgenda';
 import { AIRecommendations } from './AIRecommendations';
 import { EnhancedNetworkingHub } from './EnhancedNetworkingHub';
 import { TripTasksTab } from '../todo/TripTasksTab';
+import { CommentsWall } from '../CommentsWall';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { EventData } from '../../types/events';
 import { useTripVariant } from '../../contexts/TripVariantContext';
@@ -53,6 +54,7 @@ export const EventDetailContent = ({
     { id: 'speakers', label: 'Speakers', icon: Users, eventOnly: true },
     { id: 'networking', label: 'Networking', icon: Network, eventOnly: true },
     { id: 'live-qa', label: 'Live Q&A', icon: null, eventOnly: true },
+    { id: 'polls', label: 'Polls', icon: BarChart3 },
     { id: 'todo', label: 'To-Do List', icon: ClipboardList },
     { id: 'places', label: 'Places', icon: null },
     { id: 'preferences', label: 'Preferences', icon: null },
@@ -135,6 +137,8 @@ export const EventDetailContent = ({
             userRole={(eventData.userRole === 'exhibitor' ? 'attendee' : eventData.userRole) || 'attendee'}
           />
         );
+      case 'polls':
+        return <CommentsWall />;
       case 'todo':
         return <TripTasksTab tripId={tripId} />;
       case 'places':
