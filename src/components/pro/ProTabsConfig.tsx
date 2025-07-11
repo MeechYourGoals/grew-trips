@@ -16,11 +16,8 @@ export interface ProTab {
 export const proTabs: ProTab[] = [
   { id: 'chat', label: 'Home', icon: null },
   { id: 'places', label: 'Places', icon: null },
-  { id: 'polls', label: 'Polls', icon: BarChart3, requiredPermissions: ['read'] },
   { id: 'roster', label: 'Roster', icon: Users, proOnly: true, requiredPermissions: ['read'] },
   { id: 'equipment', label: 'Equipment', icon: Package, proOnly: true, requiredPermissions: ['read'] },
-  { id: 'todo', label: 'To-Do List', icon: ClipboardList, requiredPermissions: ['read'] },
-  { id: 'calendar', label: 'Calendar', icon: CalendarIcon, proOnly: true, requiredPermissions: ['read'] },
   { id: 'finance', label: 'Finance', icon: DollarSign, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['finance'] },
   { id: 'medical', label: 'Medical', icon: Shield, proOnly: true, requiredPermissions: ['medical', 'admin'] },
   { id: 'compliance', label: 'Compliance', icon: FileCheck, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['compliance', 'admin'] },
@@ -37,7 +34,7 @@ export const getVisibleTabs = (userRole: string, userPermissions: string[], cate
   if (category) {
     const categoryConfig = getCategoryConfig(category);
     availableTabs = proTabs.filter(tab => 
-      !tab.proOnly || categoryConfig.availableTabs.includes(tab.id) || ['chat', 'places', 'polls', 'todo', 'ai-chat', 'search'].includes(tab.id)
+      !tab.proOnly || categoryConfig.availableTabs.includes(tab.id) || ['chat', 'places', 'ai-chat', 'search'].includes(tab.id)
     );
   }
   

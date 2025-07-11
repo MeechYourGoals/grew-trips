@@ -62,8 +62,6 @@ export const ProTabContent = ({
         return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
       case 'places':
         return <PlacesSection />;
-      case 'polls':
-        return <CommentsWall />;
       case 'roster':
         return (
           <RosterTab
@@ -80,26 +78,6 @@ export const ProTabContent = ({
             onUpdateEquipment={onUpdateEquipment}
             isReadOnly={isReadOnly}
           />
-        );
-      case 'todo':
-        return <TripTasksTab tripId={tripId} />;
-      case 'calendar':
-        return (
-          <div className="space-y-6">
-            <div className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Production Calendar</h3>
-              {isReadOnly && (
-                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3 mb-4">
-                  <p className="text-yellow-400 text-sm">Read-only access for your role</p>
-                </div>
-              )}
-              <div className="text-center py-12">
-                <CalendarIcon size={48} className="text-red-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-400 mb-2">Load-in/Load-out Scheduler</h3>
-                <p className="text-gray-500 text-sm">Advanced scheduling with time-critical coordination coming soon</p>
-              </div>
-            </div>
-          </div>
         );
       case 'finance':
         return (
