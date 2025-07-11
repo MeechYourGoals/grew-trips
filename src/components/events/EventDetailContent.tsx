@@ -3,16 +3,12 @@ import React from 'react';
 import { Crown, Sparkles, Users, Calendar, UserCheck, Network, TrendingUp, ClipboardList, BarChart3 } from 'lucide-react';
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
-import { TripPreferences } from '../TripPreferences';
 import { GeminiAIChat } from '../GeminiAIChat';
 import { TripSearchTab } from '../TripSearchTab';
 import { RegistrationTab } from './RegistrationTab';
 import { AgendaBuilder } from './AgendaBuilder';
-import { NetworkingHub } from './NetworkingHub';
 import { SpeakerDirectory } from './SpeakerDirectory';
 import { LiveQAPanel } from './LiveQAPanel';
-import { PersonalizedAgenda } from './PersonalizedAgenda';
-import { AIRecommendations } from './AIRecommendations';
 import { EnhancedNetworkingHub } from './EnhancedNetworkingHub';
 import { TripTasksTab } from '../todo/TripTasksTab';
 import { CommentsWall } from '../CommentsWall';
@@ -46,18 +42,13 @@ export const EventDetailContent = ({
   const { accentColors } = useTripVariant();
 
   const tabs = [
-    { id: 'chat', label: 'Home', icon: null },
+    { id: 'chat', label: 'Event', icon: null },
     { id: 'registration', label: 'Registration', icon: UserCheck, eventOnly: true },
     { id: 'agenda', label: 'Agenda', icon: Calendar, eventOnly: true },
-    { id: 'my-agenda', label: 'My Agenda', icon: Calendar, eventOnly: true },
-    { id: 'recommendations', label: 'AI Recommendations', icon: Sparkles, eventOnly: true },
     { id: 'speakers', label: 'Speakers', icon: Users, eventOnly: true },
     { id: 'networking', label: 'Networking', icon: Network, eventOnly: true },
     { id: 'live-qa', label: 'Live Q&A', icon: null, eventOnly: true },
-    { id: 'polls', label: 'Polls', icon: BarChart3 },
-    { id: 'todo', label: 'To-Do List', icon: ClipboardList },
     { id: 'places', label: 'Places', icon: null },
-    { id: 'preferences', label: 'Preferences', icon: null },
     { id: 'ai-chat', label: 'AI Assistant', icon: null },
     { id: 'search', label: 'Search', icon: null },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp, eventOnly: true, organinerOnly: true }
@@ -90,21 +81,6 @@ export const EventDetailContent = ({
             sessions={eventData.sessions || []}
             speakers={eventData.speakers || []}
             userRole={eventData.userRole || 'attendee'}
-          />
-        );
-      case 'my-agenda':
-        return (
-          <PersonalizedAgenda
-            eventId={tripId}
-            sessions={eventData.sessions || []}
-          />
-        );
-      case 'recommendations':
-        return (
-          <AIRecommendations
-            sessions={eventData.sessions || []}
-            speakers={eventData.speakers || []}
-            userInterests={['technology', 'innovation', 'networking']}
           />
         );
       case 'speakers':
@@ -143,13 +119,6 @@ export const EventDetailContent = ({
         return <TripTasksTab tripId={tripId} />;
       case 'places':
         return <PlacesSection />;
-      case 'preferences':
-        return (
-          <TripPreferences 
-            tripId={tripId} 
-            onPreferencesChange={onPreferencesChange} 
-          />
-        );
       case 'ai-chat':
         return (
           <GeminiAIChat 

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Calendar, Clock, Users, MapPin, FileText, Star } from 'lucide-react';
+import { Calendar, Clock, Users, MapPin, FileText, Star, Sparkles, Brain } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -17,6 +17,7 @@ interface AgendaBuilderProps {
 export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBuilderProps) => {
   const [selectedTrack, setSelectedTrack] = useState<string>('all');
   const [rsvpedSessions, setRsvpedSessions] = useState<Set<string>>(new Set());
+  const [showAIRecommendations, setShowAIRecommendations] = useState<boolean>(false);
 
   const handleRSVP = (sessionId: string) => {
     const newRsvped = new Set(rsvpedSessions);
@@ -31,6 +32,12 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
   const filteredSessions = selectedTrack === 'all' 
     ? sessions 
     : sessions.filter(session => session.track === selectedTrack);
+
+  const recommendedSessions = sessions.filter(session => 
+    session.title.toLowerCase().includes('ai') || 
+    session.title.toLowerCase().includes('innovation') ||
+    session.title.toLowerCase().includes('tech')
+  ).slice(0, 3);
 
   const getSpeaker = (speakerId: string) => 
     speakers.find(speaker => speaker.id === speakerId);
@@ -56,16 +63,68 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
         </div>
       </div>
 
+      {/* AI Recommendations Toggle */}
+      {userRole === 'attendee' && (
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Brain size={20} className="text-purple-400" />
+            <span className="text-white font-medium">AI Recommendations</span>
+          </div>
+          <Button
+            variant={showAIRecommendations ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setShowAIRecommendations(!showAIRecommendations)}
+            className={showAIRecommendations ? 'bg-purple-600 text-white' : 'border-gray-600 text-gray-300'}
+          >
+            <Sparkles size={16} className="mr-2" />
+            {showAIRecommendations ? 'Hide' : 'Show'} Recommendations
+          </Button>
+        </div>
+      )}
+
+      {/* AI Recommendations Panel */}
+      {showAIRecommendations && userRole === 'attendee' && (
+        <div className="bg-gradient-to-r from-purple-900/20 to-blue-900/20 border border-purple-500/30 rounded-xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-purple-300">
+            <Sparkles size={16} />
+            <span className="font-medium">Recommended Sessions for You</span>
+          </div>
+          <div className="grid gap-3">
+            {recommendedSessions.map(session => {
+              const track = getTrack(session.track);
+              return (
+                <div key={session.id} className="bg-white/5 rounded-lg p-3 border border-white/10">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h4 className="text-white font-medium text-sm">{session.title}</h4>
+                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-400">
+                        <span>{formatTime(session.startTime)} - {formatTime(session.endTime)}</span>
+                        <span>{session.location}</span>
+                      </div>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant={rsvpedSessions.has(session.id) ? 'default' : 'outline'}
+                      onClick={() => handleRSVP(session.id)}
+                      className={rsvpedSessions.has(session.id) ? 'bg-purple-600 text-white' : 'border-gray-600 text-gray-300'}
+                    >
+                      {rsvpedSessions.has(session.id) ? 'RSVP\'d' : 'RSVP'}
+                    </Button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
       <Tabs defaultValue="agenda" className="space-y-4">
         <TabsList className="bg-gray-800 border-gray-700">
           <TabsTrigger value="agenda" className="text-gray-300 data-[state=active]:text-white">
-            Agenda View
-          </TabsTrigger>
-          <TabsTrigger value="speakers" className="text-gray-300 data-[state=active]:text-white">
-            Speakers
+            All Sessions
           </TabsTrigger>
           <TabsTrigger value="my-schedule" className="text-gray-300 data-[state=active]:text-white">
-            My Schedule
+            My Agenda
           </TabsTrigger>
         </TabsList>
 
@@ -196,33 +255,6 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
           </div>
         </TabsContent>
 
-        <TabsContent value="speakers" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {speakers.map(speaker => (
-              <Card key={speaker.id} className="bg-gray-800/50 border-gray-700">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3 mb-3">
-                    <img
-                      src={speaker.avatar}
-                      alt={speaker.name}
-                      className="w-16 h-16 rounded-full"
-                    />
-                    <div>
-                      <h3 className="text-white font-semibold">{speaker.name}</h3>
-                      <p className="text-gray-400 text-sm">{speaker.title}</p>
-                      <p className="text-gray-500 text-xs">{speaker.company}</p>
-                    </div>
-                  </div>
-                  <p className="text-gray-300 text-sm mb-3 line-clamp-3">{speaker.bio}</p>
-                  <div className="flex items-center gap-2 text-gray-400 text-sm">
-                    <Star size={14} />
-                    <span>{speaker.sessions.length} session{speaker.sessions.length !== 1 ? 's' : ''}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
 
         <TabsContent value="my-schedule" className="space-y-4">
           {rsvpedSessions.size === 0 ? (
