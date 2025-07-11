@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Plus, Crown, Settings, Menu, X } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import { Logo } from './Logo';
 
 interface MobileHeaderProps {
   onCreateTrip: () => void;
@@ -27,9 +28,7 @@ export const MobileHeader = ({
     <>
       <div className="flex items-center justify-between mb-6 bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-4">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">
-            TRIV
-          </h1>
+          <Logo size="sm" withBackground={true} />
         </div>
         
         <div className="flex items-center gap-2">
