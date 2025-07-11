@@ -46,8 +46,8 @@ export const TripsPlusUpsellModal = ({ isOpen, onClose }: TripsPlusUpsellModalPr
             <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
               <Sparkles size={24} className="text-white" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">AI Travel Assistant</h3>
-            <p className="text-gray-300 text-sm">Chat with Google Gemini-powered AI for personalized recommendations based on your location and preferences.</p>
+            <h3 className="text-lg font-bold text-white mb-2">Triv Concierge</h3>
+            <p className="text-gray-300 text-sm">Chat with AI for personalized recommendations based on your location and preferences.</p>
           </div>
 
           <div className="bg-gradient-to-br from-green-500/10 to-teal-500/10 border border-green-500/20 rounded-2xl p-6">
@@ -94,7 +94,7 @@ export const TripsPlusUpsellModal = ({ isOpen, onClose }: TripsPlusUpsellModalPr
                 <li>• AI-powered recommendations</li>
                 <li>• Smart preference matching</li>
                 <li>• Basecamp-aware suggestions</li>
-                <li>• Google Gemini AI chat</li>
+                <li>• Triv Concierge AI chat</li>
                 <li>• Personalized itinerary building</li>
                 <li>• Group preference management</li>
               </ul>

@@ -27,7 +27,7 @@ export const ConsumerBillingSection = () => {
       price: TRIPS_PLUS_PRICE,
       features: [
         'Everything in Free',
-        'AI Travel Assistant powered by Google Gemini',
+        'Triv Concierge AI Assistant',
         'Smart trip recommendations',
         'Basecamp-aware suggestions',
         'Group preference management',

@@ -49,7 +49,7 @@ export const EventDetailContent = ({
     { id: 'networking', label: 'Networking', icon: Network, eventOnly: true },
     { id: 'live-qa', label: 'Live Q&A', icon: null, eventOnly: true },
     { id: 'places', label: 'Places', icon: null },
-    { id: 'ai-chat', label: 'AI Assistant', icon: null },
+    { id: 'ai-chat', label: 'Triv Concierge', icon: null },
     { id: 'search', label: 'Search', icon: null },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp, eventOnly: true, organinerOnly: true }
   ];

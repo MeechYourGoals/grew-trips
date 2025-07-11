@@ -84,8 +84,8 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
                   <Sparkles size={24} className="text-white" />
                 </div>
-                <h4 className="text-lg font-bold text-white mb-2">AI Travel Assistant</h4>
-                <p className="text-gray-300 text-sm">Chat with Google Gemini-powered AI for personalized recommendations based on your location and preferences.</p>
+                <h4 className="text-lg font-bold text-white mb-2">Triv Concierge</h4>
+                <p className="text-gray-300 text-sm">Chat with AI for personalized recommendations based on your location and preferences.</p>
               </div>
 
               <div className="bg-gradient-to-br from-green-500/10 to-teal-500/10 border border-green-500/20 rounded-2xl p-6">

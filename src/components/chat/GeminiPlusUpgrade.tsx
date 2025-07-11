@@ -17,8 +17,7 @@ export const GeminiPlusUpgrade = () => {
             <Sparkles size={20} className="text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">AI Travel Assistant</h3>
-            <p className="text-gray-400 text-sm">Powered by Google Gemini</p>
+            <h3 className="text-lg font-semibold text-white">Triv Concierge</h3>
           </div>
         </div>
 
@@ -59,11 +58,11 @@ export const GeminiPlusUpgrade = () => {
           </div>
           
           <h3 className="text-2xl font-bold text-white mb-3">✨ Unlock Smart Trip Planning with Trips Plus</h3>
-          <p className="text-gray-300 mb-6">Your personal AI travel assistant—powered by Google Gemini—is ready to build the perfect trip.</p>
+          <p className="text-gray-300 mb-6">Your personal AI travel assistant is ready to build the perfect trip.</p>
           
           <div className="space-y-2 text-left mb-8">
             <div className="flex items-center gap-2 text-gray-300">
-              <span className="text-green-400">✅</span> AI Chatbot powered by Google Gemini
+              <span className="text-green-400">✅</span> AI Chatbot
             </div>
             <div className="flex items-center gap-2 text-gray-300">
               <span className="text-green-400">✅</span> Smart suggestions based on your Basecamp

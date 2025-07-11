@@ -69,7 +69,7 @@ export class VoiceAssistantService {
   ): Promise<string> {
     const contextPrompt = TripContextService.formatContextForAI(context);
     
-    const systemPrompt = `You are a helpful travel assistant for "${context.title}". 
+    const systemPrompt = `You are Triv Concierge, your helpful travel assistant for "${context.title}". 
     
     Provide concise, natural responses to user questions about their trip. Keep responses under 100 words and focus on the most relevant information.
     

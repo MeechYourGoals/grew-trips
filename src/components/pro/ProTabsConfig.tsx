@@ -23,7 +23,7 @@ export const proTabs: ProTab[] = [
   { id: 'compliance', label: 'Compliance', icon: FileCheck, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['compliance', 'admin'] },
   { id: 'media', label: 'Media', icon: Tv, proOnly: true, requiredPermissions: ['read'] },
   { id: 'sponsors', label: 'Sponsors', icon: Award, proOnly: true, requiredPermissions: ['admin'] },
-  { id: 'ai-chat', label: 'AI Assistant', icon: null },
+  { id: 'ai-chat', label: 'Triv Concierge', icon: null },
   { id: 'search', label: 'Search', icon: null }
 ];
 
