@@ -101,3 +101,30 @@ export interface WellnessEntry {
   status: 'active' | 'resolved';
   private: boolean;
 }
+
+export interface RosterMember {
+  id: string;
+  name: string;
+  email?: string;
+  phone?: string;
+  role: string;
+  status: 'invited' | 'pending' | 'active' | 'declined';
+  invitationSent: boolean;
+  invitedAt?: string;
+  joinedAt?: string;
+  contactMethod: 'email' | 'phone' | 'both';
+}
+
+export interface BulkUploadData {
+  name: string;
+  role: string;
+  email?: string;
+  phone?: string;
+  contactMethod: 'email' | 'phone' | 'both';
+}
+
+export interface InvitationBatch {
+  members: string[];
+  message?: string;
+  priority: 'normal' | 'urgent';
+}

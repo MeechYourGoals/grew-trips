@@ -202,7 +202,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
       case 'integrations': return <IntegrationsSection />;
       case 'security': return <SecurityComplianceSection />;
       case 'billing': return <BillingSection organization={organization} />;
-      case 'seats': return <SeatManagementSection organization={organization} />;
+      case 'seats': return <SeatManagementSection organization={organization} tripCategory={tripCategory} />;
       case 'profile': return <EnterpriseProfileSection />;
       case 'travel-wallet': return <div><TravelWallet userId={currentUserId} /></div>;
       case 'notifications': return <EnterpriseNotificationsSection />;
