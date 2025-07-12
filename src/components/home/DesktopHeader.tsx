@@ -72,9 +72,9 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
 
           <button
             onClick={onUpgrade}
-            className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black px-6 py-3 rounded-2xl flex items-center gap-3 transition-all duration-300 hover:scale-105 shadow-lg font-medium"
+            className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black px-4 py-2 h-12 rounded-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm"
           >
-            <Crown size={20} />
+            <Crown size={18} />
             Upgrade to Plus/Pro
           </button>
           
