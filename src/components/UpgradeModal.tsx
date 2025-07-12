@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Crown, Building, Sparkles, MessageCircle, Settings, Zap, Users, Shield, TrendingUp, Star, BarChart3, Calendar, Wallet, Globe, Phone } from 'lucide-react';
+import { X, Crown, Building, Sparkles, MessageCircle, Settings, Zap, Users, Shield, TrendingUp, Star, BarChart3, Calendar, Wallet, Globe, Phone, CalendarPlus, UserCheck, Clock, FileText, DollarSign, TrendingDown, Mail, Ticket, Megaphone, Paintbrush } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TRIPS_PLUS_PRICE } from '../types/consumer';
 
@@ -9,7 +9,7 @@ interface UpgradeModalProps {
 }
 
 export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
-  const [selectedPlan, setSelectedPlan] = useState<'plus' | 'pro'>('plus');
+  const [selectedPlan, setSelectedPlan] = useState<'plus' | 'pro' | 'events'>('plus');
   const { upgradeToPlus, isLoading } = useConsumerSubscription();
 
   if (!isOpen) return null;
@@ -44,7 +44,7 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
           <div className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-2 flex">
             <button
               onClick={() => setSelectedPlan('plus')}
-              className={`px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${
+              className={`px-4 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${
                 selectedPlan === 'plus'
                   ? 'bg-gradient-to-r from-glass-orange to-glass-yellow text-white'
                   : 'text-gray-300 hover:text-white'
@@ -55,7 +55,7 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
             </button>
             <button
               onClick={() => setSelectedPlan('pro')}
-              className={`px-6 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${
+              className={`px-4 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${
                 selectedPlan === 'pro'
                   ? 'bg-gradient-to-r from-yellow-500 to-yellow-600 text-black'
                   : 'text-gray-300 hover:text-white'
@@ -63,6 +63,17 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
             >
               <Building size={18} />
               Trips Pro
+            </button>
+            <button
+              onClick={() => setSelectedPlan('events')}
+              className={`px-4 py-3 rounded-xl font-medium transition-all flex items-center gap-2 ${
+                selectedPlan === 'events'
+                  ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white'
+                  : 'text-gray-300 hover:text-white'
+              }`}
+            >
+              <CalendarPlus size={18} />
+              Events
             </button>
           </div>
         </div>
@@ -124,7 +135,7 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
               </div>
             </div>
           </div>
-        ) : (
+        ) : selectedPlan === 'pro' ? (
           <div>
             <div className="text-center mb-8">
               <div className="w-16 h-16 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -205,6 +216,163 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
               <div className="bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 backdrop-blur-sm border border-yellow-500/30 rounded-2xl p-6 mb-6">
                 <div className="text-4xl font-bold text-white mb-2">Start Trial</div>
                 <p className="text-gray-300 mb-2">Custom pricing available for large scale events, contact sales for more</p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div>
+            <div className="text-center mb-8">
+              <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <CalendarPlus size={32} className="text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-2">Triv Events</h3>
+              <p className="text-gray-300 mb-4">Triv Events brings all your event management needs into one professional suite—connecting venues, schedules, attendees, and teams with real-time updates, collaboration, budgeting, and bulletproof communications. Streamline every step, from invitations to analytics, with robust security and branding for your ambitions.</p>
+            </div>
+
+            {/* Events Features Grid */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <CalendarPlus size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">All-in-One Event Planning</h4>
+                <p className="text-gray-300 text-sm">Manage attendee lists, schedules, venue details, and event essentials in one unified platform.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <Mail size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Automated Invitations & RSVP</h4>
+                <p className="text-gray-300 text-sm">Send invitations individually or in bulk via email/SMS, track status, and manage re-invitations.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <UserCheck size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Custom Roles & Permissions</h4>
+                <p className="text-gray-300 text-sm">Assign roles to event staff (planner, vendor, performer, guest) with tiered access controls.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <Clock size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Integrated Scheduling & Timeline</h4>
+                <p className="text-gray-300 text-sm">Build multi-day agendas, time slots for activities, automated reminders, and conflict detection.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <FileText size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Real-time Collaboration</h4>
+                <p className="text-gray-300 text-sm">Shared event chat, document sharing, and real-time updates for attendees, organizers, and vendors.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <DollarSign size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Budgeting & Payments</h4>
+                <p className="text-gray-300 text-sm">Expense tracking, vendor payment management, split payments for group buys, and automated budget alerts.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <BarChart3 size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Analytics & Insights</h4>
+                <p className="text-gray-300 text-sm">Track ticket sales, RSVP-to-attendance rate, engagement metrics, and marketing performance.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <Ticket size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Professional Invitations & Ticketing</h4>
+                <p className="text-gray-300 text-sm">Generate custom invitations, integrate with ticketing platforms, and QR code ticket management.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6 relative">
+                <div className="absolute top-3 right-3 bg-gradient-to-r from-yellow-500 to-yellow-600 text-black text-xs px-2 py-1 rounded-full font-bold">
+                  PREMIUM
+                </div>
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <Megaphone size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Advanced Communication</h4>
+                <p className="text-gray-300 text-sm">Broadcast urgent updates to all participants and schedule broadcast messages for pre-event, in-event, and post-event.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6 relative">
+                <div className="absolute top-3 right-3 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs px-2 py-1 rounded-full font-bold">
+                  PRO
+                </div>
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <Paintbrush size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">White-label & Branding</h4>
+                <p className="text-gray-300 text-sm">Brand the event experience with your logo, theme colors, and sponsor branding for large-scale clients.</p>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20 rounded-2xl p-6">
+                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
+                  <Shield size={24} className="text-indigo-400" />
+                </div>
+                <h4 className="text-lg font-bold text-white mb-2">Security & Compliance</h4>
+                <p className="text-gray-300 text-sm">GDPR compliance, audit logging, secure file uploads, and granular invitation control to protect private events.</p>
+              </div>
+            </div>
+
+            {/* Events Pricing Tiers */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+              <div className="bg-gray-800/50 border border-gray-600 rounded-xl p-4">
+                <h5 className="font-bold text-white mb-2">Events Free</h5>
+                <div className="text-2xl font-bold text-white mb-2">$0</div>
+                <p className="text-gray-300 text-sm mb-3">Basic events, limited attendees</p>
+                <ul className="text-xs text-gray-400 space-y-1">
+                  <li>• Up to 50 attendees</li>
+                  <li>• Core scheduling</li>
+                  <li>• Basic invitations</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/30 rounded-xl p-4">
+                <h5 className="font-bold text-white mb-2">Events Plus</h5>
+                <div className="text-2xl font-bold text-white mb-2">$29/mo</div>
+                <p className="text-gray-300 text-sm mb-3">Per organizer</p>
+                <ul className="text-xs text-gray-300 space-y-1">
+                  <li>• Unlimited events</li>
+                  <li>• Full RSVP management</li>
+                  <li>• Analytics & reporting</li>
+                  <li>• Priority support</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-br from-purple-500/20 to-purple-600/20 border border-purple-500/30 rounded-xl p-4">
+                <h5 className="font-bold text-white mb-2">Events Pro</h5>
+                <div className="text-2xl font-bold text-white mb-2">$199/mo</div>
+                <p className="text-gray-300 text-sm mb-3">Per organization</p>
+                <ul className="text-xs text-gray-300 space-y-1">
+                  <li>• White-label branding</li>
+                  <li>• Advanced reporting</li>
+                  <li>• Mass upload features</li>
+                  <li>• API access</li>
+                </ul>
+              </div>
+
+              <div className="bg-gradient-to-br from-gray-700/20 to-gray-800/20 border border-gray-500/30 rounded-xl p-4">
+                <h5 className="font-bold text-white mb-2">Enterprise</h5>
+                <div className="text-2xl font-bold text-white mb-2">Custom</div>
+                <p className="text-gray-300 text-sm mb-3">500+ attendees</p>
+                <ul className="text-xs text-gray-300 space-y-1">
+                  <li>• Dedicated support</li>
+                  <li>• Custom SLAs</li>
+                  <li>• Advanced compliance</li>
+                  <li>• Custom integrations</li>
+                </ul>
               </div>
             </div>
           </div>
