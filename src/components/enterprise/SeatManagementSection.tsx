@@ -6,6 +6,7 @@ import { AddMemberModal } from './AddMemberModal';
 import { BulkUploadModal } from './BulkUploadModal';
 import { RosterManagementTable } from './RosterManagementTable';
 import { InvitationManager } from './InvitationManager';
+import { SmartImport } from '../SmartImport';
 import { RosterMember, TripCategory, InvitationBatch } from '../../types/enterprise';
 
 interface SeatManagementSectionProps {
@@ -61,7 +62,34 @@ export const SeatManagementSection = ({ organization, tripCategory = 'biz' }: Se
 
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
 
+  const parseConfig = {
+    targetType: 'roster' as const,
+    expectedFields: ['firstName', 'lastName', 'position', 'role', 'email', 'phone'],
+    description: 'Import team roster from PDFs, CSV files, or team websites. AI will automatically extract member information and assign appropriate roles.'
+  };
+
   // Handlers
+  const handleSmartImport = (importedData: any[]) => {
+    const newMembers: RosterMember[] = importedData.map((item, index) => {
+      const firstName = item.first_name || item.firstName || item.name?.split(' ')[0] || 'Unknown';
+      const lastName = item.last_name || item.lastName || item.name?.split(' ').slice(1).join(' ') || 'Member';
+      
+      return {
+        id: `imported-${Date.now()}-${index}`,
+        name: `${firstName} ${lastName}`,
+        email: item.email || item.contact_email || '',
+        phone: item.phone || item.contact_phone || '',
+        role: item.role || item.position || 'Member',
+        status: 'active' as const,
+        invitationSent: false,
+        contactMethod: (item.email && item.phone) ? 'both' : (item.email ? 'email' : 'phone'),
+        joinedAt: new Date().toISOString()
+      };
+    });
+
+    setMembers(prev => [...prev, ...newMembers]);
+  };
+
   const handleAddMember = (memberData: Omit<RosterMember, 'id' | 'status' | 'invitationSent'>) => {
     const newMember: RosterMember = {
       ...memberData,
@@ -167,6 +195,14 @@ export const SeatManagementSection = ({ organization, tripCategory = 'biz' }: Se
           </div>
         </div>
         
+        {/* Smart Import Component */}
+        <SmartImport
+          targetCollection="roster_members"
+          parseConfig={parseConfig}
+          onDataImported={handleSmartImport}
+          className="mb-6"
+        />
+
         {/* Seat Usage Overview */}
         <div className="grid md:grid-cols-3 gap-6 mb-6">
           <div className="bg-white/5 rounded-lg p-4">

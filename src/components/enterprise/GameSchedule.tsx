@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Calendar, MapPin, Clock, Plus, Trophy } from 'lucide-react';
+import { SmartImport } from '../SmartImport';
 
 interface Game {
   id: string;
@@ -15,7 +16,29 @@ interface Game {
 }
 
 export const GameSchedule = () => {
-  const [games] = useState<Game[]>([
+  const parseConfig = {
+    targetType: 'schedule' as const,
+    expectedFields: ['opponent', 'date', 'time', 'venue', 'home_away', 'load_in_time'],
+    description: 'Import game schedule from league websites, PDF schedules, or CSV files. AI will automatically extract game details, venues, and timing information.'
+  };
+
+  const handleSmartImport = (importedData: any[]) => {
+    const newGames: Game[] = importedData.map((item, index) => ({
+      id: `imported-${Date.now()}-${index}`,
+      opponent: item.opponent || item.team || item.vs || 'TBD',
+      venue: item.venue || item.location || item.stadium || 'TBD',
+      venueAddress: item.venue_address || item.address || '',
+      gameDate: item.date || item.game_date || new Date().toISOString().split('T')[0],
+      gameTime: item.time || item.start_time || '19:00',
+      loadInTime: item.load_in_time || item.arrival_time || '17:00',
+      status: 'scheduled' as const,
+      isHome: item.home_away ? item.home_away.toLowerCase().includes('home') : true
+    }));
+
+    setGames(prev => [...prev, ...newGames]);
+  };
+
+  const [games, setGames] = useState<Game[]>([
     {
       id: '1',
       opponent: 'Phoenix Suns',
@@ -52,6 +75,14 @@ export const GameSchedule = () => {
           Add Game
         </button>
       </div>
+
+      {/* Smart Import Component */}
+      <SmartImport
+        targetCollection="games"
+        parseConfig={parseConfig}
+        onDataImported={handleSmartImport}
+        className="mb-6"
+      />
 
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
         <div className="space-y-4">

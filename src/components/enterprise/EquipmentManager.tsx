@@ -2,10 +2,52 @@
 import React, { useState } from 'react';
 import { Package, DollarSign, Truck, Plus, AlertTriangle, QrCode, MapPin } from 'lucide-react';
 import { QRCodeManager } from './QRCodeManager';
+import { SmartImport } from '../SmartImport';
+import { EquipmentItem } from '../../types/enterprise';
 
 export const EquipmentManager = () => {
   const [activeTab, setActiveTab] = useState('inventory');
-  const [equipment] = useState([
+
+  const parseConfig = {
+    targetType: 'equipment' as const,
+    expectedFields: ['name', 'category', 'quantity', 'insured_value', 'status', 'tracking_number'],
+    description: 'Import equipment inventory from spreadsheets, manifests, or insurance documents. AI will categorize items and track their status.'
+  };
+
+  const handleSmartImport = (importedData: any[]) => {
+    const newEquipment: EquipmentItem[] = importedData.map((item, index) => ({
+      id: `imported-${Date.now()}-${index}`,
+      name: item.name || item.equipment || item.item || 'Unknown Item',
+      category: normalizeCategory(item.category || item.type || 'general'),
+      quantity: parseInt(item.quantity) || 1,
+      insuredValue: parseFloat(item.insured_value || item.value) || 0,
+      status: normalizeStatus(item.status || 'packed'),
+      trackingNumber: item.tracking_number || item.tracking || '',
+      assignedTo: item.assigned_to || item.assignee || ''
+    }));
+
+    setEquipment(prev => [...prev, ...newEquipment]);
+  };
+
+  const normalizeCategory = (category: string): EquipmentItem['category'] => {
+    const lower = category.toLowerCase();
+    if (lower.includes('audio') || lower.includes('sound')) return 'audio';
+    if (lower.includes('video') || lower.includes('camera')) return 'video';
+    if (lower.includes('light')) return 'lighting';
+    if (lower.includes('instrument') || lower.includes('music')) return 'instruments';
+    if (lower.includes('sport')) return 'sports';
+    return 'general';
+  };
+
+  const normalizeStatus = (status: string): EquipmentItem['status'] => {
+    const lower = status.toLowerCase();
+    if (lower.includes('transit') || lower.includes('shipping')) return 'in-transit';
+    if (lower.includes('deliver')) return 'delivered';
+    if (lower.includes('setup') || lower.includes('ready')) return 'setup';
+    if (lower.includes('missing') || lower.includes('lost')) return 'missing';
+    return 'packed';
+  };
+  const [equipment, setEquipment] = useState<EquipmentItem[]>([
     {
       id: '1',
       name: 'Main PA System',
@@ -49,27 +91,23 @@ export const EquipmentManager = () => {
   const totalValue = equipment.reduce((sum, item) => sum + item.insuredValue, 0);
 
   const tabs = [
-    { id: 'inventory', label: 'Inventory', icon: Package },
-    { id: 'tracking', label: 'Live Tracking', icon: MapPin },
-    { id: 'freight', label: 'Freight & Shipping', icon: Truck },
-    { id: 'qr-codes', label: 'QR Codes', icon: QrCode }
+    { id: 'inventory', label: 'Inventory', icon: Package }
   ];
 
   const renderTabContent = () => {
-    switch (activeTab) {
-      case 'qr-codes':
-        return <QRCodeManager />;
-      case 'tracking':
-        return <div className="text-white">Live tracking content coming soon...</div>;
-      case 'freight':
-        return <div className="text-white">Freight management content coming soon...</div>;
-      default:
-        return renderInventoryContent();
-    }
+    return renderInventoryContent();
   };
 
   const renderInventoryContent = () => (
     <>
+      {/* Smart Import Component */}
+      <SmartImport
+        targetCollection="equipment_items"
+        parseConfig={parseConfig}
+        onDataImported={handleSmartImport}
+        className="mb-6"
+      />
+
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div className="bg-white/5 border border-white/10 rounded-lg p-4">
@@ -145,7 +183,7 @@ export const EquipmentManager = () => {
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-bold text-white flex items-center gap-2">
           <Package size={24} className="text-glass-orange" />
-          Equipment & Freight
+          Equipment Inventory
         </h3>
         <button className="bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2">
           <Plus size={16} />
@@ -153,26 +191,6 @@ export const EquipmentManager = () => {
         </button>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-2 mb-6">
-        {tabs.map((tab) => {
-          const Icon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-glass-orange/20 text-glass-orange border border-glass-orange/30'
-                  : 'text-gray-300 hover:text-white hover:bg-white/10'
-              }`}
-            >
-              <Icon size={16} />
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
 
       {/* Tab Content */}
       {renderTabContent()}

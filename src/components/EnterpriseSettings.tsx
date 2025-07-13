@@ -19,7 +19,7 @@ import { SettlementPanel } from './enterprise/SettlementPanel';
 import { SponsorDashboard } from './enterprise/SponsorDashboard';
 import { ComplianceCenter } from './enterprise/ComplianceCenter';
 import { ScoutingExport } from './enterprise/ScoutingExport';
-import { WellnessLog } from './enterprise/WellnessLog';
+import { PlayerAvailability } from './enterprise/PlayerAvailability';
 import { TripCategory } from '../types/enterprise';
 
 interface EnterpriseSettingsProps {
@@ -64,7 +64,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
         { id: 'travel-wallet', label: 'Travel Wallet (Org)', icon: Wallet },
         { id: 'compliance', label: 'Compliance Center', icon: Shield },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'wellness', label: 'Wellness & Medical Log', icon: Heart },
+        { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'sports-college': [
@@ -76,7 +76,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
         { id: 'compliance', label: 'Compliance Center', icon: Shield },
         { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'wellness', label: 'Wellness & Medical Log', icon: Heart },
+        { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'sports-hs': [
@@ -97,7 +97,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
         { id: 'compliance', label: 'Compliance Center', icon: Shield },
         { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'wellness', label: 'Wellness & Medical Log', icon: Heart },
+        { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'tour-music': [
@@ -178,7 +178,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
         { id: 'sponsors', label: 'Sponsor & Deliverables', icon: Star },
         { id: 'compliance', label: 'Compliance Center (Union)', icon: Shield },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'wellness', label: 'Wellness & Medical Log', icon: Heart },
+        { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'nonprofit': [
@@ -216,7 +216,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
       case 'sponsors': return <SponsorDashboard />;
       case 'compliance': return <ComplianceCenter />;
       case 'scouting': return <ScoutingExport />;
-      case 'wellness': return <WellnessLog />;
+      case 'availability': return <PlayerAvailability tripCategory={tripCategory} />;
       default: return <OrganizationSection organization={organization} />;
     }
   };
