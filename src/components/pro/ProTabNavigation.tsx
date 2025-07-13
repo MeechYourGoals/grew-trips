@@ -26,7 +26,7 @@ export const ProTabNavigation = ({ tabs, activeTab, onTabChange, category }: Pro
         const Icon = tab.icon;
         const isReadOnly = isReadOnlyTab(tab.id, userRole, userPermissions);
         const displayLabel =
-          tab.id === 'roster' && category === 'Content' ? 'Cast' : tab.label;
+          tab.id === 'team' && category === 'Content' ? 'Cast & Crew' : tab.label;
         
         return (
           <button

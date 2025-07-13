@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Crown, Users, Package, Calendar as CalendarIcon, DollarSign, Shield, Tv, Award, FileCheck, ClipboardList, BarChart3 } from 'lucide-react';
+import { Crown, Users, Calendar as CalendarIcon, DollarSign, Shield, Tv, Award, FileCheck, ClipboardList, BarChart3 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 
@@ -16,8 +15,7 @@ export interface ProTab {
 export const proTabs: ProTab[] = [
   { id: 'chat', label: 'Home', icon: null },
   { id: 'places', label: 'Places', icon: null },
-  { id: 'roster', label: 'Roster', icon: Users, proOnly: true, requiredPermissions: ['read'] },
-  { id: 'equipment', label: 'Equipment', icon: Package, proOnly: true, requiredPermissions: ['read'] },
+  { id: 'team', label: 'Team', icon: Users, proOnly: true, requiredPermissions: ['read'] },
   { id: 'finance', label: 'Finance', icon: DollarSign, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['finance'] },
   { id: 'medical', label: 'Medical', icon: Shield, proOnly: true, requiredPermissions: ['medical', 'admin'] },
   { id: 'compliance', label: 'Compliance', icon: FileCheck, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['compliance', 'admin'] },

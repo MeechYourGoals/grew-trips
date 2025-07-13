@@ -6,8 +6,7 @@ import { PlacesSection } from '../PlacesSection';
 import { CommentsWall } from '../CommentsWall';
 import { GeminiAIChat } from '../GeminiAIChat';
 import { TripSearchTab } from '../TripSearchTab';
-import { RosterTab } from './RosterTab';
-import { EquipmentTracking } from './EquipmentTracking';
+import { TeamTab } from './TeamTab';
 import { TripTasksTab } from '../todo/TripTasksTab';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { ProTripData } from '../../types/pro';
@@ -23,7 +22,6 @@ interface ProTabContentProps {
   tripData: ProTripData;
   category: ProTripCategory;
   onUpdateRoomAssignments: (assignments: any[]) => void;
-  onUpdateEquipment: (equipment: any[]) => void;
 }
 
 export const ProTabContent = ({
@@ -33,8 +31,7 @@ export const ProTabContent = ({
   tripPreferences,
   tripData,
   category,
-  onUpdateRoomAssignments,
-  onUpdateEquipment
+  onUpdateRoomAssignments
 }: ProTabContentProps) => {
   const { user } = useAuth();
   
@@ -62,21 +59,13 @@ export const ProTabContent = ({
         return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
       case 'places':
         return <PlacesSection />;
-      case 'roster':
+      case 'team':
         return (
-          <RosterTab
+          <TeamTab
             roster={tripData.roster || []}
             userRole={userRole}
             isReadOnly={isReadOnly}
             category={category}
-          />
-        );
-      case 'equipment':
-        return (
-          <EquipmentTracking
-            equipment={tripData.equipment || []}
-            onUpdateEquipment={onUpdateEquipment}
-            isReadOnly={isReadOnly}
           />
         );
       case 'finance':

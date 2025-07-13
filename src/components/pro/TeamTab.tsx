@@ -3,20 +3,21 @@ import { Users, Shield, Settings, UserCheck, AlertTriangle } from 'lucide-react'
 import { ProParticipant } from '../../types/pro';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 
-interface RosterTabProps {
+interface TeamTabProps {
   roster: ProParticipant[];
   userRole: string;
   isReadOnly?: boolean;
   category: ProTripCategory;
 }
 
-export const RosterTab = ({ roster, userRole, isReadOnly = false, category }: RosterTabProps) => {
+export const TeamTab = ({ roster, userRole, isReadOnly = false, category }: TeamTabProps) => {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [showCredentials, setShowCredentials] = useState(false);
 
-  const { terminology: { teamLabel } } = getCategoryConfig(category);
+  const { terminology: { teamLabel }, roles: categoryRoles } = getCategoryConfig(category);
 
-  const roles = ['all', 'Player', 'Coach', 'TourManager', 'Crew', 'VIP', 'Security', 'Medical', 'Tech', 'Producer', 'Talent'];
+  // Use category-specific roles or allow all for manual input
+  const roles = categoryRoles.length > 0 ? ['all', ...categoryRoles] : ['all'];
   
   const filteredRoster = selectedRole === 'all' 
     ? roster 
@@ -60,30 +61,39 @@ export const RosterTab = ({ roster, userRole, isReadOnly = false, category }: Ro
           </div>
         </div>
 
-        {/* Role Filter Chips */}
-        <div className="flex flex-wrap gap-2">
-          {roles.map((role) => (
-            <button
-              key={role}
-              onClick={() => setSelectedRole(role)}
-              className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                selectedRole === role
-                  ? 'bg-red-600 text-white'
-                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-              }`}
-            >
-              {role === 'all' ? 'All Roles' : role}
-              {role !== 'all' && (
-                <span className="ml-1 text-xs">
-                  ({roster.filter(m => m.role === role).length})
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+        {/* Role Filter Chips - Only show if category has predefined roles */}
+        {categoryRoles.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {roles.map((role) => (
+              <button
+                key={role}
+                onClick={() => setSelectedRole(role)}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                  selectedRole === role
+                    ? 'bg-red-600 text-white'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {role === 'all' ? 'All Roles' : role}
+                {role !== 'all' && (
+                  <span className="ml-1 text-xs">
+                    ({roster.filter(m => m.role === role).length})
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+        
+        {/* Manual Role Input Notice for Corporate & Business */}
+        {categoryRoles.length === 0 && (
+          <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-3">
+            <p className="text-blue-400 text-sm">Team members can have custom titles entered manually</p>
+          </div>
+        )}
       </div>
 
-      {/* Roster Grid */}
+      {/* Team Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
         {filteredRoster.map((member) => (
           <div key={member.id} className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-4">

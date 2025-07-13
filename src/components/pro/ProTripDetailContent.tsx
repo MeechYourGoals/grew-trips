@@ -46,10 +46,6 @@ export const ProTripDetailContent = ({
     console.log('Updated room assignments:', assignments);
   };
 
-  const handleUpdateEquipment = (equipment: any[]) => {
-    // In a real app, this would update the trip data
-    console.log('Updated equipment:', equipment);
-  };
 
   return (
     <>
@@ -73,7 +69,6 @@ export const ProTripDetailContent = ({
         tripData={tripData}
         category={selectedCategory}
         onUpdateRoomAssignments={handleUpdateRoomAssignments}
-        onUpdateEquipment={handleUpdateEquipment}
       />
 
       {/* Room Assignments Modal */}
