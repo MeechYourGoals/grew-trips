@@ -1,16 +1,16 @@
 import { ProTripData } from '../../types/pro';
 
-export const taylorSwiftErasTour: ProTripData = {
-  id: 'taylor-swift-eras-tour',
-  title: 'Taylor Swift Eras Tour - International Leg',
-  description: 'International leg of Taylor Swift Eras Tour covering major stadiums across Europe and Asia.',
+export const beyonceCowboyCarterTour: ProTripData = {
+  id: 'beyonce-cowboy-carter-tour',
+  title: 'Beyoncé – Cowboy Carter World Tour (Intl Leg)',
+  description: 'International leg of Beyoncé Cowboy Carter World Tour covering major stadiums across Europe and Asia.',
   location: 'London, Paris, Tokyo, Sydney',
   dateRange: 'Mar 1 - Apr 30, 2025',
   category: 'Entertainment',
   proTripCategory: 'Music & Entertainment Tours',
   tags: ['Music Tour', 'Concert', 'International'],
   participants: [
-    { id: 4, name: 'Taylor Swift', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Artists' },
+    { id: 4, name: 'Beyoncé', avatar: '/images/avatars/blank-05.png', role: 'Artists' },
     { id: 5, name: 'Tour Director', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Tour Manager' },
     { id: 6, name: 'Production Manager', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Production Crew' },
     { id: 7, name: 'Security Chief', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Security' },
@@ -40,8 +40,8 @@ export const taylorSwiftErasTour: ProTripData = {
   roster: [
     {
       id: '4',
-      name: 'Taylor Swift',
-      email: 'taylor@taylorswift.com',
+      name: 'Beyoncé',
+      email: 'beyonce@beyonce.com',
       avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
       role: 'Artists',
       credentialLevel: 'AllAccess',

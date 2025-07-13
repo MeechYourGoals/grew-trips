@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { Broadcast } from './Broadcast';
 import { BroadcastComposer } from './BroadcastComposer';
 import { Radio, Clock } from 'lucide-react';
-import { taylorSwiftErasTour } from '../data/pro-trips/taylorSwiftErasTour';
+import { beyonceCowboyCarterTour } from '../data/pro-trips/beyonceCowboyCarterTour';
 import { demoModeService } from '@/services/demoModeService';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useParams } from 'react-router-dom';
 import { getMockAvatar } from '@/utils/mockAvatars';
 
-const participants = taylorSwiftErasTour.participants;
+const participants = beyonceCowboyCarterTour.participants;
 
 interface BroadcastData {
   id: string;
