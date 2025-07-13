@@ -4,7 +4,7 @@ import { Users, UserPlus, Upload, Send } from 'lucide-react';
 import { Button } from '../ui/button';
 import { AddMemberModal } from './AddMemberModal';
 import { BulkUploadModal } from './BulkUploadModal';
-import { RosterManagementTable } from './RosterManagementTable';
+import { TeamManagementTable } from './TeamManagementTable';
 import { InvitationManager } from './InvitationManager';
 import { SmartImport } from '../SmartImport';
 import { RosterMember, TripCategory, InvitationBatch } from '../../types/enterprise';
@@ -222,7 +222,7 @@ export const SeatManagementSection = ({ organization, tripCategory = 'biz' }: Se
         </div>
 
         {/* Enhanced Member Table */}
-        <RosterManagementTable
+        <TeamManagementTable
           members={members}
           selectedMembers={selectedMembers}
           onMemberSelect={handleMemberSelect}

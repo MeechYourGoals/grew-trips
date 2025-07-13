@@ -116,16 +116,83 @@ export const tripsData: Trip[] = [
   },
   {
     id: 8,
-    title: "Harris Middle School's 8th Grade Field Trip to Washington DC",
-    location: "Washington, DC",
-    dateRange: "Apr 15 - Apr 18, 2025",
-    description: "Educational field trip exploring American history and government with museum visits",
+    title: "Tulum Wellness Retreat",
+    location: "Tulum, Mexico",
+    dateRange: "Nov 10 - Nov 16, 2025",
+    description: "Yoga and wellness focused retreat with breathwork, meditation, and spa treatments",
     participants: [
-      { id: 32, name: "Ms. Johnson", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
-      { id: 33, name: "Mr. Davis", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
-      { id: 34, name: "Mrs. Garcia", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face" },
-      { id: 35, name: "Mr. Thompson", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
-      { id: 36, name: "Principal Adams", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face" }
+      { id: 32, name: "Elena Ramirez", avatar: "/images/avatars/blank-13.png" },
+      { id: 33, name: "Jason Wu", avatar: "/images/avatars/blank-14.png" },
+      { id: 34, name: "Amara Vance", avatar: "/images/avatars/blank-15.png" },
+      { id: 35, name: "Sophia Chen", avatar: "/images/avatars/blank-16.png" },
+      { id: 36, name: "Marcus Thompson", avatar: "/images/avatars/blank-17.png" },
+      { id: 37, name: "Isla Rodriguez", avatar: "/images/avatars/blank-18.png" },
+      { id: 38, name: "Maya Patel", avatar: "/images/avatars/blank-19.png" },
+      { id: 39, name: "River Johnson", avatar: "/images/avatars/blank-20.png" }
+    ]
+  },
+  {
+    id: 9,
+    title: "Newly Divorced Wine-Tasting Getaway",
+    location: "Napa Valley, CA",
+    dateRange: "May 2 - May 5, 2025",
+    description: "Celebratory wine country escape with tastings, spa treatments, and new beginnings",
+    participants: [
+      { id: 40, name: "Olivia Parker", avatar: "/images/avatars/blank-21.png" },
+      { id: 41, name: "Mia Brooks", avatar: "/images/avatars/blank-22.png" },
+      { id: 42, name: "Sara Kang", avatar: "/images/avatars/blank-23.png" },
+      { id: 43, name: "Jessica Martinez", avatar: "/images/avatars/blank-24.png" },
+      { id: 44, name: "Rachel Davis", avatar: "/images/avatars/blank-25.png" },
+      { id: 45, name: "Amanda Wilson", avatar: "/images/avatars/blank-26.png" }
+    ]
+  },
+  {
+    id: 10,
+    title: "Corporate Holiday Ski Trip – Aspen",
+    location: "Aspen, CO",
+    dateRange: "Dec 12 - Dec 17, 2025",
+    description: "Company holiday celebration with skiing, team building, and winter activities",
+    participants: [
+      { id: 46, name: "Tom Nguyen", avatar: "/images/avatars/blank-27.png" },
+      { id: 47, name: "Heather Cole", avatar: "/images/avatars/blank-28.png" },
+      { id: 48, name: "Luis Ortiz", avatar: "/images/avatars/blank-29.png" },
+      { id: 49, name: "Sarah Kim", avatar: "/images/avatars/blank-30.png" },
+      { id: 50, name: "Michael Chang", avatar: "/images/avatars/blank-01.png" },
+      { id: 51, name: "Jennifer Lee", avatar: "/images/avatars/blank-02.png" },
+      { id: 52, name: "David Park", avatar: "/images/avatars/blank-03.png" },
+      { id: 53, name: "Lisa Wong", avatar: "/images/avatars/blank-04.png" },
+      { id: 54, name: "Kevin Zhang", avatar: "/images/avatars/blank-05.png" },
+      { id: 55, name: "Emily Chen", avatar: "/images/avatars/blank-06.png" }
+    ]
+  },
+  {
+    id: 11,
+    title: "Disney Cruise Family Vacation",
+    location: "Port Canaveral, FL",
+    dateRange: "Jun 15 - Jun 22, 2025",
+    description: "Magical family cruise with Disney characters, activities, and island adventures",
+    participants: [
+      { id: 56, name: "Liam Turner", avatar: "/images/avatars/blank-07.png" },
+      { id: 57, name: "Emma Turner", avatar: "/images/avatars/blank-08.png" },
+      { id: 58, name: "Ella Turner", avatar: "/images/avatars/blank-09.png" },
+      { id: 59, name: "Noah Turner", avatar: "/images/avatars/blank-10.png" },
+      { id: 60, name: "Grace Turner", avatar: "/images/avatars/blank-11.png" },
+      { id: 61, name: "Grandpa Joe", avatar: "/images/avatars/blank-12.png" },
+      { id: 62, name: "Grandma Rose", avatar: "/images/avatars/blank-13.png" }
+    ]
+  },
+  {
+    id: 12,
+    title: "Yellowstone National-Park Hiking Adventure",
+    location: "Yellowstone, WY",
+    dateRange: "Jul 10 - Jul 17, 2025",
+    description: "Outdoor adventure exploring geysers, wildlife, and backcountry hiking trails",
+    participants: [
+      { id: 63, name: "Brent Miller", avatar: "/images/avatars/blank-14.png" },
+      { id: 64, name: "Nia Patel", avatar: "/images/avatars/blank-15.png" },
+      { id: 65, name: "Zoe Lewis", avatar: "/images/avatars/blank-16.png" },
+      { id: 66, name: "Alex Rivera", avatar: "/images/avatars/blank-17.png" },
+      { id: 67, name: "Cameron Brooks", avatar: "/images/avatars/blank-18.png" }
     ]
   }
 ];

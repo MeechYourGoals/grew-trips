@@ -8,8 +8,10 @@ import { ohioStateNotreDame } from './pro-trips/ohioStateNotreDame';
 import { uncMensLacrosse } from './pro-trips/uncMensLacrosse';
 import { yCombinatorCohort } from './pro-trips/yCombinatorCohort';
 import { kaiDruskiStream } from './pro-trips/kaiDruskiStream';
-import { googleIO2026 } from './pro-trips/googleIO2026';
 import { teslaCybertruckRoadshow } from './pro-trips/teslaCybertruckRoadshow';
+import { postMaloneJellyRollTour } from './pro-trips/postMaloneJellyRollTour';
+import { goldmanSachsRecruiting } from './pro-trips/goldmanSachsRecruiting';
+import { nvidiaBowlingNight } from './pro-trips/nvidiaBowlingNight';
 
 export const proTripMockData: Record<string, ProTripData> = {
   'lakers-road-trip': lakersRoadTrip,
@@ -20,6 +22,8 @@ export const proTripMockData: Record<string, ProTripData> = {
   'unc-lax-2025': uncMensLacrosse,
   'a16z-speedrun-2026': yCombinatorCohort,
   'kai-druski-jake-adin-24hr-atl': kaiDruskiStream,
-  'google-io-2026': googleIO2026,
-  'tesla-cybertruck-roadshow-2025': teslaCybertruckRoadshow
+  'tesla-cybertruck-roadshow-2025': teslaCybertruckRoadshow,
+  'postmalone-jellyroll-tour-2026': postMaloneJellyRollTour,
+  'gs-campus-gt-2025': goldmanSachsRecruiting,
+  'nvidia-bowling-2025': nvidiaBowlingNight
 };

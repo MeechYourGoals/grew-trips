@@ -112,7 +112,7 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
           {trip.roster && trip.roster.length > 0 && (
             <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-xs border border-blue-500/30">
               <Users size={12} />
-              <span>Roster: {trip.roster.length}</span>
+              <span>Team: {trip.roster.length}</span>
             </div>
           )}
           {nextLoadIn && (

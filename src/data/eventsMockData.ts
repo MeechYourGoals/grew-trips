@@ -1,4 +1,5 @@
 import { EventData } from '../types/events';
+import { googleIO2026Event } from './events/googleIO2026';
 
 export const eventsMockData: Record<string, EventData> = {
   'sxsw-2025': {
@@ -586,5 +587,6 @@ export const eventsMockData: Record<string, EventData> = {
     sessions: [],
     sponsors: [],
     exhibitors: []
-  }
+  },
+  'google-io-2026': googleIO2026Event
 };
