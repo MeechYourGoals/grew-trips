@@ -2,43 +2,50 @@
 import React, { useState } from 'react';
 import { Calendar } from './ui/calendar';
 import { Button } from './ui/button';
-import { Plus, Clock, MapPin, Edit3, Trash2 } from 'lucide-react';
+import { Plus, Clock, MapPin, Edit3, Trash2, List, Calendar as CalendarIcon } from 'lucide-react';
 import { format } from 'date-fns';
+import { ItineraryView } from './ItineraryView';
+import { CalendarEvent } from '../types/calendar';
 
-interface TripEvent {
-  id: string;
-  title: string;
-  date: Date;
-  time: string;
-  location?: string;
-  description?: string;
-  createdBy: string;
-}
+// Updated to use CalendarEvent type from types/calendar.ts
+interface TripEvent extends CalendarEvent {}
 
 const mockEvents: TripEvent[] = [
   {
     id: '1',
     title: 'Dinner at L\'Ami Jean',
     date: new Date(2025, 6, 16), // July 16, 2025
-    time: '8:00 PM',
+    time: '20:00',
     location: '27 Rue Malar, Paris',
-    createdBy: 'Emma'
+    description: 'Traditional French bistro',
+    createdBy: 'Emma',
+    include_in_itinerary: true,
+    event_category: 'dining',
+    source_type: 'manual'
   },
   {
     id: '2',
     title: 'Seine River Cruise',
     date: new Date(2025, 6, 17), // July 17, 2025
-    time: '7:30 PM',
+    time: '19:30',
     location: 'Port de la Bourdonnais',
-    createdBy: 'Jake'
+    description: 'Evening cruise with dinner',
+    createdBy: 'Jake',
+    include_in_itinerary: true,
+    event_category: 'entertainment',
+    source_type: 'manual'
   },
   {
     id: '3',
     title: 'Louvre Museum Visit',
     date: new Date(2025, 6, 18), // July 18, 2025
-    time: '10:00 AM',
+    time: '10:00',
     location: 'Louvre Museum',
-    createdBy: 'Sarah'
+    description: 'Pre-booked timed entry tickets',
+    createdBy: 'Sarah',
+    include_in_itinerary: true,
+    event_category: 'activity',
+    source_type: 'manual'
   }
 ];
 
@@ -46,6 +53,7 @@ export const GroupCalendar = () => {
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
   const [events, setEvents] = useState<TripEvent[]>(mockEvents);
   const [showAddEvent, setShowAddEvent] = useState(false);
+  const [viewMode, setViewMode] = useState<'calendar' | 'itinerary'>('calendar');
   const [newEvent, setNewEvent] = useState({
     title: '',
     time: '',
@@ -71,7 +79,10 @@ export const GroupCalendar = () => {
       time: newEvent.time,
       location: newEvent.location,
       description: newEvent.description,
-      createdBy: 'You' // In real app, this would be the current user
+      createdBy: 'You', // In real app, this would be the current user
+      include_in_itinerary: true,
+      event_category: 'other',
+      source_type: 'manual'
     };
 
     setEvents([...events, event]);
@@ -85,6 +96,29 @@ export const GroupCalendar = () => {
 
   const datesWithEvents = events.map(event => event.date);
 
+  if (viewMode === 'itinerary') {
+    return (
+      <div className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-semibold text-white mb-1">Trip Itinerary</h2>
+            <p className="text-slate-400 text-sm">Your organized schedule timeline</p>
+          </div>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              onClick={() => setViewMode('calendar')}
+            >
+              <CalendarIcon size={16} className="mr-2" />
+              Calendar View
+            </Button>
+          </div>
+        </div>
+        <ItineraryView events={events} tripName="Paris Adventure" />
+      </div>
+    );
+  }
+
   return (
     <div className="p-6">
       <div className="flex items-center justify-between mb-6">
@@ -92,13 +126,22 @@ export const GroupCalendar = () => {
           <h2 className="text-xl font-semibold text-white mb-1">Group Calendar</h2>
           <p className="text-slate-400 text-sm">Plan activities and keep everyone on schedule</p>
         </div>
-        <Button 
-          onClick={() => setShowAddEvent(!showAddEvent)}
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <Plus size={16} className="mr-2" />
-          Add Event
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline"
+            onClick={() => setViewMode('itinerary')}
+          >
+            <List size={16} className="mr-2" />
+            Itinerary View
+          </Button>
+          <Button 
+            onClick={() => setShowAddEvent(!showAddEvent)}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            <Plus size={16} className="mr-2" />
+            Add Event
+          </Button>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

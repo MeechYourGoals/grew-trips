@@ -5,9 +5,11 @@ import { AddPlaceModal } from './AddPlaceModal';
 import { GoogleMapsEmbed } from './GoogleMapsEmbed';
 import { EnhancedFindMyFriends } from './EnhancedFindMyFriends';
 import { SetBasecampSquare } from './SetBasecampSquare';
+import { AddToCalendarButton } from './AddToCalendarButton';
 import { BasecampLocation, PlaceWithDistance, DistanceCalculationSettings } from '../types/basecamp';
 import { DistanceCalculator } from '../utils/distanceCalculator';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { AddToCalendarData } from '../types/calendar';
 
 interface PlacesSectionProps {
   tripId?: string;
@@ -73,6 +75,11 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
     }
     
     setPlaces([...places, newPlace]);
+  };
+
+  const handleEventAdded = (eventData: AddToCalendarData) => {
+    console.log('Event added to calendar:', eventData);
+    // In real app, this would sync with calendar component/service
   };
 
   return (
@@ -153,6 +160,15 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
                             </span>
                           </div>
                         )}
+                        <div className="mt-3">
+                          <AddToCalendarButton
+                            placeName={place.name}
+                            placeAddress={place.address}
+                            category="activity"
+                            onEventAdded={handleEventAdded}
+                            variant="pill"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -97,7 +97,14 @@ async function extractCalendarEvents(fileUrl: string) {
           content: [
             {
               type: 'text',
-              text: `Please analyze this document and extract any calendar events, dates, times, or schedule information. Return the data in JSON format:
+              text: `Please analyze this document and extract any calendar events, reservations, bookings, or schedule information. Look for:
+              - Restaurant reservations (OpenTable, Resy, etc.)
+              - Flight bookings (airlines, confirmation codes)
+              - Hotel check-ins/check-outs
+              - Event tickets (concerts, shows, activities)
+              - Transportation bookings
+              
+              Return the data in JSON format:
               {
                 "events": [
                   {
@@ -106,11 +113,18 @@ async function extractCalendarEvents(fileUrl: string) {
                     "start_time": "HH:MM",
                     "end_time": "HH:MM",
                     "location": "string",
-                    "description": "string"
+                    "description": "string",
+                    "category": "dining|lodging|activity|transportation|entertainment|other",
+                    "confirmation_number": "string",
+                    "confidence": 0.95
                   }
                 ],
                 "dates_mentioned": ["YYYY-MM-DD"],
-                "locations_mentioned": ["string"]
+                "locations_mentioned": ["string"],
+                "reservation_details": {
+                  "platform": "string",
+                  "contact_info": "string"
+                }
               }`
             },
             {
@@ -120,7 +134,7 @@ async function extractCalendarEvents(fileUrl: string) {
           ]
         }
       ],
-      max_tokens: 1500
+      max_tokens: 2000
     })
   });
 

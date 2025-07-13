@@ -7,6 +7,8 @@ import { getTripById } from '@/data/tripsData';
 import { proTripMockData } from '@/data/proTripMockData';
 import { getMockAvatar, currentUserAvatar } from '@/utils/mockAvatars';
 import { MessageReactionBar } from './chat/MessageReactionBar';
+import { MessageAIAnalyzer } from './MessageAIAnalyzer';
+import { AddToCalendarData } from '../types/calendar';
 
 interface TripChatProps {
   groupChatEnabled?: boolean;
@@ -31,6 +33,11 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
   const [reactions, setReactions] = useState<Record<string, Record<string, { count: number; userReacted: boolean }>>>({});
+
+  const handleEventAdded = (eventData: AddToCalendarData) => {
+    console.log('Calendar event added from chat:', eventData);
+    // In real app, this would sync with calendar service
+  };
 
   const currentTripId = proTripId || tripId || eventId || 'default-trip';
 
@@ -201,6 +208,10 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
                     messageId={message.id}
                     reactions={reactions[message.id]}
                     onReaction={handleReaction}
+                  />
+                  <MessageAIAnalyzer
+                    messageText={message.text}
+                    onEventAdded={handleEventAdded}
                   />
                 </div>
               </div>
