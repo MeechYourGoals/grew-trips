@@ -22,19 +22,18 @@ export default {
 				'outfit': ['Outfit', 'sans-serif'],
 			},
 			colors: {
-				// Dark theme with gold accents, Pro crimson, and Events blue
+				// Dark theme with metallic gold, silver Pro, and navy Events
 				glass: {
-					orange: '#FFD700', // Gold
-					yellow: '#FFC107', // Amber Gold
+					'metallic-gold': 'hsl(45, 95%, 58%)', // Metallic gold
+					'metallic-gold-light': 'hsl(45, 90%, 65%)', // Lighter metallic gold
+					'metallic-silver': 'hsl(210, 8%, 45%)', // Dark metallic silver for Pro
+					'metallic-silver-light': 'hsl(210, 10%, 55%)', // Lighter metallic silver
 					green: '#62D621',
 					dark: '#000000',
 					light: '#FFFFFF',
-					// Pro theme colors
-					crimson: '#B91C3C', // Deep red/crimson for Pro
-					'crimson-light': '#DC2626', // Lighter crimson
 					// Events theme colors
-					blue: '#2A66FF', // Primary blue for Events
-					'blue-light': '#4F80FF', // Lighter blue
+					'navy-blue': 'hsl(217, 91%, 25%)', // Deep navy for Events
+					'navy-blue-light': 'hsl(217, 80%, 35%)', // Lighter navy
 				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
