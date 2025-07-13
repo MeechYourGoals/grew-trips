@@ -13,7 +13,7 @@ export interface ProTab {
 }
 
 export const proTabs: ProTab[] = [
-  { id: 'chat', label: 'Home', icon: null },
+  { id: 'chat', label: 'Trip', icon: null },
   { id: 'places', label: 'Places', icon: null },
   { id: 'team', label: 'Team', icon: Users, proOnly: true, requiredPermissions: ['read'] },
   { id: 'finance', label: 'Finance', icon: DollarSign, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['finance'] },

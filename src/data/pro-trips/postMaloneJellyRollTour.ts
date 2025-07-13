@@ -3,6 +3,7 @@ import { ProTripData } from '../../types/pro';
 export const postMaloneJellyRollTour: ProTripData = {
   id: 'postmalone-jellyroll-tour-2026',
   title: 'Post Malone × Jelly Roll — Stadium Tour 2026',
+  description: 'Major stadium tour featuring Post Malone and Jelly Roll across North America with full production crew.',
   location: 'Multiple Cities, USA',
   dateRange: 'Jun 1 - Sep 30, 2026',
   category: 'Music Tour',
@@ -38,7 +39,6 @@ export const postMaloneJellyRollTour: ProTripData = {
       { name: 'Marketing', budgeted: 2000000, spent: 1000000 }
     ]
   },
-  groupChatEnabled: true,
   schedule: [
     {
       id: 'show-1',
@@ -52,5 +52,9 @@ export const postMaloneJellyRollTour: ProTripData = {
     }
   ],
   roomAssignments: [],
-  equipment: []
+  equipment: [],
+  perDiem: { dailyRate: 150, currency: 'USD', startDate: '2026-06-01', endDate: '2026-09-30', participants: [] },
+  settlement: [],
+  medical: [],
+  compliance: []
 };

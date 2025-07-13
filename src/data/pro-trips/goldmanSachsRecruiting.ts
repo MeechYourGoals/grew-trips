@@ -3,6 +3,7 @@ import { ProTripData } from '../../types/pro';
 export const goldmanSachsRecruiting: ProTripData = {
   id: 'gs-campus-gt-2025',
   title: 'Goldman Sachs Campus-Recruiting Trip — Georgia Tech',
+  description: 'Campus recruiting visit to Georgia Tech featuring CEO keynote and networking events.',
   location: 'Atlanta, GA',
   dateRange: 'Sep 18 - Sep 19, 2025',
   category: 'Business Travel',
@@ -39,7 +40,6 @@ export const goldmanSachsRecruiting: ProTripData = {
       { name: 'Materials', budgeted: 15000, spent: 4000 }
     ]
   },
-  groupChatEnabled: true,
   schedule: [
     {
       id: 'keynote-1',
@@ -53,5 +53,9 @@ export const goldmanSachsRecruiting: ProTripData = {
     }
   ],
   roomAssignments: [],
-  equipment: []
+  equipment: [],
+  perDiem: { dailyRate: 200, currency: 'USD', startDate: '2025-09-18', endDate: '2025-09-19', participants: [] },
+  settlement: [],
+  medical: [],
+  compliance: []
 };

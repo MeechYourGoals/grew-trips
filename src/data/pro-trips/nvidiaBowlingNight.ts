@@ -3,6 +3,7 @@ import { ProTripData } from '../../types/pro';
 export const nvidiaBowlingNight: ProTripData = {
   id: 'nvidia-bowling-2025',
   title: 'NVIDIA Santa Clara — Employee Bowling Night',
+  description: 'Team building bowling event for NVIDIA employees with dinner and prizes.',
   location: 'Santa Clara, CA',
   dateRange: 'Dec 8, 2025',
   category: 'Team-Building',
@@ -39,7 +40,6 @@ export const nvidiaBowlingNight: ProTripData = {
       { name: 'Transportation', budgeted: 1000, spent: 500 }
     ]
   },
-  groupChatEnabled: true,
   schedule: [
     {
       id: 'bowling-1',
@@ -53,5 +53,9 @@ export const nvidiaBowlingNight: ProTripData = {
     }
   ],
   roomAssignments: [],
-  equipment: []
+  equipment: [],
+  perDiem: { dailyRate: 75, currency: 'USD', startDate: '2025-12-08', endDate: '2025-12-08', participants: [] },
+  settlement: [],
+  medical: [],
+  compliance: []
 };
