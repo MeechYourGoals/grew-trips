@@ -27,12 +27,12 @@ export const CategorySelector = ({ selectedCategory, onCategoryChange, className
         <>
           {/* Backdrop to close dropdown when clicking outside */}
           <div 
-            className="fixed inset-0 z-40" 
+            className="fixed inset-0 z-[59]" 
             onClick={() => setIsOpen(false)}
           />
           
           {/* Dropdown menu with higher z-index and better positioning */}
-          <div className="absolute top-full left-0 mt-2 w-full min-w-[280px] bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-50 overflow-hidden max-h-96 overflow-y-auto">
+          <div className="absolute top-full left-0 mt-2 w-full min-w-[280px] bg-gray-800 border border-gray-600 rounded-xl shadow-2xl z-[60] overflow-hidden max-h-72 overflow-y-auto mb-20 touch-pan-y">
             {categories.map((category) => {
               const config = getCategoryConfig(category);
               return (
