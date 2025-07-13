@@ -22,10 +22,22 @@ export default {
 				'outfit': ['Outfit', 'sans-serif'],
 			},
 			colors: {
-				// Dark theme with metallic gold, silver Pro, and navy Events
+				// Dark theme with exact metallic gold, silver Pro, and navy Events
+				'metallic-gold': {
+					50: 'hsl(42, 85%, 95%)',
+					100: 'hsl(42, 82%, 88%)',
+					200: 'hsl(42, 78%, 78%)',
+					300: 'hsl(42, 75%, 68%)',
+					400: 'hsl(42, 78%, 60%)',
+					500: 'hsl(42, 85%, 55%)',  // Main metallic gold - exact match
+					600: 'hsl(42, 88%, 50%)',
+					700: 'hsl(42, 90%, 45%)',
+					800: 'hsl(42, 92%, 40%)',
+					900: 'hsl(42, 95%, 35%)',
+				},
 				glass: {
-					'metallic-gold': 'hsl(45, 95%, 58%)', // Metallic gold
-					'metallic-gold-light': 'hsl(45, 90%, 65%)', // Lighter metallic gold
+					'metallic-gold': 'hsl(42, 85%, 55%)', // Exact metallic gold
+					'metallic-gold-light': 'hsl(42, 78%, 60%)', // Lighter metallic gold
 					'metallic-silver': 'hsl(210, 8%, 45%)', // Dark metallic silver for Pro
 					'metallic-silver-light': 'hsl(210, 10%, 55%)', // Lighter metallic silver
 					green: '#62D621',
