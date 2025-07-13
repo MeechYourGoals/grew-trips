@@ -11,6 +11,9 @@ export interface Trip {
   dateRange: string;
   description: string;
   participants: TripParticipant[];
+  // Feature toggles for Pro/Event trips
+  enabled_features?: string[];
+  trip_type?: 'consumer' | 'pro' | 'event';
 }
 
 export const tripsData: Trip[] = [

@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Users, Calendar, Camera, Radio, Link, BarChart3, Receipt, FileText, ClipboardList } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Camera, Radio, Link, BarChart3, Receipt, FileText, ClipboardList, Lock } from 'lucide-react';
 import { TripChat } from './TripChat';
 import { GroupCalendar } from './GroupCalendar';
 import { PhotoAlbum } from './PhotoAlbum';
@@ -11,31 +11,39 @@ import { ReceiptsTab } from './receipts/ReceiptsTab';
 import { FilesTab } from './FilesTab';
 import { TripTasksTab } from './todo/TripTasksTab';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { useFeatureToggle } from '../hooks/useFeatureToggle';
 
 interface TripTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   tripId?: string;
+  tripData?: {
+    enabled_features?: string[];
+    trip_type?: 'consumer' | 'pro' | 'event';
+  };
 }
 
-export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabChange, tripId = '1' }: TripTabsProps) => {
+export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabChange, tripId = '1', tripData }: TripTabsProps) => {
   const [activeTab, setActiveTab] = useState('chat');
   const { accentColors } = useTripVariant();
+  const features = useFeatureToggle(tripData || {});
 
   const tabs = [
-    { id: 'chat', label: 'Chat', icon: MessageCircle },
-    { id: 'broadcasts', label: 'Broadcasts', icon: Radio },
-    { id: 'links', label: 'Links', icon: Link },
-    { id: 'polls', label: 'Polls', icon: BarChart3 },
-    { id: 'todo', label: 'To-Do List', icon: ClipboardList },
-    { id: 'calendar', label: 'Calendar', icon: Calendar },
-    { id: 'photos', label: 'Photos', icon: Camera },
-    { id: 'receipts', label: 'Receipts', icon: Receipt },
-    { id: 'files', label: 'Files', icon: FileText }
+    { id: 'chat', label: 'Chat', icon: MessageCircle, enabled: features.showChat },
+    { id: 'broadcasts', label: 'Broadcasts', icon: Radio, enabled: features.showBroadcasts },
+    { id: 'links', label: 'Links', icon: Link, enabled: features.showLinks },
+    { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
+    { id: 'todo', label: 'To-Do List', icon: ClipboardList, enabled: features.showTodo },
+    { id: 'calendar', label: 'Calendar', icon: Calendar, enabled: features.showCalendar },
+    { id: 'photos', label: 'Photos', icon: Camera, enabled: features.showPhotos },
+    { id: 'receipts', label: 'Receipts', icon: Receipt, enabled: features.showFiles },
+    { id: 'files', label: 'Files', icon: FileText, enabled: features.showFiles }
   ];
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
+  const handleTabChange = (tab: string, enabled: boolean) => {
+    if (enabled) {
+      setActiveTab(tab);
+    }
   };
 
   const renderTabContent = () => {
@@ -69,18 +77,25 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
       <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 mb-8 pb-2 -mx-2 px-2 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
         {tabs.map((tab) => {
           const Icon = tab.icon;
+          const isActive = activeTab === tab.id;
+          const enabled = tab.enabled;
+          
           return (
             <button
               key={tab.id}
-              onClick={() => handleTabChange(tab.id)}
+              onClick={() => handleTabChange(tab.id, enabled)}
+              disabled={!enabled}
               className={`flex-shrink-0 min-w-max flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 text-sm ${
-                activeTab === tab.id
+                isActive && enabled
                   ? `bg-gradient-to-r ${accentColors.gradient} text-white shadow-md`
-                  : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
+                  : enabled
+                  ? 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
+                  : 'bg-white/5 text-gray-500 cursor-not-allowed opacity-50'
               }`}
             >
               <Icon size={16} />
               <span>{tab.label}</span>
+              {!enabled && <Lock size={12} className="ml-1" />}
             </button>
           );
         })}

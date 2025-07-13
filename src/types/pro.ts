@@ -300,6 +300,8 @@ export interface ProTripData {
     | 'Events';
   tags: string[];
   participants: ProTripParticipant[];
+  // Feature toggles for Pro/Event trips
+  enabled_features?: string[];
   budget: {
     total: number;
     spent: number;

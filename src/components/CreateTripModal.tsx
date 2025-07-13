@@ -1,7 +1,11 @@
 
 import React, { useState } from 'react';
-import { X, Calendar, MapPin, Users, Building, PartyPopper } from 'lucide-react';
+import { X, Calendar, MapPin, Users, Building, PartyPopper, ChevronDown, Settings } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import { Switch } from './ui/switch';
+import { Checkbox } from './ui/checkbox';
+import { DEFAULT_FEATURES } from '../hooks/useFeatureToggle';
 
 interface CreateTripModalProps {
   isOpen: boolean;
@@ -17,12 +21,35 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
     endDate: '',
     description: ''
   });
+  
+  // Feature toggle state for Pro/Event trips
+  const [enableAllFeatures, setEnableAllFeatures] = useState(true);
+  const [selectedFeatures, setSelectedFeatures] = useState<Record<string, boolean>>(
+    DEFAULT_FEATURES.reduce((acc, feature) => ({ ...acc, [feature]: true }), {})
+  );
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Creating trip:', formData);
+    
+    // Determine enabled features based on trip type
+    let enabledFeatures: string[] = [...DEFAULT_FEATURES];
+    if (tripType !== 'consumer') {
+      enabledFeatures = enableAllFeatures 
+        ? [...DEFAULT_FEATURES]
+        : Object.entries(selectedFeatures)
+            .filter(([, enabled]) => enabled)
+            .map(([feature]) => feature);
+    }
+    
+    const tripData = {
+      ...formData,
+      trip_type: tripType,
+      enabled_features: enabledFeatures
+    };
+    
+    console.log('Creating trip:', tripData);
     // Here you would typically send the data to your backend
     onClose();
   };
@@ -32,6 +59,23 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
       ...formData,
       [e.target.name]: e.target.value
     });
+  };
+
+  const handleFeatureToggle = (feature: string, enabled: boolean) => {
+    setSelectedFeatures(prev => ({ ...prev, [feature]: enabled }));
+  };
+
+  const featureLabels: Record<string, string> = {
+    chat: 'Group Chat',
+    broadcasts: 'Broadcasts',
+    links: 'Links & Ideas',
+    polls: 'Polls & Voting',
+    todo: 'To-Do Lists',
+    calendar: 'Calendar',
+    photos: 'Photo Sharing',
+    files: 'File Sharing',
+    concierge: 'AI Concierge',
+    search: 'Search'
   };
 
   return (
@@ -163,6 +207,58 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
               placeholder="Tell us about your trip..."
             />
           </div>
+
+          {/* Advanced Feature Settings - Only for Pro/Event trips */}
+          {tripType !== 'consumer' && (
+            <Collapsible className="space-y-3">
+              <CollapsibleTrigger className="w-full flex items-center justify-between p-3 bg-slate-700/30 hover:bg-slate-700/50 rounded-xl transition-colors">
+                <div className="flex items-center gap-2 text-slate-300">
+                  <Settings size={16} />
+                  <span className="text-sm font-medium">Advanced • Feature Set</span>
+                </div>
+                <ChevronDown size={16} className="text-slate-400 transition-transform duration-200 data-[state=open]:rotate-180" />
+              </CollapsibleTrigger>
+              
+              <CollapsibleContent className="space-y-4 bg-slate-700/20 rounded-xl p-4">
+                {/* Enable All Toggle */}
+                <div className="flex items-center justify-between">
+                  <label className="text-sm font-medium text-slate-300">
+                    Enable all features
+                  </label>
+                  <Switch
+                    checked={enableAllFeatures}
+                    onCheckedChange={setEnableAllFeatures}
+                  />
+                </div>
+
+                {/* Individual Feature Checkboxes */}
+                <div className={`space-y-3 ${enableAllFeatures ? 'pointer-events-none opacity-50' : ''}`}>
+                  <p className="text-xs text-slate-400 mb-3">
+                    Select which features participants can access:
+                  </p>
+                  <div className="grid grid-cols-2 gap-3">
+                    {DEFAULT_FEATURES.map((feature) => (
+                      <div key={feature} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={feature}
+                          checked={selectedFeatures[feature]}
+                          onCheckedChange={(checked) => 
+                            handleFeatureToggle(feature, checked as boolean)
+                          }
+                        />
+                        <label
+                          htmlFor={feature}
+                          className="text-sm text-slate-300 cursor-pointer"
+                        >
+                          {featureLabels[feature]}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          )}
 
           {/* Buttons */}
           <div className="flex gap-3 pt-4">
