@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, User, MoreHorizontal } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 import { ShareTripModal } from './share/ShareTripModal';
+import { getTripColor, getTripAccentColor, getTripButtonGradient } from '../utils/tripColors';
 
 interface Participant {
   id: number;
@@ -28,6 +29,10 @@ export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
   const isMobile = useIsMobile();
   const [showShareModal, setShowShareModal] = useState(false);
 
+  const tripColors = getTripColor(trip.id);
+  const accentColor = getTripAccentColor(trip.id);
+  const buttonGradient = getTripButtonGradient(trip.id);
+
   const handleViewTrip = () => {
     navigate(`/trip/${trip.id}`);
   };
@@ -39,9 +44,9 @@ export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
   if (!isMobile) return null;
 
   return (
-    <div className="bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-yellow-500/30 rounded-2xl overflow-hidden transition-all duration-300 shadow-lg">
+    <div className={`bg-gradient-to-br ${tripColors} backdrop-blur-xl transition-all duration-300 shadow-lg rounded-2xl overflow-hidden`}>
       {/* Mobile Header */}
-      <div className="relative h-32 bg-gradient-to-br from-yellow-600/20 via-yellow-500/10 to-transparent p-4">
+      <div className={`relative h-32 bg-gradient-to-br ${tripColors} p-4`}>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=200&fit=crop')] bg-cover bg-center opacity-20"></div>
         <div className="relative z-10 flex justify-between items-start h-full">
           <div className="flex-1">
@@ -49,11 +54,11 @@ export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
               {trip.title}
             </h3>
             <div className="flex items-center gap-2 text-white/80 text-sm mb-1">
-              <MapPin size={14} className="text-yellow-400" />
+              <MapPin size={14} className={`text-${accentColor}`} />
               <span className="font-medium truncate">{trip.location}</span>
             </div>
             <div className="flex items-center gap-2 text-white/80 text-sm">
-              <Calendar size={14} className="text-yellow-400" />
+              <Calendar size={14} className={`text-${accentColor}`} />
               <span className="font-medium">{trip.dateRange}</span>
             </div>
           </div>
@@ -116,7 +121,7 @@ export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
         <div className="space-y-3">
           <button 
             onClick={handleViewTrip}
-            className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-semibold py-4 rounded-xl transition-all duration-300 shadow-lg"
+            className={`w-full bg-gradient-to-r ${buttonGradient} text-white font-semibold py-4 rounded-xl transition-all duration-300 shadow-lg`}
           >
             View Trip Details
           </button>

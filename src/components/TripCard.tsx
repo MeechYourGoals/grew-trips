@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Trash, User, Plus, MoreHorizontal } from 'lucide-react';
 import { InviteModal } from './InviteModal';
 import { ShareTripModal } from './share/ShareTripModal';
+import { getTripColor, getTripAccentColor, getTripButtonGradient } from '../utils/tripColors';
 
 interface Participant {
   id: number;
@@ -28,6 +29,10 @@ export const TripCard = ({ trip }: TripCardProps) => {
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
 
+  const tripColors = getTripColor(trip.id);
+  const accentColor = getTripAccentColor(trip.id);
+  const buttonGradient = getTripButtonGradient(trip.id);
+
   const handleViewTrip = () => {
     navigate(`/trip/${trip.id}`);
   };
@@ -37,21 +42,21 @@ export const TripCard = ({ trip }: TripCardProps) => {
   };
 
   return (
-    <div className="group bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-yellow-500/30 rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl shadow-black/20">
+    <div className={`group bg-gradient-to-br ${tripColors} backdrop-blur-xl transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl shadow-black/20 rounded-3xl overflow-hidden`}>
       {/* Trip Image/Header */}
-      <div className="relative h-48 bg-gradient-to-br from-yellow-600/20 via-yellow-500/10 to-transparent p-6">
+      <div className={`relative h-48 bg-gradient-to-br ${tripColors} p-6`}>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=200&fit=crop')] bg-cover bg-center opacity-20"></div>
         <div className="relative z-10 flex justify-between items-start h-full">
           <div className="flex-1">
-            <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-yellow-300 transition-colors">
+            <h3 className={`text-2xl font-bold text-white mb-2 group-hover:text-${accentColor} transition-colors`}>
               {trip.title}
             </h3>
             <div className="flex items-center gap-2 text-white/80 mb-3">
-              <MapPin size={18} className="text-yellow-400" />
+              <MapPin size={18} className={`text-${accentColor}`} />
               <span className="font-medium">{trip.location}</span>
             </div>
             <div className="flex items-center gap-2 text-white/80">
-              <Calendar size={18} className="text-yellow-400" />
+              <Calendar size={18} className={`text-${accentColor}`} />
               <span className="font-medium">{trip.dateRange}</span>
             </div>
           </div>
@@ -86,7 +91,7 @@ export const TripCard = ({ trip }: TripCardProps) => {
             <div className="flex gap-2">
               <button 
                 onClick={() => setShowInviteModal(true)}
-                className="text-yellow-400 hover:text-yellow-300 transition-colors p-1 hover:bg-yellow-400/10 rounded-lg"
+                className={`text-${accentColor} hover:text-${accentColor}/80 transition-colors p-1 hover:bg-${accentColor}/10 rounded-lg`}
                 title="Invite people to trip"
               >
                 <Plus size={16} />
@@ -108,7 +113,7 @@ export const TripCard = ({ trip }: TripCardProps) => {
                   <img
                     src={participant.avatar}
                     alt={participant.name}
-                    className="w-10 h-10 rounded-full border-3 border-gray-900 hover:scale-110 transition-transform duration-200 hover:border-yellow-400 cursor-pointer"
+                    className={`w-10 h-10 rounded-full border-3 border-gray-900 hover:scale-110 transition-transform duration-200 hover:border-${accentColor} cursor-pointer`}
                   />
                 </div>
               ))}
@@ -125,7 +130,7 @@ export const TripCard = ({ trip }: TripCardProps) => {
         <div className="space-y-3">
           <button 
             onClick={handleViewTrip}
-            className="w-full bg-gradient-to-r from-yellow-500 to-yellow-600 hover:from-yellow-600 hover:to-yellow-700 text-black font-semibold py-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] shadow-lg hover:shadow-yellow-500/25"
+            className={`w-full bg-gradient-to-r ${buttonGradient} text-white font-semibold py-4 rounded-2xl transition-all duration-300 hover:scale-[1.02] shadow-lg`}
           >
             View Trip Details
           </button>
