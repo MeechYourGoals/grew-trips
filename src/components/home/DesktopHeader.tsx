@@ -72,7 +72,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
 
           <button
             onClick={onUpgrade}
-            className="bg-gradient-to-r from-metallic-gold-600 to-metallic-gold-500 hover:from-metallic-gold-700 hover:to-metallic-gold-600 text-black px-4 py-2 h-12 rounded-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm"
+            className="bg-gradient-to-r from-[hsl(45,95%,58%)] to-[hsl(45,90%,65%)] hover:from-[hsl(45,90%,55%)] hover:to-[hsl(45,85%,62%)] text-black px-4 py-2 h-12 rounded-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm"
           >
             <Crown size={18} />
             Upgrade to Plus/Pro
@@ -123,7 +123,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
                   onClick={onUpgrade}
                   className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
                 >
-                  <Crown size={16} className="text-metallic-gold-500" />
+                  <Crown size={16} className="text-[hsl(45,95%,58%)]" />
                   Upgrade to Plus/Pro
                 </DropdownMenuItem>
                 {user && (
