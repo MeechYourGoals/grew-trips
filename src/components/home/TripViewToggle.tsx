@@ -22,7 +22,7 @@ export const TripViewToggle = ({ viewMode, onViewModeChange }: TripViewTogglePro
       >
         <ToggleGroupItem 
           value="myTrips" 
-          className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-teal-primary-600 data-[state=on]:to-teal-primary-500 data-[state=on]:text-white transition-all font-medium ${isMobile ? 'text-sm' : ''}`}
+          className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-metallic-gold-600 data-[state=on]:to-metallic-gold-500 data-[state=on]:text-black transition-all font-medium ${isMobile ? 'text-sm' : ''}`}
         >
           <div className="flex items-center gap-2">
             <MapPin size={isMobile ? 16 : 18} />
