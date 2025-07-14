@@ -56,5 +56,7 @@ export const postMaloneJellyRollTour: ProTripData = {
   perDiem: { dailyRate: 150, currency: 'USD', startDate: '2026-06-01', endDate: '2026-09-30', participants: [] },
   settlement: [],
   medical: [],
-  compliance: []
+  compliance: [],
+  media: [],
+  sponsors: []
 };

@@ -57,5 +57,7 @@ export const nvidiaBowlingNight: ProTripData = {
   perDiem: { dailyRate: 75, currency: 'USD', startDate: '2025-12-08', endDate: '2025-12-08', participants: [] },
   settlement: [],
   medical: [],
-  compliance: []
+  compliance: [],
+  media: [],
+  sponsors: []
 };

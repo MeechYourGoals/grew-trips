@@ -10,6 +10,8 @@ import { BasecampLocation, PlaceWithDistance, DistanceCalculationSettings } from
 import { DistanceCalculator } from '../utils/distanceCalculator';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { AddToCalendarData } from '../types/calendar';
+import { useFeatureToggle, DEFAULT_FEATURES } from '../hooks/useFeatureToggle';
+import { Badge } from './ui/badge';
 
 interface PlacesSectionProps {
   tripId?: string;
@@ -18,6 +20,10 @@ interface PlacesSectionProps {
 
 export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSectionProps) => {
   const { variant } = useTripVariant();
+  const { isFeatureEnabled } = useFeatureToggle({ 
+    trip_type: variant === 'consumer' ? 'consumer' : 'pro',
+    enabled_features: [...DEFAULT_FEATURES] 
+  });
   const [isAddPlaceModalOpen, setIsAddPlaceModalOpen] = useState(false);
   const [basecamp, setBasecamp] = useState<BasecampLocation | undefined>();
   const [places, setPlaces] = useState<PlaceWithDistance[]>([]);
@@ -99,10 +105,37 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
           />
         )}
         
-        {/* Top Left - Alternative for Pro (could be different content) */}
+        {/* Top Left - Enabled Features for Pro */}
         {variant === 'pro' && (
-          <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6 shadow-2xl shadow-black/50 min-h-[500px] flex items-center justify-center">
-            <p className="text-gray-400">Pro Feature Placeholder</p>
+          <div className="bg-gray-900 border border-gray-800 rounded-3xl p-6 shadow-2xl shadow-black/50 min-h-[500px]">
+            <div className="flex flex-col h-full">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                <h3 className="text-white font-semibold">Enabled Features</h3>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <div className="grid grid-cols-2 gap-2">
+                  {DEFAULT_FEATURES.map((feature) => (
+                    <Badge 
+                      key={feature} 
+                      variant={isFeatureEnabled(feature) ? "default" : "secondary"}
+                      className={`text-xs capitalize ${
+                        isFeatureEnabled(feature) 
+                          ? "bg-green-600 hover:bg-green-700 text-white" 
+                          : "bg-gray-700 text-gray-400"
+                      }`}
+                    >
+                      {feature}
+                    </Badge>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t border-gray-700">
+                  <p className="text-gray-400 text-sm">
+                    {DEFAULT_FEATURES.filter(f => isFeatureEnabled(f)).length} of {DEFAULT_FEATURES.length} features active
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 

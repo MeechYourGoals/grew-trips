@@ -57,5 +57,7 @@ export const goldmanSachsRecruiting: ProTripData = {
   perDiem: { dailyRate: 200, currency: 'USD', startDate: '2025-09-18', endDate: '2025-09-19', participants: [] },
   settlement: [],
   medical: [],
-  compliance: []
+  compliance: [],
+  media: [],
+  sponsors: []
 };
