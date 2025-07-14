@@ -83,7 +83,7 @@ export const VoiceAssistantModal = ({
             errorMessage = 'Could not understand your audio - please speak more clearly and try again';
             break;
           case 'gpt':
-            errorMessage = 'Triv Concierge is temporarily busy - please try again in a moment';
+            errorMessage = 'Junto Concierge is temporarily busy - please try again in a moment';
             break;
           case 'elevenlabs':
             errorMessage = 'Voice synthesis unavailable - but I can still help with text responses';
@@ -158,7 +158,7 @@ export const VoiceAssistantModal = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Mic size={20} className="text-primary" />
-            Triv Concierge Voice
+            Junto Concierge Voice
           </DialogTitle>
         </DialogHeader>
         

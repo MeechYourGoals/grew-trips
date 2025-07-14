@@ -45,7 +45,7 @@ export class SciraAIService {
   static buildTripContext(tripContext: TripContext): string {
     const contextSize = tripContext.isPro ? 8000 : 2000;
     
-    let context = `You are Triv Concierge, an intelligent travel assistant with deep knowledge of this specific trip. Answer questions concisely and provide actionable insights.
+    let context = `You are Junto Concierge, an intelligent travel assistant with deep knowledge of this specific trip. Answer questions concisely and provide actionable insights.
 
 TRIP OVERVIEW:
 - Title: ${tripContext.title}

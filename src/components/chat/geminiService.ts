@@ -4,7 +4,7 @@ import { TripPreferences } from '../../types/consumer';
 
 export class GeminiService {
   buildContextPrompt(userMessage: string, basecamp?: { name: string; address: string }, preferences?: TripPreferences): string {
-    let contextInfo = `You are Triv Concierge, a helpful travel assistant. The user is planning a trip and needs recommendations.`;
+    let contextInfo = `You are Junto Concierge, a helpful travel assistant. The user is planning a trip and needs recommendations.`;
     
     if (basecamp) {
       contextInfo += `\n\nBasecamp Location: ${basecamp.name} at ${basecamp.address}`;

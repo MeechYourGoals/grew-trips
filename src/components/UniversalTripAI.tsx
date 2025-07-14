@@ -114,7 +114,7 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
         </SheetTrigger>
         <SheetContent className="bg-black border-white/20 text-white">
           <SheetHeader>
-            <SheetTitle className="text-white">Triv Concierge</SheetTitle>
+            <SheetTitle className="text-white">Junto Concierge</SheetTitle>
             <SheetDescription className="text-gray-400">
               Upgrade to unlock AI-powered trip assistance
             </SheetDescription>
@@ -123,7 +123,7 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
             <div className="w-16 h-16 bg-gradient-to-r from-glass-orange to-glass-yellow rounded-full flex items-center justify-center mx-auto mb-4">
               <Sparkles size={32} className="text-white" />
             </div>
-            <h3 className="text-lg font-semibold mb-2">Upgrade to access Triv Concierge</h3>
+            <h3 className="text-lg font-semibold mb-2">Upgrade to access Junto Concierge</h3>
             <p className="text-gray-400 text-sm mb-4">
               Get instant answers about your trip with web search and contextual insights.
             </p>
@@ -175,7 +175,7 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
           <SheetTitle className="text-white flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Sparkles size={20} className="text-blue-400" />
-              Triv Concierge for {tripContext.title}
+              Junto Concierge for {tripContext.title}
             </div>
             <div className="flex items-center gap-1 text-xs">
               {getStatusIcon()}

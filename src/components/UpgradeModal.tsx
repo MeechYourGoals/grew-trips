@@ -95,7 +95,7 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
                   <Sparkles size={24} className="text-white" />
                 </div>
-                <h4 className="text-lg font-bold text-white mb-2">Triv Concierge</h4>
+                <h4 className="text-lg font-bold text-white mb-2">Junto Concierge</h4>
                 <p className="text-gray-300 text-sm">Chat with AI for personalized recommendations based on your location and preferences.</p>
               </div>
 
@@ -225,8 +225,8 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
               <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CalendarPlus size={32} className="text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Triv Events</h3>
-              <p className="text-gray-300 mb-4">Triv Events brings all your event management needs into one professional suite—connecting venues, schedules, attendees, and teams with real-time updates, collaboration, budgeting, and bulletproof communications. Streamline every step, from invitations to analytics, with robust security and branding for your ambitions.</p>
+              <h3 className="text-2xl font-bold text-white mb-2">Junto Events</h3>
+              <p className="text-gray-300 mb-4">Junto Events brings all your event management needs into one professional suite—connecting venues, schedules, attendees, and teams with real-time updates, collaboration, budgeting, and bulletproof communications. Streamline every step, from invitations to analytics, with robust security and branding for your ambitions.</p>
             </div>
 
             {/* Events Features Grid */}

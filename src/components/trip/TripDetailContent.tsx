@@ -38,7 +38,7 @@ export const TripDetailContent = ({
     { id: 'chat', label: 'Home' },
     { id: 'places', label: 'Places' },
     { id: 'preferences', label: 'Preferences', premium: variant === 'consumer' }, // Always available for Pro
-    { id: 'ai-chat', label: 'Triv Concierge', premium: variant === 'consumer' }, // Always available for Pro
+    { id: 'ai-chat', label: 'Junto Concierge', premium: variant === 'consumer' }, // Always available for Pro
     { id: 'search', label: 'Search' } // New search tab - always available
   ];
 

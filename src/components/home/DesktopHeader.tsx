@@ -48,7 +48,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-4xl font-bold text-white tracking-tight mb-2">
-            TRIV
+            JUNTO
           </h1>
           <p className="text-gray-400">
             {viewMode === 'myTrips' 
