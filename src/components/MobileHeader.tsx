@@ -27,9 +27,11 @@ export const MobileHeader = ({
     <>
       <div className="flex items-center justify-between mb-6 bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-4">
         <div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">
-            JUNTO
-          </h1>
+          <img 
+            src="/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png" 
+            alt="Junto" 
+            className="h-8 w-auto"
+          />
         </div>
         
         <div className="flex items-center gap-2">
