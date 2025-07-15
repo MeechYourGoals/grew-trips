@@ -26,7 +26,7 @@ export interface NotificationPayload {
   title: string;
   body: string;
   icon?: string;
-  badge?: number;
+  badge?: string;
   data?: Record<string, any>;
   actions?: Array<{
     action: string;
@@ -152,11 +152,9 @@ export class NotificationService {
       const notification = new Notification(payload.title, {
         body: payload.body,
         icon: payload.icon || '/favicon.ico',
-        badge: payload.badge,
+        badge: payload.badge || '/favicon.ico',
         data: payload.data,
-        actions: payload.actions,
-        requireInteraction: true,
-        timestamp: Date.now().toString()
+        requireInteraction: true
       });
 
       notification.onclick = (event) => {
