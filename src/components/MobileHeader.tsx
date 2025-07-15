@@ -30,7 +30,7 @@ export const MobileHeader = ({
           <img 
             src="/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png" 
             alt="Junto" 
-            className="h-8 w-auto"
+            className="h-16 w-auto"
           />
         </div>
         

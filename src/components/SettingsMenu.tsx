@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { X, User, Bell, Crown, LogOut } from 'lucide-react';
+import { X, User, Bell, Crown, LogOut, Sun, Moon } from 'lucide-react';
+import { Switch } from './ui/switch';
 import { useAuth } from '../hooks/useAuth';
 import { ProUpgradeModal } from './ProUpgradeModal';
 import { EnterpriseSettings } from './EnterpriseSettings';
@@ -22,6 +23,26 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   const [activeSection, setActiveSection] = useState('profile');
   const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise' | 'events'>('consumer');
   const { accentColors } = useTripVariant();
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark') || 
+             (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    return true;
+  });
+
+  const toggleTheme = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   // Create mock user for demo mode when no real user is authenticated
   const mockUser = {
@@ -101,6 +122,23 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
             <button onClick={onClose} className="text-gray-400 hover:text-white">
               <X size={24} />
             </button>
+          </div>
+
+          {/* Theme Toggle */}
+          <div className="flex-shrink-0 p-6 border-b border-white/20">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                {isDarkMode ? <Moon size={20} className="text-blue-400" /> : <Sun size={20} className="text-yellow-400" />}
+                <span className="text-white font-medium">
+                  {isDarkMode ? 'Dark Mode' : 'Light Mode'}
+                </span>
+              </div>
+              <Switch
+                checked={isDarkMode}
+                onCheckedChange={toggleTheme}
+                className="data-[state=checked]:bg-blue-500"
+              />
+            </div>
           </div>
 
           {/* Settings Type Toggle - Updated to include Events */}

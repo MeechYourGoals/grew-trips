@@ -50,7 +50,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
           <img 
             src="/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png" 
             alt="Junto" 
-            className="h-12 w-auto mb-2"
+            className="h-24 w-auto mb-2"
           />
           <p className="text-gray-400">
             {viewMode === 'myTrips' 
