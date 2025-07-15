@@ -12,6 +12,7 @@ interface Participant {
 
 interface BroadcastComposerProps {
   participants: Participant[];
+  tripTier?: 'consumer' | 'pro' | 'event';
   onSend: (broadcast: {
     message: string;
     location?: string;
@@ -20,7 +21,7 @@ interface BroadcastComposerProps {
   }) => void;
 }
 
-export const BroadcastComposer = ({ participants, onSend }: BroadcastComposerProps) => {
+export const BroadcastComposer = ({ participants, tripTier = 'consumer', onSend }: BroadcastComposerProps) => {
   const [message, setMessage] = useState('');
   const [location, setLocation] = useState('');
   const [category, setCategory] = useState<'chill' | 'logistics' | 'urgent'>('chill');
@@ -42,6 +43,7 @@ export const BroadcastComposer = ({ participants, onSend }: BroadcastComposerPro
   ];
 
   const roleOptions = Array.from(new Set(participants.map(p => p.role)));
+  const isConsumerTrip = tripTier === 'consumer';
 
   const handleSend = () => {
     if (!message.trim()) return;
@@ -93,64 +95,70 @@ export const BroadcastComposer = ({ participants, onSend }: BroadcastComposerPro
                 className="text-slate-400 hover:text-white text-sm flex items-center gap-1"
               >
                 <MapPin size={14} />
-                Add details
-              </button>
-              <div className="flex items-center gap-2 ml-4">
-                <Languages size={14} className="text-slate-400" />
-                <Select value={translateTo} onValueChange={setTranslateTo}>
-                  <SelectTrigger className="w-32 h-6 bg-slate-700 border-slate-600 text-white text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {languages.map((lang) => (
-                      <SelectItem key={lang.code} value={lang.code} className="text-xs">
-                        {lang.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+                 Add details
+               </button>
+               {!isConsumerTrip && (
+                 <div className="flex items-center gap-2 ml-4">
+                   <Languages size={14} className="text-slate-400" />
+                   <Select value={translateTo} onValueChange={setTranslateTo}>
+                     <SelectTrigger className="w-32 h-6 bg-slate-700 border-slate-600 text-white text-xs">
+                       <SelectValue />
+                     </SelectTrigger>
+                     <SelectContent>
+                       {languages.map((lang) => (
+                         <SelectItem key={lang.code} value={lang.code} className="text-xs">
+                           {lang.name}
+                         </SelectItem>
+                       ))}
+                     </SelectContent>
+                   </Select>
+                 </div>
+               )}
               <span className="text-xs text-slate-500">
                 {message.length}/140
               </span>
             </div>
             
             <div className="flex items-center gap-2">
-              {/* Recipient selector */}
-              <select
-                value={recipient}
-                onChange={(e) => setRecipient(e.target.value)}
-                className="bg-slate-700 text-white text-xs rounded px-2 py-1"
-              >
-                <option value="everyone">Everyone</option>
-                {roleOptions.map((role) => (
-                  <option key={`role-${role}`} value={`role:${role}`}>
-                    {role}
-                  </option>
-                ))}
-                {participants.map((p) => (
-                  <option key={`user-${p.id}`} value={`user:${p.id}`}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
+              {/* Recipient selector - only for Pro/Event trips */}
+              {!isConsumerTrip && (
+                <select
+                  value={recipient}
+                  onChange={(e) => setRecipient(e.target.value)}
+                  className="bg-slate-700 text-white text-xs rounded px-2 py-1"
+                >
+                  <option value="everyone">Everyone</option>
+                  {roleOptions.map((role) => (
+                    <option key={`role-${role}`} value={`role:${role}`}>
+                      {role}
+                    </option>
+                  ))}
+                  {participants.map((p) => (
+                    <option key={`user-${p.id}`} value={`user:${p.id}`}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              )}
 
-              {/* Category selector */}
-              <div className="flex gap-1">
-                {(['chill', 'logistics', 'urgent'] as const).map((cat) => (
-                  <button
-                    key={cat}
-                    onClick={() => setCategory(cat)}
-                    className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
-                      category === cat
-                        ? `${getCategoryColor(cat)} text-white`
-                        : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
-                    }`}
-                  >
-                    {cat}
-                  </button>
-                ))}
-              </div>
+              {/* Category selector - only for Pro/Event trips */}
+              {!isConsumerTrip && (
+                <div className="flex gap-1">
+                  {(['chill', 'logistics', 'urgent'] as const).map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setCategory(cat)}
+                      className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                        category === cat
+                          ? `${getCategoryColor(cat)} text-white`
+                          : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              )}
               
               <Button
                 onClick={handleSend}

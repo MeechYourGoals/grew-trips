@@ -80,7 +80,7 @@ export class DemoModeService {
   }
 
   private getFallbackMessages(tripType: string): MockMessage[] {
-    // Consumer trip messages
+    // Enhanced consumer trip messages with more variety
     if (tripType === 'destination-wedding') {
       return [
         {
@@ -247,6 +247,135 @@ export class DemoModeService {
           delay_seconds: 0,
           timestamp_offset_days: 2,
           tags: ['compliance']
+        }
+      ];
+    }
+
+    // Add more consumer trip types
+    if (tripType === 'leisure-group' || tripType === 'friends-trip') {
+      return [
+        {
+          id: 'leisure-1',
+          trip_type: 'leisure-group',
+          sender_name: 'Marcus',
+          message_content: "🏖️ Just checked the weather - perfect beach days ahead! Don't forget sunscreen.",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['preparation']
+        },
+        {
+          id: 'leisure-2',
+          trip_type: 'leisure-group',
+          sender_name: 'Sarah',
+          message_content: "Flight confirmation came through! Landing at 2:30 PM local time ✈️",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['logistics']
+        },
+        {
+          id: 'leisure-3',
+          trip_type: 'leisure-group',
+          sender_name: 'Jamie',
+          message_content: "Pool party starts at 4! I'll grab the floating unicorns 🦄",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['fun']
+        }
+      ];
+    }
+
+    if (tripType === 'bachelorette') {
+      return [
+        {
+          id: 'bach-1',
+          trip_type: 'bachelorette',
+          sender_name: 'Ashley',
+          message_content: "👰 Can't believe Kristen is getting married! Nashville here we come!",
+          delay_seconds: 0,
+          timestamp_offset_days: 3,
+          tags: ['excitement']
+        },
+        {
+          id: 'bach-2',
+          trip_type: 'bachelorette',
+          sender_name: 'Megan',
+          message_content: "🎤 Booked us karaoke at 8 PM! Time to embarrass ourselves with 2000s hits",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['activities']
+        },
+        {
+          id: 'bach-3',
+          trip_type: 'bachelorette',
+          sender_name: 'Taylor',
+          message_content: "Hotel shuttle picks us up at 7:30 sharp. Don't be late ladies! 🚐",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['logistics']
+        }
+      ];
+    }
+
+    if (tripType === 'family-vacation') {
+      return [
+        {
+          id: 'family-1',
+          trip_type: 'family-vacation',
+          sender_name: 'Dad (Mike)',
+          message_content: "🏔️ Hiking trails look amazing! Everyone bring good walking shoes.",
+          delay_seconds: 0,
+          timestamp_offset_days: 3,
+          tags: ['preparation']
+        },
+        {
+          id: 'family-2',
+          trip_type: 'family-vacation',
+          sender_name: 'Mom (Linda)',
+          message_content: "Spa appointments confirmed for Saturday afternoon. Can't wait to relax! 💆‍♀️",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['activities']
+        },
+        {
+          id: 'family-3',
+          trip_type: 'family-vacation',
+          sender_name: 'Katie',
+          message_content: "Tommy forgot his phone charger again 🙄 Good thing I packed extras!",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['family']
+        }
+      ];
+    }
+
+    if (tripType === 'festival') {
+      return [
+        {
+          id: 'festival-1',
+          trip_type: 'festival',
+          sender_name: 'Tyler',
+          message_content: "🎵 Lineup just dropped! We're gonna be at the main stage all weekend!",
+          delay_seconds: 0,
+          timestamp_offset_days: 3,
+          tags: ['music']
+        },
+        {
+          id: 'festival-2',
+          trip_type: 'festival',
+          sender_name: 'Zoe',
+          message_content: "Camping gear is all packed! This is going to be epic 🏕️",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['preparation']
+        },
+        {
+          id: 'festival-3',
+          trip_type: 'festival',
+          sender_name: 'Mason',
+          message_content: "Found the perfect spot for our camp! Near the showers but not too close to the portapotties 😂",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['logistics']
         }
       ];
     }

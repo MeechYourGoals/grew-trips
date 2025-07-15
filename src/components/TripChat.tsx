@@ -8,6 +8,8 @@ import { proTripMockData } from '@/data/proTripMockData';
 import { getMockAvatar, currentUserAvatar } from '@/utils/mockAvatars';
 import { MessageReactionBar } from './chat/MessageReactionBar';
 import { MessageAIAnalyzer } from './MessageAIAnalyzer';
+import { InlineReplyComponent } from './chat/InlineReplyComponent';
+import { detectTripTier } from '@/utils/tripTierDetector';
 import { AddToCalendarData } from '../types/calendar';
 
 interface TripChatProps {
@@ -25,6 +27,11 @@ interface MockMessage {
   created_at: string;
   isMock: boolean;
   reactions?: Record<string, { count: number; userReacted: boolean }>;
+  replyTo?: {
+    id: string;
+    text: string;
+    senderName: string;
+  };
 }
 
 export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
@@ -33,6 +40,7 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
   const [inputValue, setInputValue] = useState('');
   const [loading, setLoading] = useState(true);
   const [reactions, setReactions] = useState<Record<string, Record<string, { count: number; userReacted: boolean }>>>({});
+  const [replyingTo, setReplyingTo] = useState<{id: string; text: string; senderName: string} | null>(null);
 
   const handleEventAdded = (eventData: AddToCalendarData) => {
     console.log('Calendar event added from chat:', eventData);
@@ -40,6 +48,7 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
   };
 
   const currentTripId = proTripId || tripId || eventId || 'default-trip';
+  const tripTier = detectTripTier(currentTripId);
 
   useEffect(() => {
     const loadMockMessages = async () => {
@@ -109,11 +118,13 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
         image: currentUserAvatar
       },
       created_at: new Date().toISOString(),
-      isMock: false
+      isMock: false,
+      replyTo: replyingTo || undefined
     };
     
     setMessages(prev => [...prev, newMessage]);
     setInputValue('');
+    setReplyingTo(null);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -145,6 +156,14 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
       };
       
       return newReactions;
+    });
+  };
+
+  const handleReplyToMessage = (messageId: string, messageText: string, senderName: string) => {
+    setReplyingTo({
+      id: messageId,
+      text: messageText,
+      senderName: senderName
     });
   };
 
@@ -186,33 +205,51 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
             </div>
           ) : (
             messages.map((message) => (
-              <div key={message.id} className="flex items-start gap-3">
-                <img
-                  src={message.user.image}
-                  alt={message.user.name}
-                  className="w-8 h-8 rounded-full flex-shrink-0 object-cover border border-gray-600"
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="text-sm font-medium text-gray-300">
-                      {message.user.name}
-                    </span>
-                    <span className="text-xs text-gray-500">
-                      {formatTime(message.created_at)}
-                    </span>
+              <div key={message.id} className="group relative">
+                {/* Reply context */}
+                {message.replyTo && (
+                  <div className="ml-11 mb-2">
+                    <div className="bg-gray-800/30 border-l-2 border-blue-500 p-2 rounded-r-lg">
+                      <p className="text-xs text-gray-400 mb-1">Replying to {message.replyTo.senderName}</p>
+                      <p className="text-sm text-gray-300 truncate">{message.replyTo.text}</p>
+                    </div>
                   </div>
-                  <div className="text-sm text-gray-200 leading-relaxed">
-                    {message.text}
+                )}
+                
+                <div className="flex items-start gap-3">
+                  <img
+                    src={message.user.image}
+                    alt={message.user.name}
+                    className="w-8 h-8 rounded-full flex-shrink-0 object-cover border border-gray-600"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-medium text-gray-300">
+                        {message.user.name}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        {formatTime(message.created_at)}
+                      </span>
+                      <button
+                        onClick={() => handleReplyToMessage(message.id, message.text, message.user.name)}
+                        className="opacity-0 group-hover:opacity-100 text-xs text-blue-400 hover:text-blue-300 transition-opacity"
+                      >
+                        Reply
+                      </button>
+                    </div>
+                    <div className="text-sm text-gray-200 leading-relaxed">
+                      {message.text}
+                    </div>
+                    <MessageReactionBar
+                      messageId={message.id}
+                      reactions={reactions[message.id]}
+                      onReaction={handleReaction}
+                    />
+                    <MessageAIAnalyzer
+                      messageText={message.text}
+                      onEventAdded={handleEventAdded}
+                    />
                   </div>
-                  <MessageReactionBar
-                    messageId={message.id}
-                    reactions={reactions[message.id]}
-                    onReaction={handleReaction}
-                  />
-                  <MessageAIAnalyzer
-                    messageText={message.text}
-                    onEventAdded={handleEventAdded}
-                  />
                 </div>
               </div>
             ))
@@ -221,13 +258,17 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
 
         {/* Message Input */}
         <div className="border-t border-gray-700 p-4">
+          <InlineReplyComponent 
+            replyTo={replyingTo || undefined}
+            onRemoveReply={() => setReplyingTo(null)}
+          />
           <div className="flex items-center gap-3">
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Type your message..."
+              placeholder={replyingTo ? `Replying to ${replyingTo.senderName}...` : "Type your message..."}
               className="flex-1 bg-gray-800 text-white placeholder-gray-400 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 border border-gray-700"
             />
             <button

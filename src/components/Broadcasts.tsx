@@ -8,6 +8,7 @@ import { demoModeService } from '@/services/demoModeService';
 import { useDemoMode } from '@/hooks/useDemoMode';
 import { useParams } from 'react-router-dom';
 import { getMockAvatar } from '@/utils/mockAvatars';
+import { detectTripTier } from '@/utils/tripTierDetector';
 
 const participants = beyonceCowboyCarterTour.participants;
 
@@ -67,6 +68,7 @@ export const Broadcasts = () => {
   const [mockBroadcastsLoaded, setMockBroadcastsLoaded] = useState(false);
 
   const currentTripId = tripId || eventId || proTripId || 'default-trip';
+  const tripTier = detectTripTier(currentTripId);
 
   // Load mock broadcasts in demo mode
   useEffect(() => {
@@ -173,7 +175,7 @@ export const Broadcasts = () => {
       </div>
 
       {/* Broadcast Composer */}
-      <BroadcastComposer participants={participants} onSend={handleNewBroadcast} />
+      <BroadcastComposer participants={participants} tripTier={tripTier} onSend={handleNewBroadcast} />
 
       {/* Active Broadcasts */}
       <div className="space-y-4">

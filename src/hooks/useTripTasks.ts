@@ -3,12 +3,98 @@ import { supabase } from '../integrations/supabase/client';
 import { TripTask, CreateTaskRequest, ToggleTaskRequest } from '../types/tasks';
 import { useToast } from './use-toast';
 
+const generateSeedTasks = (tripId: string): TripTask[] => {
+  const consumerTripIds = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
+  
+  if (!consumerTripIds.includes(tripId)) {
+    return []; // No seed tasks for pro trips
+  }
+
+  const taskTemplates: Record<string, TripTask[]> = {
+    '1': [ // Spring Break Cancun
+      {
+        id: 'seed-1-1',
+        trip_id: tripId,
+        creator_id: 'seed-user',
+        title: 'Pack reef-safe sunscreen',
+        description: 'Make sure to bring sunscreen that won\'t damage the coral reefs',
+        due_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        is_poll: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        creator: { id: 'seed-user', name: 'Trip Organizer' },
+        task_status: [{ task_id: 'seed-1-1', user_id: 'current-user', completed: false }]
+      },
+      {
+        id: 'seed-1-2',
+        trip_id: tripId,
+        creator_id: 'seed-user',
+        title: 'Download offline maps for Cancun',
+        description: 'Download Google Maps offline for the hotel and downtown areas',
+        due_at: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(),
+        is_poll: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        creator: { id: 'seed-user', name: 'Trip Organizer' },
+        task_status: [{ task_id: 'seed-1-2', user_id: 'current-user', completed: false }]
+      }
+    ],
+    '4': [ // Bachelorette Party
+      {
+        id: 'seed-4-1',
+        trip_id: tripId,
+        creator_id: 'seed-user',
+        title: 'Coordinate ride to Broadway bars',
+        description: 'Book Uber/Lyft for the group to hit the honky-tonk scene',
+        due_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+        is_poll: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        creator: { id: 'seed-user', name: 'Ashley' },
+        task_status: [{ task_id: 'seed-4-1', user_id: 'current-user', completed: false }]
+      }
+    ],
+    '6': [ // Family Vacation
+      {
+        id: 'seed-6-1',
+        trip_id: tripId,
+        creator_id: 'seed-user',
+        title: 'Pack hiking boots for everyone',
+        description: 'Make sure everyone has proper footwear for the mountain trails',
+        due_at: new Date(Date.now() + 4 * 24 * 60 * 60 * 1000).toISOString(),
+        is_poll: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        creator: { id: 'seed-user', name: 'Dad (Mike)' },
+        task_status: [{ task_id: 'seed-6-1', user_id: 'current-user', completed: false }]
+      }
+    ],
+    '7': [ // Golf Trip
+      {
+        id: 'seed-7-1',
+        trip_id: tripId,
+        creator_id: 'seed-user',
+        title: 'Bring poker chips for evening games',
+        description: 'Someone needs to pack the poker set for our nightly tournaments',
+        due_at: new Date(Date.now() + 6 * 24 * 60 * 60 * 1000).toISOString(),
+        is_poll: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        creator: { id: 'seed-user', name: 'Commissioner Mike' },
+        task_status: [{ task_id: 'seed-7-1', user_id: 'current-user', completed: false }]
+      }
+    ]
+  };
+
+  return taskTemplates[tripId] || [];
+};
+
 export const useTripTasks = (tripId: string) => {
   return useQuery({
     queryKey: ['tripTasks', tripId],
     queryFn: async (): Promise<TripTask[]> => {
-      // For now, return mock data until the database migration is applied
-      return [];
+      // Return seed tasks for consumer trips
+      return generateSeedTasks(tripId);
     },
     enabled: !!tripId
   });

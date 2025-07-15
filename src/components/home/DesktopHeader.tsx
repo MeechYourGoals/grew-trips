@@ -47,12 +47,10 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
     <>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <img 
-            src="/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png" 
-            alt="Junto" 
-            className="h-12 w-auto mb-2"
-          />
-          <p className="text-gray-400">
+          <h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight" aria-label="Junto Home">
+            Junto
+          </h1>
+          <p className="text-muted-foreground">
             {viewMode === 'myTrips' 
               ? 'Plan, organize, and share your perfect trips' 
               : viewMode === 'tripsPro'
