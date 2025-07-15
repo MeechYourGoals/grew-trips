@@ -52,9 +52,11 @@ export class DemoModeService {
   }
 
   async getMockMessages(tripType: string): Promise<MockMessage[]> {
-    // Always show messages for pro trips, only check demo mode for consumer trips
+    // Always show messages for pro trips, and now always show for consumer trips too
     const isProTrip = ['sports-pro', 'entertainment-tour', 'corporate-retreat', 'youth-sports'].includes(tripType);
-    if (!this.isDemoMode && !isProTrip) return [];
+    const isConsumerTrip = ['bachelorette', 'family-vacation', 'festival', 'destination-wedding', 'leisure-group', 'friends-trip', 'school-trip'].includes(tripType);
+    
+    if (!this.isDemoMode && !isProTrip && !isConsumerTrip) return [];
 
     try {
       const { data, error } = await supabase
@@ -280,6 +282,38 @@ export class DemoModeService {
           delay_seconds: 0,
           timestamp_offset_days: 1,
           tags: ['fun']
+        }
+      ];
+    }
+
+    if (tripType === 'school-trip') {
+      return [
+        {
+          id: 'school-1',
+          trip_type: 'school-trip',
+          sender_name: 'Ms. Rodriguez',
+          message_content: "📚 Don't forget your permission slips and lunch money for tomorrow's museum visit!",
+          delay_seconds: 0,
+          timestamp_offset_days: 2,
+          tags: ['preparation']
+        },
+        {
+          id: 'school-2',
+          trip_type: 'school-trip',
+          sender_name: 'Parent Coordinator',
+          message_content: "🚌 Bus departs at 8:15 AM sharp from the main entrance. Please arrive 10 minutes early!",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['logistics']
+        },
+        {
+          id: 'school-3',
+          trip_type: 'school-trip',
+          sender_name: 'Tommy',
+          message_content: "Can't wait to see the dinosaur exhibit! This is going to be awesome! 🦕",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['excitement']
         }
       ];
     }

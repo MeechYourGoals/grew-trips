@@ -18,7 +18,7 @@ const REACTIONS: Reaction[] = [
   { id: 'like', emoji: '👍', label: 'Like' },
   { id: 'love', emoji: '❤️', label: 'Love' },
   { id: 'dislike', emoji: '👎', label: 'Dislike' },
-  { id: 'questioning', emoji: '🤔', label: 'Question' }
+  { id: 'question', emoji: '❓', label: 'Question' }
 ];
 
 export const MessageReactionBar: React.FC<MessageReactionBarProps> = ({

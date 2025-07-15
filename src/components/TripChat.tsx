@@ -54,6 +54,11 @@ export const TripChat = ({ groupChatEnabled = true }: TripChatProps) => {
     const loadMockMessages = async () => {
       setLoading(true);
       
+      // Auto-enable demo mode for consumer trips
+      if (tripTier === 'consumer') {
+        demoModeService.enableDemoMode();
+      }
+      
       // Check if this is a pro trip first
       const proTrip = proTripMockData[currentTripId];
       let tripType: string;
