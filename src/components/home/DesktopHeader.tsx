@@ -30,10 +30,10 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
   const { user, signOut } = useAuth();
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark') || 
-             (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const savedTheme = localStorage.getItem('theme');
+      return savedTheme === 'dark';
     }
-    return true;
+    return false;
   });
 
   const toggleTheme = () => {
@@ -73,7 +73,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
             alt="Junto" 
             className="h-24 w-auto mb-2"
           />
-          <p className="text-gray-400">
+          <p className="text-muted-foreground">
             {viewMode === 'myTrips' 
               ? 'Plan, organize, and share your perfect trips' 
               : viewMode === 'tripsPro'
@@ -105,7 +105,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
           <div className="flex items-center gap-3">
             <button
               onClick={onCreateTrip}
-              className="w-12 h-12 bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:bg-gray-800/80 hover:border-gray-600 text-white rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+              className="w-12 h-12 bg-secondary backdrop-blur-md border border-border hover:bg-secondary/80 hover:border-primary text-secondary-foreground rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
               title="New Trip"
             >
               <Plus size={20} />
@@ -117,7 +117,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="w-12 h-12 bg-gray-900/80 backdrop-blur-md border border-gray-700 hover:bg-gray-800/80 hover:border-gray-600 text-white rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
+                <button className="w-12 h-12 bg-secondary backdrop-blur-md border border-border hover:bg-secondary/80 hover:border-primary text-secondary-foreground rounded-2xl flex items-center justify-center transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl">
                   <Settings size={20} />
                 </button>
               </DropdownMenuTrigger>

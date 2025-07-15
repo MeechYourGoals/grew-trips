@@ -7,47 +7,7 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
-
-    --card: 0 0% 5%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 45 95% 58%;
-    --primary-foreground: 0 0% 0%;
-
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
-
-    --accent: 45 95% 58%;
-    --accent-foreground: 0 0% 0%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 0 0% 20%;
-    --input: 0 0% 15%;
-    --ring: 45 95% 58%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 5%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 45 95% 58%;
-    --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 45 95% 58%;
-  }
-
-  .light {
+    /* Light mode as default */
     --background: 0 0% 100%;
     --foreground: 0 0% 5%;
 
@@ -75,6 +35,8 @@
     --border: 0 0% 90%;
     --input: 0 0% 96%;
     --ring: 45 95% 58%;
+
+    --radius: 0.5rem;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 0 0% 15%;
@@ -114,6 +76,7 @@
     --border: 0 0% 20%;
     --input: 0 0% 15%;
     --ring: 45 95% 58%;
+
     --sidebar-background: 0 0% 5%;
     --sidebar-foreground: 0 0% 90%;
     --sidebar-primary: 45 95% 58%;

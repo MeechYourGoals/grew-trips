@@ -58,7 +58,7 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
   const nextLoadIn = getNextLoadIn();
 
   return (
-    <div className={`bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-3xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-xl group hover:border-${accentColors.primary}/50 relative overflow-hidden`}>
+    <div className={`bg-gradient-to-br from-card/90 to-card/80 backdrop-blur-md border border-border rounded-3xl p-6 hover:bg-card transition-all duration-300 hover:scale-105 hover:shadow-xl group hover:border-primary/50 relative overflow-hidden`}>
       {/* Crown Badge - Only show if roster exists and has members */}
       {trip.roster && trip.roster.length > 0 && (
         <div className="absolute top-4 left-4">
@@ -91,7 +91,7 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
 
       {/* Header */}
       <div className="mb-4 pr-12 pl-12">
-        <h3 className={`text-xl font-semibold text-white group-hover:text-${accentColors.secondary} transition-colors mb-2`}>
+        <h3 className={`text-xl font-semibold text-card-foreground group-hover:text-primary transition-colors mb-2`}>
           {trip.title}
         </h3>
         <div className="flex flex-wrap gap-2 mb-3">
@@ -101,7 +101,7 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
             {trip.category}
           </Badge>
           {trip.tags && trip.tags.map((tag, index) => (
-            <Badge key={index} className="text-xs bg-gray-500/20 text-gray-300 border-gray-500/30 border">
+            <Badge key={index} className="text-xs bg-muted text-muted-foreground border-border border">
               {tag}
             </Badge>
           ))}
@@ -125,17 +125,17 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
       </div>
 
       {/* Location */}
-      <div className="flex items-center gap-3 text-white/80 mb-4">
-        <div className={`w-8 h-8 bg-${accentColors.primary}/20 backdrop-blur-sm rounded-lg flex items-center justify-center`}>
-          <MapPin size={16} className={`text-${accentColors.primary}`} />
+      <div className="flex items-center gap-3 text-muted-foreground mb-4">
+        <div className={`w-8 h-8 bg-primary/20 backdrop-blur-sm rounded-lg flex items-center justify-center`}>
+          <MapPin size={16} className={`text-primary`} />
         </div>
         <span className="font-medium">{trip.location}</span>
       </div>
 
       {/* Date */}
-      <div className="flex items-center gap-3 text-white/80 mb-6">
-        <div className={`w-8 h-8 bg-${accentColors.secondary}/20 backdrop-blur-sm rounded-lg flex items-center justify-center`}>
-          <Calendar size={16} className={`text-${accentColors.secondary}`} />
+      <div className="flex items-center gap-3 text-muted-foreground mb-6">
+        <div className={`w-8 h-8 bg-accent/20 backdrop-blur-sm rounded-lg flex items-center justify-center`}>
+          <Calendar size={16} className={`text-accent`} />
         </div>
         <span className="font-medium">{trip.dateRange}</span>
       </div>
@@ -143,7 +143,7 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
       {/* Team Members with Roles */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-3">
-          <span className="text-sm text-white/70 font-medium">Team Members:</span>
+          <span className="text-sm text-muted-foreground font-medium">Team Members:</span>
         </div>
         
         <div className="flex -space-x-3 mb-2">
@@ -153,7 +153,7 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
                 <img
                   src={participant.avatar}
                   alt={participant.name}
-                  className={`w-10 h-10 rounded-full border-2 border-white/30 hover:scale-110 transition-transform duration-200 hover:border-${accentColors.primary}`}
+                  className={`w-10 h-10 rounded-full border-2 border-border hover:scale-110 transition-transform duration-200 hover:border-primary`}
                   style={{ zIndex: trip.participants.length - index }}
                 />
               </TooltipTrigger>
@@ -164,7 +164,7 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
           ))}
         </div>
 
-        <div className="text-xs text-white/60">
+        <div className="text-xs text-muted-foreground">
           Roles: {trip.participants.map(p => p.role).join(', ')}
         </div>
       </div>
@@ -173,7 +173,7 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
       <div className="flex gap-2">
         <Button
           onClick={handleViewTrip}
-          className={`flex-1 bg-gradient-to-r from-${accentColors.primary}/20 to-${accentColors.secondary}/20 backdrop-blur-sm border border-white/20 hover:border-white/40 text-white hover:text-${accentColors.secondary} transition-all duration-300 font-medium hover:shadow-lg`}
+          className={`flex-1 bg-gradient-to-r from-primary/20 to-accent/20 backdrop-blur-sm border border-border hover:border-primary/40 text-card-foreground hover:text-primary transition-all duration-300 font-medium hover:shadow-lg`}
           variant="ghost"
         >
           <Eye size={16} className="mr-2" />
@@ -184,7 +184,7 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
           <TooltipTrigger asChild>
             <Button 
               onClick={handleDuplicateTrip}
-              className="bg-white/10 backdrop-blur-sm border border-white/20 hover:border-glass-green/40 text-white hover:text-glass-green transition-all duration-300"
+              className="bg-secondary/20 backdrop-blur-sm border border-border hover:border-accent/40 text-card-foreground hover:text-accent transition-all duration-300"
               variant="ghost"
               size="icon"
             >
@@ -198,8 +198,8 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
       </div>
 
       {/* Pro Features Highlight */}
-      <div className="mt-4 pt-4 border-t border-white/10">
-        <div className={`text-xs text-${accentColors.secondary}/80 flex items-center gap-1`}>
+      <div className="mt-4 pt-4 border-t border-border">
+        <div className={`text-xs text-muted-foreground flex items-center gap-1`}>
           <Crown size={12} />
           <span>Pro: Team roles, broadcasts, permissions</span>
         </div>

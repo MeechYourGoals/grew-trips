@@ -23,10 +23,10 @@ export const MobileHeader = ({
   const isMobile = useIsMobile();
   const [isDarkMode, setIsDarkMode] = useState(() => {
     if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark') || 
-             (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+      const savedTheme = localStorage.getItem('theme');
+      return savedTheme === 'dark';
     }
-    return true;
+    return false;
   });
 
   const toggleTheme = () => {

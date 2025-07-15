@@ -45,22 +45,22 @@ export const EventCard = ({ event }: EventCardProps) => {
       </div>
 
       {/* Header */}
-      <div className={`relative h-48 bg-gradient-to-br from-${accentColors.primary}/20 to-${accentColors.secondary}/20 p-6`}>
+      <div className={`relative h-48 bg-gradient-to-br from-primary/20 to-accent/20 p-6`}>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1505373877841-8d25f7d46678?w=600&h=300&fit=crop')] bg-cover bg-center opacity-20"></div>
         <div className="relative z-10 h-full flex flex-col justify-between">
           <div>
-            <div className="inline-block bg-black/20 backdrop-blur-sm px-3 py-1 rounded-lg mb-3">
-              <span className="text-sm font-medium text-white">{event.category}</span>
+            <div className="inline-block bg-background/20 backdrop-blur-sm px-3 py-1 rounded-lg mb-3">
+              <span className="text-sm font-medium text-card-foreground">{event.category}</span>
             </div>
-            <h3 className="text-2xl font-bold text-white mb-2 line-clamp-2">
+            <h3 className="text-2xl font-bold text-card-foreground mb-2 line-clamp-2">
               {event.title}
             </h3>
-            <div className="flex items-center gap-2 text-white/80 mb-2">
-              <MapPin size={16} className={`text-${accentColors.primary}`} />
+            <div className="flex items-center gap-2 text-muted-foreground mb-2">
+              <MapPin size={16} className={`text-primary`} />
               <span className="font-medium">{event.location}</span>
             </div>
-            <div className="flex items-center gap-2 text-white/80">
-              <Calendar size={16} className={`text-${accentColors.primary}`} />
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Calendar size={16} className={`text-primary`} />
               <span className="font-medium">{event.dateRange}</span>
             </div>
           </div>
@@ -72,12 +72,12 @@ export const EventCard = ({ event }: EventCardProps) => {
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
           {event.tags.slice(0, 3).map((tag, index) => (
-            <span key={index} className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-white">
+            <span key={index} className="bg-secondary/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-card-foreground">
               {tag}
             </span>
           ))}
           {event.tags.length > 3 && (
-            <span className="bg-white/10 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-white">
+            <span className="bg-secondary/20 backdrop-blur-sm px-3 py-1 rounded-full text-sm text-card-foreground">
               +{event.tags.length - 3}
             </span>
           )}
@@ -87,10 +87,10 @@ export const EventCard = ({ event }: EventCardProps) => {
         <div className="mb-6">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Users size={18} className={`text-${accentColors.primary}`} />
-              <span className="text-white font-medium">Organizers</span>
+              <Users size={18} className={`text-primary`} />
+              <span className="text-card-foreground font-medium">Organizers</span>
             </div>
-            <span className="text-gray-400 text-sm">{event.participants.length} members</span>
+            <span className="text-muted-foreground text-sm">{event.participants.length} members</span>
           </div>
           
           <div className="flex items-center justify-between">
@@ -104,13 +104,13 @@ export const EventCard = ({ event }: EventCardProps) => {
                   <img
                     src={participant.avatar}
                     alt={participant.name}
-                    className="w-10 h-10 rounded-full border-2 border-gray-900"
+                    className="w-10 h-10 rounded-full border-2 border-background"
                   />
                 </div>
               ))}
             </div>
             {event.participants.length > 4 && (
-              <div className="w-10 h-10 rounded-full bg-gray-700 border-2 border-gray-900 flex items-center justify-center text-sm font-medium text-white">
+              <div className="w-10 h-10 rounded-full bg-secondary border-2 border-background flex items-center justify-center text-sm font-medium text-secondary-foreground">
                 +{event.participants.length - 4}
               </div>
             )}
@@ -120,10 +120,10 @@ export const EventCard = ({ event }: EventCardProps) => {
         {/* Group Chat Status */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <Settings size={16} className="text-gray-400" />
-            <span className="text-gray-400 text-sm">Group Chat</span>
+            <Settings size={16} className="text-muted-foreground" />
+            <span className="text-muted-foreground text-sm">Group Chat</span>
           </div>
-          <span className={`text-sm font-medium ${event.groupChatEnabled ? 'text-green-400' : 'text-gray-500'}`}>
+          <span className={`text-sm font-medium ${event.groupChatEnabled ? 'text-green-600 dark:text-green-400' : 'text-muted-foreground'}`}>
             {event.groupChatEnabled ? 'Enabled' : 'Disabled'}
           </span>
         </div>
@@ -131,7 +131,7 @@ export const EventCard = ({ event }: EventCardProps) => {
         {/* Action Button */}
         <button
           onClick={handleViewEvent}
-          className={`w-full bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 text-white font-semibold py-4 rounded-xl transition-all duration-300 shadow-lg`}
+          className={`w-full bg-gradient-to-r from-primary to-accent hover:from-primary/80 hover:to-accent/80 text-primary-foreground font-semibold py-4 rounded-xl transition-all duration-300 shadow-lg`}
         >
           Manage Event
         </button>
