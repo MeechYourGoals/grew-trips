@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Plus, Crown, Settings, Menu, X } from 'lucide-react';
+import { Plus, Crown, Settings, Menu, X, Sun, Moon } from 'lucide-react';
+import { Switch } from './ui/switch';
 import { useIsMobile } from '../hooks/use-mobile';
 
 interface MobileHeaderProps {
@@ -20,12 +21,32 @@ export const MobileHeader = ({
 }: MobileHeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark') || 
+             (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    return true;
+  });
+
+  const toggleTheme = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   if (!isMobile) return null;
 
   return (
     <>
-      <div className="flex items-center justify-between mb-6 bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-4">
+      <div className="flex items-center justify-between mb-6 bg-card backdrop-blur-md border border-border rounded-2xl p-4">
         <div>
           <img 
             src="/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png" 
@@ -37,7 +58,7 @@ export const MobileHeader = ({
         <div className="flex items-center gap-2">
           <button
             onClick={onCreateTrip}
-            className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black p-3 rounded-xl transition-all duration-300 shadow-lg"
+            className="bg-gradient-to-r from-primary to-primary hover:from-primary/90 hover:to-primary/90 text-primary-foreground p-3 rounded-xl transition-all duration-300 shadow-lg"
             title="New Trip"
           >
             <Plus size={20} />
@@ -45,7 +66,7 @@ export const MobileHeader = ({
           
           <button
             onClick={() => setIsMenuOpen(true)}
-            className="bg-gray-800/80 backdrop-blur-md border border-gray-700 hover:bg-gray-700/80 text-white p-3 rounded-xl transition-all duration-300"
+            className="bg-secondary backdrop-blur-md border border-border hover:bg-secondary/80 text-secondary-foreground p-3 rounded-xl transition-all duration-300"
           >
             <Menu size={20} />
           </button>
@@ -55,12 +76,12 @@ export const MobileHeader = ({
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
         <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-end">
-          <div className="w-full bg-gray-900/95 backdrop-blur-md border-t border-gray-700 rounded-t-3xl p-6 animate-slide-in-bottom">
+          <div className="w-full bg-popover backdrop-blur-md border-t border-border rounded-t-3xl p-6 animate-slide-in-bottom">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-white">Menu</h2>
+              <h2 className="text-xl font-semibold text-popover-foreground">Menu</h2>
               <button
                 onClick={() => setIsMenuOpen(false)}
-                className="text-gray-400 hover:text-white p-2"
+                className="text-muted-foreground hover:text-foreground p-2"
               >
                 <X size={24} />
               </button>
@@ -72,18 +93,33 @@ export const MobileHeader = ({
                   onProDashboard();
                   setIsMenuOpen(false);
                 }}
-                className="w-full flex items-center gap-3 bg-gray-800/50 hover:bg-gray-700/50 text-white p-4 rounded-xl transition-all"
+                className="w-full flex items-center gap-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground p-4 rounded-xl transition-all"
               >
-                <Crown size={20} className="text-yellow-500" />
+                <Crown size={20} className="text-primary" />
                 <span className="font-medium">Pro Dashboard</span>
               </button>
+              
+              {/* Theme Toggle */}
+              <div className="w-full flex items-center justify-between gap-3 bg-secondary/50 p-4 rounded-xl">
+                <div className="flex items-center gap-3">
+                  {isDarkMode ? <Moon size={20} className="text-blue-400" /> : <Sun size={20} className="text-yellow-500" />}
+                  <span className="font-medium text-foreground">
+                    {isDarkMode ? 'Dark Mode' : 'Light Mode'}
+                  </span>
+                </div>
+                <Switch
+                  checked={isDarkMode}
+                  onCheckedChange={toggleTheme}
+                  className="data-[state=checked]:bg-primary"
+                />
+              </div>
               
               <button
                 onClick={() => {
                   onUpgradeToProo();
                   setIsMenuOpen(false);
                 }}
-                className="w-full flex items-center gap-3 bg-gradient-to-r from-yellow-600/20 to-yellow-500/20 border border-yellow-500/30 text-yellow-400 p-4 rounded-xl transition-all"
+                className="w-full flex items-center gap-3 bg-gradient-to-r from-primary/20 to-primary/20 border border-primary/30 text-primary p-4 rounded-xl transition-all"
               >
                 <Crown size={20} />
                 <span className="font-medium">Upgrade to Pro</span>
@@ -94,7 +130,7 @@ export const MobileHeader = ({
                   onSettings();
                   setIsMenuOpen(false);
                 }}
-                className="w-full flex items-center gap-3 bg-gray-800/50 hover:bg-gray-700/50 text-white p-4 rounded-xl transition-all"
+                className="w-full flex items-center gap-3 bg-secondary hover:bg-secondary/80 text-secondary-foreground p-4 rounded-xl transition-all"
               >
                 <Settings size={20} />
                 <span className="font-medium">Settings</span>

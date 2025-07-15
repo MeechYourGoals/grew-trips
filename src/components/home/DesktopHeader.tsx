@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Crown, Plus, Settings, User, LogIn } from 'lucide-react';
+import { Crown, Plus, Settings, User, LogIn, Sun, Moon } from 'lucide-react';
+import { Switch } from '../ui/switch';
 import { NotificationBell } from '../NotificationBell';
 import { SearchBar } from '../SearchBar';
 import { GlobalSearchModal } from '../GlobalSearchModal';
@@ -27,6 +28,26 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { search } = useGlobalSearch();
   const { user, signOut } = useAuth();
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark') || 
+             (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    }
+    return true;
+  });
+
+  const toggleTheme = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
 
   const handleSearchClick = () => {
     setShowSearchModal(true);
@@ -103,12 +124,12 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
               <DropdownMenuContent 
                 align="end" 
                 sideOffset={8}
-                className="bg-gray-900/95 backdrop-blur-md border border-gray-700 text-white min-w-[200px] z-50 rounded-xl shadow-lg"
+                className="bg-popover backdrop-blur-md border border-border text-popover-foreground min-w-[200px] z-50 rounded-xl shadow-lg"
               >
                 {!user && (
                   <DropdownMenuItem 
                     onClick={handleAuthClick}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-accent hover:text-accent-foreground cursor-pointer"
                   >
                     <LogIn size={16} />
                     Log In / Sign Up
@@ -116,22 +137,35 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
                 )}
                 <DropdownMenuItem 
                   onClick={onSettings}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-accent hover:text-accent-foreground cursor-pointer"
                 >
                   <User size={16} />
                   Account Settings
                 </DropdownMenuItem>
+                <div className="flex items-center justify-between gap-3 px-4 py-3 hover:bg-accent rounded-sm">
+                  <div className="flex items-center gap-3">
+                    {isDarkMode ? <Moon size={16} className="text-blue-400" /> : <Sun size={16} className="text-yellow-500" />}
+                    <span className="text-sm">
+                      {isDarkMode ? 'Dark Mode' : 'Light Mode'}
+                    </span>
+                  </div>
+                  <Switch
+                    checked={isDarkMode}
+                    onCheckedChange={toggleTheme}
+                    className="data-[state=checked]:bg-primary"
+                  />
+                </div>
                 <DropdownMenuItem 
                   onClick={onUpgrade}
-                  className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
+                  className="flex items-center gap-3 px-4 py-3 hover:bg-accent hover:text-accent-foreground cursor-pointer"
                 >
-                  <Crown size={16} className="text-[hsl(45,95%,58%)]" />
+                  <Crown size={16} className="text-primary" />
                   Upgrade to Plus/Pro
                 </DropdownMenuItem>
                 {user && (
                   <DropdownMenuItem 
                     onClick={signOut}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer text-red-400"
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-accent hover:text-accent-foreground cursor-pointer text-destructive"
                   >
                     <LogIn size={16} />
                     Sign Out

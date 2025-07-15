@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useEffect } from 'react';
 import { AuthProvider } from "./hooks/useAuth";
 import { ConsumerSubscriptionProvider } from "./hooks/useConsumerSubscription";
 import Index from "./pages/Index";
@@ -19,7 +20,20 @@ import { AdminDashboard } from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
-const App = () => (
+const App = () => {
+  // Initialize theme on app start
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }, []);
+
+  return (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <ConsumerSubscriptionProvider>
@@ -49,6 +63,7 @@ const App = () => (
       </ConsumerSubscriptionProvider>
     </AuthProvider>
   </QueryClientProvider>
-);
+  );
+};
 
 export default App;
