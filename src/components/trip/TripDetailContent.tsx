@@ -35,7 +35,7 @@ export const TripDetailContent = ({
   const { variant, accentColors } = useTripVariant();
 
   const tabs = [
-    { id: 'chat', label: 'Home' },
+    { id: 'chat', label: 'Trip' },
     { id: 'places', label: 'Places' },
     { id: 'preferences', label: 'Preferences', premium: variant === 'consumer' }, // Always available for Pro
     { id: 'ai-chat', label: 'Junto Concierge', premium: variant === 'consumer' }, // Always available for Pro
