@@ -57,6 +57,20 @@ export const ConsumerGeneralSettings = () => {
             </div>
             <div className="text-glass-orange">Clear</div>
           </button>
+          <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+            <div className="text-left">
+              <div className="text-white font-medium">Export Calendar</div>
+              <div className="text-sm text-gray-400">Export your travel calendar as .ics file</div>
+            </div>
+            <div className="text-glass-orange">Export</div>
+          </button>
+          <button className="w-full flex items-center justify-between p-4 bg-white/5 hover:bg-white/10 rounded-lg transition-colors">
+            <div className="text-left">
+              <div className="text-white font-medium">Import Travel Data</div>
+              <div className="text-sm text-gray-400">Import trips from other travel apps</div>
+            </div>
+            <div className="text-glass-orange">Import</div>
+          </button>
         </div>
       </div>
 

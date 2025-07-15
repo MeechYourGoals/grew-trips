@@ -1,12 +1,15 @@
 
 import React, { useState } from 'react';
-import { User, Bell, CreditCard, Shield, Settings, Wallet } from 'lucide-react';
+import { User, Bell, CreditCard, Shield, Settings, Wallet, Calendar, Link, Brain } from 'lucide-react';
 import { TravelWallet } from './TravelWallet';
 import { ConsumerProfileSection } from './consumer/ConsumerProfileSection';
 import { ConsumerBillingSection } from './consumer/ConsumerBillingSection';
 import { ConsumerNotificationsSection } from './consumer/ConsumerNotificationsSection';
 import { ConsumerPrivacySection } from './consumer/ConsumerPrivacySection';
 import { ConsumerGeneralSettings } from './consumer/ConsumerGeneralSettings';
+import { ConsumerCalendarSync } from './consumer/ConsumerCalendarSync';
+import { ConsumerVoiceAI } from './consumer/ConsumerVoiceAI';
+import { ConsumerConnectedAccounts } from './consumer/ConsumerConnectedAccounts';
 
 interface ConsumerSettingsProps {
   currentUserId: string;
@@ -19,7 +22,10 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'billing', label: 'Billing & Subscription', icon: CreditCard },
     { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
+    { id: 'calendar-sync', label: 'Calendar Sync', icon: Calendar },
+    { id: 'connected-accounts', label: 'Connected Accounts', icon: Link },
     { id: 'notifications', label: 'Notifications', icon: Bell },
+    { id: 'voice-ai', label: 'Voice & AI', icon: Brain },
     { id: 'privacy', label: 'Privacy & Security', icon: Shield },
     { id: 'settings', label: 'General Settings', icon: Settings }
   ];
@@ -35,7 +41,10 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
       case 'profile': return <ConsumerProfileSection />;
       case 'billing': return <ConsumerBillingSection />;
       case 'travel-wallet': return renderTravelWalletSection();
+      case 'calendar-sync': return <ConsumerCalendarSync />;
+      case 'connected-accounts': return <ConsumerConnectedAccounts />;
       case 'notifications': return <ConsumerNotificationsSection />;
+      case 'voice-ai': return <ConsumerVoiceAI />;
       case 'privacy': return <ConsumerPrivacySection />;
       case 'settings': return <ConsumerGeneralSettings />;
       default: return <ConsumerProfileSection />;

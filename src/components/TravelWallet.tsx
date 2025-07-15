@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2, Star, Plane, Car, Building, CreditCard } from 'lucide-react';
+import { Plus, Edit, Trash2, Star, Plane, Car, Building, CreditCard, Settings, Link, Wallet } from 'lucide-react';
 import { AirlineProgram, HotelProgram, RentalCarProgram } from '../types/pro';
 
 interface TravelWalletProps {
@@ -276,20 +276,70 @@ export const TravelWallet = ({ userId }: TravelWalletProps) => {
   ];
 
   return (
-    <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-white flex items-center gap-2">
-          <CreditCard size={24} className="text-glass-orange" />
-          Travel Wallet
-        </h3>
-        <button
-          onClick={() => setShowAddForm(true)}
-          className="bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors"
-        >
-          <Plus size={16} />
-          Add Program
-        </button>
+    <div className="space-y-6">
+      {/* Travel Booking Connections */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <Link size={20} className="text-glass-orange" />
+          Travel Booking Connections
+        </h4>
+        
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <div className="p-4 bg-white/5 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-white font-medium">Booking.com</span>
+              <span className="text-green-400 text-sm">Connected</span>
+            </div>
+            <p className="text-sm text-gray-400">Auto-book hotels based on your preferences</p>
+          </div>
+          
+          <div className="p-4 bg-white/5 rounded-lg">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-white font-medium">Expedia</span>
+              <span className="text-gray-400 text-sm">Disconnected</span>
+            </div>
+            <p className="text-sm text-gray-400">Connect to enable automatic booking</p>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Auto-booking</div>
+              <div className="text-sm text-gray-400">Automatically book hotels within budget</div>
+            </div>
+            <button className="relative w-12 h-6 rounded-full bg-glass-orange">
+              <div className="absolute w-5 h-5 bg-white rounded-full top-0.5 translate-x-6 transition-transform" />
+            </button>
+          </div>
+          
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Price Alerts</div>
+              <div className="text-sm text-gray-400">Get notified when prices drop</div>
+            </div>
+            <button className="relative w-12 h-6 rounded-full bg-glass-orange">
+              <div className="absolute w-5 h-5 bg-white rounded-full top-0.5 translate-x-6 transition-transform" />
+            </button>
+          </div>
+        </div>
       </div>
+
+      {/* Loyalty Programs */}
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-bold text-white flex items-center gap-2">
+            <Wallet size={24} className="text-glass-orange" />
+            Loyalty Programs
+          </h3>
+          <button
+            onClick={() => setShowAddForm(true)}
+            className="bg-glass-orange hover:bg-glass-orange/80 text-white px-4 py-2 rounded-lg flex items-center gap-2 font-medium transition-colors"
+          >
+            <Plus size={16} />
+            Add Program
+          </button>
+        </div>
 
       {/* Tabs */}
       <div className="flex border-b border-white/20 mb-6">
@@ -348,6 +398,50 @@ export const TravelWallet = ({ userId }: TravelWalletProps) => {
           </button>
         </div>
       )}
+      </div>
+
+      {/* Payment Methods */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <CreditCard size={20} className="text-glass-orange" />
+          Payment Methods
+        </h4>
+        
+        <div className="space-y-3 mb-6">
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div className="flex items-center gap-3">
+              <CreditCard size={20} className="text-blue-400" />
+              <div>
+                <div className="text-white font-medium">Visa •••• 4242</div>
+                <div className="text-sm text-gray-400">Expires 12/26</div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-glass-orange text-sm">Primary</span>
+              <button className="text-gray-400 hover:text-white">
+                <Edit size={14} />
+              </button>
+            </div>
+          </div>
+          
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div className="flex items-center gap-3">
+              <CreditCard size={20} className="text-green-400" />
+              <div>
+                <div className="text-white font-medium">Amex •••• 1005</div>
+                <div className="text-sm text-gray-400">Expires 03/27</div>
+              </div>
+            </div>
+            <button className="text-gray-400 hover:text-white">
+              <Edit size={14} />
+            </button>
+          </div>
+        </div>
+        
+        <button className="w-full bg-glass-orange hover:bg-glass-orange/80 text-white py-3 rounded-lg font-medium transition-colors">
+          Add Payment Method
+        </button>
+      </div>
     </div>
   );
 };
