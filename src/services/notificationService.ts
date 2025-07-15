@@ -156,7 +156,7 @@ export class NotificationService {
         data: payload.data,
         actions: payload.actions,
         requireInteraction: true,
-        timestamp: Date.now()
+        timestamp: Date.now().toString()
       });
 
       notification.onclick = (event) => {

@@ -1,0 +1,188 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL,
+  import.meta.env.VITE_SUPABASE_ANON_KEY
+);
+
+export interface CalendarEvent {
+  id?: string;
+  title: string;
+  description?: string;
+  start_time: string;
+  end_time: string;
+  location?: string;
+  all_day?: boolean;
+}
+
+export interface CalendarConnection {
+  id: string;
+  user_id: string;
+  provider: 'google' | 'outlook' | 'apple';
+  access_token: string;
+  refresh_token?: string;
+  expires_at?: string;
+  calendar_id: string;
+  sync_enabled: boolean;
+}
+
+export class GoogleCalendarService {
+  private static instance: GoogleCalendarService;
+  
+  static getInstance(): GoogleCalendarService {
+    if (!GoogleCalendarService.instance) {
+      GoogleCalendarService.instance = new GoogleCalendarService();
+    }
+    return GoogleCalendarService.instance;
+  }
+
+  async authenticateUser(): Promise<string> {
+    // In production, these would come from environment variables
+    const clientId = 'your_google_client_id';
+    const redirectUri = `${window.location.origin}/auth/google/callback`;
+    
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
+      `client_id=${clientId}&` +
+      `redirect_uri=${encodeURIComponent(redirectUri)}&` +
+      `response_type=code&` +
+      `scope=${encodeURIComponent('https://www.googleapis.com/auth/calendar')}&` +
+      `access_type=offline&` +
+      `prompt=consent`;
+    
+    window.location.href = authUrl;
+    return authUrl;
+  }
+
+  async handleAuthCallback(code: string): Promise<CalendarConnection> {
+    try {
+      const { data, error } = await supabase.functions.invoke('google-calendar-auth', {
+        body: { code }
+      });
+      
+      if (error) throw error;
+      return data.connection;
+    } catch (error) {
+      console.error('Auth callback error:', error);
+      throw error;
+    }
+  }
+
+  async getStoredConnection(userId: string): Promise<CalendarConnection | null> {
+    try {
+      const { data, error } = await supabase
+        .from('calendar_connections')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('provider', 'google')
+        .single();
+      
+      if (error) return null;
+      return data;
+    } catch (error) {
+      console.error('Error getting stored connection:', error);
+      return null;
+    }
+  }
+
+  async syncEventToCalendar(eventData: CalendarEvent, userId: string): Promise<any> {
+    try {
+      const connection = await this.getStoredConnection(userId);
+      if (!connection) {
+        throw new Error('No Google Calendar connection found');
+      }
+
+      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
+        body: {
+          action: 'sync_to_google',
+          eventData,
+          accessToken: connection.access_token,
+          calendarId: connection.calendar_id
+        }
+      });
+      
+      if (error) throw error;
+      return data;
+    } catch (error) {
+      console.error('Error syncing event:', error);
+      throw error;
+    }
+  }
+
+  async importFromGoogle(userId: string): Promise<CalendarEvent[]> {
+    try {
+      const connection = await this.getStoredConnection(userId);
+      if (!connection) {
+        throw new Error('No Google Calendar connection found');
+      }
+
+      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
+        body: {
+          action: 'import_from_google',
+          userId,
+          accessToken: connection.access_token,
+          calendarId: connection.calendar_id
+        }
+      });
+      
+      if (error) throw error;
+      return data.events || [];
+    } catch (error) {
+      console.error('Error importing events:', error);
+      throw error;
+    }
+  }
+
+  async getUserCalendars(userId: string): Promise<any[]> {
+    try {
+      const connection = await this.getStoredConnection(userId);
+      if (!connection) {
+        throw new Error('No Google Calendar connection found');
+      }
+
+      const { data, error } = await supabase.functions.invoke('google-calendar-sync', {
+        body: {
+          action: 'get_calendars',
+          accessToken: connection.access_token
+        }
+      });
+      
+      if (error) throw error;
+      return data.calendars || [];
+    } catch (error) {
+      console.error('Error getting calendars:', error);
+      throw error;
+    }
+  }
+
+  async disconnectCalendar(userId: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('calendar_connections')
+        .delete()
+        .eq('user_id', userId)
+        .eq('provider', 'google');
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error disconnecting calendar:', error);
+      throw error;
+    }
+  }
+
+  async toggleSync(userId: string, enabled: boolean): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('calendar_connections')
+        .update({ sync_enabled: enabled })
+        .eq('user_id', userId)
+        .eq('provider', 'google');
+      
+      if (error) throw error;
+    } catch (error) {
+      console.error('Error toggling sync:', error);
+      throw error;
+    }
+  }
+}
+
+export const googleCalendarService = GoogleCalendarService.getInstance();
