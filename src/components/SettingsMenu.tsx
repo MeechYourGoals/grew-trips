@@ -103,7 +103,6 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
             </button>
           </div>
 
-
           {/* Settings Type Toggle - Updated to include Events */}
           <div className="flex-shrink-0 p-6 border-b border-white/20">
             <div className="bg-white/10 rounded-xl p-1 flex">
