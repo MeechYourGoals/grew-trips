@@ -11,6 +11,8 @@ export interface Message {
   tourName?: string;
   timestamp: string;
   isRead: boolean;
+  isBroadcast?: boolean;
+  messageType?: 'chat' | 'broadcast';
   priority?: 'urgent' | 'reminder' | 'fyi';
   mentions?: string[];
   threadId?: string;

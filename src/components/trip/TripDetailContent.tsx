@@ -38,7 +38,7 @@ export const TripDetailContent = ({
     { id: 'chat', label: 'Trip' },
     { id: 'places', label: 'Places' },
     { id: 'preferences', label: 'Preferences', premium: variant === 'consumer' }, // Always available for Pro
-    { id: 'ai-chat', label: 'Junto Concierge', premium: variant === 'consumer' } // Always available for Pro
+    { id: 'ai-chat', label: 'Concierge', premium: variant === 'consumer' } // Always available for Pro
   ];
 
   const renderTabContent = () => {
@@ -70,7 +70,7 @@ export const TripDetailContent = ({
   return (
     <>
       {/* Tab Navigation - Updated order: Home | Places | Preferences | AI Assistant | Search */}
-      <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 mb-8 pb-2 -mx-2 px-2">
+      <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 mb-8 pb-2 -mx-2 px-2 justify-center">
         {tabs.map((tab) => (
           <button
             key={tab.id}

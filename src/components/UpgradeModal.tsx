@@ -95,7 +95,7 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
                 <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
                   <Sparkles size={24} className="text-white" />
                 </div>
-                <h4 className="text-lg font-bold text-white mb-2">Junto Concierge</h4>
+                <h4 className="text-lg font-bold text-white mb-2">Concierge</h4>
                 <p className="text-gray-300 text-sm">Chat with AI for personalized recommendations based on your location and preferences.</p>
               </div>
 

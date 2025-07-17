@@ -46,7 +46,7 @@ export const TripsPlusUpsellModal = ({ isOpen, onClose }: TripsPlusUpsellModalPr
             <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4">
               <Sparkles size={24} className="text-white" />
             </div>
-            <h3 className="text-lg font-bold text-white mb-2">Junto Concierge</h3>
+            <h3 className="text-lg font-bold text-white mb-2">Concierge</h3>
             <p className="text-gray-300 text-sm">Chat with AI for personalized recommendations based on your location and preferences.</p>
           </div>
 
@@ -94,7 +94,7 @@ export const TripsPlusUpsellModal = ({ isOpen, onClose }: TripsPlusUpsellModalPr
                 <li>• AI-powered recommendations</li>
                 <li>• Smart preference matching</li>
                 <li>• Basecamp-aware suggestions</li>
-                <li>• Junto Concierge AI chat</li>
+                <li>• Concierge AI chat</li>
                 <li>• Personalized itinerary building</li>
                 <li>• Group preference management</li>
               </ul>

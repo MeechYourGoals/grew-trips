@@ -346,7 +346,7 @@ export const FilesTab = ({ tripId }: FilesTabProps) => {
       <div className="relative">
         <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
         <Input
-          placeholder="Basic search or use Junto Concierge for AI search..."
+          placeholder="Basic search or use Concierge for AI search..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10 bg-white/5 border-white/10 text-white"

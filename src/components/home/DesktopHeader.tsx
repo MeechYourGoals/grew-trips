@@ -26,7 +26,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
   const { user, signOut } = useAuth();
 
   const handleSearchClick = () => {
-    alert('Please navigate to any trip and use the Junto Concierge for search and assistance.');
+    alert('Please navigate to any trip and use the Concierge for search and assistance.');
   };
 
   const handleAuthClick = () => {
@@ -54,7 +54,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
           {/* Global Search Bar */}
           <div className="w-80">
             <SearchBar
-              placeholder="Use Junto Concierge in any trip..."
+              placeholder="Use Concierge in any trip..."
               onSearch={handleSearchClick}
               className="cursor-pointer"
             />

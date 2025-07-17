@@ -49,7 +49,7 @@ export const EventDetailContent = ({
     { id: 'networking', label: 'Networking', icon: Network, eventOnly: true },
     { id: 'live-qa', label: 'Live Q&A', icon: null, eventOnly: true },
     { id: 'places', label: 'Places', icon: null },
-    { id: 'ai-chat', label: 'Junto Concierge', icon: null },
+    { id: 'ai-chat', label: 'Concierge', icon: null },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp, eventOnly: true, organinerOnly: true }
   ];
 
@@ -144,7 +144,7 @@ export const EventDetailContent = ({
   return (
     <>
       {/* Enhanced Tab Navigation for Events */}
-      <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 mb-8 pb-2 -mx-2 px-2 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+      <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 mb-8 pb-2 -mx-2 px-2 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 justify-center">
         {visibleTabs.map((tab) => {
           const Icon = tab.icon;
           return (

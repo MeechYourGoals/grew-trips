@@ -136,7 +136,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
           <Sparkles size={20} className="text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-white">Junto Concierge</h3>
+          <h3 className="text-lg font-semibold text-white">Concierge</h3>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               {getStatusIcon()}

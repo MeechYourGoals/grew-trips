@@ -101,7 +101,7 @@ export class DemoModeService {
           message_content: "so glad you broadcast that the reception moved back an hour, I was going to be late anyway lol",
           delay_seconds: 0,
           timestamp_offset_days: 1,
-          tags: ['logistics']
+          tags: ['logistics', 'broadcast']
         },
         {
           id: 'wedding-3',
@@ -125,7 +125,7 @@ export class DemoModeService {
           message_content: "🚐 Bus departs the Anaheim Hyatt at 6:45 AM sharp. Wear the navy PG Elite warm-ups so we roll in looking unified.",
           delay_seconds: 0,
           timestamp_offset_days: 1,
-          tags: ['logistics']
+          tags: ['logistics', 'broadcast']
         },
         {
           id: 'sports-2',
@@ -166,7 +166,7 @@ export class DemoModeService {
           message_content: "🎵 Load-in starts at 10 AM sharp — all crew report to loading dock",
           delay_seconds: 0,
           timestamp_offset_days: 1,
-          tags: ['production']
+          tags: ['production', 'broadcast']
         },
         {
           id: 'tour-2',

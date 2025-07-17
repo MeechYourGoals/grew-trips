@@ -17,7 +17,7 @@ export const GeminiPlusUpgrade = () => {
             <Sparkles size={20} className="text-white" />
           </div>
           <div>
-            <h3 className="text-lg font-semibold text-white">Junto Concierge</h3>
+            <h3 className="text-lg font-semibold text-white">Concierge</h3>
           </div>
         </div>
 
