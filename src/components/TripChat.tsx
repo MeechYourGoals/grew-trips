@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { addMinutes } from 'date-fns';
 import { useParams } from 'react-router-dom';
-import { demoModeService } from '../services/demoModeService';
+import { demoModeService, MockMessage as DemoMockMessage } from '../services/demoModeService';
 import { useDemoMode } from '../hooks/useDemoMode';
 import { MessageCircle } from 'lucide-react';
 import { ChatInput } from './chat/ChatInput';
 import { MessageReactionBar } from './chat/MessageReactionBar';
 import { InlineReplyComponent } from './chat/InlineReplyComponent';
-import { ReplyData, MessageReactionBarProps } from './chat/types';
+import { ReplyData } from './chat/types';
 
 interface TripChatProps {
   groupChatEnabled?: boolean;
@@ -22,6 +22,13 @@ interface MockMessage {
   isAiMessage?: boolean;
   reactions?: { [key: string]: string[] };
   replyTo?: { id: string; text: string; sender: string };
+  // Added these fields to match demoModeService.MockMessage
+  trip_type?: string;
+  sender_name?: string;
+  message_content?: string;
+  delay_seconds?: number;
+  timestamp_offset_days?: number;
+  tags?: string[];
 }
 
 export const TripChat = ({ 
@@ -95,8 +102,27 @@ export const TripChat = ({
   useEffect(() => {
     if (demoMode.isDemoMode) {
       const loadDemoData = async () => {
-        const mockTripMessages = await demoModeService.getMockMessages('demo');
-        setMessages(mockTripMessages);
+        const demoMessages = await demoModeService.getMockMessages('demo');
+        
+        // Map the demo service messages to our local format
+        const formattedMessages = demoMessages.map(msg => ({
+          id: msg.id,
+          text: msg.message_content || '', // Use message_content as text
+          sender: { 
+            id: msg.id, 
+            name: msg.sender_name || 'Unknown',
+            avatar: '/default-avatar.png' 
+          },
+          createdAt: new Date(Date.now() - (msg.timestamp_offset_days || 0) * 86400000).toISOString(),
+          trip_type: msg.trip_type,
+          sender_name: msg.sender_name,
+          message_content: msg.message_content,
+          delay_seconds: msg.delay_seconds,
+          timestamp_offset_days: msg.timestamp_offset_days,
+          tags: msg.tags
+        }));
+        
+        setMessages(formattedMessages);
         setLoading(false);
       };
 

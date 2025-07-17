@@ -12,3 +12,16 @@ export interface GeminiAPIConfig {
   topP: number;
   maxOutputTokens: number;
 }
+
+export interface ReplyData {
+  id: string;
+  text: string;
+  senderName: string;
+}
+
+export interface MessageReactionBarProps {
+  messageId: string;
+  reactions?: Record<string, { count: number; userReacted: boolean }>;
+  onReaction: (messageId: string, reactionType: string) => void;
+  className?: string;
+}

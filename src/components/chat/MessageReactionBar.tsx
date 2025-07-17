@@ -8,9 +8,10 @@ interface Reaction {
 }
 
 interface MessageReactionBarProps {
-  messageId: string;
+  messageId?: string;
   reactions?: Record<string, { count: number; userReacted: boolean }>;
-  onReaction: (messageId: string, reactionType: string) => void;
+  onReaction?: (messageId: string, reactionType: string) => void;
+  onReactMessage?: (reactionType: string) => void;
   className?: string;
 }
 
@@ -25,6 +26,7 @@ export const MessageReactionBar: React.FC<MessageReactionBarProps> = ({
   messageId,
   reactions = {},
   onReaction,
+  onReactMessage,
   className = ''
 }) => {
   return (
@@ -39,7 +41,13 @@ export const MessageReactionBar: React.FC<MessageReactionBarProps> = ({
             key={reaction.id}
             variant="ghost"
             size="sm"
-            onClick={() => onReaction(messageId, reaction.id)}
+            onClick={() => {
+              if (onReaction && messageId) {
+                onReaction(messageId, reaction.id);
+              } else if (onReactMessage) {
+                onReactMessage(reaction.id);
+              }
+            }}
             className={`h-6 px-2 py-1 text-xs rounded-full bg-background/20 backdrop-blur-sm border border-border/30 hover:bg-background/40 transition-all duration-200 ${
               userReacted 
                 ? 'bg-primary/20 border-primary/50 text-primary' 

@@ -9,11 +9,13 @@ interface ReplyData {
 interface InlineReplyComponentProps {
   replyTo?: ReplyData;
   onRemoveReply?: () => void;
+  onCancel?: () => void;
 }
 
 export const InlineReplyComponent: React.FC<InlineReplyComponentProps> = ({
   replyTo,
-  onRemoveReply
+  onRemoveReply,
+  onCancel
 }) => {
   if (!replyTo) return null;
 
@@ -24,9 +26,9 @@ export const InlineReplyComponent: React.FC<InlineReplyComponentProps> = ({
           <p className="text-xs text-muted-foreground mb-1">Replying to {replyTo.senderName}</p>
           <p className="text-sm text-foreground/80 truncate">{replyTo.text}</p>
         </div>
-        {onRemoveReply && (
+        {(onRemoveReply || onCancel) && (
           <button
-            onClick={onRemoveReply}
+            onClick={onRemoveReply || onCancel}
             className="text-muted-foreground hover:text-foreground ml-2 transition-colors"
           >
             ×
