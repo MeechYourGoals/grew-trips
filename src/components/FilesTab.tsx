@@ -1,7 +1,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, File, FileText, FileImage, FileVideo, Download, Trash2, Calendar, Sparkles, Crown, Search } from 'lucide-react';
+import { Upload, File, FileText, FileImage, FileVideo, Download, Trash2, Calendar, Sparkles, Crown, Search, Receipt, Users, DollarSign } from 'lucide-react';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Badge } from './ui/badge';
@@ -9,6 +9,12 @@ import { Card } from './ui/card';
 import { Separator } from './ui/separator';
 import { useToast } from '../hooks/use-toast';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
+import { useAuth } from '../hooks/useAuth';
+import { PaymentMethodIcon } from './receipts/PaymentMethodIcon';
+import { ReceiptUploadModal } from './receipts/ReceiptUploadModal';
+import { ReceiptViewModal } from './receipts/ReceiptViewModal';
+import { PaymentMethod } from '../types/receipts';
+import { generatePaymentDeeplink } from '../utils/paymentDeeplinks';
 
 interface TripFile {
   id: string;
@@ -19,6 +25,13 @@ interface TripFile {
   uploadedBy: string;
   uploadedAt: string;
   extractedEvents?: number;
+  // Receipt-specific fields
+  isReceipt?: boolean;
+  totalAmount?: number;
+  currency?: string;
+  preferredMethod?: PaymentMethod;
+  splitCount?: number;
+  perPersonAmount?: number;
 }
 
 interface FilesTabProps {
@@ -26,6 +39,7 @@ interface FilesTabProps {
 }
 
 export const FilesTab = ({ tripId }: FilesTabProps) => {
+  const { user } = useAuth();
   const [files, setFiles] = useState<TripFile[]>([
     {
       id: '1',
@@ -46,12 +60,32 @@ export const FilesTab = ({ tripId }: FilesTabProps) => {
       uploadedBy: 'Sarah Wilson',
       uploadedAt: '2025-01-14T16:45:00Z',
       extractedEvents: 3
+    },
+    // Example receipt file
+    {
+      id: '3',
+      name: 'Dinner at Le Comptoir.jpg',
+      type: 'image/jpeg',
+      size: 523800,
+      url: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=200&fit=crop',
+      uploadedBy: 'Emma',
+      uploadedAt: '2025-01-15T19:30:00Z',
+      isReceipt: true,
+      totalAmount: 156.80,
+      currency: 'USD',
+      preferredMethod: 'venmo',
+      splitCount: 4,
+      perPersonAmount: 39.20
     }
   ]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [pendingEvents, setPendingEvents] = useState<any[]>([]);
   const [showEventModal, setShowEventModal] = useState(false);
+  const [showReceiptUploadModal, setShowReceiptUploadModal] = useState(false);
+  const [showReceiptViewModal, setShowReceiptViewModal] = useState(false);
+  const [selectedReceipt, setSelectedReceipt] = useState<TripFile | null>(null);
+  const [activeFilter, setActiveFilter] = useState<'all' | 'receipts' | 'documents'>('all');
   const { toast } = useToast();
   const { isPlus } = useConsumerSubscription();
 
@@ -150,10 +184,63 @@ export const FilesTab = ({ tripId }: FilesTabProps) => {
       minute: '2-digit'
     });
   };
+  
+  const handleReceiptUploaded = (receiptData: any) => {
+    // Convert receipt data to TripFile format
+    const newFile: TripFile = {
+      id: Date.now().toString(),
+      name: receiptData.fileName,
+      type: receiptData.fileType,
+      size: 500000, // Estimated size
+      url: receiptData.fileUrl,
+      uploadedBy: receiptData.uploaderName,
+      uploadedAt: receiptData.createdAt,
+      isReceipt: true,
+      totalAmount: receiptData.totalAmount,
+      currency: receiptData.currency,
+      preferredMethod: receiptData.preferredMethod,
+      splitCount: receiptData.splitCount,
+      perPersonAmount: receiptData.perPersonAmount
+    };
+    
+    setFiles(prev => [newFile, ...prev]);
+    setShowReceiptUploadModal(false);
+    
+    toast({
+      title: "Receipt uploaded",
+      description: "Receipt has been added to your trip files."
+    });
+  };
 
-  const filteredFiles = files.filter(file =>
-    file.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const handlePaymentClick = (file: TripFile) => {
+    if (file.preferredMethod && file.perPersonAmount) {
+      const deeplink = generatePaymentDeeplink(
+        file.preferredMethod,
+        file.perPersonAmount,
+        file.uploadedBy
+      );
+      
+      if (deeplink) {
+        window.open(deeplink, '_blank');
+      }
+    }
+  };
+  
+  const handleViewReceipt = (file: TripFile) => {
+    setSelectedReceipt(file);
+    setShowReceiptViewModal(true);
+  };
+
+  // Filter files based on search term and active filter
+  const filteredFiles = files.filter(file => {
+    const matchesSearch = file.name.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (activeFilter === 'all') return matchesSearch;
+    if (activeFilter === 'receipts') return matchesSearch && file.isReceipt;
+    if (activeFilter === 'documents') return matchesSearch && !file.isReceipt;
+    
+    return matchesSearch;
+  });
 
   const handleDeleteFile = (fileId: string) => {
     setFiles(prev => prev.filter(f => f.id !== fileId));
@@ -176,19 +263,52 @@ export const FilesTab = ({ tripId }: FilesTabProps) => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h3 className="text-lg font-semibold text-white">Trip Files</h3>
+          <h3 className="text-lg font-semibold text-white">Trip Files & Receipts</h3>
           <p className="text-sm text-gray-400">
-            Share tickets, itineraries, confirmations, and more
+            Share tickets, itineraries, receipts and more
           </p>
         </div>
-        {isPlus && (
-          <Badge className="bg-gradient-to-r from-glass-orange to-glass-yellow text-black">
-            <Sparkles size={12} className="mr-1" />
-            AI Calendar Sync
-          </Badge>
-        )}
+        <div className="flex items-center gap-3">
+          {isPlus && (
+            <Badge className="bg-gradient-to-r from-glass-orange to-glass-yellow text-black">
+              <Sparkles size={12} className="mr-1" />
+              AI Calendar Sync
+            </Badge>
+          )}
+          {user && (
+            <Button
+              onClick={() => setShowReceiptUploadModal(true)}
+              variant="outline"
+              size="sm"
+              className="flex items-center gap-2"
+            >
+              <Receipt size={16} />
+              Add Receipt
+            </Button>
+          )}
+        </div>
+      </div>
+
+      {/* Filter Tabs */}
+      <div className="flex items-center gap-2 mb-6">
+        {(['all', 'documents', 'receipts'] as const).map((filter) => (
+          <Button
+            key={filter}
+            variant={activeFilter === filter ? "default" : "outline"}
+            size="sm"
+            onClick={() => setActiveFilter(filter)}
+            className="capitalize"
+          >
+            {filter === 'all' ? 'All Files' : filter}
+            {filter === 'receipts' && (
+              <Badge variant="secondary" className="ml-2">
+                {files.filter(f => f.isReceipt).length}
+              </Badge>
+            )}
+          </Button>
+        ))}
       </div>
 
       {/* Upload Area */}
@@ -246,10 +366,37 @@ export const FilesTab = ({ tripId }: FilesTabProps) => {
             <Card key={file.id} className="bg-white/5 border-white/10 p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
-                  {getFileIcon(file.type)}
+                  {file.isReceipt ? (
+                    <div className="flex-shrink-0">
+                      {file.type.includes('image') ? (
+                        <img
+                          src={file.url}
+                          alt={file.name}
+                          className="w-12 h-12 rounded-lg object-cover cursor-pointer"
+                          onClick={() => handleViewReceipt(file)}
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-green-500/20 border border-green-500/30 rounded-lg flex items-center justify-center cursor-pointer"
+                             onClick={() => handleViewReceipt(file)}>
+                          <Receipt size={20} className="text-green-400" />
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    getFileIcon(file.type)
+                  )}
+                  
                   <div className="flex-1 min-w-0">
-                    <p className="text-white font-medium truncate">{file.name}</p>
-                    <div className="flex items-center gap-4 text-xs text-gray-400">
+                    <div className="flex items-center gap-2">
+                      <p className="text-white font-medium truncate">{file.name}</p>
+                      {file.isReceipt && (
+                        <Badge variant="outline" className="text-green-400 border-green-400/50">
+                          Receipt
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-4 text-xs text-gray-400 mb-1">
                       <span>{formatFileSize(file.size)}</span>
                       <span>by {file.uploadedBy}</span>
                       <span>{formatDate(file.uploadedAt)}</span>
@@ -260,9 +407,51 @@ export const FilesTab = ({ tripId }: FilesTabProps) => {
                         </Badge>
                       )}
                     </div>
+
+                    {/* Receipt-specific info */}
+                    {file.isReceipt && file.totalAmount && (
+                      <div className="flex items-center gap-4 mt-2">
+                        <div className="flex items-center gap-1">
+                          <DollarSign size={14} className="text-green-400" />
+                          <span className="text-white text-sm font-medium">
+                            ${file.totalAmount.toFixed(2)}
+                          </span>
+                        </div>
+                        
+                        {file.splitCount && file.perPersonAmount && (
+                          <div className="flex items-center gap-1">
+                            <Users size={14} className="text-blue-400" />
+                            <span className="text-gray-300 text-sm">
+                              ${file.perPersonAmount.toFixed(2)} each ({file.splitCount} people)
+                            </span>
+                          </div>
+                        )}
+                        
+                        {file.preferredMethod && (
+                          <div className="flex items-center gap-2">
+                            <PaymentMethodIcon method={file.preferredMethod} size={14} />
+                            <span className="text-gray-300 text-sm capitalize">
+                              {file.preferredMethod}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
+                
                 <div className="flex items-center gap-2">
+                  {/* Receipt-specific payment button */}
+                  {file.isReceipt && file.perPersonAmount && (
+                    <Button
+                      onClick={() => handlePaymentClick(file)}
+                      size="sm"
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600"
+                    >
+                      Pay ${file.perPersonAmount.toFixed(2)}
+                    </Button>
+                  )}
+                  
                   <Button
                     variant="ghost"
                     size="sm"
@@ -304,6 +493,37 @@ export const FilesTab = ({ tripId }: FilesTabProps) => {
             </Button>
           </div>
         </Card>
+      )}
+
+      {/* Receipt Upload Modal */}
+      <ReceiptUploadModal
+        isOpen={showReceiptUploadModal}
+        onClose={() => setShowReceiptUploadModal(false)}
+        onReceiptUploaded={handleReceiptUploaded}
+        tripId={tripId}
+      />
+
+      {/* Receipt View Modal */}
+      {selectedReceipt && selectedReceipt.isReceipt && (
+        <ReceiptViewModal
+          isOpen={showReceiptViewModal}
+          onClose={() => setShowReceiptViewModal(false)}
+          receipt={{
+            id: selectedReceipt.id,
+            tripId: tripId,
+            uploaderId: 'user1',
+            uploaderName: selectedReceipt.uploadedBy,
+            fileUrl: selectedReceipt.url,
+            fileName: selectedReceipt.name,
+            fileType: selectedReceipt.type,
+            totalAmount: selectedReceipt.totalAmount || 0,
+            currency: selectedReceipt.currency || 'USD',
+            preferredMethod: selectedReceipt.preferredMethod || 'venmo',
+            splitCount: selectedReceipt.splitCount,
+            perPersonAmount: selectedReceipt.perPersonAmount,
+            createdAt: selectedReceipt.uploadedAt
+          }}
+        />
       )}
     </div>
   );

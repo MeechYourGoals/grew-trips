@@ -1,13 +1,12 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Users, Calendar, Camera, Radio, Link, BarChart3, Receipt, FileText, ClipboardList, Lock } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Camera, Radio, Link, BarChart3, FileText, ClipboardList, Lock } from 'lucide-react';
 import { TripChat } from './TripChat';
 import { GroupCalendar } from './GroupCalendar';
 import { PhotoAlbum } from './PhotoAlbum';
 import { Broadcasts } from './Broadcasts';
 import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
-import { ReceiptsTab } from './receipts/ReceiptsTab';
 import { FilesTab } from './FilesTab';
 import { TripTasksTab } from './todo/TripTasksTab';
 import { useTripVariant } from '../contexts/TripVariantContext';
@@ -36,7 +35,6 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
     { id: 'todo', label: 'To-Do List', icon: ClipboardList, enabled: features.showTodo },
     { id: 'calendar', label: 'Calendar', icon: Calendar, enabled: features.showCalendar },
     { id: 'photos', label: 'Photos', icon: Camera, enabled: features.showPhotos },
-    { id: 'receipts', label: 'Receipts', icon: Receipt, enabled: features.showFiles },
     { id: 'files', label: 'Files', icon: FileText, enabled: features.showFiles }
   ];
 
@@ -61,8 +59,6 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
         return <GroupCalendar />;
       case 'photos':
         return <PhotoAlbum />;
-      case 'receipts':
-        return <ReceiptsTab tripId={tripId} />;
       case 'files':
         return <FilesTab tripId={tripId} />;
       default:
