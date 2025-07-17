@@ -30,7 +30,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
 
   const tabs = [
     { id: 'chat', label: 'Chat', icon: MessageCircle, enabled: features.showChat },
-    { id: 'broadcasts', label: 'Broadcasts', icon: Radio, enabled: features.showBroadcasts },
+    // Broadcasts removed and merged into Chat
     { id: 'links', label: 'Links', icon: Link, enabled: features.showLinks },
     { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
     { id: 'todo', label: 'To-Do List', icon: ClipboardList, enabled: features.showTodo },
@@ -50,8 +50,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
     switch (activeTab) {
       case 'chat':
         return <TripChat />;
-      case 'broadcasts':
-        return <Broadcasts />;
+      // Broadcasts case removed
       case 'links':
         return <VenueIdeas />;
       case 'polls':
