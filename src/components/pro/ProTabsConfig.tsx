@@ -21,8 +21,7 @@ export const proTabs: ProTab[] = [
   { id: 'compliance', label: 'Compliance', icon: FileCheck, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['compliance', 'admin'] },
   { id: 'media', label: 'Media', icon: Tv, proOnly: true, requiredPermissions: ['read'] },
   { id: 'sponsors', label: 'Sponsors', icon: Award, proOnly: true, requiredPermissions: ['admin'] },
-  { id: 'ai-chat', label: 'Junto Concierge', icon: null },
-  { id: 'search', label: 'Search', icon: null }
+  { id: 'ai-chat', label: 'Junto Concierge', icon: null }
 ];
 
 export const getVisibleTabs = (userRole: string, userPermissions: string[], category?: ProTripCategory): ProTab[] => {
@@ -32,7 +31,7 @@ export const getVisibleTabs = (userRole: string, userPermissions: string[], cate
   if (category) {
     const categoryConfig = getCategoryConfig(category);
     availableTabs = proTabs.filter(tab => 
-      !tab.proOnly || categoryConfig.availableTabs.includes(tab.id) || ['chat', 'places', 'ai-chat', 'search'].includes(tab.id)
+      !tab.proOnly || categoryConfig.availableTabs.includes(tab.id) || ['chat', 'places', 'ai-chat'].includes(tab.id)
     );
   }
   

@@ -4,7 +4,7 @@ import { Crown, Sparkles, Users, Calendar, UserCheck, Network, TrendingUp, Clipb
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
 import { GeminiAIChat } from '../GeminiAIChat';
-import { TripSearchTab } from '../TripSearchTab';
+
 import { RegistrationTab } from './RegistrationTab';
 import { AgendaBuilder } from './AgendaBuilder';
 import { SpeakerDirectory } from './SpeakerDirectory';
@@ -50,7 +50,6 @@ export const EventDetailContent = ({
     { id: 'live-qa', label: 'Live Q&A', icon: null, eventOnly: true },
     { id: 'places', label: 'Places', icon: null },
     { id: 'ai-chat', label: 'Junto Concierge', icon: null },
-    { id: 'search', label: 'Search', icon: null },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp, eventOnly: true, organinerOnly: true }
   ];
 
@@ -127,8 +126,6 @@ export const EventDetailContent = ({
             preferences={tripPreferences}
           />
         );
-      case 'search':
-        return <TripSearchTab tripId={tripId} />;
       case 'analytics':
         return (
           <div className="p-6">

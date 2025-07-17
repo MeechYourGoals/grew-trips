@@ -4,9 +4,11 @@ import { Sparkles, WifiOff, Wifi, AlertCircle } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
 import { SciraAIService, TripContext } from '../services/sciraAI';
+import { UniversalConciergeService, SearchResult } from '../services/universalConciergeService';
 import { ChatMessages } from './chat/ChatMessages';
 import { ChatInput } from './chat/ChatInput';
 import { GeminiPlusUpgrade } from './chat/GeminiPlusUpgrade';
+import { SearchResultsPane } from './SearchResultsPane';
 
 interface GeminiAIChatProps {
   tripId: string;
@@ -19,6 +21,7 @@ interface ChatMessage {
   type: 'user' | 'assistant';
   content: string;
   timestamp: string;
+  searchResults?: SearchResult[];
   isFromFallback?: boolean;
 }
 
@@ -54,12 +57,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         isPro: false
       };
 
-      const context = SciraAIService.buildTripContext(tripContext);
-      const response = await SciraAIService.querySciraAI(inputMessage, context, {
-        temperature: 0.7,
-        maxTokens: 1024,
-        webSearch: true
-      });
+      const response = await UniversalConciergeService.processMessage(inputMessage, tripContext);
       
       // Update AI status based on response
       if (response.isFromFallback) {
@@ -73,6 +71,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         type: 'assistant',
         content: response.content,
         timestamp: new Date().toISOString(),
+        searchResults: response.searchResults,
         isFromFallback: response.isFromFallback
       };
       
@@ -167,8 +166,30 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         </div>
       )}
 
+      {messages.length === 0 && (
+        <div className="text-center py-8 mb-6">
+          <h4 className="text-white font-medium mb-3">Your Trip Assistant</h4>
+          <div className="text-sm text-gray-300 space-y-2 max-w-md mx-auto">
+            <p>Ask me anything about your trip:</p>
+            <div className="text-xs text-gray-400 space-y-1">
+              <p>• "Find all receipts over $50"</p>
+              <p>• "Show me the flight tickets"</p>
+              <p>• "What events do we have tomorrow?"</p>
+              <p>• "Who uploaded the hotel confirmation?"</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-4 mb-6 max-h-80 overflow-y-auto">
         <ChatMessages messages={messages} isTyping={isTyping} />
+        
+        {/* Show search results for the last message if available */}
+        {messages.length > 0 && messages[messages.length - 1].searchResults && (
+          <SearchResultsPane 
+            results={messages[messages.length - 1].searchResults!}
+          />
+        )}
       </div>
 
       <ChatInput

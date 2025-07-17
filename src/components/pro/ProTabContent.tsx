@@ -5,7 +5,7 @@ import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
 import { CommentsWall } from '../CommentsWall';
 import { GeminiAIChat } from '../GeminiAIChat';
-import { TripSearchTab } from '../TripSearchTab';
+
 import { TeamTab } from './TeamTab';
 import { TripTasksTab } from '../todo/TripTasksTab';
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
@@ -166,8 +166,6 @@ export const ProTabContent = ({
             preferences={tripPreferences}
           />
         );
-      case 'search':
-        return <TripSearchTab tripId={tripId} />;
       default:
         return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
     }

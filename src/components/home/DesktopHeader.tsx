@@ -3,10 +3,9 @@ import React, { useState } from 'react';
 import { Crown, Plus, Settings, User, LogIn } from 'lucide-react';
 import { NotificationBell } from '../NotificationBell';
 import { SearchBar } from '../SearchBar';
-import { GlobalSearchModal } from '../GlobalSearchModal';
 import { AuthModal } from '../AuthModal';
 
-import { useGlobalSearch } from '../../hooks/useGlobalSearch';
+
 import { useAuth } from '../../hooks/useAuth';
 import {
   DropdownMenu,
@@ -23,20 +22,11 @@ interface DesktopHeaderProps {
 }
 
 export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }: DesktopHeaderProps) => {
-  const [showSearchModal, setShowSearchModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const { search } = useGlobalSearch();
   const { user, signOut } = useAuth();
 
   const handleSearchClick = () => {
-    setShowSearchModal(true);
-  };
-
-  const handleSearch = (query: string) => {
-    if (query.trim()) {
-      search(query);
-      setShowSearchModal(true);
-    }
+    alert('Please navigate to any trip and use the Junto Concierge for search and assistance.');
   };
 
   const handleAuthClick = () => {
@@ -64,8 +54,8 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
           {/* Global Search Bar */}
           <div className="w-80">
             <SearchBar
-              placeholder="Search trips, people, files..."
-              onSearch={handleSearch}
+              placeholder="Use Junto Concierge in any trip..."
+              onSearch={handleSearchClick}
               className="cursor-pointer"
             />
           </div>
@@ -141,10 +131,6 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
         </div>
       </div>
 
-      <GlobalSearchModal 
-        isOpen={showSearchModal}
-        onClose={() => setShowSearchModal(false)}
-      />
       
       <AuthModal 
         isOpen={showAuthModal}
