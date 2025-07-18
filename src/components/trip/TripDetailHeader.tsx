@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MessageCircle, Settings, UserPlus, Crown } from 'lucide-react';
-import { UniversalTripAI } from '../UniversalTripAI';
+
 import { useTripVariant } from '../../contexts/TripVariantContext';
 import { useAuth } from '../../hooks/useAuth';
 import { useConsumerSubscription } from '../../hooks/useConsumerSubscription';
@@ -42,10 +42,6 @@ export const TripDetailHeader = ({
       </button>
 
       <div className="flex items-center gap-3">
-        {/* Universal Trip AI Button */}
-        <UniversalTripAI tripContext={tripContext} />
-
-
         {user && (
           <>
             <button

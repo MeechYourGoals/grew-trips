@@ -6,7 +6,7 @@ import { TripPreferences } from '../types/consumer';
 import { SciraAIService, TripContext } from '../services/sciraAI';
 import { UniversalConciergeService, SearchResult } from '../services/universalConciergeService';
 import { ChatMessages } from './chat/ChatMessages';
-import { ChatInput } from './chat/ChatInput';
+import { AiChatInput } from './chat/AiChatInput';
 import { GeminiPlusUpgrade } from './chat/GeminiPlusUpgrade';
 import { SearchResultsPane } from './SearchResultsPane';
 
@@ -192,12 +192,11 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         )}
       </div>
 
-      <ChatInput
+      <AiChatInput
         inputMessage={inputMessage}
         onInputChange={setInputMessage}
         onSendMessage={handleSendMessage}
         onKeyPress={handleKeyPress}
-        apiKey=""
         isTyping={isTyping}
       />
     </div>

@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Settings, Crown, MessageCircle, UserPlus } from 'lucide-react';
-import { UniversalTripAI } from '../UniversalTripAI';
+
 import { useAuth } from '../../hooks/useAuth';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 
@@ -40,9 +40,6 @@ export const ProTripDetailHeader = ({
       </button>
 
       <div className="flex items-center gap-3">
-        {/* Universal Trip AI Button */}
-        <UniversalTripAI tripContext={tripContext} />
-
         {/* Pro Badge */}
         <div className={`bg-gradient-to-r ${accentColors.gradient} backdrop-blur-sm border border-yellow-500/30 rounded-xl px-4 py-2 flex items-center gap-2`}>
           <Crown size={16} className="text-white" />
