@@ -46,7 +46,7 @@ export const TripDetailHeader = ({
         <UniversalTripAI tripContext={tripContext} />
 
 
-        {user ? (
+        {user && (
           <>
             <button
               onClick={onShowInvite}

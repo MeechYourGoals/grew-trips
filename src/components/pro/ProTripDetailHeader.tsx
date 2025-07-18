@@ -49,7 +49,7 @@ export const ProTripDetailHeader = ({
           <span className="text-white font-medium">PRO</span>
         </div>
 
-        {user ? (
+        {user && (
           <>
             <button
               onClick={onShowInvite}
