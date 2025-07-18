@@ -57,7 +57,7 @@ export const GeminiPlusUpgrade = () => {
             <Crown size={32} className="text-white" />
           </div>
           
-          <h3 className="text-2xl font-bold text-white mb-3">✨ Unlock Smart Trip Planning with Trips Plus</h3>
+          <h3 className="text-2xl font-bold text-white mb-3">✨ Unlock Smart Trip Planning with Plus</h3>
           <p className="text-gray-300 mb-6">Your personal AI travel assistant is ready to build the perfect trip.</p>
           
           <div className="space-y-2 text-left mb-8">
@@ -84,7 +84,7 @@ export const GeminiPlusUpgrade = () => {
               onClick={upgradeToPlus}
               className={`w-full bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 text-white font-bold py-4 rounded-xl transition-all duration-200 hover:scale-105 shadow-lg text-lg`}
             >
-              🔓 Unlock with Trips Plus
+              🔓 Unlock with Plus
             </button>
             <button className="text-gray-400 hover:text-white text-sm">
               No thanks

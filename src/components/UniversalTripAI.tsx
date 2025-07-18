@@ -107,10 +107,10 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
     return (
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
-            <Sparkles size={16} className="mr-2" />
-            Ask about this trip
-          </Button>
+        <Button variant="outline" className="bg-white/10 border-white/20 text-white hover:bg-white/20">
+          <Sparkles size={16} className="mr-2" />
+          Concierge
+        </Button>
         </SheetTrigger>
         <SheetContent className="bg-black border-white/20 text-white">
           <SheetHeader>
@@ -167,7 +167,7 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
       <SheetTrigger asChild>
         <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
           <Sparkles size={16} className="mr-2" />
-          Ask about this trip
+          Concierge
         </Button>
       </SheetTrigger>
       <SheetContent className="bg-black border-white/20 text-white w-full sm:max-w-lg">

@@ -1,15 +1,14 @@
-
 import React from 'react';
 import { X, Crown, Sparkles, MessageCircle, Settings, Zap } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TRIPS_PLUS_PRICE } from '../types/consumer';
 
-interface TripsPlusUpsellModalProps {
+interface PlusUpsellModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const TripsPlusUpsellModal = ({ isOpen, onClose }: TripsPlusUpsellModalProps) => {
+export const PlusUpsellModal = ({ isOpen, onClose }: PlusUpsellModalProps) => {
   const { upgradeToPlus, isLoading } = useConsumerSubscription();
 
   if (!isOpen) return null;
@@ -28,7 +27,7 @@ export const TripsPlusUpsellModal = ({ isOpen, onClose }: TripsPlusUpsellModalPr
               <Crown size={24} className="text-white" />
             </div>
             <div>
-              <h2 className="text-3xl font-bold text-white">Upgrade to Trips Plus</h2>
+              <h2 className="text-3xl font-bold text-white">Upgrade to Plus</h2>
               <p className="text-gray-400">AI-powered travel planning for smarter trips</p>
             </div>
           </div>
@@ -77,7 +76,7 @@ export const TripsPlusUpsellModal = ({ isOpen, onClose }: TripsPlusUpsellModalPr
 
         {/* Comparison */}
         <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 mb-8">
-          <h3 className="text-lg font-bold text-white mb-4">Free vs. Trips Plus</h3>
+          <h3 className="text-lg font-bold text-white mb-4">Free vs. Plus</h3>
           <div className="grid md:grid-cols-2 gap-6">
             <div>
               <h4 className="text-white font-medium mb-3">Free Plan</h4>
@@ -89,7 +88,7 @@ export const TripsPlusUpsellModal = ({ isOpen, onClose }: TripsPlusUpsellModalPr
               </ul>
             </div>
             <div>
-              <h4 className="text-white font-medium mb-3">Trips Plus</h4>
+              <h4 className="text-white font-medium mb-3">Plus</h4>
               <ul className="space-y-2 text-sm text-green-300">
                 <li>• AI-powered recommendations</li>
                 <li>• Smart preference matching</li>

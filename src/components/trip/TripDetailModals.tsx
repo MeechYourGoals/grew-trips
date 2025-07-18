@@ -4,7 +4,7 @@ import { SettingsMenu } from '../SettingsMenu';
 import { InviteModal } from '../InviteModal';
 import { AuthModal } from '../AuthModal';
 import { TripSettings } from '../TripSettings';
-import { TripsPlusUpsellModal } from '../TripsPlusUpsellModal';
+import { PlusUpsellModal } from '../PlusUpsellModal';
 
 interface TripDetailModalsProps {
   showSettings: boolean;
@@ -54,7 +54,7 @@ export const TripDetailModals = ({
         tripName={tripName}
         currentUserId={userId || '4'}
       />
-      <TripsPlusUpsellModal
+      <PlusUpsellModal
         isOpen={showTripsPlusModal}
         onClose={onCloseTripsPlusModal}
       />

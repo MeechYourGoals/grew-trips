@@ -42,8 +42,8 @@ export const ConsumerSubscriptionProvider = ({ children }: { children: React.Rea
 
   const upgradeToPlus = async () => {
     setIsLoading(true);
-    // TODO: Implement Stripe checkout for Trips Plus
-    console.log('Upgrading to Trips Plus...');
+    // TODO: Implement Stripe checkout for Plus
+    console.log('Upgrading to Plus...');
     setTimeout(() => {
       setSubscription(prev => prev ? { ...prev, tier: 'plus' } : null);
       setIsLoading(false);

@@ -45,18 +45,6 @@ export const TripDetailHeader = ({
         {/* Universal Trip AI Button */}
         <UniversalTripAI tripContext={tripContext} />
 
-        {/* Badge - Pro or Trips Plus */}
-        {variant === 'pro' ? (
-          <div className={`bg-gradient-to-r ${accentColors.gradient} backdrop-blur-sm border border-${accentColors.primary}/30 rounded-xl px-4 py-2 flex items-center gap-2`}>
-            <Crown size={16} className="text-white" />
-            <span className="text-white font-medium">PRO</span>
-          </div>
-        ) : isPlus && (
-          <div className={`bg-gradient-to-r from-${accentColors.primary}/20 to-${accentColors.secondary}/20 backdrop-blur-sm border border-${accentColors.primary}/30 rounded-xl px-4 py-2 flex items-center gap-2`}>
-            <Crown size={16} className={`text-${accentColors.primary}`} />
-            <span className={`text-${accentColors.primary} font-medium`}>TRIPS PLUS</span>
-          </div>
-        )}
 
         {user ? (
           <>
@@ -83,13 +71,6 @@ export const TripDetailHeader = ({
               <Settings size={20} />
             </button>
           </>
-        ) : (
-          <button
-            onClick={onShowAuth}
-            className={`bg-gradient-to-r ${accentColors.gradient} text-white px-6 py-2 rounded-xl transition-colors font-medium`}
-          >
-            Sign In
-          </button>
         )}
       </div>
     </div>

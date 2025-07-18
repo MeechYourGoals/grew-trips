@@ -74,13 +74,6 @@ export const ProTripDetailHeader = ({
               <Settings size={20} />
             </button>
           </>
-        ) : (
-          <button
-            onClick={onShowAuth}
-            className={`bg-gradient-to-r ${accentColors.gradient} text-white px-6 py-2 rounded-xl transition-colors font-medium`}
-          >
-            Sign In
-          </button>
         )}
       </div>
     </div>

@@ -51,7 +51,7 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
               }`}
             >
               <Crown size={18} />
-              Trips Plus
+              Plus
             </button>
             <button
               onClick={() => setSelectedPlan('pro')}
@@ -85,7 +85,7 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
               <div className="w-16 h-16 bg-gradient-to-r from-glass-orange to-glass-yellow rounded-full flex items-center justify-center mx-auto mb-4">
                 <Crown size={32} className="text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Trips Plus</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">Plus</h3>
               <p className="text-gray-300">AI-powered travel planning for smarter trips</p>
             </div>
 

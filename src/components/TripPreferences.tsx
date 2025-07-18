@@ -78,10 +78,10 @@ export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferences
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
           <div className="text-center">
             <Crown size={48} className={`text-${accentColors.primary} mx-auto mb-4`} />
-            <h3 className="text-xl font-bold text-white mb-2">Trips Plus Exclusive</h3>
+            <h3 className="text-xl font-bold text-white mb-2">Plus Exclusive</h3>
             <p className="text-gray-300 mb-4">Set group preferences to get personalized AI recommendations</p>
             <button className={`bg-gradient-to-r ${accentColors.gradient} text-white px-6 py-3 rounded-xl font-medium hover:scale-105 transition-transform`}>
-              Upgrade to Trips Plus
+              Upgrade to Plus
             </button>
           </div>
         </div>

@@ -23,7 +23,7 @@ export const ConsumerBillingSection = () => {
       ]
     },
     plus: {
-      name: 'Trips Plus',
+      name: 'Plus',
       price: TRIPS_PLUS_PRICE,
       features: [
         'Everything in Free',
@@ -53,7 +53,7 @@ export const ConsumerBillingSection = () => {
               <h4 className="text-xl font-bold text-white flex items-center gap-2">
                 {isPlus ? (
                   <>
-                    Trips Plus
+                    Plus
                     <Crown size={20} className="text-glass-orange" />
                   </>
                 ) : (
@@ -95,7 +95,7 @@ export const ConsumerBillingSection = () => {
             disabled={isLoading}
             className="bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white px-6 py-3 rounded-lg font-medium transition-colors disabled:opacity-50"
           >
-            {isLoading ? 'Processing...' : 'Upgrade to Trips Plus'}
+            {isLoading ? 'Processing...' : 'Upgrade to Plus'}
           </button>
         )}
 

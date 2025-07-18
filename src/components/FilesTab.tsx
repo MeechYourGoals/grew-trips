@@ -483,7 +483,7 @@ export const FilesTab = ({ tripId }: FilesTabProps) => {
               <Crown className="h-6 w-6 text-white" />
             </div>
             <div className="flex-1">
-              <h4 className="text-white font-semibold mb-1">Upgrade to Trips Plus</h4>
+              <h4 className="text-white font-semibold mb-1">Upgrade to Plus</h4>
               <p className="text-gray-300 text-sm">
                 Let AI automatically extract dates, times, and locations from your uploaded files and sync them to your trip calendar.
               </p>
