@@ -17,6 +17,16 @@ export const PollComponent = () => {
         { id: 'c', text: 'Le Comptoir du Relais', votes: 12 }
       ],
       totalVotes: 25
+    },
+    {
+      id: '2',
+      question: 'What amount is everybody going to spend tonight on a table at a club?',
+      options: [
+        { id: 'a', text: '$300 each', votes: 3 },
+        { id: 'b', text: '$600 each', votes: 7 },
+        { id: 'c', text: '$900 each', votes: 2 }
+      ],
+      totalVotes: 12
     }
   ]);
 

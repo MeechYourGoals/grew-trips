@@ -82,9 +82,27 @@ export class DemoModeService {
   }
 
   private getFallbackMessages(tripType: string): MockMessage[] {
-    // Enhanced consumer trip messages with more variety
+    // Enhanced consumer trip messages with regular chat and broadcast messages
     if (tripType === 'destination-wedding') {
       return [
+        {
+          id: 'wedding-broadcast-1',
+          trip_type: 'destination-wedding',
+          sender_name: 'Wedding Coordinator',
+          message_content: "📍 Going to the beach at 4pm. Make sure you're not late!",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['logistics', 'broadcast']
+        },
+        {
+          id: 'wedding-broadcast-2',
+          trip_type: 'destination-wedding',
+          sender_name: 'Best Man',
+          message_content: "🚗 Ubers will be here in 20 minutes. Everyone meet in the lobby.",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['urgent', 'broadcast']
+        },
         {
           id: 'wedding-1',
           trip_type: 'destination-wedding',
@@ -101,7 +119,7 @@ export class DemoModeService {
           message_content: "so glad you broadcast that the reception moved back an hour, I was going to be late anyway lol",
           delay_seconds: 0,
           timestamp_offset_days: 1,
-          tags: ['logistics', 'broadcast']
+          tags: ['logistics']
         },
         {
           id: 'wedding-3',
@@ -111,6 +129,15 @@ export class DemoModeService {
           delay_seconds: 0,
           timestamp_offset_days: 1,
           tags: ['coordination']
+        },
+        {
+          id: 'wedding-4',
+          trip_type: 'destination-wedding',
+          sender_name: 'Sarah',
+          message_content: "The sunset ceremony was absolutely magical! 🌅✨",
+          delay_seconds: 0,
+          timestamp_offset_days: 0,
+          tags: ['celebration']
         }
       ];
     }
@@ -253,9 +280,27 @@ export class DemoModeService {
       ];
     }
 
-    // Add more consumer trip types
-    if (tripType === 'leisure-group' || tripType === 'friends-trip') {
+    // Default consumer trip type with comprehensive mock data
+    if (tripType === 'leisure-group' || tripType === 'friends-trip' || tripType === 'demo') {
       return [
+        {
+          id: 'friends-broadcast-1',
+          trip_type: 'friends-trip',
+          sender_name: 'Trip Organizer',
+          message_content: "📍 Going to the beach at 4pm. Make sure you're not late!",
+          delay_seconds: 0,
+          timestamp_offset_days: 1,
+          tags: ['logistics', 'broadcast']
+        },
+        {
+          id: 'friends-broadcast-2',
+          trip_type: 'friends-trip',
+          sender_name: 'Marcus',
+          message_content: "🚗 Ubers will be here in 20 minutes. Everyone meet in the lobby.",
+          delay_seconds: 0,
+          timestamp_offset_days: 0,
+          tags: ['urgent', 'broadcast']
+        },
         {
           id: 'leisure-1',
           trip_type: 'leisure-group',
@@ -282,6 +327,15 @@ export class DemoModeService {
           delay_seconds: 0,
           timestamp_offset_days: 1,
           tags: ['fun']
+        },
+        {
+          id: 'leisure-4',
+          trip_type: 'leisure-group',
+          sender_name: 'Alex',
+          message_content: "Who's ready for some volleyball? I brought the net! 🏐",
+          delay_seconds: 0,
+          timestamp_offset_days: 0,
+          tags: ['activities']
         }
       ];
     }

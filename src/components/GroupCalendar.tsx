@@ -13,20 +13,8 @@ interface TripEvent extends CalendarEvent {}
 const mockEvents: TripEvent[] = [
   {
     id: '1',
-    title: 'Dinner at L\'Ami Jean',
-    date: new Date(2025, 6, 16), // July 16, 2025
-    time: '20:00',
-    location: '27 Rue Malar, Paris',
-    description: 'Traditional French bistro',
-    createdBy: 'Emma',
-    include_in_itinerary: true,
-    event_category: 'dining',
-    source_type: 'manual'
-  },
-  {
-    id: '2',
     title: 'Seine River Cruise',
-    date: new Date(2025, 6, 17), // July 17, 2025
+    date: new Date(2025, 6, 16), // July 16, 2025
     time: '19:30',
     location: 'Port de la Bourdonnais',
     description: 'Evening cruise with dinner',
@@ -36,13 +24,37 @@ const mockEvents: TripEvent[] = [
     source_type: 'manual'
   },
   {
+    id: '2',
+    title: 'Sushi dinner at Tsukiji Market',
+    date: new Date(2025, 6, 17), // July 17, 2025
+    time: '19:00',
+    location: 'Tsukiji Outer Market, Tokyo',
+    description: 'Fresh sushi experience at the famous market',
+    createdBy: 'Marcus',
+    include_in_itinerary: true,
+    event_category: 'dining',
+    source_type: 'manual'
+  },
+  {
     id: '3',
-    title: 'Louvre Museum Visit',
+    title: 'Team photo at Shibuya Crossing',
     date: new Date(2025, 6, 18), // July 18, 2025
     time: '10:00',
-    location: 'Louvre Museum',
-    description: 'Pre-booked timed entry tickets',
+    location: 'Shibuya Crossing, Tokyo',
+    description: 'Group photo at the world\'s busiest pedestrian crossing',
     createdBy: 'Sarah',
+    include_in_itinerary: true,
+    event_category: 'activity',
+    source_type: 'manual'
+  },
+  {
+    id: '4',
+    title: 'Beach volleyball tournament',
+    date: new Date(2025, 6, 19), // July 19, 2025
+    time: '14:00',
+    location: 'Shiokaze Park Beach',
+    description: 'Friendly competition on the sand courts',
+    createdBy: 'Alex',
     include_in_itinerary: true,
     event_category: 'activity',
     source_type: 'manual'

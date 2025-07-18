@@ -16,7 +16,53 @@ export const TripTasksTab = ({ tripId }: TripTasksTabProps) => {
   const { accentColors } = useTripVariant();
   const { data: tasks, isLoading } = useTripTasks(tripId);
 
-  const openTasks = tasks?.filter(task => {
+  // Mock todo items for demo
+  const mockTasks = [
+    {
+      id: 'task-1',
+      trip_id: tripId,
+      title: 'Make sure your visa and passport documents are handled at least one month prior',
+      description: 'Verify all travel documents are valid and up to date',
+      due_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      is_poll: false,
+      task_status: [{ task_id: 'task-1', completed: false, user_id: 'user1' }],
+      creator_id: 'trip-organizer',
+      created_by: 'Trip Organizer',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'task-2',
+      trip_id: tripId,
+      title: 'Jimmy to purchase alcohol for the house while Sam gets food',
+      description: 'Coordinate house supplies for the trip',
+      due_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      is_poll: false,
+      task_status: [{ task_id: 'task-2', completed: true, user_id: 'jimmy' }],
+      creator_id: 'marcus',
+      created_by: 'Marcus',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'task-3',
+      trip_id: tripId,
+      title: 'Making sure all clothes are packed before next destination',
+      description: 'Pack weather-appropriate clothing for all activities',
+      due_at: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+      is_poll: false,
+      task_status: [{ task_id: 'task-3', completed: false, user_id: 'user1' }],
+      creator_id: 'sarah',
+      created_by: 'Sarah',
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  ];
+
+  // Use mock tasks if no real tasks are available
+  const displayTasks = tasks && tasks.length > 0 ? tasks : mockTasks;
+
+  const openTasks = displayTasks?.filter(task => {
     if (task.is_poll) {
       // For poll tasks, check if all required users have completed
       const completionRate = task.task_status?.filter(status => status.completed).length || 0;
@@ -27,7 +73,7 @@ export const TripTasksTab = ({ tripId }: TripTasksTabProps) => {
     return !task.task_status?.[0]?.completed;
   }) || [];
 
-  const completedTasks = tasks?.filter(task => {
+  const completedTasks = displayTasks?.filter(task => {
     if (task.is_poll) {
       const completionRate = task.task_status?.filter(status => status.completed).length || 0;
       const totalRequired = task.task_status?.length || 1;

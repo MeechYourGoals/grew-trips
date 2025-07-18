@@ -11,7 +11,32 @@ interface Photo {
 }
 
 export const PhotoAlbum = () => {
-  const [photos, setPhotos] = useState<Photo[]>([]);
+  // Mock vacation photos for demo
+  const mockPhotos: Photo[] = [
+    {
+      id: 'photo-1',
+      url: '/src/assets/vacation-beach-group.jpg',
+      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+      uploadedBy: 'Marcus',
+      caption: 'Beach day with the crew! 🏖️'
+    },
+    {
+      id: 'photo-2', 
+      url: '/src/assets/vacation-landmark-selfie.jpg',
+      timestamp: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000), // 1 day ago
+      uploadedBy: 'Sarah',
+      caption: 'Epic group selfie at the landmark!'
+    },
+    {
+      id: 'photo-3',
+      url: '/src/assets/vacation-dinner-sunset.jpg',
+      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 hours ago
+      uploadedBy: 'Alex',
+      caption: 'Sunset dinner vibes ✨'
+    }
+  ];
+
+  const [photos, setPhotos] = useState<Photo[]>(mockPhotos);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handlePhotoUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -90,6 +115,9 @@ export const PhotoAlbum = () => {
               <div className="mt-3 px-2">
                 <div className="text-sm font-medium text-white">{photo.uploadedBy}</div>
                 <div className="text-xs text-gray-400">{photo.timestamp.toLocaleDateString()}</div>
+                {photo.caption && (
+                  <div className="text-xs text-gray-300 mt-1">{photo.caption}</div>
+                )}
               </div>
             </div>
           ))}

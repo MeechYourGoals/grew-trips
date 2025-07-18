@@ -103,35 +103,34 @@ export const TripChat = ({
   };
 
   useEffect(() => {
-    if (demoMode.isDemoMode) {
-      const loadDemoData = async () => {
-        const demoMessages = await demoModeService.getMockMessages('demo');
-        
-        // Map the demo service messages to our local format
-        const formattedMessages = demoMessages.map(msg => ({
-          id: msg.id,
-          text: msg.message_content || '', // Use message_content as text
-          sender: { 
-            id: msg.id, 
-            name: msg.sender_name || 'Unknown',
-            avatar: '/default-avatar.png' 
-          },
-          createdAt: new Date(Date.now() - (msg.timestamp_offset_days || 0) * 86400000).toISOString(),
-          isBroadcast: msg.tags?.includes('logistics') || msg.tags?.includes('urgent') || false,
-          trip_type: msg.trip_type,
-          sender_name: msg.sender_name,
-          message_content: msg.message_content,
-          delay_seconds: msg.delay_seconds,
-          timestamp_offset_days: msg.timestamp_offset_days,
-          tags: msg.tags
-        }));
-        
-        setMessages(formattedMessages);
-        setLoading(false);
-      };
+    const loadDemoData = async () => {
+      // Always load demo data for consumer trips, with fallback to 'demo' type
+      const demoMessages = await demoModeService.getMockMessages('friends-trip');
+      
+      // Map the demo service messages to our local format
+      const formattedMessages = demoMessages.map(msg => ({
+        id: msg.id,
+        text: msg.message_content || '', // Use message_content as text
+        sender: { 
+          id: msg.id, 
+          name: msg.sender_name || 'Unknown',
+          avatar: '/default-avatar.png' 
+        },
+        createdAt: new Date(Date.now() - (msg.timestamp_offset_days || 0) * 86400000).toISOString(),
+        isBroadcast: msg.tags?.includes('logistics') || msg.tags?.includes('urgent') || msg.tags?.includes('broadcast') || false,
+        trip_type: msg.trip_type,
+        sender_name: msg.sender_name,
+        message_content: msg.message_content,
+        delay_seconds: msg.delay_seconds,
+        timestamp_offset_days: msg.timestamp_offset_days,
+        tags: msg.tags
+      }));
+      
+      setMessages(formattedMessages);
+      setLoading(false);
+    };
 
-      loadDemoData();
-    }
+    loadDemoData();
   }, [demoMode.isDemoMode]);
 
   const filteredMessages = messages.filter(message => {
@@ -196,18 +195,18 @@ export const TripChat = ({
           {filteredMessages.map((message) => (
             <div key={message.id} className={`flex flex-col ${message.sender.name === 'You' ? 'items-end' : 'items-start'}`}>
               <div className={`
-                max-w-md p-3 rounded-2xl relative
+                max-w-md p-3 rounded-2xl relative font-medium
                 ${message.isBroadcast
-                  ? 'bg-gradient-to-r from-orange-900/40 to-red-900/40 border border-orange-500/50 text-white'
+                  ? 'bg-gradient-to-r from-red-900/60 to-orange-900/60 border-2 border-red-500/70 text-white shadow-lg shadow-red-500/20 font-bold'
                   : message.sender.name === 'You' 
                     ? 'bg-gray-800 text-white' 
                     : 'bg-gray-700 text-gray-200'
                 }
               `}>
                 {message.isBroadcast && (
-                  <div className="flex items-center gap-1 text-xs text-orange-400 mb-1">
-                    <Megaphone size={12} />
-                    <span>Broadcast</span>
+                  <div className="flex items-center gap-1 text-xs text-red-300 mb-2 font-bold">
+                    <Megaphone size={14} className="text-red-400" />
+                    <span className="text-red-300">📢 BROADCAST ALERT</span>
                   </div>
                 )}
                 {message.replyTo && (
