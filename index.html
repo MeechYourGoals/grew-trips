@@ -1,17 +1,44 @@
 
+
 <!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png" type="image/png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Junto</title>
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- iOS PWA Meta Tags -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Junto" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    
+    <!-- iOS App Icons -->
+    <link rel="apple-touch-icon" href="/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png" />
+    
+    <!-- Theme colors -->
+    <meta name="theme-color" content="#3A60D0" />
+    <meta name="msapplication-TileColor" content="#3A60D0" />
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- iOS Safari viewport fixes -->
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-touch-fullscreen" content="yes" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
+

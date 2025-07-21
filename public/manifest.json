@@ -1,0 +1,41 @@
+
+{
+  "name": "Junto - Travel Planning Platform",
+  "short_name": "Junto",
+  "description": "Professional trip management and collaborative travel planning platform",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#181A21",
+  "theme_color": "#3A60D0",
+  "orientation": "portrait-primary",
+  "categories": ["travel", "productivity", "business"],
+  "lang": "en",
+  "scope": "/",
+  "icons": [
+    {
+      "src": "/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}
+
