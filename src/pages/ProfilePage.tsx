@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { User, Settings, Archive, Camera, Share2 } from 'lucide-react';
+import { User, Archive, Camera, Share2 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Badge } from '../components/ui/badge';
@@ -8,6 +9,7 @@ import { useAuth } from '../hooks/useAuth';
 
 const ProfilePage = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const stats = [
     { label: 'Total Trips', value: '12', icon: '✈️' },
@@ -49,24 +51,34 @@ const ProfilePage = () => {
 
       {/* Quick Actions */}
       <div className="space-y-3 mb-8">
-        <Button variant="outline" className="w-full justify-start h-12" size="lg">
+        <Button 
+          variant="outline" 
+          className="w-full justify-start h-12" 
+          size="lg"
+          onClick={() => alert('Feature coming soon!')}
+        >
           <Camera className="mr-3" size={18} />
           Manage Photos & Memories
         </Button>
         
-        <Button variant="outline" className="w-full justify-start h-12" size="lg">
+        <Button 
+          variant="outline" 
+          className="w-full justify-start h-12" 
+          size="lg"
+          onClick={() => navigate('/archive')}
+        >
           <Archive className="mr-3" size={18} />
           Archived Trips
         </Button>
         
-        <Button variant="outline" className="w-full justify-start h-12" size="lg">
+        <Button 
+          variant="outline" 
+          className="w-full justify-start h-12" 
+          size="lg"
+          onClick={() => alert('Feature coming soon!')}
+        >
           <Share2 className="mr-3" size={18} />
           Shared Trip Links
-        </Button>
-        
-        <Button variant="outline" className="w-full justify-start h-12" size="lg">
-          <Settings className="mr-3" size={18} />
-          Account Settings
         </Button>
       </div>
 
