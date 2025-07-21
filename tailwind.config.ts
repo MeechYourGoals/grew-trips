@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -19,15 +20,42 @@ export default {
 		},
 		extend: {
 			fontFamily: {
-				'outfit': ['Outfit', 'sans-serif'],
+				// Enterprise-grade font stack
+				'sans': [
+					'Inter', 
+					'-apple-system', 
+					'BlinkMacSystemFont', 
+					'"SF Pro Display"', 
+					'"SF Pro Text"', 
+					'"Segoe UI"', 
+					'Roboto', 
+					'system-ui', 
+					'sans-serif'
+				],
+			},
+			fontSize: {
+				// Enterprise typography scale
+				'h1': ['24px', { lineHeight: '32px', fontWeight: '700' }],
+				'h2': ['20px', { lineHeight: '28px', fontWeight: '600' }],
+				'h3': ['18px', { lineHeight: '24px', fontWeight: '600' }],
+				'body': ['16px', { lineHeight: '24px', fontWeight: '400' }],
+				'body-sm': ['15px', { lineHeight: '22px', fontWeight: '400' }],
+				'caption': ['14px', { lineHeight: '20px', fontWeight: '500' }],
 			},
 			colors: {
-				// Dark theme with metallic gold, silver Pro, and navy Events
+				// Enterprise color system
 				glass: {
-					'metallic-gold': 'hsl(45, 95%, 58%)', // Metallic gold
-					'metallic-gold-light': 'hsl(45, 90%, 65%)', // Lighter metallic gold
-					'metallic-silver': 'hsl(210, 8%, 45%)', // Dark metallic silver for Pro
-					'metallic-silver-light': 'hsl(210, 10%, 55%)', // Lighter metallic silver
+					// Updated enterprise colors
+					'enterprise-blue': 'hsl(223, 56%, 53%)', // #3A60D0
+					'enterprise-blue-light': 'hsl(223, 50%, 60%)', // Lighter variant
+					'accent-orange': 'hsl(32, 95%, 48%)', // #F57C00
+					'accent-orange-light': 'hsl(32, 85%, 58%)', // #FFA726
+					'slate-bg': 'hsl(223, 25%, 12%)', // #181A21
+					'slate-card': 'hsl(223, 25%, 18%)', // #232B3B
+					'slate-border': 'hsl(223, 15%, 25%)', // #383C4A
+					'light-bg': 'hsl(223, 25%, 97%)', // #F7F8FA
+					'light-border': 'hsl(223, 15%, 90%)', // #E3E7ED
+					'text-primary': 'hsl(223, 35%, 20%)', // #252F4A
 					green: '#62D621',
 					dark: '#000000',
 					light: '#FFFFFF',
@@ -79,10 +107,29 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
+			spacing: {
+				// Enterprise spacing scale
+				'page-gutter-mobile': '16px',
+				'page-gutter-desktop': '24px',
+				'section-gap': '20px',
+				'card-padding': '20px',
+				'button-padding-y': '16px',
+				'button-padding-x': '24px',
+				'touch-target': '44px',
+			},
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				sm: 'calc(var(--radius) - 4px)',
+				// Enterprise border radius
+				'enterprise': '8px',
+				'enterprise-sm': '6px',
+			},
+			boxShadow: {
+				// Enterprise shadows
+				'enterprise': '0px 2px 16px rgba(50, 50, 93, 0.07)',
+				'enterprise-md': '0px 4px 24px rgba(50, 50, 93, 0.12)',
+				'enterprise-lg': '0px 8px 32px rgba(50, 50, 93, 0.18)',
 			},
 			keyframes: {
 				'accordion-down': {

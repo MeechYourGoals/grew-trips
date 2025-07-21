@@ -7,82 +7,85 @@
 
 @layer base {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+    /* Enterprise Dark Theme */
+    --background: 223 25% 12%; /* Slate background instead of pure black */
+    --foreground: 223 25% 97%;
 
-    --card: 0 0% 5%;
-    --card-foreground: 0 0% 100%;
+    --card: 223 25% 18%; /* Slate card background */
+    --card-foreground: 223 25% 97%;
 
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 223 25% 18%;
+    --popover-foreground: 223 25% 97%;
 
-    --primary: 45 95% 58%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 223 56% 53%; /* Enterprise blue */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 223 25% 20%;
+    --secondary-foreground: 223 25% 97%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 223 15% 25%;
+    --muted-foreground: 223 15% 70%;
 
-    --accent: 45 95% 58%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 32 95% 48%; /* Accent orange */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 15%;
-    --ring: 45 95% 58%;
+    --border: 223 15% 25%;
+    --input: 223 25% 20%;
+    --ring: 223 56% 53%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 5%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 45 95% 58%;
-    --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 45 95% 58%;
+    --sidebar-background: 223 25% 15%;
+    --sidebar-foreground: 223 25% 90%;
+    --sidebar-primary: 223 56% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 223 25% 20%;
+    --sidebar-accent-foreground: 223 25% 90%;
+    --sidebar-border: 223 15% 25%;
+    --sidebar-ring: 223 56% 53%;
   }
 
-  .dark {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 100%;
+  .light {
+    /* Enterprise Light Theme */
+    --background: 223 25% 97%; /* Light background */
+    --foreground: 223 35% 20%;
 
-    --card: 0 0% 5%;
-    --card-foreground: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 223 35% 20%;
 
-    --popover: 0 0% 5%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 223 35% 20%;
 
-    --primary: 45 95% 58%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 223 56% 53%; /* Same enterprise blue */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 10%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 223 15% 90%;
+    --secondary-foreground: 223 35% 20%;
 
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 65%;
+    --muted: 223 15% 90%;
+    --muted-foreground: 223 15% 45%;
 
-    --accent: 45 95% 58%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 32 95% 48%; /* Same accent orange */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 20%;
-    --input: 0 0% 15%;
-    --ring: 45 95% 58%;
-    --sidebar-background: 0 0% 5%;
-    --sidebar-foreground: 0 0% 90%;
-    --sidebar-primary: 45 95% 58%;
-    --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 0 0% 10%;
-    --sidebar-accent-foreground: 0 0% 90%;
-    --sidebar-border: 0 0% 15%;
-    --sidebar-ring: 45 95% 58%;
+    --border: 223 15% 90%;
+    --input: 223 15% 90%;
+    --ring: 223 56% 53%;
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 223 35% 20%;
+    --sidebar-primary: 223 56% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 223 15% 90%;
+    --sidebar-accent-foreground: 223 35% 20%;
+    --sidebar-border: 223 15% 90%;
+    --sidebar-ring: 223 56% 53%;
   }
 }
 
@@ -92,7 +95,33 @@
   }
 
   body {
-    @apply bg-black text-white;
+    @apply bg-background text-foreground font-sans;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* Enterprise Typography */
+  h1 {
+    @apply text-h1;
+  }
+
+  h2 {
+    @apply text-h2;
+  }
+
+  h3 {
+    @apply text-h3;
+  }
+
+  p {
+    @apply text-body;
+  }
+
+  /* Mobile typography adjustments */
+  @media (max-width: 768px) {
+    body {
+      font-size: 15px;
+    }
   }
 }
 
@@ -125,4 +154,29 @@
 
 .animate-scale-in {
   animation: scale-in 0.2s ease-out;
+}
+
+/* Enterprise component utilities */
+@layer components {
+  .btn-enterprise {
+    @apply px-button-padding-x py-button-padding-y rounded-enterprise shadow-enterprise transition-all duration-200;
+    min-height: 44px; /* Touch target */
+  }
+
+  .card-enterprise {
+    @apply bg-card rounded-enterprise shadow-enterprise p-card-padding;
+  }
+
+  .input-enterprise {
+    @apply rounded-enterprise-sm border-border bg-input px-3 py-2 text-body;
+    min-height: 44px; /* Touch target */
+  }
+
+  .page-container {
+    @apply px-page-gutter-mobile md:px-page-gutter-desktop;
+  }
+
+  .section-spacing {
+    @apply space-y-section-gap;
+  }
 }
