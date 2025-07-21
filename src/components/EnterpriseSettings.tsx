@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Building, Users, CreditCard, Shield, Settings, Bell, User, Crown, Wallet, Calendar, Package, Badge, DollarSign, Star, Users as UsersIcon, Heart } from 'lucide-react';
+import { Building, Users, CreditCard, Shield, Settings, Bell, User, Crown, Wallet, Calendar, Package, Badge, DollarSign, Star, Users as UsersIcon, Heart, ChevronDown } from 'lucide-react';
 import { TravelWallet } from './TravelWallet';
 import { OrganizationSection } from './enterprise/OrganizationSection';
 import { BillingSection } from './enterprise/BillingSection';
@@ -13,7 +12,6 @@ import { IntegrationsSection } from './enterprise/IntegrationsSection';
 import { SecurityComplianceSection } from './enterprise/SecurityComplianceSection';
 import { GameSchedule } from './enterprise/GameSchedule';
 import { ShowSchedule } from './enterprise/ShowSchedule';
-
 import { CredentialControl } from './enterprise/CredentialControl';
 import { SettlementPanel } from './enterprise/SettlementPanel';
 import { SponsorDashboard } from './enterprise/SponsorDashboard';
@@ -21,6 +19,7 @@ import { ComplianceCenter } from './enterprise/ComplianceCenter';
 import { ScoutingExport } from './enterprise/ScoutingExport';
 import { PlayerAvailability } from './enterprise/PlayerAvailability';
 import { TripCategory } from '../types/enterprise';
+import { useIsMobile } from '../hooks/use-mobile';
 
 interface EnterpriseSettingsProps {
   organizationId: string;
@@ -31,6 +30,8 @@ interface EnterpriseSettingsProps {
 export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSection = 'organization' }: EnterpriseSettingsProps) => {
   const [activeSection, setActiveSection] = useState(defaultSection);
   const [tripCategory, setTripCategory] = useState<TripCategory>('sports-pro');
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const isMobile = useIsMobile();
 
   // Mock organization data
   const organization = {
@@ -201,7 +202,6 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
       case 'settings': return <EnterpriseGeneralSettings />;
       case 'game-schedule': return <GameSchedule />;
       case 'show-schedule': return <ShowSchedule />;
-      
       case 'credentials': return <CredentialControl />;
       case 'settlement': return <SettlementPanel />;
       case 'sponsors': return <SponsorDashboard />;
@@ -230,6 +230,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
   ];
 
   const sections = getSidebarSections(tripCategory);
+  const currentSection = sections.find(s => s.id === activeSection);
 
   // When integrated into dashboard, render without the full layout
   if (defaultSection !== 'organization') {
@@ -240,9 +241,84 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
     );
   }
 
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-full w-full min-w-0">
+        {/* Mobile Trip Category Selector */}
+        <div className="flex-shrink-0 p-4 border-b border-white/20">
+          <label className="block text-sm text-gray-300 mb-2">Trip Category</label>
+          <select
+            value={tripCategory}
+            onChange={(e) => {
+              setTripCategory(e.target.value as TripCategory);
+              setActiveSection('organization');
+            }}
+            className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50 mb-3"
+          >
+            {categoryOptions.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Mobile Section Selector */}
+        <div className="flex-shrink-0 p-4 border-b border-white/20">
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="w-full flex items-center justify-between p-3 bg-white/10 rounded-xl text-white"
+          >
+            <div className="flex items-center gap-3">
+              {currentSection && <currentSection.icon size={20} />}
+              <span className="text-sm">{currentSection?.label}</span>
+            </div>
+            <ChevronDown 
+              size={20} 
+              className={`transform transition-transform ${showMobileMenu ? 'rotate-180' : ''}`}
+            />
+          </button>
+          
+          {showMobileMenu && (
+            <div className="mt-2 bg-white/10 rounded-xl overflow-hidden">
+              {sections.map((section) => {
+                const Icon = section.icon;
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => {
+                      setActiveSection(section.id);
+                      setShowMobileMenu(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+                      activeSection === section.id
+                        ? 'bg-glass-orange/20 text-glass-orange'
+                        : 'text-gray-300 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <Icon size={20} />
+                    <span className="text-sm">{section.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Content */}
+        <div className="flex-1 min-w-0 overflow-y-auto">
+          <div className="p-4">
+            {renderSection()}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop layout (unchanged)
   return (
     <div className="flex h-full w-full min-w-0">
-      {/* Sidebar */}
+      {/* Desktop Sidebar */}
       <div className="w-80 flex-shrink-0 bg-white/5 backdrop-blur-md border-r border-white/10 p-6 overflow-y-auto">
         <h2 className="text-xl font-bold text-white mb-6">Enterprise Settings</h2>
         
@@ -253,7 +329,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
             value={tripCategory}
             onChange={(e) => {
               setTripCategory(e.target.value as TripCategory);
-              setActiveSection('organization'); // Reset to first section when category changes
+              setActiveSection('organization');
             }}
             className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50"
           >
@@ -286,7 +362,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Desktop Main Content */}
       <div className="flex-1 min-w-0 overflow-y-auto">
         <div className="p-8 pb-24">
           {renderSection()}

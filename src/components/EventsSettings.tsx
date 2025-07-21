@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Calendar, CreditCard, Users, Clock, Building, Badge, Network, Megaphone, Activity, BarChart, Settings, Send } from 'lucide-react';
+import { Calendar, CreditCard, Users, Clock, Building, Badge, Network, Megaphone, Activity, BarChart, Settings, Send, ChevronDown } from 'lucide-react';
 import { EventProfileSection } from './events/EventProfileSection';
 import { TicketingBillingSection } from './events/TicketingBillingSection';
 import { AttendeeTypesSection } from './events/AttendeeTypesSection';
@@ -18,6 +17,7 @@ import { EventSetupWizard } from './events/EventSetupWizard';
 import { EventBasicsSection } from './events/EventBasicsSection';
 import { EventScheduleSection } from './events/EventScheduleSection';
 import { EventInvitationsSection } from './events/EventInvitationsSection';
+import { useIsMobile } from '../hooks/use-mobile';
 
 interface EventsSettingsProps {
   currentUserId: string;
@@ -26,6 +26,8 @@ interface EventsSettingsProps {
 export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
   const [activeSection, setActiveSection] = useState('basics');
   const [eventData, setEventData] = useState({});
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const isMobile = useIsMobile();
 
   const sections = [
     { id: 'basics', label: 'Event Basics', icon: Calendar },
@@ -74,9 +76,66 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
     }
   };
 
+  const currentSection = sections.find(s => s.id === activeSection);
+
+  if (isMobile) {
+    return (
+      <div className="flex flex-col h-full w-full min-w-0">
+        {/* Mobile Section Selector */}
+        <div className="flex-shrink-0 p-4 border-b border-white/20">
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="w-full flex items-center justify-between p-3 bg-white/10 rounded-xl text-white"
+          >
+            <div className="flex items-center gap-3">
+              {currentSection && <currentSection.icon size={20} />}
+              <span className="text-sm">{currentSection?.label}</span>
+            </div>
+            <ChevronDown 
+              size={20} 
+              className={`transform transition-transform ${showMobileMenu ? 'rotate-180' : ''}`}
+            />
+          </button>
+          
+          {showMobileMenu && (
+            <div className="mt-2 bg-white/10 rounded-xl overflow-hidden">
+              {sections.map((section) => {
+                const Icon = section.icon;
+                return (
+                  <button
+                    key={section.id}
+                    onClick={() => {
+                      setActiveSection(section.id);
+                      setShowMobileMenu(false);
+                    }}
+                    className={`w-full flex items-center gap-3 px-4 py-3 text-left transition-colors ${
+                      activeSection === section.id
+                        ? 'bg-glass-orange/20 text-glass-orange'
+                        : 'text-gray-300 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    <Icon size={20} />
+                    <span className="text-sm">{section.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Mobile Content */}
+        <div className="flex-1 min-w-0 overflow-y-auto">
+          <div className="p-4">
+            {renderSection()}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full w-full min-w-0">
-      {/* Sidebar */}
+      {/* Desktop Sidebar */}
       <div className="w-80 flex-shrink-0 bg-white/5 backdrop-blur-md border-r border-white/10 p-6 overflow-y-auto">
         <h2 className="text-xl font-bold text-white mb-6">Events Settings</h2>
         <div className="space-y-2">
@@ -93,14 +152,14 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
                 }`}
               >
                 <Icon size={20} />
-                {section.label}
+                <span className="text-sm">{section.label}</span>
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* Desktop Main Content */}
       <div className="flex-1 min-w-0 overflow-y-auto">
         <div className="p-8 pb-24">
           {renderSection()}
