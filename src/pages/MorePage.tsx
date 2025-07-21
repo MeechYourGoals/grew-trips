@@ -2,15 +2,10 @@
 import React from 'react';
 import { 
   Sparkles, 
-  Users, 
   Calendar, 
   Camera, 
-  FileText, 
-  Gift, 
-  Star,
-  MessageCircle,
-  TrendingUp,
-  Archive
+  Archive,
+  Brain
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -22,36 +17,20 @@ const MorePage = () => {
 
   const features = [
     {
+      icon: Brain,
+      title: 'AI Trip Insights',
+      description: 'AI-powered trip analysis, review summaries, and audio overviews',
+      badge: 'AI',
+      color: 'text-blue-400',
+      action: () => navigate('/ai/review-analysis')
+    },
+    {
       icon: Sparkles,
       title: 'AI Concierge',
       description: 'Get personalized trip recommendations',
       badge: 'Pro',
       color: 'text-yellow-400',
       action: () => navigate('/ai/concierge')
-    },
-    {
-      icon: TrendingUp,
-      title: 'Review Analysis',
-      description: 'AI-powered trip insights and sentiment analysis',
-      badge: 'AI',
-      color: 'text-blue-400',
-      action: () => navigate('/ai/review-analysis')
-    },
-    {
-      icon: MessageCircle,
-      title: 'Audio Overviews',
-      description: 'Listen to AI-generated trip summaries',
-      badge: 'New',
-      color: 'text-green-400',
-      action: () => navigate('/ai/audio-overviews')
-    },
-    {
-      icon: Calendar,
-      title: 'Scheduled Messages',
-      description: 'Manage automated trip communications',
-      badge: 'Pro',
-      color: 'text-purple-400',
-      action: () => navigate('/admin/scheduled-messages')
     },
     {
       icon: Archive,
@@ -66,34 +45,6 @@ const MorePage = () => {
       description: 'Create and share trip photo albums',
       color: 'text-pink-400',
       action: () => {}
-    },
-    {
-      icon: Users,
-      title: 'Find Friends',
-      description: 'Connect with other travelers',
-      color: 'text-indigo-400',
-      action: () => {}
-    },
-    {
-      icon: FileText,
-      title: 'Trip Templates',
-      description: 'Use pre-built trip planning templates',
-      color: 'text-orange-400',
-      action: () => {}
-    },
-    {
-      icon: Gift,
-      title: 'Referral Program',
-      description: 'Invite friends and earn rewards',
-      color: 'text-red-400',
-      action: () => {}
-    },
-    {
-      icon: Star,
-      title: 'Rate App',
-      description: 'Help us improve with your feedback',
-      color: 'text-yellow-400',
-      action: () => {}
     }
   ];
 
@@ -102,7 +53,7 @@ const MorePage = () => {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl font-bold mb-2">More Features</h1>
-        <p className="text-gray-400">Discover all the ways Ravel can enhance your travels</p>
+        <p className="text-gray-400">Discover additional ways Ravel can enhance your travels</p>
       </div>
 
       {/* Featured Section */}
@@ -143,7 +94,7 @@ const MorePage = () => {
 
       {/* All Features Grid */}
       <div className="mb-8">
-        <h2 className="text-lg font-semibold mb-4">All Features</h2>
+        <h2 className="text-lg font-semibold mb-4">Additional Features</h2>
         <div className="grid grid-cols-2 gap-4">
           {features.filter(f => !f.badge || (f.badge !== 'AI' && f.badge !== 'Pro')).map((feature, index) => {
             const Icon = feature.icon;

@@ -20,6 +20,7 @@ import SearchPage from "./pages/SearchPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import MorePage from "./pages/MorePage";
+import ArchivePage from "./pages/ArchivePage";
 import { AdminDashboard } from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
@@ -48,7 +49,8 @@ const App = () => (
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/more" element={<MorePage />} />
-                {/* AI Feature routes */}
+                <Route path="/archive" element={<ArchivePage />} />
+                {/* AI Feature routes - Merged audio overviews into review analysis */}
                 <Route path="/ai/review-analysis" element={<ReviewAnalysis />} />
                 <Route path="/ai/audio-overviews" element={<AudioOverviews />} />
                 <Route path="/admin/scheduled-messages" element={<AdminDashboard />} />

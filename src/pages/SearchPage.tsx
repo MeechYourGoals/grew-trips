@@ -69,7 +69,7 @@ const SearchPage = () => {
       }
     });
 
-    // Search pro trips
+    // Search pro trips - Fixed: use participants instead of teamMembers
     Object.values(proTripMockData).forEach(trip => {
       let score = 0;
       if (trip.title.toLowerCase().includes(query)) score += 3;
@@ -84,14 +84,14 @@ const SearchPage = () => {
           location: trip.location,
           dateRange: trip.dateRange,
           status: new Date(trip.dateRange.split(' - ')[1]) < new Date() ? 'archived' : 'upcoming',
-          participants: trip.teamMembers.length,
+          participants: trip.participants?.length || 0,
           matchScore: score,
           deepLink: `/tour/pro/${trip.id}`
         });
       }
     });
 
-    // Search events
+    // Search events - Fixed: use participants instead of attendees
     Object.values(eventsMockData).forEach(event => {
       let score = 0;
       if (event.title.toLowerCase().includes(query)) score += 3;
@@ -106,7 +106,7 @@ const SearchPage = () => {
           location: event.location,
           dateRange: event.dateRange,
           status: new Date(event.dateRange.split(' - ')[1]) < new Date() ? 'archived' : 'upcoming',
-          participants: event.attendees.length,
+          participants: event.participants?.length || 0,
           matchScore: score,
           deepLink: `/event/${event.id}`
         });
