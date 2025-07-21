@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, MapPin, Settings, Sparkles, MoreHorizontal } from 'lucide-react';
+import { Home, Search, User, Settings, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MobileBottomNavProps {
@@ -20,25 +21,25 @@ export const MobileBottomNav = ({ className }: MobileBottomNavProps) => {
       isActive: location.pathname === '/'
     },
     {
-      id: 'places',
-      label: 'Places',
-      icon: MapPin,
-      path: '/places',
-      isActive: location.pathname.includes('/places')
+      id: 'search',
+      label: 'Search',
+      icon: Search,
+      path: '/search',
+      isActive: location.pathname.includes('/search')
     },
     {
-      id: 'preferences',
-      label: 'Preferences',
+      id: 'profile',
+      label: 'Profile',
+      icon: User,
+      path: '/profile',
+      isActive: location.pathname.includes('/profile')
+    },
+    {
+      id: 'settings',
+      label: 'Settings',
       icon: Settings,
-      path: '/preferences',
-      isActive: location.pathname.includes('/preferences')
-    },
-    {
-      id: 'concierge',
-      label: 'Concierge',
-      icon: Sparkles,
-      path: '/concierge',
-      isActive: location.pathname.includes('/concierge')
+      path: '/settings',
+      isActive: location.pathname.includes('/settings')
     },
     {
       id: 'more',
@@ -53,12 +54,6 @@ export const MobileBottomNav = ({ className }: MobileBottomNavProps) => {
     // Add haptic feedback if available
     if ('vibrate' in navigator) {
       navigator.vibrate(10);
-    }
-    
-    if (tab.path === '/places' || tab.path === '/preferences' || tab.path === '/concierge' || tab.path === '/more') {
-      // For now, keep user on current page or redirect to home
-      // These will be implemented as modal overlays or separate pages later
-      return;
     }
     
     navigate(tab.path);

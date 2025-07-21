@@ -1,5 +1,4 @@
 
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -17,6 +16,10 @@ import ReviewAnalysis from "./pages/ReviewAnalysis";
 import AudioOverviews from "./pages/AudioOverviews";
 import NotFound from "./pages/NotFound";
 import JoinTrip from "./pages/JoinTrip";
+import SearchPage from "./pages/SearchPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
+import MorePage from "./pages/MorePage";
 import { AdminDashboard } from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
@@ -40,6 +43,11 @@ const App = () => (
                 <Route path="/tour/pro/:proTripId" element={<ProTripDetail />} />
                 {/* Events routes - New routes for Events functionality */}
                 <Route path="/event/:eventId" element={<EventDetail />} />
+                {/* Mobile navigation routes */}
+                <Route path="/search" element={<SearchPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/more" element={<MorePage />} />
                 {/* AI Feature routes */}
                 <Route path="/ai/review-analysis" element={<ReviewAnalysis />} />
                 <Route path="/ai/audio-overviews" element={<AudioOverviews />} />
@@ -56,4 +64,3 @@ const App = () => (
 );
 
 export default App;
-
