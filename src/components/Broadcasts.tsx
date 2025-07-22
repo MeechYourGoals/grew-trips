@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Broadcast } from './Broadcast';
 import { BroadcastComposer } from './BroadcastComposer';
@@ -18,7 +17,7 @@ interface BroadcastData {
   message: string;
   timestamp: Date;
   location?: string;
-  category: 'chill' | 'logistics' | 'urgent';
+  category: 'chill' | 'logistics' | 'urgent' | 'emergency';
   recipients: string;
   responses: {
     coming: number;

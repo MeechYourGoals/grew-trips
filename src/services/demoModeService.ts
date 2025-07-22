@@ -1,5 +1,3 @@
-import { getTripCategory } from "@/utils/tripCategoryDetector";
-import { Trip } from "@/types/consumer";
 
 interface MockMessage {
   id: string;
@@ -10,6 +8,8 @@ interface MockMessage {
   timestamp_offset_days?: number;
   tags?: string[];
 }
+
+export { MockMessage };
 
 interface MockBroadcast {
   id: string;
@@ -22,9 +22,24 @@ interface MockBroadcast {
 }
 
 class DemoModeService {
-  getTripType(trip: Trip | null): string {
+  private demoModeKey = 'TRIPS_DEMO_MODE';
+
+  getTripType(trip: any): string {
     if (!trip) return 'demo';
-    return getTripCategory(trip);
+    if (trip.category === 'pro') return 'pro-trip';
+    return 'consumer-trip';
+  }
+
+  isDemoModeEnabled(): boolean {
+    return localStorage.getItem(this.demoModeKey) === 'true';
+  }
+
+  enableDemoMode(): void {
+    localStorage.setItem(this.demoModeKey, 'true');
+  }
+
+  disableDemoMode(): void {
+    localStorage.removeItem(this.demoModeKey);
   }
 
   async getMockMessages(tripType: string): Promise<MockMessage[]> {
