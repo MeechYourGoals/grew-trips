@@ -1,13 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { addMinutes } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { demoModeService, MockMessage as DemoMockMessage } from '../services/demoModeService';
 import { useDemoMode } from '../hooks/useDemoMode';
-import { MessageCircle, Megaphone } from 'lucide-react';
+import { MessageCircle, Megaphone, AlertTriangle } from 'lucide-react';
 import { ChatInput } from './chat/ChatInput';
 import { MessageReactionBar } from './chat/MessageReactionBar';
 import { InlineReplyComponent } from './chat/InlineReplyComponent';
 import { ReplyData } from './chat/types';
+import { getMockAvatar } from '../utils/mockAvatars';
 
 interface TripChatProps {
   groupChatEnabled?: boolean;
@@ -21,9 +23,9 @@ interface MockMessage {
   createdAt: string;
   isAiMessage?: boolean;
   isBroadcast?: boolean;
+  isEmergencyBroadcast?: boolean;
   reactions?: { [key: string]: string[] };
   replyTo?: { id: string; text: string; sender: string };
-  // Added these fields to match demoModeService.MockMessage
   trip_type?: string;
   sender_name?: string;
   message_content?: string;
@@ -39,7 +41,7 @@ export const TripChat = ({
   const [messages, setMessages] = useState<MockMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [inputMessage, setInputMessage] = useState('');
-  const [messageFilter, setMessageFilter] = useState<'all' | 'chat' | 'broadcast'>('all');
+  const [messageFilter, setMessageFilter] = useState<'all' | 'broadcast'>('all');
   const [reactions, setReactions] = useState<{ [messageId: string]: { [reaction: string]: { count: number; userReacted: boolean } } }>({});
   const [replyingTo, setReplyingTo] = useState<{ id: string; text: string; senderName: string } | null>(null);
 
@@ -51,7 +53,7 @@ export const TripChat = ({
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const handleSendMessage = (isBroadcast = false) => {
+  const handleSendMessage = (isBroadcast = false, isEmergency = false) => {
     if (inputMessage.trim() === '') return;
 
     const newMessage: MockMessage = {
@@ -60,10 +62,11 @@ export const TripChat = ({
       sender: { 
         id: 'user1', 
         name: 'You', 
-        avatar: '/default-avatar.png' 
+        avatar: getMockAvatar('You')
       },
       createdAt: new Date().toISOString(),
       isBroadcast,
+      isEmergencyBroadcast: isEmergency,
       reactions: {},
       replyTo: replyingTo ? {
         id: replyingTo.id,
@@ -104,20 +107,19 @@ export const TripChat = ({
 
   useEffect(() => {
     const loadDemoData = async () => {
-      // Always load demo data for consumer trips, with fallback to 'demo' type
       const demoMessages = await demoModeService.getMockMessages('friends-trip');
       
-      // Map the demo service messages to our local format
       const formattedMessages = demoMessages.map(msg => ({
         id: msg.id,
-        text: msg.message_content || '', // Use message_content as text
+        text: msg.message_content || '',
         sender: { 
           id: msg.id, 
           name: msg.sender_name || 'Unknown',
-          avatar: '/default-avatar.png' 
+          avatar: getMockAvatar(msg.sender_name || 'Unknown')
         },
         createdAt: new Date(Date.now() - (msg.timestamp_offset_days || 0) * 86400000).toISOString(),
-        isBroadcast: msg.tags?.includes('logistics') || msg.tags?.includes('urgent') || msg.tags?.includes('broadcast') || false,
+        isBroadcast: msg.tags?.includes('broadcast') || msg.tags?.includes('logistics') || msg.tags?.includes('urgent') || false,
+        isEmergencyBroadcast: msg.tags?.includes('urgent') || msg.tags?.includes('emergency') || false,
         trip_type: msg.trip_type,
         sender_name: msg.sender_name,
         message_content: msg.message_content,
@@ -136,7 +138,6 @@ export const TripChat = ({
   const filteredMessages = messages.filter(message => {
     if (messageFilter === 'all') return true;
     if (messageFilter === 'broadcast') return message.isBroadcast;
-    if (messageFilter === 'chat') return !message.isBroadcast;
     return true;
   });
 
@@ -146,32 +147,25 @@ export const TripChat = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Message Filters */}
+      {/* Message Filters - Only All Messages and Broadcasts */}
       {messages.length > 0 && (
         <div className="flex gap-2 p-4 border-b border-gray-700">
           <button
             onClick={() => setMessageFilter('all')}
-            className={`px-3 py-1 rounded-full text-sm transition-all ${
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
               messageFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
           >
             All Messages
           </button>
           <button
-            onClick={() => setMessageFilter('chat')}
-            className={`px-3 py-1 rounded-full text-sm transition-all ${
-              messageFilter === 'chat' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            Chat Only
-          </button>
-          <button
             onClick={() => setMessageFilter('broadcast')}
-            className={`px-3 py-1 rounded-full text-sm transition-all ${
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
               messageFilter === 'broadcast' ? 'bg-orange-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
             }`}
           >
-            Broadcasts Only
+            <Megaphone size={14} />
+            Broadcasts
           </button>
         </div>
       )}
@@ -180,60 +174,98 @@ export const TripChat = ({
         <div className="text-center py-8">
           <MessageCircle size={48} className="text-gray-600 mx-auto mb-4" />
           <h4 className="text-lg font-medium text-gray-400 mb-2">
-            {messageFilter === 'all' ? 'Start your trip chat' : 
-             messageFilter === 'broadcast' ? 'No broadcasts yet' : 
-             'No chat messages yet'}
+            {messageFilter === 'all' ? 'Start your trip chat' : 'No broadcasts yet'}
           </h4>
           <p className="text-gray-500 text-sm">
             {messageFilter === 'all' ? 'Send a message to get the conversation started!' :
-             messageFilter === 'broadcast' ? 'Send an announcement to all trip members' :
-             'Start chatting with your fellow travelers'}
+             'Send an announcement to all trip members'}
           </p>
         </div>
       ) : (
         <div className="flex-1 overflow-y-auto space-y-4 p-4">
           {filteredMessages.map((message) => (
-            <div key={message.id} className={`flex flex-col ${message.sender.name === 'You' ? 'items-end' : 'items-start'}`}>
-              <div className={`
-                max-w-md p-3 rounded-2xl relative font-medium
-                ${message.isBroadcast
-                  ? 'bg-gradient-to-r from-red-900/60 to-orange-900/60 border-2 border-red-500/70 text-white shadow-lg shadow-red-500/20 font-bold'
-                  : message.sender.name === 'You' 
-                    ? 'bg-gray-800 text-white' 
-                    : 'bg-gray-700 text-gray-200'
-                }
-              `}>
-                {message.isBroadcast && (
-                  <div className="flex items-center gap-1 text-xs text-red-300 mb-2 font-bold">
-                    <Megaphone size={14} className="text-red-400" />
-                    <span className="text-red-300">📢 BROADCAST ALERT</span>
-                  </div>
-                )}
-                {message.replyTo && (
-                  <div className="text-xs text-gray-400 mb-1">
-                    Replying to {message.replyTo.sender}: {message.replyTo.text}
-                  </div>
-                )}
-                <div>{message.text}</div>
-                <div className="text-xs text-gray-500 mt-1">{formatTime(message.createdAt)}</div>
+            <div key={message.id} className="flex items-start gap-3">
+              {/* Avatar */}
+              <img
+                src={message.sender.avatar || getMockAvatar(message.sender.name)}
+                alt={message.sender.name}
+                className="w-10 h-10 rounded-full flex-shrink-0 object-cover border border-gray-600"
+              />
+              
+              {/* Message Content */}
+              <div className="flex-1 min-w-0">
+                {/* Sender Name */}
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-sm font-medium text-gray-300">
+                    {message.sender.name}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    {formatTime(message.createdAt)}
+                  </span>
+                </div>
                 
-                <MessageReactionBar 
-                  reactions={reactions[message.id] || {}} 
-                  onReactMessage={(reactionType) => handleReaction(message.id, reactionType)}
-                />
+                {/* Message Bubble */}
+                <div className={`
+                  max-w-md p-3 rounded-lg relative
+                  ${message.isEmergencyBroadcast
+                    ? 'bg-red-100 border-2 border-red-400 text-red-900 shadow-lg'
+                    : message.isBroadcast
+                      ? 'bg-orange-100 border border-orange-300 text-orange-900'
+                      : 'bg-gray-700 text-gray-200'
+                  }
+                `} role={message.isBroadcast ? 'alert' : undefined}
+                    aria-label={message.isBroadcast ? 'Broadcast message' : undefined}>
+                  
+                  {/* Broadcast Header */}
+                  {message.isBroadcast && (
+                    <div className="flex items-center gap-2 text-xs font-bold mb-2">
+                      {message.isEmergencyBroadcast ? (
+                        <>
+                          <AlertTriangle size={14} className="text-red-600" />
+                          <span className="text-red-600">🚨 EMERGENCY BROADCAST</span>
+                        </>
+                      ) : (
+                        <>
+                          <Megaphone size={14} className="text-orange-600" />
+                          <span className="text-orange-600">📢 BROADCAST</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                  
+                  {/* Reply Context */}
+                  {message.replyTo && (
+                    <div className="text-xs opacity-70 mb-2 p-2 bg-black/10 rounded border-l-2 border-gray-500">
+                      Replying to {message.replyTo.sender}: "{message.replyTo.text}"
+                    </div>
+                  )}
+                  
+                  {/* Message Text */}
+                  <div className="leading-relaxed">{message.text}</div>
+                </div>
                 
-                <button 
-                  onClick={() => handleReplyToMessage(message.id, message.text, message.sender.name)}
-                  className="text-xs text-gray-400 hover:text-gray-200 mt-1"
-                >
-                  Reply
-                </button>
+                {/* Message Actions */}
+                <div className="mt-2 space-y-1">
+                  <MessageReactionBar 
+                    messageId={message.id}
+                    reactions={reactions[message.id] || {}} 
+                    onReaction={handleReaction}
+                  />
+                  
+                  <button 
+                    onClick={() => handleReplyToMessage(message.id, message.text, message.sender.name)}
+                    className="text-xs text-gray-400 hover:text-gray-200 transition-colors"
+                  >
+                    Reply
+                  </button>
+                </div>
               </div>
             </div>
           ))}
         </div>
       )}
 
+      {/* Reply Context */}
       {replyingTo && (
         <InlineReplyComponent 
           replyTo={{ 
@@ -245,6 +277,7 @@ export const TripChat = ({
         />
       )}
 
+      {/* Message Input */}
       <div className="p-4">
         <ChatInput
           inputMessage={inputMessage}
