@@ -97,7 +97,7 @@ const TripDetail = () => {
           </div>
         )}
 
-        {/* Trip Header */}
+        {/* Trip Header with Cover Photo Upload */}
         <TripHeader trip={trip} />
 
         {/* Main Content */}

@@ -2,8 +2,10 @@
 import React, { useState } from 'react';
 import { Calendar, MapPin, Users, Plus, Settings } from 'lucide-react';
 import { InviteModal } from './InviteModal';
+import { TripCoverPhotoUpload } from './TripCoverPhotoUpload';
 import { useAuth } from '../hooks/useAuth';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { useTripCoverPhoto } from '../hooks/useTripCoverPhoto';
 import { CategorySelector } from './pro/CategorySelector';
 import { CategoryTags } from './pro/CategoryTags';
 import { ProTripCategory } from '../types/proCategories';
@@ -20,6 +22,7 @@ interface TripHeaderProps {
       name: string;
       avatar: string;
     }>;
+    coverPhoto?: string;
   };
   onManageUsers?: () => void;
   // Pro-specific props
@@ -32,15 +35,63 @@ export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategor
   const { user } = useAuth();
   const [showInvite, setShowInvite] = useState(false);
   const { variant, accentColors } = useTripVariant();
+  const { coverPhoto, updateCoverPhoto } = useTripCoverPhoto(trip);
   const isPro = variant === 'pro';
 
   return (
     <>
+      {/* Cover Photo Section */}
+      {coverPhoto ? (
+        <div className="relative mb-8 rounded-3xl overflow-hidden">
+          <div 
+            className="h-64 bg-cover bg-center"
+            style={{ backgroundImage: `url(${coverPhoto})` }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+            <div className="absolute bottom-6 left-8 right-8">
+              <h1 className="text-4xl font-bold text-white mb-2">{trip.title}</h1>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                <div className="flex items-center gap-2 text-white/90">
+                  <MapPin size={18} />
+                  <span>{trip.location}</span>
+                </div>
+                <div className="flex items-center gap-2 text-white/90">
+                  <Calendar size={18} />
+                  <span>{trip.dateRange}</span>
+                </div>
+              </div>
+            </div>
+            {user && (
+              <div className="absolute top-4 right-4">
+                <TripCoverPhotoUpload
+                  tripId={trip.id.toString()}
+                  currentPhoto={coverPhoto}
+                  onPhotoUploaded={updateCoverPhoto}
+                  className="w-auto"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="mb-8">
+          <TripCoverPhotoUpload
+            tripId={trip.id.toString()}
+            currentPhoto={coverPhoto}
+            onPhotoUploaded={updateCoverPhoto}
+            className="h-32 mb-6"
+          />
+        </div>
+      )}
+
+      {/* Main Trip Info Section */}
       <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 mb-8">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
           {/* Trip Info */}
           <div className="flex-1">
-            <h1 className="text-4xl font-bold text-white mb-4">{trip.title}</h1>
+            {!coverPhoto && (
+              <h1 className="text-4xl font-bold text-white mb-4">{trip.title}</h1>
+            )}
             
             {/* Category Tags for Pro trips */}
             {isPro && category && (
@@ -49,16 +100,19 @@ export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategor
               </div>
             )}
             
-            <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
-              <div className="flex items-center gap-2 text-gray-300">
-                <MapPin size={18} className={`text-${accentColors.primary}`} />
-                <span>{trip.location}</span>
+            {!coverPhoto && (
+              <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-6">
+                <div className="flex items-center gap-2 text-gray-300">
+                  <MapPin size={18} className={`text-${accentColors.primary}`} />
+                  <span>{trip.location}</span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-300">
+                  <Calendar size={18} className={`text-${accentColors.primary}`} />
+                  <span>{trip.dateRange}</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2 text-gray-300">
-                <Calendar size={18} className={`text-${accentColors.primary}`} />
-                <span>{trip.dateRange}</span>
-              </div>
-            </div>
+            )}
+            
             <p className="text-gray-300 text-lg leading-relaxed">
               {trip.description}
             </p>
