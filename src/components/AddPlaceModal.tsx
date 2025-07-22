@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, Link, Sparkles } from 'lucide-react';
+import { X, Link, Sparkles, CheckCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { BasecampLocation, PlaceWithDistance } from '../types/basecamp';
 
@@ -28,6 +28,7 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
   const [category, setCategory] = useState<string>('');
   const [useAiSorting, setUseAiSorting] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const classifyPlace = async (url: string, title: string): Promise<string> => {
     const text = `${title} ${url}`.toLowerCase();
@@ -99,13 +100,19 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
         onPlaceAdded(newPlace);
       }
       
-      // Reset form and close modal
-      setUrl('');
-      setPlaceName('');
-      setCalculateDistance(!!basecamp);
-      setCategory('');
-      setUseAiSorting(false);
-      onClose();
+      // Show success state
+      setShowSuccess(true);
+      
+      // Wait a moment then reset form and close modal
+      setTimeout(() => {
+        setUrl('');
+        setPlaceName('');
+        setCalculateDistance(!!basecamp);
+        setCategory('');
+        setUseAiSorting(false);
+        setShowSuccess(false);
+        onClose();
+      }, 1500);
     } catch (error) {
       console.error('Error adding place:', error);
     } finally {
@@ -115,12 +122,26 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
 
   if (!isOpen) return null;
 
+  if (showSuccess) {
+    return (
+      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div className="bg-slate-800 border border-slate-700 rounded-lg w-full max-w-md p-8 text-center">
+          <div className="flex justify-center mb-4">
+            <CheckCircle size={48} className="text-green-400" />
+          </div>
+          <h3 className="text-xl font-semibold text-white mb-2">Pin saved!</h3>
+          <p className="text-slate-300">Added to your trip links.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-slate-800 border border-slate-700 rounded-lg w-full max-w-md max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
-          <h2 className="text-lg font-semibold text-white">Add Place</h2>
+          <h2 className="text-lg font-semibold text-white">Save Trip Pin</h2>
           <button 
             onClick={onClose}
             className="text-slate-400 hover:text-white"
@@ -131,6 +152,11 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Helper Text */}
+          <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 text-sm text-blue-300">
+            Places you add will be saved to Links for easy access during your trip.
+          </div>
+
           {/* URL Input */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
@@ -244,7 +270,7 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
               disabled={isLoading || !url.trim() || !placeName.trim()}
               className="flex-1 bg-blue-600 hover:bg-blue-700"
             >
-              {isLoading ? 'Adding...' : 'Add Place'}
+              {isLoading ? 'Saving...' : 'Save Pin'}
             </Button>
           </div>
         </form>

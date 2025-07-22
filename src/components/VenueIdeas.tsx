@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, MapPin } from 'lucide-react';
 import { Button } from './ui/button';
 import { AddLinkModal } from './AddLinkModal';
 import { LinkCard } from './LinkCard';
+import { Badge } from './ui/badge';
 
 interface LinkPost {
   id: string;
@@ -16,6 +16,8 @@ interface LinkPost {
   postedAt: string;
   upvotes: number;
   comments: number;
+  originatedFromPlace?: boolean;
+  placeId?: string;
 }
 
 // Mock data for demonstration with new categories
@@ -36,13 +38,15 @@ const mockLinks: LinkPost[] = [
     id: '2',
     title: 'L\'Ami Jean - Traditional Bistro',
     url: 'https://example.com/restaurant',
-    description: 'Highly rated traditional French bistro in the 7th arrondissement',
+    description: 'Saved from Places: 27 Rue Malar, 75007 Paris, France',
     category: 'eats',
     imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=200&fit=crop',
-    postedBy: 'Jake',
-    postedAt: '4 hours ago',
+    postedBy: 'You',
+    postedAt: 'just now',
     upvotes: 12,
-    comments: 5
+    comments: 5,
+    originatedFromPlace: true,
+    placeId: 'place-123'
   },
   {
     id: '3',
@@ -186,7 +190,17 @@ export const VenueIdeas = () => {
       <div className="space-y-4">
         {filteredLinks.length > 0 ? (
           filteredLinks.map((link) => (
-            <LinkCard key={link.id} link={link} />
+            <div key={link.id} className="relative">
+              <LinkCard link={link} />
+              {link.originatedFromPlace && (
+                <div className="absolute top-4 right-4">
+                  <Badge variant="secondary" className="bg-green-500/20 text-green-300 border-green-500/30 flex items-center gap-1">
+                    <MapPin size={12} />
+                    From Places
+                  </Badge>
+                </div>
+              )}
+            </div>
           ))
         ) : (
           <div className="text-center py-12">
