@@ -24,6 +24,7 @@ export const tripsData: Trip[] = [
     location: "Cancun, Mexico",
     dateRange: "Mar 15 - Mar 22, 2026",
     description: "Brotherhood spring break getaway with beach activities, nightlife, and bonding experiences",
+    coverPhoto: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=400&fit=crop",
     participants: [
       { id: 1, name: "Marcus", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
       { id: 2, name: "Jamal", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
@@ -38,6 +39,7 @@ export const tripsData: Trip[] = [
     location: "Tokyo, Japan",
     dateRange: "Oct 5 - Oct 15, 2025",
     description: "Cultural exploration of Japan's capital with temples, modern tech districts, and amazing cuisine",
+    coverPhoto: "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=400&fit=crop",
     participants: [
       { id: 4, name: "Alex", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
       { id: 5, name: "Maria", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face" },
@@ -50,6 +52,7 @@ export const tripsData: Trip[] = [
     location: "Bali, Indonesia",
     dateRange: "Dec 10 - Dec 20, 2025",
     description: "Romantic destination wedding celebration with family and friends in paradise",
+    coverPhoto: "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=800&h=400&fit=crop",
     participants: [
       { id: 7, name: "Jack", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
       { id: 8, name: "Jill", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face" },

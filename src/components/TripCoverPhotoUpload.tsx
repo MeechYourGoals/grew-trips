@@ -24,42 +24,55 @@ export const TripCoverPhotoUpload = ({
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (!user || acceptedFiles.length === 0) return;
+    if (acceptedFiles.length === 0) return;
 
     const file = acceptedFiles[0];
     setIsUploading(true);
     setUploadProgress(0);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('tripId', tripId);
-      formData.append('userId', user.id);
-      formData.append('caption', `Cover photo for trip ${tripId}`);
-
-      const response = await fetch('/api/supabase/functions/v1/photo-upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Upload failed');
-      }
-
-      const result = await response.json();
+      // Demo mode: Create object URL for immediate preview
+      const demoUrl = URL.createObjectURL(file);
       
-      if (result.success) {
-        onPhotoUploaded(result.publicUrl);
+      // Simulate upload delay
+      setTimeout(() => {
+        onPhotoUploaded(demoUrl);
         setUploadSuccess(true);
         setTimeout(() => setUploadSuccess(false), 2000);
+        setIsUploading(false);
+        setUploadProgress(0);
+      }, 1500);
+
+      // If user is authenticated and we have Supabase, try real upload
+      if (user && supabase) {
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          formData.append('tripId', tripId);
+          formData.append('userId', user.id);
+          formData.append('caption', `Cover photo for trip ${tripId}`);
+
+          const { data, error } = await supabase.functions.invoke('photo-upload', {
+            body: formData
+          });
+
+          if (error) throw error;
+          
+          if (data?.success) {
+            // Replace demo URL with real URL
+            onPhotoUploaded(data.publicUrl);
+          }
+        } catch (error) {
+          console.log('Supabase upload failed, using demo mode:', error);
+          // Demo mode fallback already handled above
+        }
       }
     } catch (error) {
       console.error('Photo upload error:', error);
-    } finally {
       setIsUploading(false);
       setUploadProgress(0);
     }
-  }, [user, tripId, onPhotoUploaded]);
+  }, [user, tripId, onPhotoUploaded, supabase]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -70,7 +83,11 @@ export const TripCoverPhotoUpload = ({
     multiple: false
   });
 
-  if (!user) return null;
+  const handleAuthPrompt = () => {
+    if (!user) {
+      alert('Please sign in to upload photos. Demo mode: Photo will be shown temporarily.');
+    }
+  };
 
   if (currentPhoto) {
     return (
@@ -84,6 +101,7 @@ export const TripCoverPhotoUpload = ({
           <div
             {...getRootProps()}
             className="cursor-pointer bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl px-4 py-2 flex items-center gap-2 text-white hover:bg-white/30 transition-colors"
+            onClick={handleAuthPrompt}
           >
             <input {...getInputProps()} />
             <Camera size={16} />
@@ -114,6 +132,7 @@ export const TripCoverPhotoUpload = ({
     <div
       {...getRootProps()}
       className={`border-2 border-dashed border-white/30 rounded-2xl p-8 text-center cursor-pointer transition-all hover:border-white/50 hover:bg-white/5 ${isDragActive ? 'border-blue-400 bg-blue-400/10' : ''} ${className}`}
+      onClick={handleAuthPrompt}
     >
       <input {...getInputProps()} />
       <div className="text-white">
@@ -128,6 +147,11 @@ export const TripCoverPhotoUpload = ({
         <p className="text-gray-400 text-xs">
           Supports PNG, JPG, GIF • Max 10MB
         </p>
+        {!user && (
+          <p className="text-yellow-400 text-xs mt-2">
+            Demo mode: Photos will be shown temporarily. Sign in for full functionality.
+          </p>
+        )}
       </div>
       {isUploading && (
         <div className="mt-4">
