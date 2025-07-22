@@ -14,7 +14,7 @@ import { useIsMobile } from '../hooks/use-mobile';
 import { proTripMockData } from '../data/proTripMockData';
 import { eventsMockData } from '../data/eventsMockData';
 import { tripsData } from '../data/tripsData';
-import { calculateTripStats, calculateProTripStats, calculateEventStats } from '../utils/tripStatsCalculator';
+import { calculateTripStats, calculateProTripStats, calculateEventStats, filterItemsByStatus } from '../utils/tripStatsCalculator';
 
 const Index = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -22,6 +22,7 @@ const Index = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [viewMode, setViewMode] = useState('myTrips');
   const [isLoading, setIsLoading] = useState(false);
+  const [activeFilter, setActiveFilter] = useState<string>('');
   const { user } = useAuth();
   const isMobile = useIsMobile();
 
@@ -45,19 +46,68 @@ const Index = () => {
     }
   };
 
+  const getFilteredData = () => {
+    if (!activeFilter || activeFilter === 'total') {
+      return {
+        trips,
+        proTrips: proTripMockData,
+        events: eventsMockData
+      };
+    }
+
+    switch (viewMode) {
+      case 'myTrips':
+        return {
+          trips: filterItemsByStatus(trips, activeFilter),
+          proTrips: proTripMockData,
+          events: eventsMockData
+        };
+      case 'tripsPro':
+        return {
+          trips,
+          proTrips: Object.fromEntries(
+            Object.entries(proTripMockData).filter(([_, trip]) => 
+              filterItemsByStatus([trip], activeFilter).length > 0
+            )
+          ),
+          events: eventsMockData
+        };
+      case 'events':
+        return {
+          trips,
+          proTrips: proTripMockData,
+          events: Object.fromEntries(
+            Object.entries(eventsMockData).filter(([_, event]) => 
+              filterItemsByStatus([event], activeFilter).length > 0
+            )
+          )
+        };
+      default:
+        return { trips, proTrips: proTripMockData, events: eventsMockData };
+    }
+  };
+
   // Simulate loading when switching view modes
   const handleViewModeChange = (newMode: string) => {
     setIsLoading(true);
     setViewMode(newMode);
+    setActiveFilter(''); // Reset filter when changing view mode
     // Simulate API delay
     setTimeout(() => {
       setIsLoading(false);
     }, 800);
   };
 
+  const handleFilterClick = (filter: string) => {
+    // Toggle filter: if same filter is clicked, clear it
+    setActiveFilter(activeFilter === filter ? '' : filter);
+  };
+
   const handleCreateTrip = () => {
     setIsCreateModalOpen(true);
   };
+
+  const filteredData = getFilteredData();
 
   return (
     <div className="min-h-screen bg-background font-outfit">
@@ -99,7 +149,12 @@ const Index = () => {
         {/* Trip Stats Overview with loading state */}
         {!isMobile && (
           <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
-            <TripStatsOverview stats={getCurrentStats()} viewMode={viewMode} />
+            <TripStatsOverview 
+              stats={getCurrentStats()} 
+              viewMode={viewMode} 
+              activeFilter={activeFilter}
+              onFilterClick={handleFilterClick}
+            />
           </div>
         )}
 
@@ -107,9 +162,9 @@ const Index = () => {
         <div className="mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <TripGrid
             viewMode={viewMode}
-            trips={trips}
-            proTrips={proTripMockData}
-            events={eventsMockData}
+            trips={filteredData.trips}
+            proTrips={filteredData.proTrips}
+            events={filteredData.events}
             loading={isLoading}
             onCreateTrip={handleCreateTrip}
           />
