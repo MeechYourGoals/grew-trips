@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../integrations/supabase/client';
@@ -14,6 +15,42 @@ const JoinTrip = () => {
   const [inviteData, setInviteData] = useState<any>(null);
   const [error, setError] = useState<string>('');
   const [isMockInvite, setIsMockInvite] = useState(false);
+
+  // Set document head for rich link previews
+  useEffect(() => {
+    // Update page title and meta tags for social sharing
+    document.title = 'Join Trip - Tryps';
+    
+    // Add Open Graph meta tags
+    const updateMetaTag = (property: string, content: string) => {
+      let meta = document.querySelector(`meta[property="${property}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('property', property);
+        document.head.appendChild(meta);
+      }
+      meta.content = content;
+    };
+
+    const updateMetaName = (name: string, content: string) => {
+      let meta = document.querySelector(`meta[name="${name}"]`) as HTMLMetaElement;
+      if (!meta) {
+        meta = document.createElement('meta');
+        meta.setAttribute('name', name);
+        document.head.appendChild(meta);
+      }
+      meta.content = content;
+    };
+
+    updateMetaTag('og:title', 'Join an Amazing Trip!');
+    updateMetaTag('og:description', 'You\'ve been invited to join a trip. Click to see details and join the adventure!');
+    updateMetaTag('og:type', 'website');
+    updateMetaTag('og:image', 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&h=630&fit=crop');
+    updateMetaName('twitter:card', 'summary_large_image');
+    updateMetaName('twitter:title', 'Join an Amazing Trip!');
+    updateMetaName('twitter:description', 'You\'ve been invited to join a trip. Click to see details and join the adventure!');
+    updateMetaName('twitter:image', 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1200&h=630&fit=crop');
+  }, []);
 
   useEffect(() => {
     if (token) {
@@ -194,32 +231,35 @@ const JoinTrip = () => {
           <p className="text-gray-400">Join this amazing trip with your friends</p>
         </div>
 
-        {/* Trip Preview */}
-        <div className="bg-white/5 border border-white/10 rounded-2xl p-4 mb-6">
-          <h3 className="text-lg font-semibold text-white mb-3">
-            {isMockInvite ? 'Demo Trip Invitation' : 'Trip to Explore'}
-          </h3>
-          <div className="space-y-2 text-sm text-gray-300">
-            <div className="flex items-center gap-2">
-              <MapPin size={16} className="text-blue-400" />
-              <span>
-                {isMockInvite ? 
-                  `Demo Trip (ID: ${inviteData?.trip_id})` : 
-                  `Trip ID: ${inviteData?.trip_id}`
-                }
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar size={16} className="text-blue-400" />
-              <span>Invited {new Date(inviteData?.created_at).toLocaleDateString()}</span>
-            </div>
-            {isMockInvite && (
-              <div className="mt-3 p-2 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                <p className="text-blue-400 text-xs">
-                  This is a demo invite link. In the full app, this would connect to a real trip.
-                </p>
+        {/* Enhanced Trip Preview Card */}
+        <div className="bg-gradient-to-br from-yellow-600/20 via-yellow-500/10 to-transparent border border-yellow-500/20 rounded-2xl p-4 mb-6 relative overflow-hidden">
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=200&fit=crop')] bg-cover bg-center opacity-10 rounded-2xl"></div>
+          <div className="relative z-10">
+            <h3 className="text-lg font-semibold text-white mb-3">
+              {isMockInvite ? 'Demo Trip Invitation' : 'Trip to Explore'}
+            </h3>
+            <div className="space-y-2 text-sm text-gray-300">
+              <div className="flex items-center gap-2">
+                <MapPin size={16} className="text-yellow-400" />
+                <span>
+                  {isMockInvite ? 
+                    `Demo Trip (ID: ${inviteData?.trip_id})` : 
+                    `Trip ID: ${inviteData?.trip_id}`
+                  }
+                </span>
               </div>
-            )}
+              <div className="flex items-center gap-2">
+                <Calendar size={16} className="text-yellow-400" />
+                <span>Invited {new Date(inviteData?.created_at).toLocaleDateString()}</span>
+              </div>
+              {isMockInvite && (
+                <div className="mt-3 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+                  <p className="text-blue-400 text-xs">
+                    This is a demo invite link. In the full app, this would connect to a real trip with full details and participant photos.
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 

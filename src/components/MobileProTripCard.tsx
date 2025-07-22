@@ -24,18 +24,6 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
 
   if (!isMobile) return null;
 
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Touring': return 'from-blue-500/20 to-blue-600/20 border-blue-500/30';
-      case 'Sports – Team Trip': return 'from-green-500/20 to-green-600/20 border-green-500/30';
-      case 'Residency': return 'from-purple-500/20 to-purple-600/20 border-purple-500/30';
-      case 'Conference': return 'from-orange-500/20 to-orange-600/20 border-orange-500/30';
-      case 'Business Travel': return 'from-yellow-500/20 to-yellow-600/20 border-yellow-500/30';
-      case 'Tournament': return 'from-red-500/20 to-red-600/20 border-red-500/30';
-      default: return 'from-gray-500/20 to-gray-600/20 border-gray-500/30';
-    }
-  };
-
   // Ensure all participants have proper avatar URLs
   const participantsWithAvatars = trip.participants.map((participant, index) => ({
     ...participant,
@@ -43,22 +31,19 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
   }));
 
   return (
-    <div className={`bg-gradient-to-br ${getCategoryColor(trip.category)} backdrop-blur-xl border rounded-2xl overflow-hidden transition-all duration-300 shadow-lg hover:scale-[1.02]`}>
+    <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden transition-all duration-300 shadow-lg hover:scale-[1.02]">
       {/* Pro Badge */}
       <div className={`absolute top-3 right-3 z-10 bg-gradient-to-r ${accentColors.gradient} px-2 py-1 rounded-full flex items-center gap-1`}>
         <Crown size={12} className="text-black" />
         <span className="text-xs font-bold text-black">PRO</span>
       </div>
 
-      {/* Mobile Header */}
+      {/* Mobile Header - Removed category display */}
       <div className={`relative h-36 bg-gradient-to-br from-${accentColors.primary}/10 to-${accentColors.secondary}/10 p-4`}>
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1501594907352-04cda38ebc29?w=400&h=200&fit=crop')] bg-cover bg-center opacity-10"></div>
         <div className="relative z-10 h-full flex flex-col justify-between">
           <div className="flex-1">
-            <div className="inline-block bg-black/20 backdrop-blur-sm px-2 py-1 rounded-lg mb-2">
-              <span className="text-xs font-medium text-white">{trip.category}</span>
-            </div>
-            <h3 className="text-lg font-bold text-white mb-2 line-clamp-2">
+            <h3 className="text-lg font-bold text-white mb-3 line-clamp-2">
               {trip.title}
             </h3>
             <div className="flex items-center gap-2 text-white/80 text-sm mb-1">
@@ -75,20 +60,6 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
 
       {/* Mobile Content */}
       <div className="p-4">
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1 mb-4">
-          {trip.tags.slice(0, 2).map((tag, index) => (
-            <span key={index} className="bg-white/10 backdrop-blur-sm px-2 py-1 rounded-md text-xs text-white">
-              {tag}
-            </span>
-          ))}
-          {trip.tags.length > 2 && (
-            <span className="bg-white/10 backdrop-blur-sm px-2 py-1 rounded-md text-xs text-white">
-              +{trip.tags.length - 2}
-            </span>
-          )}
-        </div>
-
         {/* Team Members */}
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">

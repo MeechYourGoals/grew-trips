@@ -2,7 +2,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Crown, Copy, Eye, Users, Clock } from 'lucide-react';
-import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { TravelerTooltip } from './ui/traveler-tooltip';
@@ -26,21 +25,6 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
   const handleDuplicateTrip = () => {
     console.log('Duplicating trip:', trip.title);
     // This would open a modal or redirect to create a new trip with this template
-  };
-
-  const getCategoryColor = (category: string) => {
-    switch (category) {
-      case 'Sports – Team Trip': return 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      case 'Conference': return 'bg-green-500/20 text-green-300 border-green-500/30';
-      case 'Touring': return 'bg-purple-500/20 text-purple-300 border-purple-500/30';
-      case 'Business Travel': return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-      case 'School Trips': return 'bg-yellow-500/20 text-yellow-300 border-yellow-500/30';
-      case 'Public Relations': return 'bg-pink-500/20 text-pink-300 border-pink-500/30';
-      case 'Client Pursuits': return 'bg-red-500/20 text-red-300 border-red-500/30';
-      case 'Residency': return 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30';
-      case 'Tournament': return 'bg-cyan-500/20 text-cyan-300 border-cyan-500/30';
-      default: return 'bg-gray-500/20 text-gray-300 border-gray-500/30';
-    }
   };
 
   // Get next load-in event from schedule
@@ -96,25 +80,13 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
         </Tooltip>
       </div>
 
-      {/* Header */}
+      {/* Header - Removed category badges and tags */}
       <div className="mb-4 pr-12 pl-12">
-        <h3 className={`text-xl font-semibold text-white group-hover:text-${accentColors.secondary} transition-colors mb-2`}>
+        <h3 className={`text-xl font-semibold text-white group-hover:text-${accentColors.secondary} transition-colors mb-3`}>
           {trip.title}
         </h3>
-        <div className="flex flex-wrap gap-2 mb-3">
-          <Badge 
-            className={`text-xs ${getCategoryColor(trip.category)} border`}
-          >
-            {trip.category}
-          </Badge>
-          {trip.tags && trip.tags.map((tag, index) => (
-            <Badge key={index} className="text-xs bg-gray-500/20 text-gray-300 border-gray-500/30 border">
-              {tag}
-            </Badge>
-          ))}
-        </div>
 
-        {/* New Pills - Roster and Next Load-In */}
+        {/* Status Pills - Roster and Next Load-In */}
         <div className="flex flex-wrap gap-2 mb-4">
           {trip.roster && trip.roster.length > 0 && (
             <div className="flex items-center gap-1 bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-xs border border-blue-500/30">
