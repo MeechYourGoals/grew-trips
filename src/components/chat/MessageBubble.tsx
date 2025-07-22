@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Megaphone, AlertTriangle } from 'lucide-react';
+import { Megaphone } from 'lucide-react';
 
 interface MessageBubbleProps {
   text: string;
@@ -8,7 +8,6 @@ interface MessageBubbleProps {
   timestamp: string;
   avatar: string;
   isBroadcast?: boolean;
-  isEmergencyBroadcast?: boolean;
   replyTo?: {
     id: string;
     text: string;
@@ -23,7 +22,6 @@ export const MessageBubble = ({
   timestamp,
   avatar,
   isBroadcast = false,
-  isEmergencyBroadcast = false,
   replyTo,
   children
 }: MessageBubbleProps) => {
@@ -56,11 +54,9 @@ export const MessageBubble = ({
         {/* Message Bubble */}
         <div className={`
           max-w-md p-3 rounded-lg relative
-          ${isEmergencyBroadcast
-            ? 'bg-red-100 border-2 border-red-400 text-red-900 shadow-lg'
-            : isBroadcast
-              ? 'bg-orange-100 border border-orange-300 text-orange-900'
-              : 'bg-gray-700 text-gray-200'
+          ${isBroadcast
+            ? 'bg-orange-100 border border-orange-300 text-orange-900'
+            : 'bg-gray-700 text-gray-200'
           }
         `} role={isBroadcast ? 'alert' : undefined}
             aria-label={isBroadcast ? 'Broadcast message' : undefined}>
@@ -68,17 +64,8 @@ export const MessageBubble = ({
           {/* Broadcast Header */}
           {isBroadcast && (
             <div className="flex items-center gap-2 text-xs font-bold mb-2">
-              {isEmergencyBroadcast ? (
-                <>
-                  <AlertTriangle size={14} className="text-red-600" />
-                  <span className="text-red-600">🚨 EMERGENCY BROADCAST</span>
-                </>
-              ) : (
-                <>
-                  <Megaphone size={14} className="text-orange-600" />
-                  <span className="text-orange-600">📢 BROADCAST</span>
-                </>
-              )}
+              <Megaphone size={14} className="text-orange-600" />
+              <span className="text-orange-600">📢 BROADCAST</span>
             </div>
           )}
           

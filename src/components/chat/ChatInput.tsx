@@ -70,7 +70,7 @@ export const ChatInput = ({
           placeholder={
             isBroadcastMode 
               ? "Send an announcement to all trip members..." 
-              : "Ask me about restaurants, activities, or anything about your trip..."
+              : "Type a message..."
           }
           rows={2}
           className={`flex-1 border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none resize-none transition-all ${

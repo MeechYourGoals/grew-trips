@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Send, MessageCircle, Megaphone, AlertTriangle } from 'lucide-react';
+import { Send, MessageCircle, Megaphone } from 'lucide-react';
 import { demoModeService } from '@/services/demoModeService';
 import { getTripById } from '@/data/tripsData';
 import { getMockAvatar, currentUserAvatar } from '@/utils/mockAvatars';
@@ -21,7 +21,7 @@ interface DemoMessage {
   created_at: string;
   isMock: boolean;
   isBroadcast?: boolean;
-  isEmergencyBroadcast?: boolean;
+  
   reactions?: Record<string, { count: number; userReacted: boolean }>;
 }
 
@@ -48,7 +48,7 @@ export const DemoChat = ({ tripId }: DemoChatProps) => {
         createdAt.setHours(createdAt.getHours() - Math.floor(Math.random() * 12));
         
         const isBroadcast = mock.tags?.includes('broadcast') || false;
-        const isEmergencyBroadcast = mock.tags?.includes('emergency') || mock.tags?.includes('urgent') || false;
+        
         
         return {
           id: `demo_${mock.id}_${index}`,
@@ -61,7 +61,6 @@ export const DemoChat = ({ tripId }: DemoChatProps) => {
           created_at: createdAt.toISOString(),
           isMock: true,
           isBroadcast,
-          isEmergencyBroadcast
         };
       });
 
@@ -221,11 +220,9 @@ export const DemoChat = ({ tripId }: DemoChatProps) => {
                   {/* Message Bubble */}
                   <div className={`
                     max-w-md p-3 rounded-lg
-                    ${message.isEmergencyBroadcast
-                      ? 'bg-red-100 border-2 border-red-400 text-red-900 shadow-lg'
-                      : message.isBroadcast
-                        ? 'bg-orange-100 border border-orange-300 text-orange-900'
-                        : 'bg-gray-800 text-gray-200'
+                    ${message.isBroadcast
+                      ? 'bg-orange-100 border border-orange-300 text-orange-900'
+                      : 'bg-gray-800 text-gray-200'
                     }
                   `} role={message.isBroadcast ? 'alert' : undefined}
                       aria-label={message.isBroadcast ? 'Broadcast message' : undefined}>
@@ -233,17 +230,8 @@ export const DemoChat = ({ tripId }: DemoChatProps) => {
                     {/* Broadcast Header */}
                     {message.isBroadcast && (
                       <div className="flex items-center gap-2 text-xs font-bold mb-2">
-                        {message.isEmergencyBroadcast ? (
-                          <>
-                            <AlertTriangle size={14} className="text-red-600" />
-                            <span className="text-red-600">🚨 EMERGENCY BROADCAST</span>
-                          </>
-                        ) : (
-                          <>
-                            <Megaphone size={14} className="text-orange-600" />
-                            <span className="text-orange-600">📢 BROADCAST</span>
-                          </>
-                        )}
+                        <Megaphone size={14} className="text-orange-600" />
+                        <span className="text-orange-600">📢 BROADCAST</span>
                       </div>
                     )}
                     

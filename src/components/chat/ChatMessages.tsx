@@ -13,8 +13,8 @@ export const ChatMessages = ({ messages, isTyping }: ChatMessagesProps) => {
     return (
       <div className="text-center py-8">
         <MessageCircle size={48} className="text-gray-600 mx-auto mb-4" />
-        <h4 className="text-lg font-medium text-gray-400 mb-2">Start planning with AI</h4>
-        <p className="text-gray-500 text-sm">Ask me about restaurants, activities, or anything about your trip!</p>
+        <h4 className="text-lg font-medium text-gray-400 mb-2">Start the conversation</h4>
+        <p className="text-gray-500 text-sm">Send a message to get the chat started!</p>
       </div>
     );
   }

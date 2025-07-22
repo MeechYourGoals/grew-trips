@@ -4,7 +4,7 @@ import { addMinutes } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { demoModeService, MockMessage as DemoMockMessage } from '../services/demoModeService';
 import { useDemoMode } from '../hooks/useDemoMode';
-import { MessageCircle, Megaphone, AlertTriangle } from 'lucide-react';
+import { MessageCircle, Megaphone } from 'lucide-react';
 import { ChatInput } from './chat/ChatInput';
 import { MessageReactionBar } from './chat/MessageReactionBar';
 import { InlineReplyComponent } from './chat/InlineReplyComponent';
@@ -23,7 +23,7 @@ interface MockMessage {
   createdAt: string;
   isAiMessage?: boolean;
   isBroadcast?: boolean;
-  isEmergencyBroadcast?: boolean;
+  
   reactions?: { [key: string]: string[] };
   replyTo?: { id: string; text: string; sender: string };
   trip_type?: string;
@@ -66,7 +66,7 @@ export const TripChat = ({
       },
       createdAt: new Date().toISOString(),
       isBroadcast,
-      isEmergencyBroadcast: isEmergency,
+      
       reactions: {},
       replyTo: replyingTo ? {
         id: replyingTo.id,
@@ -119,7 +119,7 @@ export const TripChat = ({
         },
         createdAt: new Date(Date.now() - (msg.timestamp_offset_days || 0) * 86400000).toISOString(),
         isBroadcast: msg.tags?.includes('broadcast') || msg.tags?.includes('logistics') || msg.tags?.includes('urgent') || false,
-        isEmergencyBroadcast: msg.tags?.includes('urgent') || msg.tags?.includes('emergency') || false,
+        
         trip_type: msg.trip_type,
         sender_name: msg.sender_name,
         message_content: msg.message_content,
@@ -207,11 +207,9 @@ export const TripChat = ({
                 {/* Message Bubble */}
                 <div className={`
                   max-w-md p-3 rounded-lg relative
-                  ${message.isEmergencyBroadcast
-                    ? 'bg-red-100 border-2 border-red-400 text-red-900 shadow-lg'
-                    : message.isBroadcast
-                      ? 'bg-orange-100 border border-orange-300 text-orange-900'
-                      : 'bg-gray-700 text-gray-200'
+                  ${message.isBroadcast
+                    ? 'bg-orange-100 border border-orange-300 text-orange-900'
+                    : 'bg-gray-700 text-gray-200'
                   }
                 `} role={message.isBroadcast ? 'alert' : undefined}
                     aria-label={message.isBroadcast ? 'Broadcast message' : undefined}>
@@ -219,17 +217,8 @@ export const TripChat = ({
                   {/* Broadcast Header */}
                   {message.isBroadcast && (
                     <div className="flex items-center gap-2 text-xs font-bold mb-2">
-                      {message.isEmergencyBroadcast ? (
-                        <>
-                          <AlertTriangle size={14} className="text-red-600" />
-                          <span className="text-red-600">🚨 EMERGENCY BROADCAST</span>
-                        </>
-                      ) : (
-                        <>
-                          <Megaphone size={14} className="text-orange-600" />
-                          <span className="text-orange-600">📢 BROADCAST</span>
-                        </>
-                      )}
+                      <Megaphone size={14} className="text-orange-600" />
+                      <span className="text-orange-600">📢 BROADCAST</span>
                     </div>
                   )}
                   
