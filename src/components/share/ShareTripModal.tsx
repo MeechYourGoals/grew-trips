@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { X, Copy, Mail, MessageCircle, Share2, Check } from 'lucide-react';
+import { X, Copy, Share2, Check } from 'lucide-react';
 import { Button } from '../ui/button';
 import { useInviteLink } from '../../hooks/useInviteLink';
 import { toast } from 'sonner';
@@ -26,16 +26,12 @@ interface ShareTripModalProps {
 }
 
 export const ShareTripModal = ({ isOpen, onClose, trip }: ShareTripModalProps) => {
-  const [emailRecipient, setEmailRecipient] = useState('');
-  const [phoneRecipient, setPhoneRecipient] = useState('');
   const [copied, setCopied] = useState(false);
 
   const {
     inviteLink,
     loading,
     handleCopyLink,
-    handleEmailInvite,
-    handleSMSInvite,
     handleShare
   } = useInviteLink({ 
     isOpen, 
@@ -80,26 +76,6 @@ export const ShareTripModal = ({ isOpen, onClose, trip }: ShareTripModalProps) =
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleEmailShare = () => {
-    if (!emailRecipient.trim()) {
-      toast.error('Please enter an email address');
-      return;
-    }
-    handleEmailInvite();
-    setEmailRecipient('');
-    toast.success(`Invite sent to ${emailRecipient}!`);
-  };
-
-  const handleSMSShare = () => {
-    if (!phoneRecipient.trim()) {
-      toast.error('Please enter a phone number');
-      return;
-    }
-    handleSMSInvite();
-    setPhoneRecipient('');
-    toast.success(`Invite sent to ${phoneRecipient}!`);
-  };
-
   const handleNativeShare = async () => {
     await handleShare();
     toast.success('Share options opened!');
@@ -109,22 +85,22 @@ export const ShareTripModal = ({ isOpen, onClose, trip }: ShareTripModalProps) =
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
-      <div className="bg-background/95 backdrop-blur-md border border-border rounded-3xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto animate-scale-in">
+      <div className="bg-background/95 backdrop-blur-md border border-border rounded-3xl p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto animate-scale-in relative">
+        {/* Close Button - Fixed Position */}
+        <Button 
+          onClick={onClose} 
+          variant="ghost" 
+          size="icon" 
+          title="Close"
+          className="absolute top-4 right-4 z-10 hover:bg-destructive/20 hover:text-destructive text-foreground w-10 h-10 rounded-full"
+        >
+          <X size={20} />
+        </Button>
+
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground">Share Trip</h2>
-            <p className="text-muted-foreground">Invite others to join "{trip.title}"</p>
-          </div>
-          <Button 
-            onClick={onClose} 
-            variant="ghost" 
-            size="icon" 
-            title="Close"
-            className="hover:bg-destructive/20 hover:text-destructive text-foreground w-12 h-12"
-          >
-            <X size={28} />
-          </Button>
+        <div className="mb-6 pr-12">
+          <h2 className="text-2xl font-bold text-foreground">Share Trip</h2>
+          <p className="text-muted-foreground">Invite others to join "{trip.title}"</p>
         </div>
 
         {/* Trip Preview Card */}
@@ -171,70 +147,15 @@ export const ShareTripModal = ({ isOpen, onClose, trip }: ShareTripModalProps) =
           </div>
         </div>
 
-        {/* Email Sharing */}
-        <div className="mb-4">
-          <label className="block text-foreground text-sm font-medium mb-2">Send via Email</label>
-          <div className="flex gap-2">
-            <input
-              type="email"
-              value={emailRecipient}
-              onChange={(e) => setEmailRecipient(e.target.value)}
-              placeholder="Enter email address"
-              className="flex-1 bg-muted border border-border rounded-xl px-4 py-3 text-foreground text-sm"
-            />
-            <Button
-              onClick={handleEmailShare}
-              disabled={loading || !inviteLink}
-              variant="outline"
-            >
-              <Mail size={16} />
-              <span className="hidden sm:inline ml-2">Send</span>
-            </Button>
-          </div>
-        </div>
-
-        {/* SMS Sharing */}
+        {/* Share via Apps Button */}
         <div className="mb-6">
-          <label className="block text-foreground text-sm font-medium mb-2">Send via Text</label>
-          <div className="flex gap-2">
-            <input
-              type="tel"
-              value={phoneRecipient}
-              onChange={(e) => setPhoneRecipient(e.target.value)}
-              placeholder="Enter phone number"
-              className="flex-1 bg-muted border border-border rounded-xl px-4 py-3 text-foreground text-sm"
-            />
-            <Button
-              onClick={handleSMSShare}
-              disabled={loading || !inviteLink}
-              variant="outline"
-            >
-              <MessageCircle size={16} />
-              <span className="hidden sm:inline ml-2">Send</span>
-            </Button>
-          </div>
-        </div>
-
-        {/* Quick Share Options */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Button
             onClick={handleNativeShare}
             disabled={loading || !inviteLink}
-            variant="outline"
-            className="flex items-center justify-center gap-2"
+            className="w-full flex items-center justify-center gap-3 h-12 text-base font-medium"
           >
             <Share2 size={20} />
             <span>Share via Apps</span>
-          </Button>
-          
-          <Button
-            onClick={handleCopyLinkClick}
-            disabled={loading || !inviteLink}
-            variant="outline"
-            className="flex items-center justify-center gap-2"
-          >
-            {copied ? <Check size={20} /> : <Copy size={20} />}
-            <span>{copied ? 'Copied!' : 'Copy Link'}</span>
           </Button>
         </div>
 

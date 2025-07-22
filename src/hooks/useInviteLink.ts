@@ -22,7 +22,7 @@ export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days
 
   const generateMockInviteLink = () => {
     const mockToken = crypto.randomUUID();
-    let baseUrl = 'https://tryps.app/join';
+    let baseUrl = 'https://junto.app/join';
     
     // Create universal link that handles both app and web
     let inviteUrl = `${baseUrl}/${mockToken}`;
@@ -86,7 +86,7 @@ export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days
     const body = encodeURIComponent(
       `Hi there!\n\nYou're invited to join my trip "${tripName}"!\n\n` +
       `Click here to join: ${inviteLink}\n\n` +
-      `If you have the Tryps app installed, this link will open it directly. ` +
+      `If you have the Junto app installed, this link will open it directly. ` +
       `Otherwise, you can join through your browser!\n\nSee you there!`
     );
     window.open(`mailto:?subject=${subject}&body=${body}`);
@@ -96,7 +96,7 @@ export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days
     if (!inviteLink) return;
     
     const message = encodeURIComponent(
-      `You're invited to join my trip "${tripName}"! ${inviteLink} (Opens in Tryps app if installed)`
+      `You're invited to join my trip "${tripName}"! ${inviteLink} (Opens in Junto app if installed)`
     );
     window.open(`sms:?body=${message}`);
   };
