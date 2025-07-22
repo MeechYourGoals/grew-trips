@@ -58,7 +58,7 @@ const getDateRange = (dateRange: string): { start: Date | null, end: Date | null
         const month = new Date(`${monthPart} 1, ${year}`).getMonth();
         return {
           start: new Date(year, month, startDay),
-          end: new Date(year, month, parseInt(endDay))
+          end: new Date(year, month, parseInt(endDay.toString()))
         };
       }
     }
