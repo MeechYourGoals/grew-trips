@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Trash, User, Plus, MoreHorizontal } from 'lucide-react';
 import { InviteModal } from './InviteModal';
 import { ShareTripModal } from './share/ShareTripModal';
+import { TravelerTooltip } from './ui/traveler-tooltip';
 
 interface Participant {
   id: number;
@@ -36,6 +37,12 @@ export const TripCard = ({ trip }: TripCardProps) => {
     navigate(`/trip/${trip.id}/edit-itinerary`);
   };
 
+  // Ensure all participants have proper avatar URLs
+  const participantsWithAvatars = trip.participants.map((participant, index) => ({
+    ...participant,
+    avatar: participant.avatar || `https://images.unsplash.com/photo-${1649972904349 + index}-6e44c42644a7?w=40&h=40&fit=crop&crop=face`
+  }));
+
   return (
     <div className="group bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-yellow-500/30 rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl shadow-black/20">
       {/* Trip Image/Header */}
@@ -66,7 +73,7 @@ export const TripCard = ({ trip }: TripCardProps) => {
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="text-center">
-            <div className="text-2xl font-bold text-white">{trip.id === 3 ? '200' : trip.participants.length}</div>
+            <div className="text-2xl font-bold text-white">{trip.id === 3 ? '200' : participantsWithAvatars.length}</div>
             <div className="text-sm text-gray-400">People</div>
           </div>
           <div className="text-center">
@@ -99,23 +106,24 @@ export const TripCard = ({ trip }: TripCardProps) => {
           
           <div className="flex items-center">
             <div className="flex -space-x-3">
-              {trip.participants.slice(0, 4).map((participant, index) => (
-                <div
-                  key={participant.id}
-                  className="relative"
-                  style={{ zIndex: trip.participants.length - index }}
-                >
-                  <img
-                    src={participant.avatar}
-                    alt={participant.name}
-                    className="w-10 h-10 rounded-full border-3 border-gray-900 hover:scale-110 transition-transform duration-200 hover:border-yellow-400 cursor-pointer"
-                  />
-                </div>
+              {participantsWithAvatars.slice(0, 4).map((participant, index) => (
+                <TravelerTooltip key={participant.id} name={participant.name}>
+                  <div
+                    className="relative"
+                    style={{ zIndex: participantsWithAvatars.length - index }}
+                  >
+                    <img
+                      src={participant.avatar}
+                      alt={participant.name}
+                      className="w-10 h-10 rounded-full border-3 border-gray-900 hover:scale-110 transition-transform duration-200 hover:border-yellow-400 cursor-pointer"
+                    />
+                  </div>
+                </TravelerTooltip>
               ))}
             </div>
-            {trip.participants.length > 4 && (
+            {participantsWithAvatars.length > 4 && (
               <div className="w-10 h-10 rounded-full bg-gray-700 border-3 border-gray-900 flex items-center justify-center text-sm font-medium text-white ml-2">
-                +{trip.participants.length - 4}
+                +{participantsWithAvatars.length - 4}
               </div>
             )}
           </div>

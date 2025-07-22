@@ -5,6 +5,7 @@ import { Calendar, MapPin, Crown, Copy, Eye, Users, Clock } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { TravelerTooltip } from './ui/traveler-tooltip';
 import { ProTripData } from '../types/pro';
 import { useTripVariant } from '../contexts/TripVariantContext';
 
@@ -56,6 +57,12 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
   };
 
   const nextLoadIn = getNextLoadIn();
+
+  // Ensure all participants have proper avatar URLs
+  const participantsWithAvatars = trip.participants.map((participant, index) => ({
+    ...participant,
+    avatar: participant.avatar || `https://images.unsplash.com/photo-${1649972904349 + index}-6e44c42644a7?w=40&h=40&fit=crop&crop=face`
+  }));
 
   return (
     <div className={`bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-3xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-xl group hover:border-${accentColors.primary}/50 relative overflow-hidden`}>
@@ -147,25 +154,20 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
         </div>
         
         <div className="flex -space-x-3 mb-2">
-          {trip.participants.map((participant, index) => (
-            <Tooltip key={participant.id}>
-              <TooltipTrigger>
-                <img
-                  src={participant.avatar}
-                  alt={participant.name}
-                  className={`w-10 h-10 rounded-full border-2 border-white/30 hover:scale-110 transition-transform duration-200 hover:border-${accentColors.primary}`}
-                  style={{ zIndex: trip.participants.length - index }}
-                />
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{participant.name} - {participant.role}</p>
-              </TooltipContent>
-            </Tooltip>
+          {participantsWithAvatars.map((participant, index) => (
+            <TravelerTooltip key={participant.id} name={`${participant.name} - ${participant.role}`}>
+              <img
+                src={participant.avatar}
+                alt={`${participant.name} - ${participant.role}`}
+                className={`w-10 h-10 rounded-full border-2 border-white/30 hover:scale-110 transition-transform duration-200 hover:border-${accentColors.primary}`}
+                style={{ zIndex: participantsWithAvatars.length - index }}
+              />
+            </TravelerTooltip>
           ))}
         </div>
 
         <div className="text-xs text-white/60">
-          Roles: {trip.participants.map(p => p.role).join(', ')}
+          Roles: {participantsWithAvatars.map(p => p.role).join(', ')}
         </div>
       </div>
 

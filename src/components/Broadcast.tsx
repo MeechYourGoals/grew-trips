@@ -8,7 +8,7 @@ interface BroadcastProps {
   message: string;
   timestamp: Date;
   location?: string;
-  category: 'chill' | 'logistics' | 'urgent';
+  category: 'chill' | 'logistics' | 'urgent' | 'emergency';
   recipients: string;
   responses: {
     coming: number;
@@ -39,6 +39,8 @@ export const Broadcast = ({
         return 'bg-yellow-600/20 border-yellow-500/30';
       case 'urgent':
         return 'bg-red-600/20 border-red-500/30';
+      case 'emergency':
+        return 'bg-red-700/30 border-red-600/50';
       default:
         return 'bg-slate-600/20 border-slate-500/30';
     }

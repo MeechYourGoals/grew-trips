@@ -1,9 +1,11 @@
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Users, Crown } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 import { ProTripData } from '../types/pro';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { TravelerTooltip } from './ui/traveler-tooltip';
 
 interface MobileProTripCardProps {
   trip: ProTripData;
@@ -33,6 +35,12 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
       default: return 'from-gray-500/20 to-gray-600/20 border-gray-500/30';
     }
   };
+
+  // Ensure all participants have proper avatar URLs
+  const participantsWithAvatars = trip.participants.map((participant, index) => ({
+    ...participant,
+    avatar: participant.avatar || `https://images.unsplash.com/photo-${1649972904349 + index}-6e44c42644a7?w=40&h=40&fit=crop&crop=face`
+  }));
 
   return (
     <div className={`bg-gradient-to-br ${getCategoryColor(trip.category)} backdrop-blur-xl border rounded-2xl overflow-hidden transition-all duration-300 shadow-lg hover:scale-[1.02]`}>
@@ -88,28 +96,29 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
               <Users size={14} className={`text-${accentColors.primary}`} />
               <span className="text-sm text-gray-300 font-medium">Team</span>
             </div>
-            <span className="text-xs text-gray-500">{trip.participants.length} members</span>
+            <span className="text-xs text-gray-500">{participantsWithAvatars.length} members</span>
           </div>
           
           <div className="flex items-center">
             <div className="flex -space-x-2">
-              {trip.participants.slice(0, 3).map((participant, index) => (
-                <div
-                  key={participant.id}
-                  className="relative"
-                  style={{ zIndex: trip.participants.length - index }}
-                >
-                  <img
-                    src={participant.avatar}
-                    alt={participant.name}
-                    className="w-8 h-8 rounded-full border-2 border-gray-900"
-                  />
-                </div>
+              {participantsWithAvatars.slice(0, 3).map((participant, index) => (
+                <TravelerTooltip key={participant.id} name={`${participant.name} - ${participant.role}`}>
+                  <div
+                    className="relative"
+                    style={{ zIndex: participantsWithAvatars.length - index }}
+                  >
+                    <img
+                      src={participant.avatar}
+                      alt={`${participant.name} - ${participant.role}`}
+                      className="w-8 h-8 rounded-full border-2 border-gray-900"
+                    />
+                  </div>
+                </TravelerTooltip>
               ))}
             </div>
-            {trip.participants.length > 3 && (
+            {participantsWithAvatars.length > 3 && (
               <div className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-900 flex items-center justify-center text-xs font-medium text-white ml-1">
-                +{trip.participants.length - 3}
+                +{participantsWithAvatars.length - 3}
               </div>
             )}
           </div>

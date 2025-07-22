@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, User, MoreHorizontal } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 import { ShareTripModal } from './share/ShareTripModal';
+import { TravelerTooltip } from './ui/traveler-tooltip';
 
 interface Participant {
   id: number;
@@ -38,6 +39,12 @@ export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
 
   if (!isMobile) return null;
 
+  // Ensure all participants have proper avatar URLs
+  const participantsWithAvatars = trip.participants.map((participant, index) => ({
+    ...participant,
+    avatar: participant.avatar || `https://images.unsplash.com/photo-${1649972904349 + index}-6e44c42644a7?w=40&h=40&fit=crop&crop=face`
+  }));
+
   return (
     <div className="bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-yellow-500/30 rounded-2xl overflow-hidden transition-all duration-300 shadow-lg">
       {/* Mobile Header */}
@@ -68,7 +75,7 @@ export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
         {/* Stats Row */}
         <div className="flex justify-between items-center mb-4">
           <div className="text-center">
-            <div className="text-xl font-bold text-white">{trip.id === 3 ? '200' : trip.participants.length}</div>
+            <div className="text-xl font-bold text-white">{trip.id === 3 ? '200' : participantsWithAvatars.length}</div>
             <div className="text-xs text-gray-400">People</div>
           </div>
           <div className="text-center">
@@ -85,28 +92,29 @@ export const MobileTripCard = ({ trip }: MobileTripCardProps) => {
         <div className="mb-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-gray-400 font-medium">Travelers</span>
-            <span className="text-xs text-gray-500">{trip.participants.length} people</span>
+            <span className="text-xs text-gray-500">{participantsWithAvatars.length} people</span>
           </div>
           
           <div className="flex items-center">
             <div className="flex -space-x-2">
-              {trip.participants.slice(0, 3).map((participant, index) => (
-                <div
-                  key={participant.id}
-                  className="relative"
-                  style={{ zIndex: trip.participants.length - index }}
-                >
-                  <img
-                    src={participant.avatar}
-                    alt={participant.name}
-                    className="w-8 h-8 rounded-full border-2 border-gray-900"
-                  />
-                </div>
+              {participantsWithAvatars.slice(0, 3).map((participant, index) => (
+                <TravelerTooltip key={participant.id} name={participant.name}>
+                  <div
+                    className="relative"
+                    style={{ zIndex: participantsWithAvatars.length - index }}
+                  >
+                    <img
+                      src={participant.avatar}
+                      alt={participant.name}
+                      className="w-8 h-8 rounded-full border-2 border-gray-900"
+                    />
+                  </div>
+                </TravelerTooltip>
               ))}
             </div>
-            {trip.participants.length > 3 && (
+            {participantsWithAvatars.length > 3 && (
               <div className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-900 flex items-center justify-center text-xs font-medium text-white ml-1">
-                +{trip.participants.length - 3}
+                +{participantsWithAvatars.length - 3}
               </div>
             )}
           </div>

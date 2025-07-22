@@ -9,7 +9,7 @@ interface MockMessage {
   tags?: string[];
 }
 
-export { MockMessage };
+export type { MockMessage };
 
 interface MockBroadcast {
   id: string;
