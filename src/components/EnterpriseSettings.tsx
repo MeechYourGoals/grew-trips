@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building, Users, CreditCard, Settings, Bell, User, Crown, Wallet, Calendar, Package, Badge, DollarSign, Star, Users as UsersIcon, Heart, ChevronDown } from 'lucide-react';
+import { Building, Users, CreditCard, Settings, Bell, User, Crown, Wallet, Calendar, Package, Users as UsersIcon, ChevronDown } from 'lucide-react';
 import { TravelWallet } from './TravelWallet';
 import { OrganizationSection } from './enterprise/OrganizationSection';
 import { BillingSection } from './enterprise/BillingSection';
@@ -11,11 +11,7 @@ import { EnterpriseGeneralSettings } from './enterprise/EnterpriseGeneralSetting
 import { IntegrationsSection } from './enterprise/IntegrationsSection';
 import { GameSchedule } from './enterprise/GameSchedule';
 import { ShowSchedule } from './enterprise/ShowSchedule';
-import { CredentialControl } from './enterprise/CredentialControl';
-import { SettlementPanel } from './enterprise/SettlementPanel';
-import { SponsorDashboard } from './enterprise/SponsorDashboard';
 import { ScoutingExport } from './enterprise/ScoutingExport';
-import { PlayerAvailability } from './enterprise/PlayerAvailability';
 import { TripCategory } from '../types/enterprise';
 import { useIsMobile } from '../hooks/use-mobile';
 
@@ -57,68 +53,44 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
       'sports-pro': [
         { id: 'seats', label: 'Team & Roles', icon: Users },
         { id: 'game-schedule', label: 'Game Schedule', icon: Calendar },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet (Org)', icon: Wallet },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'sports-college': [
         { id: 'seats', label: 'Team & Roles', icon: Users },
         { id: 'game-schedule', label: 'Game Schedule', icon: Calendar },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet (Org)', icon: Wallet },
         { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'sports-hs-aau': [
         { id: 'seats', label: 'Team & Roles (Staff)', icon: Users },
         { id: 'game-schedule', label: 'Game Schedule', icon: Calendar },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet (Org)', icon: Wallet },
         { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'tour-music': [
         { id: 'seats', label: 'Team & Roles', icon: Users },
         { id: 'show-schedule', label: 'Show Schedule', icon: Calendar },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'settlement', label: 'Settlement & Revenue', icon: DollarSign },
-        { id: 'sponsors', label: 'Sponsor & Deliverables', icon: Star },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'tour-comedy': [
         { id: 'seats', label: 'Team & Roles', icon: Users },
         { id: 'show-schedule', label: 'Show Schedule', icon: Calendar },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'settlement', label: 'Settlement & Revenue', icon: DollarSign },
-        { id: 'sponsors', label: 'Sponsor & Deliverables', icon: Star },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'tour-other': [
         { id: 'seats', label: 'Team & Roles', icon: Users },
         { id: 'show-schedule', label: 'Show Schedule', icon: Calendar },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'settlement', label: 'Settlement & Revenue', icon: DollarSign },
-        { id: 'sponsors', label: 'Sponsor & Deliverables', icon: Star },
-        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'privacy', label: 'General & Privacy', icon: Settings }
-      ],
-      'influencer': [
-        { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
-        { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'settlement', label: 'Settlement & Revenue', icon: DollarSign },
-        { id: 'sponsors', label: 'Sponsor & Deliverables', icon: Star },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
@@ -129,7 +101,6 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
       ],
       'recruit': [
         { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
         { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
@@ -142,25 +113,23 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
       ],
       'field': [
         { id: 'seats', label: 'Team & Roles (Staff)', icon: Users },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'film': [
         { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'settlement', label: 'Settlement & Revenue', icon: DollarSign },
-        { id: 'sponsors', label: 'Sponsor & Deliverables', icon: Star },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'nonprofit': [
         { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'sponsors', label: 'Sponsor & Deliverables', icon: Star },
+        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
+        { id: 'privacy', label: 'General & Privacy', icon: Settings }
+      ],
+      'other': [
+        { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ]
@@ -182,11 +151,7 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
       case 'settings': return <EnterpriseGeneralSettings />;
       case 'game-schedule': return <GameSchedule />;
       case 'show-schedule': return <ShowSchedule />;
-      case 'credentials': return <CredentialControl />;
-      case 'settlement': return <SettlementPanel />;
-      case 'sponsors': return <SponsorDashboard />;
       case 'scouting': return <ScoutingExport />;
-      case 'availability': return <PlayerAvailability tripCategory={tripCategory} />;
       default: return <OrganizationSection organization={organization} />;
     }
   };
@@ -198,13 +163,13 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
     { value: 'tour-music', label: 'Tour – Music' },
     { value: 'tour-comedy', label: 'Tour – Comedy' },
     { value: 'tour-other', label: 'Tour – Podcasts, Creators, etc.' },
-    { value: 'influencer', label: 'Influencer / Creator Activation' },
     { value: 'retreat', label: 'Company Retreat' },
     { value: 'recruit', label: 'Recruiting Trip' },
     { value: 'biz', label: 'Business Travel (Sales / Exec)' },
-    { value: 'field', label: 'School Field Trip' },
+    { value: 'field', label: 'School Trip' },
     { value: 'film', label: 'Content' },
-    { value: 'nonprofit', label: 'Non-Profit Mission (Humanitarian)' }
+    { value: 'nonprofit', label: 'Non-Profit Mission (Humanitarian)' },
+    { value: 'other', label: 'Other' }
   ];
 
   const sections = getSidebarSections(tripCategory);

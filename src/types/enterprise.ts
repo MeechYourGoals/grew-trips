@@ -2,7 +2,7 @@
 export type TripCategory =
   | "sports-pro" | "sports-college" | "sports-hs-aau"
   | "tour-music" | "tour-comedy" | "tour-other"
-  | "influencer" | "retreat" | "recruit" | "biz" | "field" | "film" | "nonprofit";
+  | "retreat" | "recruit" | "biz" | "field" | "film" | "nonprofit" | "other";
 
 export interface EnterpriseSettingsState {
   tripCategory: TripCategory;
