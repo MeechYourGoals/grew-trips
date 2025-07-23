@@ -1,51 +1,54 @@
 
 import React, { useState } from 'react';
-import { Bell, Mail, Smartphone, TestTube, Volume2, Settings } from 'lucide-react';
+import { Bell, Mail, Smartphone, TestTube } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../integrations/supabase/client';
 
 export const ConsumerNotificationsSection = () => {
-  const { user, updateNotificationSettings } = useAuth();
+  const { user } = useAuth();
   const [isTesting, setIsTesting] = useState<string | null>(null);
+  
+  // Local state for notification settings
+  const [notificationSettings, setNotificationSettings] = useState({
+    messages: true,
+    broadcasts: true,
+    tripUpdates: true,
+    email: true,
+    push: false,
+    sms: false
+  });
 
   // Create mock user for demo mode when no real user is authenticated
   const mockUser = {
     id: 'demo-user-123',
     email: 'demo@example.com',
-    displayName: 'Demo User',
-    notificationSettings: {
-      messages: true,
-      broadcasts: true,
-      tripUpdates: true,
-      email: true,
-      push: false,
-      sms: false,
-      voiceCall: false
-    }
+    displayName: 'Demo User'
   };
 
   const currentUser = user || mockUser;
-  const currentUpdateNotificationSettings = user ? updateNotificationSettings : () => console.log('Demo mode - notification settings update clicked');
 
   const handleNotificationToggle = (setting: string) => {
-    currentUpdateNotificationSettings({
-      [setting]: !currentUser.notificationSettings[setting as keyof typeof currentUser.notificationSettings]
-    });
+    setNotificationSettings(prev => ({
+      ...prev,
+      [setting]: !prev[setting as keyof typeof prev]
+    }));
+    
+    // In a real app, this would update the backend
+    console.log(`Toggled ${setting} to:`, !notificationSettings[setting as keyof typeof notificationSettings]);
   };
 
   const handleTestNotification = async (type: string) => {
     setIsTesting(type);
     
     try {
-      const { data, error } = await supabase.functions.invoke('push-notifications', {
-        body: {
-          type: 'test',
-          notificationType: type,
-          userId: currentUser.id
-        }
-      });
-      
-      if (error) throw error;
+      console.log(`Testing ${type} notification for user:`, currentUser.id);
+      // Mock test notification
+      if (type === 'push' && 'Notification' in window) {
+        new Notification('Test Notification', {
+          body: 'This is a test push notification from your travel app!',
+          icon: '/favicon.ico'
+        });
+      }
     } catch (error) {
       console.error('Test notification error:', error);
     } finally {
@@ -65,7 +68,7 @@ export const ConsumerNotificationsSection = () => {
         <h4 className="text-lg font-semibold text-white mb-4">App Notifications</h4>
         
         <div className="space-y-4">
-          {Object.entries(currentUser.notificationSettings).filter(([key]) => 
+          {Object.entries(notificationSettings).filter(([key]) => 
             ['messages', 'broadcasts', 'tripUpdates'].includes(key)
           ).map(([key, value]) => (
             <div key={key} className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
@@ -121,11 +124,11 @@ export const ConsumerNotificationsSection = () => {
               <button
                 onClick={() => handleNotificationToggle('push')}
                 className={`relative w-12 h-6 rounded-full transition-colors ${
-                  currentUser.notificationSettings.push ? 'bg-glass-orange' : 'bg-gray-600'
+                  notificationSettings.push ? 'bg-glass-orange' : 'bg-gray-600'
                 }`}
               >
                 <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
-                  currentUser.notificationSettings.push ? 'translate-x-6' : 'translate-x-0.5'
+                  notificationSettings.push ? 'translate-x-6' : 'translate-x-0.5'
                 }`} />
               </button>
             </div>
@@ -150,11 +153,11 @@ export const ConsumerNotificationsSection = () => {
               <button
                 onClick={() => handleNotificationToggle('email')}
                 className={`relative w-12 h-6 rounded-full transition-colors ${
-                  currentUser.notificationSettings.email ? 'bg-glass-orange' : 'bg-gray-600'
+                  notificationSettings.email ? 'bg-glass-orange' : 'bg-gray-600'
                 }`}
               >
                 <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
-                  currentUser.notificationSettings.email ? 'translate-x-6' : 'translate-x-0.5'
+                  notificationSettings.email ? 'translate-x-6' : 'translate-x-0.5'
                 }`} />
               </button>
             </div>
@@ -179,11 +182,11 @@ export const ConsumerNotificationsSection = () => {
               <button
                 onClick={() => handleNotificationToggle('sms')}
                 className={`relative w-12 h-6 rounded-full transition-colors ${
-                  (currentUser.notificationSettings as any).sms ? 'bg-glass-orange' : 'bg-gray-600'
+                  notificationSettings.sms ? 'bg-glass-orange' : 'bg-gray-600'
                 }`}
               >
                 <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
-                  (currentUser.notificationSettings as any).sms ? 'translate-x-6' : 'translate-x-0.5'
+                  notificationSettings.sms ? 'translate-x-6' : 'translate-x-0.5'
                 }`} />
               </button>
             </div>
@@ -208,7 +211,7 @@ export const ConsumerNotificationsSection = () => {
                 <label className="block text-sm text-gray-300 mb-2">Start Time</label>
                 <input 
                   type="time" 
-                  value="22:00"
+                  defaultValue="22:00"
                   className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50"
                 />
               </div>
@@ -216,7 +219,7 @@ export const ConsumerNotificationsSection = () => {
                 <label className="block text-sm text-gray-300 mb-2">End Time</label>
                 <input 
                   type="time" 
-                  value="08:00"
+                  defaultValue="08:00"
                   className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-glass-orange/50"
                 />
               </div>

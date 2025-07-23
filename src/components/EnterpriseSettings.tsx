@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building, Users, CreditCard, Shield, Settings, Bell, User, Crown, Wallet, Calendar, Package, Badge, DollarSign, Star, Users as UsersIcon, Heart, ChevronDown } from 'lucide-react';
+import { Building, Users, CreditCard, Settings, Bell, User, Crown, Wallet, Calendar, Package, Badge, DollarSign, Star, Users as UsersIcon, Heart, ChevronDown } from 'lucide-react';
 import { TravelWallet } from './TravelWallet';
 import { OrganizationSection } from './enterprise/OrganizationSection';
 import { BillingSection } from './enterprise/BillingSection';
@@ -9,13 +9,11 @@ import { EnterpriseNotificationsSection } from './enterprise/EnterpriseNotificat
 import { EnterprisePrivacySection } from './enterprise/EnterprisePrivacySection';
 import { EnterpriseGeneralSettings } from './enterprise/EnterpriseGeneralSettings';
 import { IntegrationsSection } from './enterprise/IntegrationsSection';
-import { SecurityComplianceSection } from './enterprise/SecurityComplianceSection';
 import { GameSchedule } from './enterprise/GameSchedule';
 import { ShowSchedule } from './enterprise/ShowSchedule';
 import { CredentialControl } from './enterprise/CredentialControl';
 import { SettlementPanel } from './enterprise/SettlementPanel';
 import { SponsorDashboard } from './enterprise/SponsorDashboard';
-import { ComplianceCenter } from './enterprise/ComplianceCenter';
 import { ScoutingExport } from './enterprise/ScoutingExport';
 import { PlayerAvailability } from './enterprise/PlayerAvailability';
 import { TripCategory } from '../types/enterprise';
@@ -52,7 +50,6 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
     const baseSections = [
       { id: 'organization', label: 'Organization Profile', icon: Building },
       { id: 'integrations', label: 'Integrations', icon: Settings },
-      { id: 'security', label: 'Security & Compliance', icon: Shield },
       { id: 'billing', label: 'Billing & Subscription', icon: CreditCard }
     ];
 
@@ -62,7 +59,6 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
         { id: 'game-schedule', label: 'Game Schedule', icon: Calendar },
         { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet (Org)', icon: Wallet },
-        { id: 'compliance', label: 'Compliance Center', icon: Shield },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
@@ -72,26 +68,16 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
         { id: 'game-schedule', label: 'Game Schedule', icon: Calendar },
         { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet (Org)', icon: Wallet },
-        { id: 'compliance', label: 'Compliance Center', icon: Shield },
         { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
-      'sports-hs': [
+      'sports-hs-aau': [
         { id: 'seats', label: 'Team & Roles (Staff)', icon: Users },
         { id: 'game-schedule', label: 'Game Schedule', icon: Calendar },
         { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
-        { id: 'compliance', label: 'Compliance Center', icon: Shield },
-        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'privacy', label: 'General & Privacy', icon: Settings }
-      ],
-      'sports-aau': [
-        { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'game-schedule', label: 'Game Schedule', icon: Calendar },
-        { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet (Org)', icon: Wallet },
-        { id: 'compliance', label: 'Compliance Center', icon: Shield },
         { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'availability', label: 'Player Availability', icon: Heart },
@@ -145,21 +131,18 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
         { id: 'seats', label: 'Team & Roles', icon: Users },
         { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'compliance', label: 'Compliance Center', icon: Shield },
         { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'biz': [
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'compliance', label: 'Compliance Center (Policy)', icon: Shield },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'field': [
         { id: 'seats', label: 'Team & Roles (Staff)', icon: Users },
         { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
-        { id: 'compliance', label: 'Compliance Center', icon: Shield },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
@@ -169,7 +152,6 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
         { id: 'settlement', label: 'Settlement & Revenue', icon: DollarSign },
         { id: 'sponsors', label: 'Sponsor & Deliverables', icon: Star },
-        { id: 'compliance', label: 'Compliance Center (Union)', icon: Shield },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'availability', label: 'Player Availability', icon: Heart },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
@@ -179,7 +161,6 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
         { id: 'credentials', label: 'Credential & Badge Control', icon: Badge },
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
         { id: 'sponsors', label: 'Sponsor & Deliverables', icon: Star },
-        { id: 'compliance', label: 'Compliance Center', icon: Shield },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ]
@@ -192,7 +173,6 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
     switch (activeSection) {
       case 'organization': return <OrganizationSection organization={organization} />;
       case 'integrations': return <IntegrationsSection />;
-      case 'security': return <SecurityComplianceSection />;
       case 'billing': return <BillingSection organization={organization} />;
       case 'seats': return <SeatManagementSection organization={organization} tripCategory={tripCategory} />;
       case 'profile': return <EnterpriseProfileSection />;
@@ -205,7 +185,6 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
       case 'credentials': return <CredentialControl />;
       case 'settlement': return <SettlementPanel />;
       case 'sponsors': return <SponsorDashboard />;
-      case 'compliance': return <ComplianceCenter />;
       case 'scouting': return <ScoutingExport />;
       case 'availability': return <PlayerAvailability tripCategory={tripCategory} />;
       default: return <OrganizationSection organization={organization} />;
@@ -215,11 +194,10 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
   const categoryOptions = [
     { value: 'sports-pro', label: 'Sports – Pro Team' },
     { value: 'sports-college', label: 'Sports – Collegiate' },
-    { value: 'sports-hs', label: 'Sports – High School' },
-    { value: 'sports-aau', label: 'Sports – AAU / Travel Circuit' },
+    { value: 'sports-hs-aau', label: 'Sports – High School & AAU' },
     { value: 'tour-music', label: 'Tour – Music' },
     { value: 'tour-comedy', label: 'Tour – Comedy' },
-    { value: 'tour-other', label: 'Tour – Other (theatre, dance)' },
+    { value: 'tour-other', label: 'Tour – Podcasts, Creators, etc.' },
     { value: 'influencer', label: 'Influencer / Creator Activation' },
     { value: 'retreat', label: 'Company Retreat' },
     { value: 'recruit', label: 'Recruiting Trip' },

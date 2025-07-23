@@ -1,6 +1,6 @@
 
 export type TripCategory =
-  | "sports-pro" | "sports-college" | "sports-hs" | "sports-aau"
+  | "sports-pro" | "sports-college" | "sports-hs-aau"
   | "tour-music" | "tour-comedy" | "tour-other"
   | "influencer" | "retreat" | "recruit" | "biz" | "field" | "film" | "nonprofit";
 
