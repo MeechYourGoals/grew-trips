@@ -1,170 +1,207 @@
 
-import React from 'react';
-import { Network, Users, MessageCircle, Calendar } from 'lucide-react';
+import React, { useState } from 'react';
+import { MessageSquare, Shield, Users } from 'lucide-react';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 
 export const NetworkingRulesSection = () => {
+  const [communicationRules, setCommunicationRules] = useState({
+    allowDirectMessages: true,
+    allowGroupMessages: true,
+    allowFileSharing: true,
+    allowVoiceMessages: false,
+    moderationEnabled: true,
+    profanityFilter: true,
+    reportingEnabled: true,
+    customRules: ''
+  });
+
+  const handleToggle = (setting: string) => {
+    setCommunicationRules(prev => ({
+      ...prev,
+      [setting]: !prev[setting as keyof typeof prev]
+    }));
+  };
+
+  const handleCustomRulesChange = (value: string) => {
+    setCommunicationRules(prev => ({
+      ...prev,
+      customRules: value
+    }));
+  };
+
   return (
     <div className="space-y-6">
-      <h3 className="text-2xl font-bold text-white">Networking & Matchmaking Rules</h3>
-      
-      {/* Matchmaking Algorithm */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Network size={20} />
-          AI Matchmaking Settings
-        </h4>
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm text-gray-300 mb-2">Matching Criteria Priority</label>
-              <div className="space-y-2">
-                {['Industry/Sector', 'Job Function', 'Company Size', 'Geographic Location', 'Interests/Goals'].map((criteria, index) => (
-                  <div key={criteria} className="flex items-center justify-between p-3 bg-white/5 rounded-lg">
-                    <span className="text-gray-300">{criteria}</span>
-                    <select className="bg-gray-800/50 border border-gray-600 text-white rounded px-3 py-1 text-sm">
-                      <option>High</option>
-                      <option>Medium</option>
-                      <option>Low</option>
-                      <option>Disabled</option>
-                    </select>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm text-gray-300 mb-2">Networking Preferences</label>
-              <div className="space-y-3">
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 text-glass-orange bg-gray-800 border-gray-600 rounded" />
-                  <span className="text-gray-300">Enable mutual interest matching</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 text-glass-orange bg-gray-800 border-gray-600 rounded" />
-                  <span className="text-gray-300">Allow cross-industry connections</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" className="w-4 h-4 text-glass-orange bg-gray-800 border-gray-600 rounded" />
-                  <span className="text-gray-300">Prioritize similar experience levels</span>
-                </label>
-                <label className="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" defaultChecked className="w-4 h-4 text-glass-orange bg-gray-800 border-gray-600 rounded" />
-                  <span className="text-gray-300">Include complementary skill matching</span>
-                </label>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Connection Limits */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Users size={20} />
-          Connection & Interaction Limits
-        </h4>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm text-gray-300 mb-2">Daily Connection Requests</label>
-            <input 
-              type="number" 
-              defaultValue="10"
-              className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-300 mb-2">Max Connections Per Person</label>
-            <input 
-              type="number" 
-              defaultValue="50"
-              className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50"
-            />
-          </div>
-          <div>
-            <label className="block text-sm text-gray-300 mb-2">Meeting Duration (minutes)</label>
-            <select className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50">
-              <option>15</option>
-              <option>30</option>
-              <option>45</option>
-              <option>60</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Networking Sessions */}
-      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <Calendar size={20} />
-          Structured Networking Sessions
-        </h4>
-        <div className="space-y-4">
-          {[
-            { name: 'Speed Networking Round 1', time: '10:30 - 11:15', format: 'Round Robin', participants: '50' },
-            { name: 'Industry Meetup: FinTech', time: '14:00 - 15:00', format: 'Open Discussion', participants: '25' },
-            { name: 'Startup Pitch & Connect', time: '16:30 - 17:30', format: 'Pitch + Network', participants: '30' }
-          ].map((session) => (
-            <div key={session.name} className="bg-white/5 rounded-lg p-4 border border-white/10">
-              <div className="flex items-center justify-between mb-3">
-                <h5 className="text-white font-medium">{session.name}</h5>
-                <div className="text-sm text-glass-orange">{session.participants} participants</div>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-gray-400">
-                <div>Time: {session.time}</div>
-                <div>Format: {session.format}</div>
-                <div>
-                  <button className="text-glass-orange hover:text-glass-orange/80">
-                    Manage Session
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-          <button className="w-full bg-glass-orange/20 hover:bg-glass-orange/30 text-glass-orange border border-glass-orange/30 rounded-lg py-3 font-medium">
-            + Schedule New Networking Session
-          </button>
-        </div>
-      </div>
+      <h3 className="text-2xl font-bold text-white flex items-center gap-2">
+        <MessageSquare size={24} className="text-glass-orange" />
+        Communication Rules
+      </h3>
 
       {/* Communication Settings */}
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
         <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-          <MessageCircle size={20} />
-          Communication Rules
+          <Users size={20} className="text-glass-orange" />
+          Communication Settings
         </h4>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm text-gray-300 mb-2">Message Approval</label>
-            <select className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50">
-              <option>No Moderation</option>
-              <option>Auto-Filter Inappropriate</option>
-              <option>Manual Review Required</option>
-            </select>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Direct Messages</div>
+              <div className="text-sm text-gray-400">Allow attendees to send direct messages to each other</div>
+            </div>
+            <button
+              onClick={() => handleToggle('allowDirectMessages')}
+              className={`relative w-12 h-6 rounded-full transition-colors ${
+                communicationRules.allowDirectMessages ? 'bg-glass-orange' : 'bg-gray-600'
+              }`}
+            >
+              <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
+                communicationRules.allowDirectMessages ? 'translate-x-6' : 'translate-x-0.5'
+              }`} />
+            </button>
           </div>
-          <div>
-            <label className="block text-sm text-gray-300 mb-2">Contact Info Sharing</label>
-            <select className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50">
-              <option>Opt-in Required</option>
-              <option>Automatic After Connection</option>
-              <option>Never Share</option>
-            </select>
+
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Group Messages</div>
+              <div className="text-sm text-gray-400">Allow creation of group conversations</div>
+            </div>
+            <button
+              onClick={() => handleToggle('allowGroupMessages')}
+              className={`relative w-12 h-6 rounded-full transition-colors ${
+                communicationRules.allowGroupMessages ? 'bg-glass-orange' : 'bg-gray-600'
+              }`}
+            >
+              <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
+                communicationRules.allowGroupMessages ? 'translate-x-6' : 'translate-x-0.5'
+              }`} />
+            </button>
           </div>
-          <div>
-            <label className="block text-sm text-gray-300 mb-2">Follow-up Reminders</label>
-            <select className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50">
-              <option>Enabled</option>
-              <option>Disabled</option>
-            </select>
+
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">File Sharing</div>
+              <div className="text-sm text-gray-400">Allow sharing of files and documents</div>
+            </div>
+            <button
+              onClick={() => handleToggle('allowFileSharing')}
+              className={`relative w-12 h-6 rounded-full transition-colors ${
+                communicationRules.allowFileSharing ? 'bg-glass-orange' : 'bg-gray-600'
+              }`}
+            >
+              <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
+                communicationRules.allowFileSharing ? 'translate-x-6' : 'translate-x-0.5'
+              }`} />
+            </button>
           </div>
-          <div>
-            <label className="block text-sm text-gray-300 mb-2">Connection Expiry</label>
-            <select className="w-full bg-gray-800/50 border border-gray-600 text-white rounded-lg px-4 py-3 focus:outline-none focus:ring-2 focus:ring-glass-orange/50">
-              <option>Never</option>
-              <option>30 days post-event</option>
-              <option>90 days post-event</option>
-              <option>1 year post-event</option>
-            </select>
+
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Voice Messages</div>
+              <div className="text-sm text-gray-400">Allow voice message recordings</div>
+            </div>
+            <button
+              onClick={() => handleToggle('allowVoiceMessages')}
+              className={`relative w-12 h-6 rounded-full transition-colors ${
+                communicationRules.allowVoiceMessages ? 'bg-glass-orange' : 'bg-gray-600'
+              }`}
+            >
+              <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
+                communicationRules.allowVoiceMessages ? 'translate-x-6' : 'translate-x-0.5'
+              }`} />
+            </button>
           </div>
         </div>
+      </div>
+
+      {/* Moderation Settings */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <Shield size={20} className="text-glass-orange" />
+          Moderation & Safety
+        </h4>
+
+        <div className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Content Moderation</div>
+              <div className="text-sm text-gray-400">Enable automatic content moderation</div>
+            </div>
+            <button
+              onClick={() => handleToggle('moderationEnabled')}
+              className={`relative w-12 h-6 rounded-full transition-colors ${
+                communicationRules.moderationEnabled ? 'bg-glass-orange' : 'bg-gray-600'
+              }`}
+            >
+              <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
+                communicationRules.moderationEnabled ? 'translate-x-6' : 'translate-x-0.5'
+              }`} />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Profanity Filter</div>
+              <div className="text-sm text-gray-400">Filter inappropriate language</div>
+            </div>
+            <button
+              onClick={() => handleToggle('profanityFilter')}
+              className={`relative w-12 h-6 rounded-full transition-colors ${
+                communicationRules.profanityFilter ? 'bg-glass-orange' : 'bg-gray-600'
+              }`}
+            >
+              <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
+                communicationRules.profanityFilter ? 'translate-x-6' : 'translate-x-0.5'
+              }`} />
+            </button>
+          </div>
+
+          <div className="flex items-center justify-between p-4 bg-white/5 rounded-lg">
+            <div>
+              <div className="text-white font-medium">Reporting System</div>
+              <div className="text-sm text-gray-400">Allow users to report inappropriate content</div>
+            </div>
+            <button
+              onClick={() => handleToggle('reportingEnabled')}
+              className={`relative w-12 h-6 rounded-full transition-colors ${
+                communicationRules.reportingEnabled ? 'bg-glass-orange' : 'bg-gray-600'
+              }`}
+            >
+              <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
+                communicationRules.reportingEnabled ? 'translate-x-6' : 'translate-x-0.5'
+              }`} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Custom Rules */}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-6">
+        <h4 className="text-lg font-semibold text-white mb-4">Custom Communication Rules</h4>
+        
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="customRules" className="text-white">Additional Rules</Label>
+            <Textarea
+              id="customRules"
+              value={communicationRules.customRules}
+              onChange={(e) => handleCustomRulesChange(e.target.value)}
+              className="bg-gray-800/50 border-gray-600 text-white mt-2"
+              placeholder="Enter any additional communication rules or guidelines for your event..."
+              rows={4}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Save Button */}
+      <div className="flex justify-end">
+        <Button className="bg-glass-orange hover:bg-glass-orange/80">
+          Save Communication Rules
+        </Button>
       </div>
     </div>
   );

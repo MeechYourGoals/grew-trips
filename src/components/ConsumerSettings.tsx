@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { User, Bell, CreditCard, Shield, Settings, Wallet, Calendar, Link, Brain, ChevronDown } from 'lucide-react';
+import { User, Bell, CreditCard, Shield, Settings, Wallet, Calendar, Link, ChevronDown } from 'lucide-react';
 import { TravelWallet } from './TravelWallet';
 import { ConsumerProfileSection } from './consumer/ConsumerProfileSection';
 import { ConsumerBillingSection } from './consumer/ConsumerBillingSection';
@@ -7,7 +8,6 @@ import { ConsumerNotificationsSection } from './consumer/ConsumerNotificationsSe
 import { ConsumerPrivacySection } from './consumer/ConsumerPrivacySection';
 import { ConsumerGeneralSettings } from './consumer/ConsumerGeneralSettings';
 import { ConsumerCalendarSync } from './consumer/ConsumerCalendarSync';
-import { ConsumerVoiceAI } from './consumer/ConsumerVoiceAI';
 import { ConsumerConnectedAccounts } from './consumer/ConsumerConnectedAccounts';
 import { useIsMobile } from '../hooks/use-mobile';
 
@@ -27,7 +27,6 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
     { id: 'calendar-sync', label: 'Calendar Sync', icon: Calendar },
     { id: 'connected-accounts', label: 'Connected Accounts', icon: Link },
     { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'voice-ai', label: 'Voice & AI', icon: Brain },
     { id: 'privacy', label: 'Privacy & Security', icon: Shield },
     { id: 'settings', label: 'General Settings', icon: Settings }
   ];
@@ -46,7 +45,6 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
       case 'calendar-sync': return <ConsumerCalendarSync />;
       case 'connected-accounts': return <ConsumerConnectedAccounts />;
       case 'notifications': return <ConsumerNotificationsSection />;
-      case 'voice-ai': return <ConsumerVoiceAI />;
       case 'privacy': return <ConsumerPrivacySection />;
       case 'settings': return <ConsumerGeneralSettings />;
       default: return <ConsumerProfileSection />;

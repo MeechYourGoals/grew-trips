@@ -1,11 +1,12 @@
+
 import React, { useState } from 'react';
-import { Calendar, CreditCard, Users, Clock, Building, Badge, Network, Megaphone, Activity, BarChart, Settings, Send, ChevronDown } from 'lucide-react';
+import { Calendar, CreditCard, Users, Clock, Building, Network, Megaphone, Activity, BarChart, Settings, Send, ChevronDown } from 'lucide-react';
+import { EventSetupSection } from './events/EventSetupSection';
 import { EventProfileSection } from './events/EventProfileSection';
 import { TicketingBillingSection } from './events/TicketingBillingSection';
 import { AttendeeTypesSection } from './events/AttendeeTypesSection';
 import { AgendaBuilderSection } from './events/AgendaBuilderSection';
 import { ExhibitorsSponsorSection } from './events/ExhibitorsSponsorSection';
-import { BadgeAccessSection } from './events/BadgeAccessSection';
 import { NetworkingRulesSection } from './events/NetworkingRulesSection';
 import { SegmentedBroadcastsSection } from './events/SegmentedBroadcastsSection';
 import { LiveEngagementSection } from './events/LiveEngagementSection';
@@ -13,10 +14,6 @@ import { EventAnalyticsSection } from './events/EventAnalyticsSection';
 import { ChatControlsSection } from './events/ChatControlsSection';
 import { HeatMapDashboard } from './events/HeatMapDashboard';
 import { EmergencyBroadcast } from './events/EmergencyBroadcast';
-import { EventSetupWizard } from './events/EventSetupWizard';
-import { EventBasicsSection } from './events/EventBasicsSection';
-import { EventScheduleSection } from './events/EventScheduleSection';
-import { EventInvitationsSection } from './events/EventInvitationsSection';
 import { useIsMobile } from '../hooks/use-mobile';
 
 interface EventsSettingsProps {
@@ -24,24 +21,20 @@ interface EventsSettingsProps {
 }
 
 export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
-  const [activeSection, setActiveSection] = useState('basics');
+  const [activeSection, setActiveSection] = useState('setup');
   const [eventData, setEventData] = useState({});
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const isMobile = useIsMobile();
 
   const sections = [
-    { id: 'basics', label: 'Event Basics', icon: Calendar },
-    { id: 'schedule', label: 'Setup & Schedule', icon: Settings },
-    { id: 'invitations', label: 'Invitations', icon: Send },
-    { id: 'setup', label: 'Event Setup Wizard', icon: Calendar },
+    { id: 'setup', label: 'Event Setup', icon: Calendar },
     { id: 'profile', label: 'Event Profile', icon: Calendar },
     { id: 'chat', label: 'Chat Controls', icon: Users },
     { id: 'ticketing', label: 'Ticketing & Billing', icon: CreditCard },
     { id: 'attendees', label: 'Attendee Types', icon: Users },
     { id: 'agenda', label: 'Agenda Builder', icon: Clock },
     { id: 'exhibitors', label: 'Exhibitors & Sponsors', icon: Building },
-    { id: 'badges', label: 'Badge & Access', icon: Badge },
-    { id: 'networking', label: 'Networking Rules', icon: Network },
+    { id: 'networking', label: 'Communication Rules', icon: Network },
     { id: 'broadcasts', label: 'Segmented Broadcasts', icon: Megaphone },
     { id: 'emergency', label: 'Emergency Broadcast', icon: Activity },
     { id: 'engagement', label: 'Live Engagement', icon: Activity },
@@ -55,24 +48,20 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
 
   const renderSection = () => {
     switch (activeSection) {
-      case 'basics': return <EventBasicsSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
-      case 'schedule': return <EventScheduleSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
-      case 'invitations': return <EventInvitationsSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
-      case 'setup': return <EventSetupWizard onComplete={() => {}} onCancel={() => {}} />;
+      case 'setup': return <EventSetupSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
       case 'profile': return <EventProfileSection />;
       case 'chat': return <ChatControlsSection />;
       case 'ticketing': return <TicketingBillingSection />;
       case 'attendees': return <AttendeeTypesSection />;
       case 'agenda': return <AgendaBuilderSection />;
       case 'exhibitors': return <ExhibitorsSponsorSection />;
-      case 'badges': return <BadgeAccessSection />;
       case 'networking': return <NetworkingRulesSection />;
       case 'broadcasts': return <SegmentedBroadcastsSection />;
       case 'emergency': return <EmergencyBroadcast />;
       case 'engagement': return <LiveEngagementSection />;
       case 'heatmap': return <HeatMapDashboard />;
       case 'analytics': return <EventAnalyticsSection />;
-      default: return <EventBasicsSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
+      default: return <EventSetupSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
     }
   };
 

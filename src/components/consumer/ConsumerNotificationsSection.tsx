@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
-import { Bell, Mail, Smartphone, TestTube } from 'lucide-react';
+import { Bell, Mail, Smartphone } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
-import { supabase } from '../../integrations/supabase/client';
 
 export const ConsumerNotificationsSection = () => {
   const { user } = useAuth();
@@ -15,7 +14,10 @@ export const ConsumerNotificationsSection = () => {
     tripUpdates: true,
     email: true,
     push: false,
-    sms: false
+    sms: false,
+    quietHours: true,
+    vibration: true,
+    badgeCount: true
   });
 
   // Create mock user for demo mode when no real user is authenticated
@@ -202,8 +204,15 @@ export const ConsumerNotificationsSection = () => {
           <div className="p-4 bg-white/5 rounded-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="text-white font-medium">Quiet Hours</div>
-              <button className="relative w-12 h-6 rounded-full bg-glass-orange">
-                <div className="absolute w-5 h-5 bg-white rounded-full top-0.5 translate-x-6 transition-transform" />
+              <button
+                onClick={() => handleNotificationToggle('quietHours')}
+                className={`relative w-12 h-6 rounded-full transition-colors ${
+                  notificationSettings.quietHours ? 'bg-glass-orange' : 'bg-gray-600'
+                }`}
+              >
+                <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
+                  notificationSettings.quietHours ? 'translate-x-6' : 'translate-x-0.5'
+                }`} />
               </button>
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -251,8 +260,15 @@ export const ConsumerNotificationsSection = () => {
               <div className="text-white font-medium">Vibration</div>
               <div className="text-sm text-gray-400">Enable vibration for mobile notifications</div>
             </div>
-            <button className="relative w-12 h-6 rounded-full bg-glass-orange">
-              <div className="absolute w-5 h-5 bg-white rounded-full top-0.5 translate-x-6 transition-transform" />
+            <button
+              onClick={() => handleNotificationToggle('vibration')}
+              className={`relative w-12 h-6 rounded-full transition-colors ${
+                notificationSettings.vibration ? 'bg-glass-orange' : 'bg-gray-600'
+              }`}
+            >
+              <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
+                notificationSettings.vibration ? 'translate-x-6' : 'translate-x-0.5'
+              }`} />
             </button>
           </div>
           
@@ -261,8 +277,15 @@ export const ConsumerNotificationsSection = () => {
               <div className="text-white font-medium">Badge Count</div>
               <div className="text-sm text-gray-400">Show unread count on app icon</div>
             </div>
-            <button className="relative w-12 h-6 rounded-full bg-glass-orange">
-              <div className="absolute w-5 h-5 bg-white rounded-full top-0.5 translate-x-6 transition-transform" />
+            <button
+              onClick={() => handleNotificationToggle('badgeCount')}
+              className={`relative w-12 h-6 rounded-full transition-colors ${
+                notificationSettings.badgeCount ? 'bg-glass-orange' : 'bg-gray-600'
+              }`}
+            >
+              <div className={`absolute w-5 h-5 bg-white rounded-full top-0.5 transition-transform ${
+                notificationSettings.badgeCount ? 'translate-x-6' : 'translate-x-0.5'
+              }`} />
             </button>
           </div>
         </div>
