@@ -1,4 +1,3 @@
-
 import { supabase } from '../integrations/supabase/client';
 
 export interface UserLocation {
@@ -131,7 +130,8 @@ export class MobileLocationService {
         is_moving: await this.getMovementStatus(position)
       };
 
-      const { error } = await supabase
+      // Use a generic table approach until migrations are applied
+      const { error } = await (supabase as any)
         .from('user_locations')
         .upsert(locationData, {
           onConflict: 'user_id,trip_id'
@@ -147,7 +147,7 @@ export class MobileLocationService {
 
   async getUserLocations(tripId: string): Promise<UserLocation[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('user_locations')
         .select(`
           *,
@@ -161,7 +161,7 @@ export class MobileLocationService {
         return [];
       }
 
-      return data?.map(location => ({
+      return data?.map((location: any) => ({
         id: location.id,
         userId: location.user_id,
         tripId: location.trip_id,
@@ -181,7 +181,7 @@ export class MobileLocationService {
 
   async removeUserLocation(userId: string, tripId: string): Promise<void> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('user_locations')
         .delete()
         .eq('user_id', userId)

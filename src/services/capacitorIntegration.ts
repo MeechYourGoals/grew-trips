@@ -112,18 +112,8 @@ export class CapacitorIntegrationService {
         timeout: 10000
       });
 
-      return {
-        coords: {
-          latitude: coordinates.coords.latitude,
-          longitude: coordinates.coords.longitude,
-          accuracy: coordinates.coords.accuracy,
-          altitude: coordinates.coords.altitude,
-          altitudeAccuracy: coordinates.coords.altitudeAccuracy,
-          heading: coordinates.coords.heading,
-          speed: coordinates.coords.speed
-        },
-        timestamp: coordinates.timestamp
-      };
+      // Return the Capacitor position object directly (it's compatible with GeolocationPosition)
+      return coordinates as GeolocationPosition;
     } catch (error) {
       console.error('Error getting current position:', error);
       return null;

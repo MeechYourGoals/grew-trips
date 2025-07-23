@@ -135,7 +135,7 @@ export class ProductionNotificationService {
 
   async getNotificationPreferences(userId: string): Promise<NotificationPreference | null> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('notification_preferences')
         .select('*')
         .eq('user_id', userId)
@@ -169,17 +169,17 @@ export class ProductionNotificationService {
       }
 
       return {
-        userId: data.user_id,
-        pushEnabled: data.push_enabled,
-        emailEnabled: data.email_enabled,
-        smsEnabled: data.sms_enabled,
-        tripUpdates: data.trip_updates,
-        chatMessages: data.chat_messages,
-        calendarReminders: data.calendar_reminders,
-        paymentAlerts: data.payment_alerts,
-        quietHoursEnabled: data.quiet_hours_enabled,
-        quietStart: data.quiet_start,
-        quietEnd: data.quiet_end
+        userId: (data as any).user_id,
+        pushEnabled: (data as any).push_enabled,
+        emailEnabled: (data as any).email_enabled,
+        smsEnabled: (data as any).sms_enabled,
+        tripUpdates: (data as any).trip_updates,
+        chatMessages: (data as any).chat_messages,
+        calendarReminders: (data as any).calendar_reminders,
+        paymentAlerts: (data as any).payment_alerts,
+        quietHoursEnabled: (data as any).quiet_hours_enabled,
+        quietStart: (data as any).quiet_start,
+        quietEnd: (data as any).quiet_end
       };
     } catch (error) {
       console.error('Error getting notification preferences:', error);
@@ -189,7 +189,7 @@ export class ProductionNotificationService {
 
   async updateNotificationPreferences(userId: string, preferences: Partial<NotificationPreference>): Promise<boolean> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('notification_preferences')
         .upsert({
           user_id: userId,
