@@ -68,9 +68,9 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
 
   return (
     <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8">
-      {/* Tab Navigation - Now with Horizontal Scrolling */}
+      {/* Tab Navigation - Responsive Center + Scroll */}
       <div className="mb-8">
-        <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 pb-2 -mx-2 px-2 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10">
+        <div className="flex overflow-x-auto whitespace-nowrap scroll-smooth gap-2 pb-2 -mx-2 px-2 bg-white/5 backdrop-blur-sm rounded-xl border border-white/10 justify-center">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
