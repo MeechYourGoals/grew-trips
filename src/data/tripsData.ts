@@ -24,7 +24,7 @@ export const tripsData: Trip[] = [
     location: "Cancun, Mexico",
     dateRange: "Mar 15 - Mar 22, 2026",
     description: "Brotherhood spring break getaway with beach activities, nightlife, and bonding experiences",
-    coverPhoto: "/src/assets/trip-covers/cancun-beach.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=800&h=600&fit=crop",
     participants: [
       { id: 1, name: "Marcus", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
       { id: 2, name: "Jamal", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
@@ -39,7 +39,7 @@ export const tripsData: Trip[] = [
     location: "Tokyo, Japan",
     dateRange: "Oct 5 - Oct 15, 2025",
     description: "Cultural exploration of Japan's capital with temples, modern tech districts, and amazing cuisine",
-    coverPhoto: "/src/assets/trip-covers/tokyo-skyline.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1449157291145-7efd050a4d0e?w=800&h=600&fit=crop",
     participants: [
       { id: 4, name: "Alex", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
       { id: 5, name: "Maria", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face" },
@@ -52,7 +52,7 @@ export const tripsData: Trip[] = [
     location: "Bali, Indonesia",
     dateRange: "Dec 10 - Dec 20, 2025",
     description: "Romantic destination wedding celebration with family and friends in paradise",
-    coverPhoto: "/src/assets/trip-covers/bali-wedding.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=800&h=600&fit=crop",
     participants: [
       { id: 7, name: "Jack", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
       { id: 8, name: "Jill", avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face" },
@@ -66,7 +66,7 @@ export const tripsData: Trip[] = [
     location: "Nashville, TN",
     dateRange: "Nov 8 - Nov 10, 2025",
     description: "Epic bachelorette celebration with honky-tonk bars, live music, and unforgettable memories",
-    coverPhoto: "/src/assets/trip-covers/nashville-nightlife.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=800&h=600&fit=crop",
     participants: [
       { id: 10, name: "Kristen", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
       { id: 11, name: "Ashley", avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=40&h=40&fit=crop&crop=face" },
@@ -82,7 +82,7 @@ export const tripsData: Trip[] = [
     location: "Indio, CA",
     dateRange: "Apr 10 - Apr 13, 2026",
     description: "Music festival adventure with top artists, desert vibes, and group camping",
-    coverPhoto: "/src/assets/trip-covers/coachella-festival.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1469474968028-56623f02e422?w=800&h=600&fit=crop",
     participants: [
       { id: 16, name: "Tyler", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
       { id: 17, name: "Zoe", avatar: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=40&h=40&fit=crop&crop=face" },
@@ -97,7 +97,7 @@ export const tripsData: Trip[] = [
     location: "Aspen, CO",
     dateRange: "Jul 20 - Jul 28, 2025",
     description: "Multi-generational family retreat with hiking, spa time, and quality family bonding",
-    coverPhoto: "/src/assets/trip-covers/aspen-summer.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1472396961693-142e6e269027?w=800&h=600&fit=crop",
     participants: [
       { id: 21, name: "Dad (Mike)", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
       { id: 22, name: "Mom (Linda)", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
@@ -112,7 +112,7 @@ export const tripsData: Trip[] = [
     location: "Phoenix, Arizona",
     dateRange: "Feb 20 - Feb 23, 2025",
     description: "Annual guys' golf trip with tournaments, poker nights, and fantasy football draft",
-    coverPhoto: "/src/assets/trip-covers/phoenix-golf.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1482881497185-d4a9ddbe4151?w=800&h=600&fit=crop",
     participants: [
       { id: 26, name: "Commissioner Mike", avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face" },
       { id: 27, name: "Big Rob", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
@@ -128,7 +128,7 @@ export const tripsData: Trip[] = [
     location: "Tulum, Mexico",
     dateRange: "Nov 10 - Nov 16, 2025",
     description: "Yoga and wellness focused retreat with breathwork, meditation, and spa treatments",
-    coverPhoto: "/src/assets/trip-covers/tulum-wellness.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1523712999610-f77fbcfc3843?w=800&h=600&fit=crop",
     participants: [
       { id: 32, name: "Elena Ramirez", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
       { id: 33, name: "Jason Wu", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
@@ -146,7 +146,7 @@ export const tripsData: Trip[] = [
     location: "Napa Valley, CA",
     dateRange: "May 2 - May 5, 2025",
     description: "Celebratory wine country escape with tastings, spa treatments, and new beginnings",
-    coverPhoto: "/src/assets/trip-covers/napa-vineyard.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=800&h=600&fit=crop",
     participants: [
       { id: 40, name: "Olivia Parker", avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face" },
       { id: 41, name: "Mia Brooks", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
@@ -162,7 +162,7 @@ export const tripsData: Trip[] = [
     location: "Aspen, CO",
     dateRange: "Dec 12 - Dec 17, 2025",
     description: "Company holiday celebration with skiing, team building, and winter activities",
-    coverPhoto: "/src/assets/trip-covers/aspen-ski.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1458668383970-8ddd3927deed?w=800&h=600&fit=crop",
     participants: [
       { id: 46, name: "Tom Nguyen", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
       { id: 47, name: "Heather Cole", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
@@ -182,7 +182,7 @@ export const tripsData: Trip[] = [
     location: "Port Canaveral, FL",
     dateRange: "Jun 15 - Jun 22, 2025",
     description: "Magical family cruise with Disney characters, activities, and island adventures",
-    coverPhoto: "/src/assets/trip-covers/disney-cruise.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1518877593221-1f28583780b4?w=800&h=600&fit=crop",
     participants: [
       { id: 56, name: "Liam Turner", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
       { id: 57, name: "Emma Turner", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },
@@ -199,7 +199,7 @@ export const tripsData: Trip[] = [
     location: "Yellowstone, WY",
     dateRange: "Jul 10 - Jul 17, 2025",
     description: "Outdoor adventure exploring geysers, wildlife, and backcountry hiking trails",
-    coverPhoto: "/src/assets/trip-covers/yellowstone-geyser.webp",
+    coverPhoto: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=800&h=600&fit=crop",
     participants: [
       { id: 63, name: "Brent Miller", avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face" },
       { id: 64, name: "Nia Patel", avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face" },

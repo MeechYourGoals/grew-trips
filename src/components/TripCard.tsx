@@ -49,11 +49,12 @@ export const TripCard = ({ trip }: TripCardProps) => {
       {/* Trip Image/Header */}
       <div className="relative h-48 bg-gradient-to-br from-yellow-600/20 via-yellow-500/10 to-transparent p-6">
         <div 
-          className="absolute inset-0 bg-cover bg-center opacity-20"
+          className="absolute inset-0 bg-cover bg-center opacity-80"
           style={{
             backgroundImage: `url('${trip.coverPhoto || 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=200&fit=crop'}')`
           }}
         ></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
         <div className="relative z-10 flex justify-between items-start h-full">
           <div className="flex-1">
             <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-yellow-300 transition-colors">
