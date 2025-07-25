@@ -514,8 +514,7 @@ export const FilesTab = ({ tripId }: FilesTabProps) => {
             uploaderId: 'user1',
             uploaderName: selectedReceipt.uploadedBy,
             fileUrl: selectedReceipt.url,
-            fileName: selectedReceipt.name,
-            fileType: selectedReceipt.type,
+             
             totalAmount: selectedReceipt.totalAmount || 0,
             currency: selectedReceipt.currency || 'USD',
             preferredMethod: selectedReceipt.preferredMethod || 'venmo',
