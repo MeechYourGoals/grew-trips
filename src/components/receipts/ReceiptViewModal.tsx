@@ -29,13 +29,14 @@ export const ReceiptViewModal = ({ isOpen, onClose, receipt }: ReceiptViewModalP
   const handleDownload = () => {
     const link = document.createElement('a');
     link.href = receipt.fileUrl;
-    link.download = receipt.fileName;
+    link.download = receipt.fileUrl.split('/').pop() || 'receipt';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  const isImage = receipt.fileType.startsWith('image/');
+  const isImage = !receipt.fileUrl.toLowerCase().endsWith('.pdf');
+  const fileName = receipt.fileUrl.split('/').pop() || 'Receipt';
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -43,8 +44,10 @@ export const ReceiptViewModal = ({ isOpen, onClose, receipt }: ReceiptViewModalP
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-700">
           <div>
-            <h3 className="text-lg font-semibold text-white">{receipt.fileName}</h3>
-            <p className="text-gray-400 text-sm">Uploaded by {receipt.uploaderName}</p>
+            <h3 className="text-lg font-semibold text-white">{fileName}</h3>
+            {receipt.uploaderName && (
+              <p className="text-gray-400 text-sm">Uploaded by {receipt.uploaderName}</p>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -70,7 +73,7 @@ export const ReceiptViewModal = ({ isOpen, onClose, receipt }: ReceiptViewModalP
             {isImage ? (
               <img
                 src={receipt.fileUrl}
-                alt={receipt.fileName}
+                alt={fileName}
                 className="w-full max-h-80 object-contain rounded-xl bg-gray-800"
               />
             ) : (
@@ -97,7 +100,7 @@ export const ReceiptViewModal = ({ isOpen, onClose, receipt }: ReceiptViewModalP
               <div>
                 <label className="text-gray-400 text-sm">Total Amount</label>
                 <div className="text-white font-semibold text-lg">
-                  ${receipt.totalAmount.toFixed(2)} {receipt.currency}
+                  ${receipt.totalAmount ? receipt.totalAmount.toFixed(2) : '0.00'} {receipt.currency || ''}
                 </div>
               </div>
               

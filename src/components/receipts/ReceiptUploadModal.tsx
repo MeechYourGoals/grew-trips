@@ -7,6 +7,7 @@ import { getPaymentMethodDisplayName } from '../../utils/paymentDeeplinks';
 import { useAuth } from '../../hooks/useAuth';
 import { useConsumerSubscription } from '../../hooks/useConsumerSubscription';
 import { AISplitHelper } from './AISplitHelper';
+import { supabase } from '../../integrations/supabase/client';
 
 interface ReceiptUploadModalProps {
   isOpen: boolean;
@@ -30,6 +31,7 @@ export const ReceiptUploadModal = ({
   const [splitCount, setSplitCount] = useState<number | undefined>();
   const [showAISplit, setShowAISplit] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [parsedResult, setParsedResult] = useState<any | null>(null);
 
   const paymentMethods: PaymentMethod[] = ['venmo', 'splitwise', 'cashapp', 'zelle'];
 
@@ -55,35 +57,60 @@ export const ReceiptUploadModal = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedFile || !totalAmount || !user) return;
+    if (!selectedFile || !user) return;
 
     setIsUploading(true);
-    
-    try {
-      // Mock upload - in real implementation, this would upload to Supabase
-      const mockReceipt: Receipt = {
-        id: Date.now().toString(),
-        tripId,
-        uploaderId: user.id,
-        uploaderName: user.displayName || 'Unknown User',
-        fileUrl: URL.createObjectURL(selectedFile),
-        fileName: selectedFile.name,
-        fileType: selectedFile.type,
-        totalAmount: parseFloat(totalAmount),
-        currency,
-        preferredMethod,
-        splitCount,
-        perPersonAmount: splitCount ? parseFloat(totalAmount) / splitCount : undefined,
-        createdAt: new Date().toISOString()
-      };
 
-      onReceiptUploaded(mockReceipt);
-      
-      // Reset form
-      setSelectedFile(null);
-      setTotalAmount('');
-      setSplitCount(undefined);
-      onClose();
+    try {
+      const fileExt = selectedFile.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
+      const filePath = `${tripId}/receipts/${fileName}`;
+
+      let publicUrl = URL.createObjectURL(selectedFile);
+
+      try {
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('trip-files')
+          .upload(filePath, selectedFile, { contentType: selectedFile.type, upsert: false });
+
+        if (!uploadError && uploadData) {
+          const { data } = supabase.storage.from('trip-files').getPublicUrl(uploadData.path);
+          publicUrl = data.publicUrl;
+        }
+      } catch (err) {
+        console.log('Supabase upload failed, using demo URL', err);
+      }
+
+      const { data, error } = await supabase.functions.invoke('receipt-parser', {
+        body: { receiptImageUrl: publicUrl, tripId, userId: user.id }
+      });
+
+      if (error) throw error;
+
+      if (data?.receipt) {
+        setParsedResult(data.parsed_data);
+
+        const newReceipt: Receipt = {
+          id: data.receipt.id,
+          tripId: data.receipt.trip_id,
+          uploaderId: data.receipt.uploader_id,
+          uploaderName: user.displayName || 'User',
+          fileUrl: data.receipt.file_url,
+          totalAmount: data.receipt.total_amount,
+          currency: data.receipt.currency,
+          parsedData: data.parsed_data,
+          preferredMethod,
+          splitCount,
+          perPersonAmount: splitCount && data.receipt.total_amount ? data.receipt.total_amount / splitCount : undefined,
+          createdAt: data.receipt.created_at
+        };
+
+        setTotalAmount(data.receipt.total_amount ? String(data.receipt.total_amount) : '');
+        onReceiptUploaded(newReceipt);
+        setSelectedFile(null);
+        setSplitCount(undefined);
+        onClose();
+      }
     } catch (error) {
       console.error('Error uploading receipt:', error);
       alert('Failed to upload receipt. Please try again.');
@@ -191,6 +218,18 @@ export const ReceiptUploadModal = ({
               </div>
             </div>
 
+            {parsedResult && (
+              <div className="bg-white/5 rounded-xl p-4 space-y-2">
+                <div className="text-gray-300 text-sm">Parsed Total: {parsedResult.total_amount ?? 'N/A'}</div>
+                {parsedResult.merchant_name && (
+                  <div className="text-gray-300 text-sm">Merchant: {parsedResult.merchant_name}</div>
+                )}
+                {parsedResult.date && (
+                  <div className="text-gray-300 text-sm">Date: {parsedResult.date}</div>
+                )}
+              </div>
+            )}
+
             {/* Split Options */}
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-3">
@@ -223,9 +262,12 @@ export const ReceiptUploadModal = ({
                   )}
                 </div>
                 
-                {splitCount && totalAmount && (
+                {splitCount && (totalAmount || parsedResult?.total_amount) && (
                   <div className="text-green-400 text-sm">
-                    Each person owes: ${(parseFloat(totalAmount) / splitCount).toFixed(2)}
+                    Each person owes: {(
+                      (parseFloat(totalAmount || String(parsedResult?.total_amount || 0))) /
+                      splitCount
+                    ).toFixed(2)}
                   </div>
                 )}
               </div>
@@ -234,7 +276,7 @@ export const ReceiptUploadModal = ({
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={!selectedFile || !totalAmount || isUploading}
+              disabled={!selectedFile || isUploading}
               className="w-full bg-gradient-to-r from-green-500 to-emerald-500 text-white py-3 rounded-xl transition-colors hover:from-green-600 hover:to-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isUploading ? 'Uploading...' : 'Upload Receipt'}
@@ -248,7 +290,7 @@ export const ReceiptUploadModal = ({
         <AISplitHelper
           isOpen={showAISplit}
           onClose={() => setShowAISplit(false)}
-          receiptAmount={parseFloat(totalAmount) || 0}
+          receiptAmount={parseFloat(totalAmount || String(parsedResult?.total_amount || 0)) || 0}
           onSplitCalculated={handleAISplitResult}
         />
       )}

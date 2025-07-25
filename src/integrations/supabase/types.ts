@@ -849,35 +849,35 @@ export type Database = {
         Row: {
           created_at: string
           currency: string | null
+          file_url: string
           id: string
           parsed_data: Json | null
-          receipt_image_path: string
           total_amount: number | null
           trip_id: string
           updated_at: string
-          uploaded_by: string
+          uploader_id: string
         }
         Insert: {
           created_at?: string
           currency?: string | null
+          file_url: string
           id?: string
           parsed_data?: Json | null
-          receipt_image_path: string
           total_amount?: number | null
           trip_id: string
           updated_at?: string
-          uploaded_by: string
+          uploader_id: string
         }
         Update: {
           created_at?: string
           currency?: string | null
+          file_url?: string
           id?: string
           parsed_data?: Json | null
-          receipt_image_path?: string
           total_amount?: number | null
           trip_id?: string
           updated_at?: string
-          uploaded_by?: string
+          uploader_id?: string
         }
         Relationships: []
       }

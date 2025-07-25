@@ -1,10 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, Receipt as ReceiptIcon, Plus } from 'lucide-react';
 import { ReceiptUploadModal } from './ReceiptUploadModal';
 import { ReceiptCard } from './ReceiptCard';
 import { Receipt } from '../../types/receipts';
 import { useAuth } from '../../hooks/useAuth';
+import { supabase } from '../../integrations/supabase/client';
 
 interface ReceiptsTabProps {
   tripId: string;
@@ -15,46 +16,40 @@ export const ReceiptsTab = ({ tripId }: ReceiptsTabProps) => {
   const [showUploadModal, setShowUploadModal] = useState(false);
   const [receipts, setReceipts] = useState<Receipt[]>([]);
 
-  // Mock receipts data for demo
-  const mockReceipts: Receipt[] = [
-    {
-      id: '1',
-      tripId,
-      uploaderId: '1',
-      uploaderName: 'Emma',
-      fileUrl: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=200&fit=crop',
-      fileName: 'Dinner at Le Comptoir.jpg',
-      fileType: 'image/jpeg',
-      totalAmount: 156.80,
-      currency: 'USD',
-      preferredMethod: 'venmo',
-      splitCount: 4,
-      perPersonAmount: 39.20,
-      createdAt: '2025-01-15T19:30:00Z'
-    },
-    {
-      id: '2',
-      tripId,
-      uploaderId: '2',
-      uploaderName: 'Jake',
-      fileUrl: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop',
-      fileName: 'Grocery shopping.pdf',
-      fileType: 'application/pdf',
-      totalAmount: 87.45,
-      currency: 'USD',
-      preferredMethod: 'splitwise',
-      splitCount: 6,
-      perPersonAmount: 14.58,
-      createdAt: '2025-01-14T10:15:00Z'
-    }
-  ];
+  useEffect(() => {
+    const fetchReceipts = async () => {
+      const { data, error } = await supabase
+        .from('trip_receipts')
+        .select('id, trip_id, uploader_id, file_url, total_amount, currency, parsed_data, created_at, profiles:uploader_id(display_name)')
+        .eq('trip_id', tripId)
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        const mapped = data.map((r: any) => ({
+          id: r.id,
+          tripId: r.trip_id,
+          uploaderId: r.uploader_id,
+          uploaderName: r.profiles?.display_name ?? undefined,
+          fileUrl: r.file_url,
+          totalAmount: r.total_amount,
+          currency: r.currency,
+          parsedData: r.parsed_data,
+          preferredMethod: 'venmo',
+          createdAt: r.created_at
+        })) as Receipt[];
+        setReceipts(mapped);
+      }
+    };
+
+    fetchReceipts();
+  }, [tripId]);
 
   const handleReceiptUploaded = (newReceipt: Receipt) => {
     setReceipts(prev => [newReceipt, ...prev]);
     setShowUploadModal(false);
   };
 
-  const displayReceipts = receipts.length > 0 ? receipts : mockReceipts;
+  const displayReceipts = receipts;
 
   return (
     <div className="space-y-6">
