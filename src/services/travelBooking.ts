@@ -1,4 +1,4 @@
-import { useToast } from '../hooks/use-toast';
+import { supabase } from '../integrations/supabase/client';
 
 export interface FlightSearchParams {
   origin: string;
@@ -101,51 +101,47 @@ export class TravelBookingService {
 
   async searchFlights(params: FlightSearchParams): Promise<FlightResult[]> {
     try {
-      // Mock implementation - would integrate with Expedia, Amadeus, or Skyscanner APIs
-      const mockResults: FlightResult[] = [
-        {
-          id: 'flight-1',
-          airline: 'United Airlines',
-          flightNumber: 'UA 123',
-          departure: {
-            airport: 'JFK',
-            time: '08:00 AM',
-            date: params.departDate
-          },
-          arrival: {
-            airport: 'LAX',
-            time: '11:30 AM',
-            date: params.departDate
-          },
-          price: 299,
-          currency: 'USD',
-          duration: '5h 30m',
-          stops: 0,
-          bookingUrl: 'https://united.com/booking'
-        },
-        {
-          id: 'flight-2',
-          airline: 'Delta Air Lines',
-          flightNumber: 'DL 456',
-          departure: {
-            airport: 'JFK',
-            time: '02:15 PM',
-            date: params.departDate
-          },
-          arrival: {
-            airport: 'LAX',
-            time: '05:45 PM',
-            date: params.departDate
-          },
-          price: 349,
-          currency: 'USD',
-          duration: '5h 30m',
-          stops: 0,
-          bookingUrl: 'https://delta.com/booking'
-        }
-      ];
+      const apiKey = (import.meta as any).env.VITE_SKYSCANNER_API_KEY as string | undefined;
+      if (!apiKey) {
+        console.warn('Skyscanner API key not configured');
+        return [];
+      }
 
-      return mockResults;
+      const query = new URLSearchParams({
+        origin: params.origin,
+        destination: params.destination,
+        departDate: params.departDate,
+        adults: params.passengers.toString(),
+        cabinClass: params.class
+      });
+      if (params.returnDate) query.set('returnDate', params.returnDate);
+
+      const res = await fetch(
+        `https://partners.api.skyscanner.net/apiservices/v3/flights/search?${query.toString()}`,
+        { headers: { apikey: apiKey } }
+      );
+      const data = await res.json();
+
+      return (data.flights || []).map((f: any) => ({
+        id: f.id,
+        airline: f.airline || f.carrier,
+        flightNumber: f.flightNumber || f.number,
+        departure: {
+          airport: f.departureAirport,
+          time: f.departureTime,
+          date: f.departureDate
+        },
+        arrival: {
+          airport: f.arrivalAirport,
+          time: f.arrivalTime,
+          date: f.arrivalDate
+        },
+        price: f.price?.amount || 0,
+        currency: f.price?.currency || 'USD',
+        duration: f.duration,
+        stops: f.stops || 0,
+        bookingUrl: f.bookingUrl
+      }));
     } catch (error) {
       console.error('Flight search failed:', error);
       return [];
@@ -154,35 +150,41 @@ export class TravelBookingService {
 
   async searchHotels(params: HotelSearchParams): Promise<HotelResult[]> {
     try {
-      // Mock implementation - would integrate with Booking.com, Expedia, or Hotels.com APIs
-      const mockResults: HotelResult[] = [
-        {
-          id: 'hotel-1',
-          name: 'Grand Hotel Downtown',
-          address: '123 Main St, City Center',
-          rating: 4.5,
-          pricePerNight: 189,
-          currency: 'USD',
-          amenities: ['WiFi', 'Pool', 'Gym', 'Restaurant', 'Parking'],
-          photos: ['/hotel1.jpg', '/hotel1-2.jpg'],
-          bookingUrl: 'https://booking.com/hotel1',
-          availability: true
-        },
-        {
-          id: 'hotel-2',
-          name: 'Boutique Inn & Suites',
-          address: '456 Oak Ave, Historic District',
-          rating: 4.2,
-          pricePerNight: 149,
-          currency: 'USD',
-          amenities: ['WiFi', 'Breakfast', 'Concierge', 'Pet-friendly'],
-          photos: ['/hotel2.jpg', '/hotel2-2.jpg'],
-          bookingUrl: 'https://booking.com/hotel2',
-          availability: true
-        }
-      ];
+      const apiKey = (import.meta as any).env.VITE_BOOKING_API_KEY as string | undefined;
+      if (!apiKey) {
+        console.warn('Booking.com API key not configured');
+        return [];
+      }
 
-      return mockResults;
+      const query = new URLSearchParams({
+        location: params.location,
+        checkin_date: params.checkIn,
+        checkout_date: params.checkOut,
+        adults_number: params.guests.toString(),
+        room_number: params.rooms.toString()
+      });
+
+      const res = await fetch(`https://booking-com.p.rapidapi.com/v1/hotels/search?${query.toString()}`,
+        {
+          headers: {
+            'X-RapidAPI-Key': apiKey,
+            'X-RapidAPI-Host': 'booking-com.p.rapidapi.com'
+          }
+        });
+      const data = await res.json();
+
+      return (data.result || []).map((h: any) => ({
+        id: String(h.hotel_id),
+        name: h.hotel_name,
+        address: h.address || h.address_trans,
+        rating: h.review_score,
+        pricePerNight: h.min_total_price,
+        currency: h.currency_code,
+        amenities: h.hotel_amenities || [],
+        photos: h.main_photo_url ? [h.main_photo_url] : [],
+        bookingUrl: h.url,
+        availability: (h.available_rooms ?? 1) > 0
+      }));
     } catch (error) {
       console.error('Hotel search failed:', error);
       return [];
@@ -191,33 +193,32 @@ export class TravelBookingService {
 
   async searchRestaurants(params: RestaurantSearchParams): Promise<RestaurantResult[]> {
     try {
-      // Mock implementation - would integrate with OpenTable, Resy, or Yelp APIs
-      const mockResults: RestaurantResult[] = [
-        {
-          id: 'restaurant-1',
-          name: 'The Steakhouse',
-          address: '789 Elm St, Downtown',
-          rating: 4.6,
-          priceLevel: 3,
-          cuisine: 'American',
-          photos: ['/restaurant1.jpg'],
-          availability: true,
-          reservationUrl: 'https://opentable.com/restaurant1'
-        },
-        {
-          id: 'restaurant-2',
-          name: 'Bella Italia',
-          address: '321 Pine St, Little Italy',
-          rating: 4.3,
-          priceLevel: 2,
-          cuisine: 'Italian',
-          photos: ['/restaurant2.jpg'],
-          availability: true,
-          reservationUrl: 'https://resy.com/restaurant2'
-        }
-      ];
+      const apiKey = (import.meta as any).env.VITE_YELP_API_KEY as string | undefined;
+      if (!apiKey) {
+        console.warn('Yelp API key not configured');
+        return [];
+      }
 
-      return mockResults;
+      const query = new URLSearchParams({
+        location: params.location,
+        term: params.cuisine ?? 'restaurants'
+      });
+
+      const res = await fetch(`https://api.yelp.com/v3/businesses/search?${query.toString()}`,
+        { headers: { Authorization: `Bearer ${apiKey}` } });
+      const data = await res.json();
+
+      return (data.businesses || []).map((r: any) => ({
+        id: r.id,
+        name: r.name,
+        address: r.location?.display_address?.join(', ') || '',
+        rating: r.rating,
+        priceLevel: r.price ? r.price.length : 0,
+        cuisine: r.categories?.[0]?.title ?? '',
+        photos: r.image_url ? [r.image_url] : [],
+        availability: true,
+        reservationUrl: r.url
+      }));
     } catch (error) {
       console.error('Restaurant search failed:', error);
       return [];
@@ -226,29 +227,30 @@ export class TravelBookingService {
 
   async searchTransportation(params: TransportationSearchParams): Promise<TransportationResult[]> {
     try {
-      // Mock implementation - would integrate with Uber, Lyft APIs
-      const mockResults: TransportationResult[] = [
-        {
-          id: 'transport-1',
-          provider: 'Uber',
-          type: 'UberX',
-          estimatedPrice: 15,
-          estimatedTime: '5-8 min',
-          vehicleType: 'Sedan',
-          bookingUrl: 'https://uber.com/book'
-        },
-        {
-          id: 'transport-2',
-          provider: 'Lyft',
-          type: 'Lyft',
-          estimatedPrice: 13,
-          estimatedTime: '6-9 min',
-          vehicleType: 'Sedan',
-          bookingUrl: 'https://lyft.com/book'
-        }
-      ];
+      const apiKey = (import.meta as any).env.VITE_UBER_API_KEY as string | undefined;
+      if (!apiKey) {
+        console.warn('Uber API key not configured');
+        return [];
+      }
 
-      return mockResults;
+      const query = new URLSearchParams({
+        start_address: params.pickup,
+        end_address: params.destination
+      });
+
+      const res = await fetch(`https://api.uber.com/v1.2/estimates/price?${query.toString()}`,
+        { headers: { Authorization: `Bearer ${apiKey}` } });
+      const data = await res.json();
+
+      return (data.prices || []).map((t: any) => ({
+        id: t.product_id,
+        provider: 'Uber',
+        type: t.display_name,
+        estimatedPrice: t.low_estimate || 0,
+        estimatedTime: `${Math.round((t.duration || 0) / 60)} min`,
+        vehicleType: t.display_name,
+        bookingUrl: 'https://m.uber.com'
+      }));
     } catch (error) {
       console.error('Transportation search failed:', error);
       return [];
@@ -258,9 +260,27 @@ export class TravelBookingService {
   // Utility methods for booking management
   async saveBooking(type: 'flight' | 'hotel' | 'restaurant' | 'transportation', booking: any, tripId: string) {
     try {
-      // This would save to Supabase
-      console.log('Saving booking:', { type, booking, tripId });
-      return { success: true, bookingId: `booking-${Date.now()}` };
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      const { data, error } = await supabase
+        .from('trip_bookings')
+        .insert({
+          trip_id: tripId,
+          user_id: user.id,
+          booking_type: type,
+          provider: booking.provider || booking.airline || booking.name,
+          external_booking_id: booking.id,
+          booking_data: booking,
+          total_price: booking.price || booking.pricePerNight || booking.estimatedPrice,
+          currency: booking.currency || 'USD',
+          travel_date: booking.departure?.date || booking.checkIn || booking.date || null
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      return { success: true, bookingId: data.id };
     } catch (error) {
       console.error('Failed to save booking:', error);
       return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };

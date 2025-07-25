@@ -87,3 +87,12 @@ For local development, create a `supabase/.env.local` file containing these
 variables so they are loaded when running `supabase functions serve`.
 When deploying, set the same variables using `supabase secrets set` so the
 deployed functions have access to them.
+
+### Additional API keys
+
+The travel booking features require credentials for the third‑party providers. Set the following variables in your environment:
+
+- `VITE_SKYSCANNER_API_KEY` – used for flight searches
+- `VITE_BOOKING_API_KEY` – used for hotel searches
+- `VITE_YELP_API_KEY` – used for restaurant recommendations
+- `VITE_UBER_API_KEY` – used for transportation estimates

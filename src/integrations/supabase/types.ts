@@ -881,6 +881,60 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_bookings: {
+        Row: {
+          id: string
+          trip_id: string
+          user_id: string
+          booking_type: string
+          provider: string
+          external_booking_id: string | null
+          confirmation_number: string | null
+          booking_data: Json
+          booking_status: string | null
+          total_price: number | null
+          currency: string | null
+          booking_date: string | null
+          travel_date: string | null
+          created_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          id?: string
+          trip_id: string
+          user_id: string
+          booking_type: string
+          provider: string
+          external_booking_id?: string | null
+          confirmation_number?: string | null
+          booking_data?: Json
+          booking_status?: string | null
+          total_price?: number | null
+          currency?: string | null
+          booking_date?: string | null
+          travel_date?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          id?: string
+          trip_id?: string
+          user_id?: string
+          booking_type?: string
+          provider?: string
+          external_booking_id?: string | null
+          confirmation_number?: string | null
+          booking_data?: Json
+          booking_status?: string | null
+          total_price?: number | null
+          currency?: string | null
+          booking_date?: string | null
+          travel_date?: string | null
+          created_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       trip_venue_ideas: {
         Row: {
           created_at: string
