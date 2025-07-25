@@ -75,7 +75,12 @@ export const useMessages = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const addMessage = async (content: string, tripId?: string, tourId?: string) => {
+  const addMessage = async (
+    content: string,
+    tripId?: string,
+    tourId?: string,
+    recipients?: { type: 'individual' | 'all'; userIds?: string[] }
+  ) => {
     const priority = await OpenAIService.classifyPriority(content);
     const newMessage: Message = {
       id: Date.now().toString(),
@@ -87,7 +92,8 @@ export const useMessages = () => {
       isRead: true,
       tripId,
       tourId,
-      priority
+      priority,
+      recipients
     };
 
     setMessages(prev => [...prev, newMessage]);

@@ -15,6 +15,10 @@ export interface Message {
   messageType?: 'chat' | 'broadcast';
   priority?: 'urgent' | 'reminder' | 'fyi';
   mentions?: string[];
+  recipients?: {
+    type: 'individual' | 'all';
+    userIds?: string[];
+  };
   threadId?: string;
   replyToId?: string;
 }

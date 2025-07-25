@@ -29,13 +29,18 @@ describe('AiMessageComposer', () => {
     });
     vi.mocked(OpenAIService.queryOpenAI).mockResolvedValue('response');
 
-    render(<AiMessageComposer />);
+    render(<AiMessageComposer participants={[{ id: '1', name: 'Test User' }]} />);
     const textarea = screen.getByPlaceholderText('Ask the AI to craft a message...') as HTMLTextAreaElement;
+    const recipientSelect = screen.getByRole('listbox');
+    fireEvent.change(recipientSelect, { target: { value: '1' } });
     fireEvent.change(textarea, { target: { value: 'hello' } });
     fireEvent.click(screen.getByRole('button', { name: /send/i }));
 
     await waitFor(() => {
-      expect(addMessage).toHaveBeenCalledWith('response');
+      expect(addMessage).toHaveBeenCalledWith('response', undefined, undefined, {
+        type: 'individual',
+        userIds: ['1'],
+      });
     });
 
     expect(textarea.value).toBe('');
