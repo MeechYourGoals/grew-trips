@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../integrations/supabase/client';
+import { InviteService } from '../services/inviteService';
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'sonner';
 import { Loader2, Users, MapPin, Calendar } from 'lucide-react';
@@ -165,17 +166,7 @@ const JoinTrip = () => {
       }
 
       // Handle real invites
-      const { data, error } = await supabase.rpc('join_trip_via_invite', {
-        invite_token_param: token
-      });
-
-      if (error) {
-        console.error('Error joining trip:', error);
-        toast.error('Failed to join trip');
-        return;
-      }
-
-      const result = typeof data === 'string' ? JSON.parse(data) : data;
+      const result = await InviteService.acceptInvite(token);
 
       if (result.success) {
         toast.success('Successfully joined the trip!');

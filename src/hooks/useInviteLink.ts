@@ -1,14 +1,17 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 
+import { supabase } from '../integrations/supabase/client';
+
 interface UseInviteLinkProps {
   isOpen: boolean;
+  tripId: string;
   tripName: string;
   requireApproval: boolean;
   expireIn7Days: boolean;
 }
 
-export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days }: UseInviteLinkProps) => {
+export const useInviteLink = ({ isOpen, tripId, tripName, requireApproval, expireIn7Days }: UseInviteLinkProps) => {
   const [copied, setCopied] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,34 +19,47 @@ export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days
   // Generate mock invite link immediately when modal opens
   useEffect(() => {
     if (isOpen) {
-      generateMockInviteLink();
+      generateInviteLink();
     }
   }, [isOpen, requireApproval, expireIn7Days]);
 
-  const generateMockInviteLink = () => {
-    const mockToken = crypto.randomUUID();
-    let baseUrl = 'https://junto.app/join';
-    
-    // Create universal link that handles both app and web
-    let inviteUrl = `${baseUrl}/${mockToken}`;
-    
-    // Add parameters for settings
-    const params = new URLSearchParams();
-    if (requireApproval) params.append('approval', 'true');
-    if (expireIn7Days) params.append('expires', '7d');
-    
-    if (params.toString()) {
-      inviteUrl += `?${params.toString()}`;
-    }
+  const generateInviteLink = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-invite', {
+        body: {
+          trip_id: tripId,
+          require_approval: requireApproval,
+          expire_in_days: expireIn7Days ? 7 : null,
+        },
+      });
 
-    setInviteLink(inviteUrl);
-    setLoading(false);
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      const token = data.invite_token as string;
+      let inviteUrl = `https://junto.app/join/${token}`;
+
+      const params = new URLSearchParams();
+      if (requireApproval) params.append('approval', 'true');
+      if (expireIn7Days) params.append('expires', '7d');
+
+      if (params.toString()) {
+        inviteUrl += `?${params.toString()}`;
+      }
+
+      setInviteLink(inviteUrl);
+    } catch (err) {
+      console.error('Failed to generate invite link:', err);
+      toast.error('Could not create invite');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const regenerateInviteToken = () => {
-    setLoading(true);
-    // Generate new mock link
-    generateMockInviteLink();
+    generateInviteLink();
     toast.success('New invite link generated!');
   };
 
