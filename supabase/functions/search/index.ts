@@ -77,129 +77,159 @@ async function performSearch(supabase: any, query: string, scope: string, tripId
   }
 
   try {
-    // Build the search query using trigram similarity
-    let searchQuery = supabase
-      .from('search_index')
-      .select('*')
-      
-    // Apply trip type filter if specified
+    // First try semantic search if query is complex enough
+    const semanticResults = await performSemanticSearch(supabase, query, scope, tripId, Math.floor(limit / 2), tripType)
+    
+    // Then perform traditional keyword search
+    const keywordResults = await performKeywordSearch(supabase, query, scope, tripId, Math.floor(limit / 2), tripType)
+    
+    // Combine and deduplicate results
+    const combinedResults = combineSearchResults(semanticResults, keywordResults, limit)
+    
+    console.log(`Found ${combinedResults.length} combined search results (${semanticResults.length} semantic + ${keywordResults.length} keyword)`)
+    return combinedResults
+
+  } catch (error) {
+    console.error('Database search error:', error)
+    return getFallbackResults(query, scope, tripId)
+  }
+}
+
+async function performSemanticSearch(supabase: any, query: string, scope: string, tripId?: string, limit: number = 10, tripType?: string): Promise<SearchResult[]> {
+  try {
+    // Call the semantic search function
+    const { data, error } = await supabase.functions.invoke('semantic-search', {
+      body: {
+        query,
+        tripId,
+        limit,
+        threshold: 0.7
+      }
+    })
+
+    if (error) {
+      console.error('Semantic search error:', error)
+      return []
+    }
+
+    return data?.results?.map((result: any) => ({
+      id: result.id || `semantic-${Date.now()}-${Math.random()}`,
+      objectType: result.objectType || 'trip',
+      objectId: result.objectId || result.tripId,
+      tripId: result.tripId,
+      tripName: result.tripName || result.content?.slice(0, 50),
+      content: result.content,
+      snippet: result.snippet || result.content?.slice(0, 150),
+      score: result.similarity || result.score || 0.8,
+      deepLink: result.deepLink,
+      matchReason: 'Matched via: AI semantic understanding'
+    })) || []
+  } catch (error) {
+    console.error('Semantic search failed:', error)
+    return []
+  }
+}
+
+async function performKeywordSearch(supabase: any, query: string, scope: string, tripId?: string, limit: number = 10, tripType?: string): Promise<SearchResult[]> {
+  const results = []
+  
+  try {
+    // Apply filters
+    let searchQuery = supabase.from('search_index').select('*')
+    
     if (tripType && ['regular', 'pro', 'event'].includes(tripType)) {
       searchQuery = searchQuery.eq('trip_type', tripType)
     }
     
-    // For trip-specific search, filter by trip ID
     if (scope === 'trip' && tripId) {
       searchQuery = searchQuery.eq('trip_id', tripId)
     }
 
-    // Use multiple similarity searches and combine results
-    const searches = [
-      // Title similarity (highest priority)
-      searchQuery.gt('title', `similarity(title, '${query}')`, 0.1),
-      
-      // Location similarity
-      searchQuery.gt('location', `similarity(location, '${query}')`, 0.1),
-      
-      // Full text similarity  
-      searchQuery.gt('full_text', `similarity(full_text, '${query}')`, 0.1),
-      
-      // Tag array contains search
-      searchQuery.contains('tags', [queryLower]),
-      
-      // Participant names array similarity
-      searchQuery.overlaps('participant_names', [queryLower])
-    ]
-
-    // Execute multiple search strategies
-    const results = []
-    
     // 1. Exact title matches (highest score)
-    const { data: titleMatches } = await supabase
-      .from('search_index')
-      .select('*')
+    const { data: titleMatches } = await searchQuery
       .ilike('title', `%${query}%`)
-      .limit(5)
+      .limit(3)
     
     if (titleMatches) {
-      for (const match of titleMatches) {
+      titleMatches.forEach(match => {
         results.push(createSearchResult(match, 0.95, 'title'))
-      }
+      })
     }
 
     // 2. Location matches
-    const { data: locationMatches } = await supabase
-      .from('search_index')
-      .select('*')
+    const { data: locationMatches } = await searchQuery
       .or(`location.ilike.%${query}%,city.ilike.%${query}%,state.ilike.%${query}%`)
-      .limit(5)
+      .limit(3)
     
     if (locationMatches) {
-      for (const match of locationMatches) {
+      locationMatches.forEach(match => {
         if (!results.find(r => r.tripId === match.trip_id)) {
           results.push(createSearchResult(match, 0.85, 'location'))
         }
-      }
+      })
     }
 
     // 3. Date/month matches
-    const { data: dateMatches } = await supabase
-      .from('search_index')
-      .select('*')
+    const { data: dateMatches } = await searchQuery
       .ilike('formatted_date', `%${query}%`)
-      .limit(5)
+      .limit(2)
     
     if (dateMatches) {
-      for (const match of dateMatches) {
+      dateMatches.forEach(match => {
         if (!results.find(r => r.tripId === match.trip_id)) {
           results.push(createSearchResult(match, 0.75, 'date'))
         }
-      }
+      })
     }
 
-    // 4. Participant/role matches
-    const { data: participantMatches } = await supabase
-      .from('search_index')
-      .select('*')
-      .or(`participant_names.cs.{"${queryLower}"},participant_roles.cs.{"${queryLower}"}`)
-      .limit(5)
-    
-    if (participantMatches) {
-      for (const match of participantMatches) {
-        if (!results.find(r => r.tripId === match.trip_id)) {
-          results.push(createSearchResult(match, 0.70, 'participant'))
-        }
-      }
-    }
-
-    // 5. Full text search as fallback
-    const { data: fullTextMatches } = await supabase
-      .from('search_index')
-      .select('*')
+    // 4. Full text search
+    const { data: fullTextMatches } = await searchQuery
       .textSearch('full_text', query)
-      .limit(10)
+      .limit(4)
     
     if (fullTextMatches) {
-      for (const match of fullTextMatches) {
+      fullTextMatches.forEach(match => {
         if (!results.find(r => r.tripId === match.trip_id)) {
           results.push(createSearchResult(match, 0.60, 'content'))
         }
-      }
+      })
     }
 
-    // Sort by score and limit results
-    const sortedResults = results
-      .sort((a, b) => b.score - a.score)
-      .slice(0, limit)
-
-    console.log(`Found ${sortedResults.length} search results`)
-    return sortedResults
+    return results.slice(0, limit)
 
   } catch (error) {
-    console.error('Database search error:', error)
-    
-    // Fallback to basic mock results for critical searches  
-    return getFallbackResults(query, scope, tripId)
+    console.error('Keyword search error:', error)
+    return []
   }
+}
+
+function combineSearchResults(semanticResults: SearchResult[], keywordResults: SearchResult[], limit: number): SearchResult[] {
+  const combined = []
+  const seen = new Set()
+
+  // Add semantic results first (higher priority)
+  for (const result of semanticResults) {
+    if (!seen.has(result.tripId)) {
+      combined.push({
+        ...result,
+        score: result.score * 1.1 // Boost semantic results slightly
+      })
+      seen.add(result.tripId)
+    }
+  }
+
+  // Add keyword results that aren't duplicates
+  for (const result of keywordResults) {
+    if (!seen.has(result.tripId)) {
+      combined.push(result)
+      seen.add(result.tripId)
+    }
+  }
+
+  // Sort by score and limit
+  return combined
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
 }
 
 function createSearchResult(match: any, baseScore: number, matchReason: string): SearchResult {

@@ -101,8 +101,8 @@ export const DemoChat = ({ tripId }: DemoChatProps) => {
               <div key={message.id} className="flex items-start gap-3">
                 {/* Avatar */}
                 <img
-                  src={message.user.image}
-                  alt={message.user.name}
+                  src={message.senderAvatar || currentUserAvatar}
+                  alt={message.senderName}
                   className="w-10 h-10 rounded-full flex-shrink-0 object-cover border border-gray-600"
                 />
                 
@@ -111,10 +111,10 @@ export const DemoChat = ({ tripId }: DemoChatProps) => {
                   {/* Sender Name & Time */}
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-sm font-medium text-gray-300">
-                      {message.user.name}
+                      {message.senderName}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {formatTime(message.created_at)}
+                      {formatTime(message.timestamp)}
                     </span>
                   </div>
                   
@@ -122,7 +122,7 @@ export const DemoChat = ({ tripId }: DemoChatProps) => {
                   <div className="max-w-md p-3 rounded-lg bg-gray-800 text-gray-200">
                     {/* Message Text */}
                     <div className="text-sm leading-relaxed">
-                      {message.text}
+                      {message.content}
                     </div>
                   </div>
                   

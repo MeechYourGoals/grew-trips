@@ -37,10 +37,10 @@ export const useMessages = () => {
     if (!channel) return null;
     await channel.watch();
     setChannels(prev => ({ ...prev, [tripId]: channel }));
-    const initial = channel.state.messages.map(m => mapMessage(m, tripId));
+    const initial = channel.state.messages.map(m => mapMessage(m as unknown as MessageResponse, tripId));
     setMessagesByTrip(prev => ({ ...prev, [tripId]: initial }));
     channel.on('message.new', event => {
-      const msg = mapMessage(event.message, tripId);
+      const msg = mapMessage(event.message as unknown as MessageResponse, tripId);
       setMessagesByTrip(prev => ({
         ...prev,
         [tripId]: [...(prev[tripId] || []), msg]
