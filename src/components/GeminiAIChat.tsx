@@ -8,7 +8,7 @@ import { UniversalConciergeService, SearchResult } from '../services/universalCo
 import { ChatMessages } from './chat/ChatMessages';
 import { AiChatInput } from './chat/AiChatInput';
 import { GeminiPlusUpgrade } from './chat/GeminiPlusUpgrade';
-import { SearchResultsPane } from './SearchResultsPane';
+import { UniversalSearchResultsPane } from './UniversalSearchResultsPane';
 
 interface GeminiAIChatProps {
   tripId: string;
@@ -16,12 +16,25 @@ interface GeminiAIChatProps {
   preferences?: TripPreferences;
 }
 
+interface SemanticSearchResult {
+  id: string;
+  objectType: string;
+  objectId: string;
+  tripId?: string;
+  content: string;
+  snippet: string;
+  score: number;
+  similarity: number;
+  matchReason: string;
+  deepLink?: string;
+}
+
 interface ChatMessage {
   id: string;
   type: 'user' | 'assistant';
   content: string;
   timestamp: string;
-  searchResults?: SearchResult[];
+  searchResults?: (SearchResult | SemanticSearchResult)[];
   isFromFallback?: boolean;
 }
 
@@ -30,7 +43,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [aiStatus, setAiStatus] = useState<'connected' | 'fallback' | 'error'>('connected');
+  const [aiStatus, setAiStatus] = useState<'connected' | 'fallback' | 'error' | 'thinking' | 'searching'>('connected');
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -45,38 +58,105 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
     setMessages(prev => [...prev, userMessage]);
     setInputMessage('');
     setIsTyping(true);
+    setAiStatus('thinking');
 
     try {
-      const tripContext: TripContext = {
-        id: tripId,
-        title: 'Current Trip',
-        location: basecamp?.address || 'Unknown location',
-        dateRange: 'Current dates',
-        basecamp,
-        preferences,
-        isPro: false
-      };
+      // Check if this is a search query for semantic search
+      const isSearch = inputMessage.toLowerCase().includes('find') || 
+                      inputMessage.toLowerCase().includes('search') ||
+                      inputMessage.toLowerCase().includes('show me') ||
+                      inputMessage.toLowerCase().includes('where') ||
+                      inputMessage.toLowerCase().includes('recommend');
 
-      const response = await UniversalConciergeService.processMessage(inputMessage, tripContext);
-      
-      // Update AI status based on response
-      if (response.isFromFallback) {
-        setAiStatus('fallback');
+      let response;
+      let searchResults: (SearchResult | SemanticSearchResult)[] = [];
+
+      if (isSearch) {
+        // Use semantic search for search-like queries
+        setAiStatus('searching');
+        try {
+          const searchResponse = await fetch('/api/semantic-search', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              query: inputMessage.trim(),
+              tripId,
+              limit: 5
+            }),
+          });
+
+          if (searchResponse.ok) {
+            const searchData = await searchResponse.json();
+            if (searchData.success && searchData.results?.length > 0) {
+              searchResults = searchData.results;
+              response = `I found ${searchResults.length} relevant results using AI semantic search for "${inputMessage}":
+
+${searchResults.map((result, idx) => 
+  `${idx + 1}. ${result.objectType.toUpperCase()}: ${result.snippet} ${('similarity' in result) ? `(${Math.round(result.similarity * 100)}% match)` : ''}`
+).join('\n\n')}
+
+These results are ranked by semantic similarity. Would you like me to elaborate on any of these?`;
+              setAiStatus('connected');
+            } else {
+              throw new Error('No semantic results found');
+            }
+          } else {
+            throw new Error('Search API failed');
+          }
+        } catch (error) {
+          console.log('Semantic search failed, falling back to Universal Concierge:', error);
+          setAiStatus('fallback');
+          // Fall back to Universal Concierge
+          const tripContext: TripContext = {
+            id: tripId,
+            title: 'Current Trip',
+            location: basecamp?.address || 'Unknown location',
+            dateRange: 'Current dates',
+            basecamp,
+            preferences,
+            isPro: false
+          };
+          const fallbackResponse = await UniversalConciergeService.processMessage(inputMessage, tripContext);
+          response = fallbackResponse.content;
+          searchResults = fallbackResponse.searchResults || [];
+        }
       } else {
-        setAiStatus('connected');
+        // Use Universal Concierge for general conversation
+        setAiStatus('thinking');
+        const tripContext: TripContext = {
+          id: tripId,
+          title: 'Current Trip',
+          location: basecamp?.address || 'Unknown location',
+          dateRange: 'Current dates',
+          basecamp,
+          preferences,
+          isPro: false
+        };
+
+        const conciergeResponse = await UniversalConciergeService.processMessage(inputMessage, tripContext);
+        response = conciergeResponse.content;
+        searchResults = conciergeResponse.searchResults || [];
+        
+        if (conciergeResponse.isFromFallback) {
+          setAiStatus('fallback');
+        } else {
+          setAiStatus('connected');
+        }
       }
       
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: response.content,
+        content: response,
         timestamp: new Date().toISOString(),
-        searchResults: response.searchResults,
-        isFromFallback: response.isFromFallback
+        searchResults: searchResults,
+        isFromFallback: aiStatus === 'fallback'
       };
       
       setMessages(prev => [...prev, assistantMessage]);
+
     } catch (err) {
+      console.error('Chat error:', err);
       setAiStatus('error');
       const errorResponse: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -107,6 +187,10 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         return <WifiOff size={16} className="text-yellow-400" />;
       case 'error':
         return <AlertCircle size={16} className="text-red-400" />;
+      case 'thinking':
+        return <Sparkles size={16} className="text-blue-400 animate-pulse" />;
+      case 'searching':
+        return <Sparkles size={16} className="text-purple-400 animate-spin" />;
       default:
         return <Sparkles size={16} className="text-blue-400" />;
     }
@@ -120,6 +204,10 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         return 'Limited Mode';
       case 'error':
         return 'Reconnecting...';
+      case 'thinking':
+        return 'Thinking...';
+      case 'searching':
+        return 'Searching...';
       default:
         return 'Ready';
     }
@@ -186,7 +274,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         
         {/* Show search results for the last message if available */}
         {messages.length > 0 && messages[messages.length - 1].searchResults && (
-          <SearchResultsPane 
+          <UniversalSearchResultsPane 
             results={messages[messages.length - 1].searchResults!}
           />
         )}
