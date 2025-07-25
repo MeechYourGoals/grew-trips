@@ -82,6 +82,8 @@ environment variables:
   read and write data in your Supabase project.
 - `ELEVENLABS_API_KEY` – optional, enables speech generation in the
   `generate-audio-summary` function.
+- `STREAM_API_KEY` and `STREAM_API_SECRET` – credentials for the GetStream
+  chat service used by `/functions/getstream-token`.
 
 For local development, create a `supabase/.env.local` file containing these
 variables so they are loaded when running `supabase functions serve`.
