@@ -3,12 +3,11 @@ export interface Receipt {
   id: string;
   tripId: string;
   uploaderId: string;
-  uploaderName: string;
+  uploaderName?: string;
   fileUrl: string;
-  fileName: string;
-  fileType: string;
-  totalAmount: number;
-  currency: string;
+  totalAmount: number | null;
+  currency: string | null;
+  parsedData?: any;
   preferredMethod: 'venmo' | 'splitwise' | 'cashapp' | 'zelle';
   splitCount?: number;
   perPersonAmount?: number;

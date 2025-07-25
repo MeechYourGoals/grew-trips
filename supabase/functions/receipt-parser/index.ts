@@ -88,10 +88,10 @@ serve(async (req) => {
       .from('trip_receipts')
       .insert({
         trip_id: tripId,
-        receipt_image_path: receiptImageUrl,
+        file_url: receiptImageUrl,
         total_amount: parsedData.total_amount || null,
         currency: parsedData.currency || 'USD',
-        uploaded_by: userId,
+        uploader_id: userId,
         parsed_data: parsedData
       })
       .select()

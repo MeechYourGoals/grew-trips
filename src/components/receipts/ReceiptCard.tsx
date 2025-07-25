@@ -34,8 +34,9 @@ export const ReceiptCard = ({ receipt }: ReceiptCardProps) => {
     });
   };
 
-  const isImage = receipt.fileType.startsWith('image/');
-  const isPDF = receipt.fileType === 'application/pdf';
+  const isPDF = receipt.fileUrl.toLowerCase().endsWith('.pdf');
+  const isImage = !isPDF;
+  const fileName = receipt.fileUrl.split('/').pop()?.split('?')[0] || 'Receipt';
 
   return (
     <>
@@ -46,7 +47,7 @@ export const ReceiptCard = ({ receipt }: ReceiptCardProps) => {
             {isImage ? (
               <img
                 src={receipt.fileUrl}
-                alt={receipt.fileName}
+                alt={fileName}
                 className="w-16 h-16 rounded-lg object-cover cursor-pointer"
                 onClick={() => setShowViewModal(true)}
               />
@@ -62,8 +63,10 @@ export const ReceiptCard = ({ receipt }: ReceiptCardProps) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between mb-2">
               <div>
-                <h4 className="text-white font-medium truncate">{receipt.fileName}</h4>
-                <p className="text-gray-400 text-sm">Uploaded by {receipt.uploaderName}</p>
+                <h4 className="text-white font-medium truncate">{fileName}</h4>
+                {receipt.uploaderName && (
+                  <p className="text-gray-400 text-sm">Uploaded by {receipt.uploaderName}</p>
+                )}
               </div>
               <button
                 onClick={() => setShowViewModal(true)}
@@ -78,7 +81,7 @@ export const ReceiptCard = ({ receipt }: ReceiptCardProps) => {
               <div className="flex items-center gap-1">
                 <DollarSign size={16} className="text-green-400" />
                 <span className="text-white font-medium">
-                  ${receipt.totalAmount.toFixed(2)}
+                  ${receipt.totalAmount ? receipt.totalAmount.toFixed(2) : '0.00'}
                 </span>
               </div>
               
