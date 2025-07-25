@@ -2,61 +2,74 @@
 import { useState, useEffect } from 'react';
 import { Message, ScheduledMessage } from '../types/messaging';
 import { OpenAIService } from '../services/OpenAIService';
-import { proTripMockData } from '../data/proTripMockData';
+import { useGetStream } from './useGetStream';
 
-export const useMessages = () => {
+export const useMessages = (tripId?: string) => {
+  const { isReady, getTripChannel } = useGetStream();
   const [messages, setMessages] = useState<Message[]>([]);
   const [scheduledMessages, setScheduledMessages] = useState<ScheduledMessage[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [channelId, setChannelId] = useState<string | null>(null);
+  const [channelObj, setChannelObj] = useState<any>(null);
 
-  // Generate dynamic mock messages based on trip data
-  const generateMockMessages = (tourId: string): Message[] => {
-    const tripData = proTripMockData[tourId];
-    if (!tripData) return [];
+  useEffect(() => {
+    if (!tripId || !isReady) return;
 
-    const participants = tripData.participants;
-    const baseMessages: Message[] = [
-      {
-        id: '1',
-        content: `Looking forward to ${tripData.title}! This is going to be amazing.`,
-        senderId: 'user-1',
-        senderName: participants[0]?.name || 'Team Lead',
-        senderAvatar: participants[0]?.avatar || 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-        timestamp: '2024-01-15T10:30:00Z',
-        isRead: false,
-        tourId: tourId
-      },
-      {
-        id: '2',
-        content: `Just confirmed all arrangements for ${tripData.location}. Everything looks great!`,
-        senderId: 'user-2',
-        senderName: participants[1]?.name || 'Coordinator',
-        senderAvatar: participants[1]?.avatar || 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
-        timestamp: '2024-01-15T11:15:00Z',
-        isRead: false,
-        tourId: tourId
-      },
-      {
-        id: '3',
-        content: `Team check-in: Is everyone ready for ${tripData.dateRange}?`,
-        senderId: 'user-3',
-        senderName: participants[2]?.name || 'Manager',
-        senderAvatar: participants[2]?.avatar || 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=40&h=40&fit=crop&crop=face',
-        timestamp: '2024-01-15T14:22:00Z',
-        isRead: false,
-        tourId: tourId
-      }
-    ];
+    let unsubscribe: (() => void) | undefined;
 
-    return baseMessages;
+    const init = async () => {
+      const channel = await getTripChannel(tripId);
+      if (!channel) return;
+      setChannelId(channel.id);
+      setChannelObj(channel);
+
+      const state = await channel.watch();
+      const mapped = state.messages.map((m) => ({
+        id: m.id,
+        content: m.text || '',
+        senderId: m.user?.id || '',
+        senderName: m.user?.name || 'Unknown',
+        senderAvatar: m.user?.image,
+        timestamp: new Date(m.created_at).toISOString(),
+        isRead: false,
+        tripId
+      }));
+      setMessages(mapped);
+
+      const handler = (event: any) => {
+        const m = event.message;
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: m.id,
+            content: m.text || '',
+            senderId: m.user?.id || '',
+            senderName: m.user?.name || 'Unknown',
+            senderAvatar: m.user?.image,
+            timestamp: new Date(m.created_at).toISOString(),
+            isRead: false,
+            tripId
+          }
+        ]);
+      };
+
+      channel.on('message.new', handler);
+      unsubscribe = () => channel.off('message.new', handler);
+    };
+
+    init();
+    return () => {
+      if (unsubscribe) unsubscribe();
+      setChannelObj(null);
+    };
+  }, [tripId, isReady, getTripChannel]);
+
+  const getMessagesForTour = (tour: string): Message[] => {
+    return messages.filter((m) => m.tourId === tour);
   };
 
-  const getMessagesForTour = (tourId: string): Message[] => {
-    return generateMockMessages(tourId);
-  };
-
-  const getMessagesForTrip = (tripId: string): Message[] => {
-    return messages.filter(msg => msg.tripId === tripId);
+  const getMessagesForTrip = (_tripId: string): Message[] => {
+    return messages.filter((m) => m.tripId === _tripId);
   };
 
   useEffect(() => {
@@ -75,22 +88,26 @@ export const useMessages = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const addMessage = async (content: string, tripId?: string, tourId?: string) => {
+  const addMessage = async (content: string, tripIdParam?: string, tourId?: string) => {
     const priority = await OpenAIService.classifyPriority(content);
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      content,
-      senderId: 'current-user',
-      senderName: 'You',
-      senderAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
-      timestamp: new Date().toISOString(),
-      isRead: true,
-      tripId,
-      tourId,
-      priority
-    };
 
-    setMessages(prev => [...prev, newMessage]);
+    if (channelObj) {
+      await channelObj.sendMessage({ text: content });
+    } else {
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        content,
+        senderId: 'current-user',
+        senderName: 'You',
+        senderAvatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+        timestamp: new Date().toISOString(),
+        isRead: true,
+        tripId: tripIdParam,
+        tourId,
+        priority
+      };
+      setMessages(prev => [...prev, newMessage]);
+    }
   };
 
   const scheduleMessage = async (content: string, sendAt: Date, tripId?: string, tourId?: string) => {

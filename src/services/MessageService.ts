@@ -1,4 +1,5 @@
 import { Message, ScheduledMessage } from '../types/messaging';
+import { getStreamService } from './getStreamService';
 
 export interface MessageTemplate {
   id: string;
@@ -238,5 +239,10 @@ export class MessageService {
     if (!matches) return [];
     
     return matches.map(match => match.replace(/\{\{|\}\}/g, ''));
+  }
+
+  static async sendChatMessage(tripId: string, text: string): Promise<void> {
+    const channel = await getStreamService.getOrCreateTripChannel(tripId);
+    await channel.sendMessage({ text });
   }
 }

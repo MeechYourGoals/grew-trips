@@ -80,10 +80,12 @@ environment variables:
 - `OPENAI_API_KEY` – required for generating summaries and chat responses.
 - `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` – allow the functions to
   read and write data in your Supabase project.
+- `STREAM_API_KEY` and `STREAM_API_SECRET` – credentials for GetStream chat integration.
 - `ELEVENLABS_API_KEY` – optional, enables speech generation in the
   `generate-audio-summary` function.
 
 For local development, create a `supabase/.env.local` file containing these
 variables so they are loaded when running `supabase functions serve`.
 When deploying, set the same variables using `supabase secrets set` so the
-deployed functions have access to them.
+deployed functions have access to them. Ensure `STREAM_API_KEY` and
+`STREAM_API_SECRET` are included in both locations.
