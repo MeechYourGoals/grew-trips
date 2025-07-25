@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { OpenAIService } from '../services/OpenAIService';
+import { VertexAIService } from '../services/vertexAIService';
 import { useMessages } from '../hooks/useMessages';
 import { Send } from 'lucide-react';
 
@@ -13,7 +13,7 @@ export const AiMessageComposer = () => {
     if (!prompt.trim()) return;
     setIsSending(true);
     try {
-      const response = await OpenAIService.queryOpenAI(prompt, { tone });
+      const response = await VertexAIService.generateMessageWithTone(prompt, tone);
       await addMessage(response);
       setPrompt('');
     } catch (e) {

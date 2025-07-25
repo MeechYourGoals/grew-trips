@@ -173,60 +173,109 @@ async function generateMessageWithTemplate(templateId: string | undefined, conte
 }
 
 async function classifyMessagePriority(content: string) {
-  const openaiKey = Deno.env.get('OPENAI_API_KEY');
-  if (!openaiKey) {
-    // Fallback to simple keyword-based classification
-    const urgentKeywords = ['urgent', 'emergency', 'asap', 'immediately', 'critical'];
-    const reminderKeywords = ['reminder', 'don\'t forget', 'remember', 'deadline', 'due'];
-    
-    const lowerContent = content.toLowerCase();
-    
-    if (urgentKeywords.some(keyword => lowerContent.includes(keyword))) {
-      return { priority: 'urgent', confidence: 0.7 };
-    } else if (reminderKeywords.some(keyword => lowerContent.includes(keyword))) {
-      return { priority: 'reminder', confidence: 0.6 };
-    } else {
-      return { priority: 'fyi', confidence: 0.5 };
-    }
-  }
-
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    // Use Vertex AI for priority classification
+    const projectId = Deno.env.get('GOOGLE_CLOUD_PROJECT')
+    const location = Deno.env.get('GOOGLE_CLOUD_LOCATION') || 'us-central1'
+    const serviceAccountKey = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_KEY')
+
+    if (!projectId || !serviceAccountKey) {
+      throw new Error('Google Cloud credentials not configured')
+    }
+
+    const credentials = JSON.parse(serviceAccountKey)
+    const accessToken = await getVertexAIAccessToken(credentials)
+
+    const endpoint = `https://${location}-aiplatform.googleapis.com/v1/projects/${projectId}/locations/${location}/publishers/google/models/gemini-2.0-flash-exp:generateContent`
+
+    const prompt = `Classify the priority of this message as "urgent", "reminder", or "fyi". Consider urgency, time sensitivity, and importance. Respond with only the priority level.
+
+Message: "${content}"`
+
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${accessToken}`,
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${openaiKey}`,
       },
       body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'Classify the priority of this message as "urgent", "reminder", or "fyi". Consider urgency, time sensitivity, and importance. Respond with only the priority level.'
-          },
-          { role: 'user', content: content }
-        ],
-        max_tokens: 10,
-        temperature: 0.1,
+        contents: [{ parts: [{ text: prompt }] }],
+        generationConfig: {
+          temperature: 0.1,
+          maxOutputTokens: 10
+        }
       }),
-    });
+    })
 
-    if (!response.ok) {
-      throw new Error(`OpenAI API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const priority = data.choices?.[0]?.message?.content?.trim().toLowerCase();
-    
-    if (['urgent', 'reminder', 'fyi'].includes(priority)) {
-      return { priority, confidence: 0.9 };
-    } else {
-      return { priority: 'fyi', confidence: 0.3 };
+    if (response.ok) {
+      const data = await response.json()
+      const priority = data.candidates?.[0]?.content?.parts?.[0]?.text?.trim().toLowerCase()
+      
+      if (['urgent', 'reminder', 'fyi'].includes(priority)) {
+        return { priority, confidence: 0.9 };
+      }
     }
   } catch (error) {
-    console.error('Priority classification failed:', error);
-    return { priority: 'fyi', confidence: 0.1 };
+    console.error('Vertex AI priority classification failed:', error);
   }
+
+  // Fallback to keyword-based classification
+  const urgentKeywords = ['urgent', 'emergency', 'asap', 'immediately', 'critical'];
+  const reminderKeywords = ['reminder', 'don\'t forget', 'remember', 'deadline', 'due'];
+  
+  const lowerContent = content.toLowerCase();
+  
+  if (urgentKeywords.some(keyword => lowerContent.includes(keyword))) {
+    return { priority: 'urgent', confidence: 0.7 };
+  } else if (reminderKeywords.some(keyword => lowerContent.includes(keyword))) {
+    return { priority: 'reminder', confidence: 0.6 };
+  } else {
+    return { priority: 'fyi', confidence: 0.5 };
+  }
+}
+
+async function getVertexAIAccessToken(credentials: any): Promise<string> {
+  const header = { alg: 'RS256', typ: 'JWT' }
+  const now = Math.floor(Date.now() / 1000)
+  const claim = {
+    iss: credentials.client_email,
+    scope: 'https://www.googleapis.com/auth/cloud-platform',
+    aud: 'https://oauth2.googleapis.com/token',
+    exp: now + 3600,
+    iat: now
+  }
+
+  const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
+      assertion: await createJWT(header, claim, credentials.private_key)
+    }).toString()
+  })
+
+  if (!tokenResponse.ok) {
+    throw new Error('Failed to get access token')
+  }
+
+  const tokenData = await tokenResponse.json()
+  return tokenData.access_token
+}
+
+async function createJWT(header: any, payload: any, privateKey: string): Promise<string> {
+  const encoder = new TextEncoder()
+  const headerBase64 = btoa(JSON.stringify(header)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+  const payloadBase64 = btoa(JSON.stringify(payload)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+  const data = `${headerBase64}.${payloadBase64}`
+  
+  const keyData = privateKey.replace(/-----BEGIN PRIVATE KEY-----/, '').replace(/-----END PRIVATE KEY-----/, '').replace(/\s/g, '')
+  const binaryKey = Uint8Array.from(atob(keyData), c => c.charCodeAt(0))
+  
+  const cryptoKey = await crypto.subtle.importKey('pkcs8', binaryKey, { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' }, false, ['sign'])
+  const signature = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', cryptoKey, encoder.encode(data))
+  const signatureBase64 = btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_')
+  
+  return `${data}.${signatureBase64}`
 }
 
 async function suggestSendTimes(content: string, context: Record<string, any>) {

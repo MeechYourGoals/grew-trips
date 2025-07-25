@@ -1,4 +1,4 @@
-import { OpenAIService } from './OpenAIService';
+import { VertexAIService } from './vertexAIService';
 import { CalendarEvent, AddToCalendarData } from '../types/calendar';
 
 export interface AIConfidenceScore {
@@ -41,10 +41,8 @@ export interface SmartTodoItem {
 }
 
 export class EnhancedAIService {
-  private openAIService: OpenAIService;
-
   constructor() {
-    this.openAIService = new OpenAIService();
+    // Using Vertex AI service instead of OpenAI
   }
 
   async detectCalendarEvents(text: string): Promise<EnhancedAIResult> {

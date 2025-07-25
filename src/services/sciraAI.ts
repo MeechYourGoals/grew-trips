@@ -183,9 +183,9 @@ USER QUESTION: ${query}
 Please provide a helpful, specific response based on the trip context above. If you need current information about places, events, or travel conditions, use web search capabilities.`;
 
     try {
-      console.log('Attempting Gemini AI request...');
+      console.log('Attempting Vertex AI Gemini 2.0 Flash request...');
 
-      const geminiRes = await fetch(this.GEMINI_ENDPOINT, {
+      const vertexRes = await fetch('/api/vertex-ai-chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -193,22 +193,23 @@ Please provide a helpful, specific response based on the trip context above. If 
         body: JSON.stringify({
           message: prompt,
           config: {
+            model: 'gemini-2.0-flash-exp',
             temperature: config.temperature ?? 0.3,
             topK: 40,
             topP: 0.95,
             maxOutputTokens: config.maxTokens ?? 1024
           },
-          tripContext: null
+          vertexAI: true
         })
       });
 
-      if (geminiRes.ok) {
-        const geminiData = await geminiRes.json();
-        console.log('Gemini AI response received:', geminiData);
-        return { content: geminiData.response, sources: [], citations: [], isFromFallback: false };
+      if (vertexRes.ok) {
+        const vertexData = await vertexRes.json();
+        console.log('Vertex AI response received:', vertexData);
+        return { content: vertexData.response, sources: [], citations: [], isFromFallback: false };
       } else {
-        const text = await geminiRes.text();
-        throw new Error(`Gemini HTTP ${geminiRes.status}: ${text}`);
+        const text = await vertexRes.text();
+        throw new Error(`Vertex AI HTTP ${vertexRes.status}: ${text}`);
       }
     } catch (gemError) {
       console.error('Gemini AI Request Failed:', gemError);

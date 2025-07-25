@@ -28,22 +28,26 @@ export class GeminiService {
   }
 
   async callAPI(message: string, config: GeminiAPIConfig, tripContext?: any): Promise<string> {
-    // Call the Supabase Edge Function instead of direct Gemini API
-    const response = await fetch('/api/gemini-chat', {
+    // Call the Vertex AI Chat endpoint instead of basic Gemini API
+    const response = await fetch('/api/vertex-ai-chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         message,
-        config,
-        tripContext
+        config: {
+          model: 'gemini-2.0-flash-exp',
+          ...config
+        },
+        tripContext,
+        vertexAI: true
       }),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`API Error: ${response.status} - ${errorData.error || 'Unknown error'}`);
+      throw new Error(`Vertex AI Error: ${response.status} - ${errorData.error || 'Unknown error'}`);
     }
 
     const data = await response.json();
