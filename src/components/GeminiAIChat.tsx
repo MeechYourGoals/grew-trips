@@ -75,33 +75,27 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
         // Use semantic search for search-like queries
         setAiStatus('searching');
         try {
-          const searchResponse = await fetch('/api/semantic-search', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+          const { supabase } = await import('../integrations/supabase/client');
+          const { data: searchData, error: searchError } = await supabase.functions.invoke('semantic-search', {
+            body: {
               query: inputMessage.trim(),
               tripId,
               limit: 5
-            }),
+            }
           });
 
-          if (searchResponse.ok) {
-            const searchData = await searchResponse.json();
-            if (searchData.success && searchData.results?.length > 0) {
-              searchResults = searchData.results;
-              response = `I found ${searchResults.length} relevant results using AI semantic search for "${inputMessage}":
+          if (!searchError && searchData?.results?.length > 0) {
+            searchResults = searchData.results;
+            response = `I found ${searchResults.length} relevant results using AI semantic search for "${inputMessage}":
 
 ${searchResults.map((result, idx) => 
   `${idx + 1}. ${result.objectType.toUpperCase()}: ${result.snippet} ${('similarity' in result) ? `(${Math.round(result.similarity * 100)}% match)` : ''}`
 ).join('\n\n')}
 
 These results are ranked by semantic similarity. Would you like me to elaborate on any of these?`;
-              setAiStatus('connected');
-            } else {
-              throw new Error('No semantic results found');
-            }
+            setAiStatus('connected');
           } else {
-            throw new Error('Search API failed');
+            throw new Error('No semantic results found');
           }
         } catch (error) {
           console.log('Semantic search failed, falling back to Universal Concierge:', error);

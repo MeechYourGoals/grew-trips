@@ -185,12 +185,10 @@ Please provide a helpful, specific response based on the trip context above. If 
     try {
       console.log('Attempting Vertex AI Gemini 2.0 Flash request...');
 
-      const vertexRes = await fetch('/api/vertex-ai-chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
+      const { supabase } = await import('../integrations/supabase/client');
+      
+      const { data: vertexData, error: vertexError } = await supabase.functions.invoke('vertex-ai-chat', {
+        body: {
           message: prompt,
           config: {
             model: 'gemini-2.0-flash-exp',
@@ -200,16 +198,14 @@ Please provide a helpful, specific response based on the trip context above. If 
             maxOutputTokens: config.maxTokens ?? 1024
           },
           vertexAI: true
-        })
+        }
       });
 
-      if (vertexRes.ok) {
-        const vertexData = await vertexRes.json();
+      if (!vertexError && vertexData?.response) {
         console.log('Vertex AI response received:', vertexData);
         return { content: vertexData.response, sources: [], citations: [], isFromFallback: false };
       } else {
-        const text = await vertexRes.text();
-        throw new Error(`Vertex AI HTTP ${vertexRes.status}: ${text}`);
+        throw new Error(`Vertex AI Error: ${vertexError?.message || 'Unknown error'}`);
       }
     } catch (gemError) {
       console.error('Gemini AI Request Failed:', gemError);
