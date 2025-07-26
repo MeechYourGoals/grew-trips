@@ -1,6 +1,21 @@
 
 import React, { useEffect } from 'react';
-import { Users, Shield, Star, Play, Wrench, Lock, Heart, Camera, Crown, Building, GraduationCap, Lightbulb } from 'lucide-react';
+import {
+  Users,
+  Shield,
+  Star,
+  Play,
+  Wrench,
+  Lock,
+  Heart,
+  Camera,
+  Crown,
+  Building,
+  GraduationCap,
+  Mic,
+  User,
+  Truck,
+} from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import { Button } from '../ui/button';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
@@ -36,10 +51,12 @@ const getRoleIcon = (role: string, category: ProTripCategory) => {
       if (lowerRole.includes('cast') || lowerRole.includes('talent')) return Star;
       if (lowerRole.includes('producer') || lowerRole.includes('director')) return Camera;
       return Wrench;
-    
+
     case 'Events':
-      if (lowerRole.includes('founder')) return Lightbulb;
-      if (lowerRole.includes('mentor')) return GraduationCap;
+      if (lowerRole.includes('speaker')) return Mic;
+      if (lowerRole.includes('guest')) return User;
+      if (lowerRole.includes('logistics')) return Truck;
+      if (lowerRole.includes('press')) return Camera;
       return Users;
     
     default:
@@ -76,10 +93,12 @@ const getRoleColor = (role: string, category: ProTripCategory) => {
       if (lowerRole.includes('cast')) return 'bg-yellow-500';
       if (lowerRole.includes('producer')) return 'bg-red-500';
       return 'bg-gray-500';
-    
+
     case 'Events':
-      if (lowerRole.includes('founder')) return 'bg-yellow-500';
-      if (lowerRole.includes('mentor')) return 'bg-blue-500';
+      if (lowerRole.includes('speaker')) return 'bg-yellow-500';
+      if (lowerRole.includes('guest')) return 'bg-green-500';
+      if (lowerRole.includes('logistics')) return 'bg-blue-500';
+      if (lowerRole.includes('press')) return 'bg-red-500';
       return 'bg-gray-500';
     
     default:
