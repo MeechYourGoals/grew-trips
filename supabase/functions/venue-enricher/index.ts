@@ -42,6 +42,8 @@ serve(async (req) => {
         return await getPlaceDetails(placeId, googleApiKey);
       case 'get_nearby_places':
         return await getNearbyPlaces(location, googleApiKey);
+      case 'resolve_place_links':
+        return await resolvePlaceLinks(query, googleApiKey);
       default:
         return new Response(
           JSON.stringify({ error: 'Invalid action' }),
@@ -116,4 +118,142 @@ async function getNearbyPlaces(location: string, apiKey: string) {
     }),
     { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
   );
+}
+
+async function resolvePlaceLinks(placeName: string, apiKey: string) {
+  const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(placeName)}&key=${apiKey}`;
+  
+  const response = await fetch(searchUrl);
+  if (!response.ok) {
+    throw new Error(`Google Places API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  
+  if (!data.results || data.results.length === 0) {
+    return new Response(
+      JSON.stringify({ 
+        success: false, 
+        error: 'No places found' 
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  const place = data.results[0];
+  
+  // Get detailed place information
+  const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,rating,formatted_phone_number,formatted_address,website,photos,reviews,opening_hours,price_level,types&key=${apiKey}`;
+  
+  const detailsResponse = await fetch(detailsUrl);
+  if (!detailsResponse.ok) {
+    throw new Error(`Google Places API error: ${detailsResponse.status}`);
+  }
+
+  const detailsData = await detailsResponse.json();
+  const placeDetails = detailsData.result;
+  
+  // Generate smart link options based on place type
+  const linkOptions = generateLinkOptions(placeDetails, place);
+  
+  return new Response(
+    JSON.stringify({ 
+      success: true, 
+      place: {
+        ...placeDetails,
+        place_id: place.place_id,
+        geometry: place.geometry
+      },
+      linkOptions,
+      status: data.status 
+    }),
+    { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+  );
+}
+
+function generateLinkOptions(placeDetails: any, place: any) {
+  const options = [];
+  const placeTypes = placeDetails.types || [];
+  
+  // Always include Google Maps
+  const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${place.place_id}`;
+  options.push({
+    type: 'maps',
+    label: 'Google Maps',
+    url: mapsUrl,
+    description: 'View location and directions',
+    isPrimary: true
+  });
+  
+  // Official website if available
+  if (placeDetails.website) {
+    options.unshift({
+      type: 'official',
+      label: 'Official Website',
+      url: placeDetails.website,
+      description: 'Visit the official website',
+      isPrimary: true
+    });
+  }
+  
+  // Generate review links based on place type
+  const placeName = encodeURIComponent(placeDetails.name);
+  const placeAddress = encodeURIComponent(placeDetails.formatted_address || '');
+  
+  if (placeTypes.includes('lodging') || placeTypes.includes('establishment')) {
+    // Hotels and accommodations
+    options.push({
+      type: 'booking',
+      label: 'Booking.com',
+      url: `https://www.booking.com/search.html?ss=${placeName}`,
+      description: 'Check rates and availability'
+    });
+    
+    options.push({
+      type: 'tripadvisor',
+      label: 'TripAdvisor',
+      url: `https://www.tripadvisor.com/Search?q=${placeName}+${placeAddress}`,
+      description: 'Read reviews and ratings'
+    });
+  } else if (placeTypes.includes('restaurant') || placeTypes.includes('food') || placeTypes.includes('meal_takeaway')) {
+    // Restaurants
+    options.push({
+      type: 'opentable',
+      label: 'OpenTable',
+      url: `https://www.opentable.com/s/?text=${placeName}`,
+      description: 'Make a reservation'
+    });
+    
+    options.push({
+      type: 'yelp',
+      label: 'Yelp',
+      url: `https://www.yelp.com/search?find_desc=${placeName}&find_loc=${placeAddress}`,
+      description: 'Read reviews and photos'
+    });
+  } else if (placeTypes.includes('tourist_attraction') || placeTypes.includes('museum') || placeTypes.includes('amusement_park')) {
+    // Attractions
+    options.push({
+      type: 'tripadvisor',
+      label: 'TripAdvisor',
+      url: `https://www.tripadvisor.com/Search?q=${placeName}+${placeAddress}`,
+      description: 'Read reviews and tips'
+    });
+    
+    options.push({
+      type: 'viator',
+      label: 'Viator',
+      url: `https://www.viator.com/search/?text=${placeName}`,
+      description: 'Book tours and activities'
+    });
+  } else {
+    // Generic places
+    options.push({
+      type: 'yelp',
+      label: 'Yelp',
+      url: `https://www.yelp.com/search?find_desc=${placeName}&find_loc=${placeAddress}`,
+      description: 'Read reviews and ratings'
+    });
+  }
+  
+  return options.slice(0, 4); // Limit to 4 options
 }
