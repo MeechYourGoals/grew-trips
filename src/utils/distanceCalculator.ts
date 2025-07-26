@@ -1,7 +1,6 @@
 
 import { BasecampLocation, PlaceWithDistance, DistanceCalculationSettings } from '../types/basecamp';
-
-const GOOGLE_MAPS_API_KEY = 'AIzaSyAWm0vayRrQJHpMc6XcShcge52hGTt9BV4';
+import { SecureApiService } from '../services/secureApiService';
 
 export class DistanceCalculator {
   private static cache = new Map<string, any>();
@@ -74,25 +73,20 @@ export class DistanceCalculator {
     const origin = `${basecamp.coordinates.lat},${basecamp.coordinates.lng}`;
     const destination = place.coordinates 
       ? `${place.coordinates.lat},${place.coordinates.lng}`
-      : encodeURIComponent(place.address || '');
-
-    const travelMode = mode === 'driving' ? 'DRIVING' : 'WALKING';
-    
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destination}&mode=${travelMode}&key=${GOOGLE_MAPS_API_KEY}`;
+      : place.address || '';
 
     try {
-      const response = await fetch(url);
-      const data = await response.json();
+      const response = await SecureApiService.getDistanceMatrix(origin, destination, mode.toLowerCase());
       
-      if (data.status === 'OK' && data.rows[0]?.elements[0]?.status === 'OK') {
-        const distanceText = data.rows[0].elements[0].distance.text;
+      if (response.success && response.data.status === 'OK' && response.data.rows[0]?.elements[0]?.status === 'OK') {
+        const distanceText = response.data.rows[0].elements[0].distance.text;
         const distanceValue = parseFloat(distanceText.replace(/[^\d.]/g, ''));
         return distanceValue;
       }
       
       return null;
     } catch (error) {
-      console.error('Error fetching distance from Google Maps API:', error);
+      console.error('Error fetching distance from secure API:', error);
       return null;
     }
   }
@@ -103,12 +97,10 @@ export class DistanceCalculator {
 
   static async geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
     try {
-      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`;
-      const response = await fetch(url);
-      const data = await response.json();
+      const response = await SecureApiService.geocodeAddress(address);
       
-      if (data.status === 'OK' && data.results[0]) {
-        const location = data.results[0].geometry.location;
+      if (response.success && response.data.status === 'OK' && response.data.results[0]) {
+        const location = response.data.results[0].geometry.location;
         return { lat: location.lat, lng: location.lng };
       }
       

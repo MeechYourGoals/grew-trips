@@ -1,7 +1,10 @@
 project_id = "yiitqkjrbskxumriujrh"
 
 [functions.getstream-token]
-verify_jwt = false
+verify_jwt = true
+
+[functions.secure-maps-api]
+verify_jwt = true
 
 [functions.broadcasts-create]
 verify_jwt = true
@@ -31,7 +34,7 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.search]
-verify_jwt = false
+verify_jwt = true
 
 [functions.populate-search-index]
-verify_jwt = false
+verify_jwt = true

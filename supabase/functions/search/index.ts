@@ -35,8 +35,41 @@ serve(async (req) => {
   }
 
   try {
+    // Verify user authentication
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: 'Authorization required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Initialize Supabase client with user context
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    // Verify user
+    const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid authentication' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Parse request body
     const { query, scope, tripId, limit = 20, tripType }: SearchRequest = await req.json()
+
+    // Sanitize query input
+    if (!query || typeof query !== 'string' || query.length > 200) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid query parameter' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Validate input
     if (!query || !scope) {
@@ -46,13 +79,8 @@ serve(async (req) => {
       )
     }
 
-    // Initialize Supabase client
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
-    const supabase = createClient(supabaseUrl, supabaseKey)
-
-    // Perform search using database
-    const results = await performSearch(supabase, query, scope, tripId, limit, tripType);
+    // Perform search using database with user context
+    const results = await performSearch(supabase, query, scope, tripId, limit, tripType, user.id);
 
     return new Response(
       JSON.stringify({ success: true, results }),
@@ -68,7 +96,7 @@ serve(async (req) => {
   }
 })
 
-async function performSearch(supabase: any, query: string, scope: string, tripId?: string, limit: number = 20, tripType?: string): Promise<SearchResult[]> {
+async function performSearch(supabase: any, query: string, scope: string, tripId?: string, limit: number = 20, tripType?: string, userId?: string): Promise<SearchResult[]> {
   console.log(`Performing search for query: "${query}", scope: ${scope}, tripType: ${tripType}`)
   
   const queryLower = query.toLowerCase().trim()
