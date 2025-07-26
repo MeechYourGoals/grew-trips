@@ -15,6 +15,7 @@ export interface Trip {
   // Feature toggles for Pro/Event trips
   enabled_features?: string[];
   trip_type?: 'consumer' | 'pro' | 'event';
+  archived?: boolean;
 }
 
 export const tripsData: Trip[] = [

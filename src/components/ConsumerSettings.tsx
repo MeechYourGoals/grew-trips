@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { User, Bell, CreditCard, Shield, Settings, Wallet, Calendar, Link, ChevronDown } from 'lucide-react';
+import { User, Bell, CreditCard, Shield, Settings, Wallet, Calendar, Link, ChevronDown, Archive } from 'lucide-react';
 import { TravelWallet } from './TravelWallet';
 import { ConsumerProfileSection } from './consumer/ConsumerProfileSection';
 import { ConsumerBillingSection } from './consumer/ConsumerBillingSection';
@@ -9,6 +9,7 @@ import { ConsumerPrivacySection } from './consumer/ConsumerPrivacySection';
 import { ConsumerGeneralSettings } from './consumer/ConsumerGeneralSettings';
 import { ConsumerCalendarSync } from './consumer/ConsumerCalendarSync';
 import { ConsumerConnectedAccounts } from './consumer/ConsumerConnectedAccounts';
+import { ArchivedTripsSection } from './ArchivedTripsSection';
 import { useIsMobile } from '../hooks/use-mobile';
 
 interface ConsumerSettingsProps {
@@ -28,7 +29,8 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
     { id: 'connected-accounts', label: 'Connected Accounts', icon: Link },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'privacy', label: 'Privacy & Security', icon: Shield },
-    { id: 'settings', label: 'General Settings', icon: Settings }
+    { id: 'settings', label: 'General Settings', icon: Settings },
+    { id: 'archived', label: 'Archived Trips', icon: Archive }
   ];
 
   const renderTravelWalletSection = () => (
@@ -47,6 +49,7 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
       case 'notifications': return <ConsumerNotificationsSection />;
       case 'privacy': return <ConsumerPrivacySection />;
       case 'settings': return <ConsumerGeneralSettings />;
+      case 'archived': return <ArchivedTripsSection />;
       default: return <ConsumerProfileSection />;
     }
   };

@@ -77,6 +77,7 @@ export interface EventData {
   registrationStatus: 'open' | 'closed' | 'waitlist';
   attendanceExpected: number;
   groupChatEnabled: boolean;
+  archived?: boolean;
   
   // Event-specific features
   tracks: Track[];

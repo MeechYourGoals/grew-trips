@@ -302,6 +302,7 @@ export interface ProTripData {
   participants: ProTripParticipant[];
   // Feature toggles for Pro/Event trips
   enabled_features?: string[];
+  archived?: boolean;
   budget: {
     total: number;
     spent: number;

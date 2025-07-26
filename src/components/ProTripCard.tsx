@@ -1,12 +1,21 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, Crown, Copy, Eye, Users, Clock } from 'lucide-react';
+import { Calendar, MapPin, Crown, Copy, Eye, Users, Clock, MoreHorizontal, Archive } from 'lucide-react';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { TravelerTooltip } from './ui/traveler-tooltip';
+import { ArchiveConfirmDialog } from './ArchiveConfirmDialog';
 import { ProTripData } from '../types/pro';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { archiveTrip } from '../services/archiveService';
+import { useToast } from '../hooks/use-toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 interface ProTripCardProps {
   trip: ProTripData;
@@ -15,6 +24,8 @@ interface ProTripCardProps {
 export const ProTripCard = ({ trip }: ProTripCardProps) => {
   const navigate = useNavigate();
   const { accentColors } = useTripVariant();
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
+  const { toast } = useToast();
 
   const handleViewTrip = () => {
     console.log('ProTripCard - Navigating to trip ID:', trip.id);
@@ -25,6 +36,14 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
   const handleDuplicateTrip = () => {
     console.log('Duplicating trip:', trip.title);
     // This would open a modal or redirect to create a new trip with this template
+  };
+
+  const handleArchiveTrip = () => {
+    archiveTrip(trip.id, 'pro');
+    toast({
+      title: "Professional trip archived",
+      description: `"${trip.title}" has been archived. You can restore it from Settings.`,
+    });
   };
 
   // Get next load-in event from schedule
@@ -66,8 +85,8 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
         </div>
       )}
 
-      {/* Pro Badge */}
-      <div className="absolute top-4 right-4">
+      {/* Pro Badge and Menu */}
+      <div className="absolute top-4 right-4 flex items-center gap-2">
         <Tooltip>
           <TooltipTrigger>
             <div className={`bg-gradient-to-r ${accentColors.gradient} p-2 rounded-lg`}>
@@ -78,6 +97,27 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
             <p>Pro Feature Demo</p>
           </TooltipContent>
         </Tooltip>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="text-white/60 hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-all duration-200"
+            >
+              <MoreHorizontal size={16} />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-background border-border">
+            <DropdownMenuItem 
+              onClick={() => setShowArchiveDialog(true)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Archive className="mr-2 h-4 w-4" />
+              Archive Trip
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Header - Removed category badges and tags */}
@@ -178,6 +218,14 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
           <span>Pro: Team roles, broadcasts, permissions</span>
         </div>
       </div>
+
+      <ArchiveConfirmDialog
+        isOpen={showArchiveDialog}
+        onClose={() => setShowArchiveDialog(false)}
+        onConfirm={handleArchiveTrip}
+        tripTitle={trip.title}
+        isArchiving={true}
+      />
     </div>
   );
 };

@@ -1,10 +1,19 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, Trash, User, Plus, MoreHorizontal } from 'lucide-react';
+import { Calendar, MapPin, User, Plus, MoreHorizontal, Archive } from 'lucide-react';
 import { InviteModal } from './InviteModal';
 import { ShareTripModal } from './share/ShareTripModal';
+import { ArchiveConfirmDialog } from './ArchiveConfirmDialog';
 import { TravelerTooltip } from './ui/traveler-tooltip';
+import { archiveTrip } from '../services/archiveService';
+import { useToast } from '../hooks/use-toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 interface Participant {
   id: number;
@@ -29,6 +38,8 @@ export const TripCard = ({ trip }: TripCardProps) => {
   const navigate = useNavigate();
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
+  const { toast } = useToast();
 
   const handleViewTrip = () => {
     navigate(`/trip/${trip.id}`);
@@ -36,6 +47,14 @@ export const TripCard = ({ trip }: TripCardProps) => {
 
   const handleEditItinerary = () => {
     navigate(`/trip/${trip.id}/edit-itinerary`);
+  };
+
+  const handleArchiveTrip = () => {
+    archiveTrip(trip.id.toString(), 'consumer');
+    toast({
+      title: "Trip archived",
+      description: `"${trip.title}" has been archived. You can restore it from Settings.`,
+    });
   };
 
   // Ensure all participants have proper avatar URLs
@@ -69,9 +88,22 @@ export const TripCard = ({ trip }: TripCardProps) => {
               <span className="font-medium">{trip.dateRange}</span>
             </div>
           </div>
-          <button className="text-white/60 hover:text-red-400 transition-colors opacity-0 group-hover:opacity-100 p-2 hover:bg-white/10 rounded-xl">
-            <MoreHorizontal size={20} />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="text-white/60 hover:text-white transition-colors opacity-0 group-hover:opacity-100 p-2 hover:bg-white/10 rounded-xl">
+                <MoreHorizontal size={20} />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="bg-background border-border">
+              <DropdownMenuItem 
+                onClick={() => setShowArchiveDialog(true)}
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <Archive className="mr-2 h-4 w-4" />
+                Archive Trip
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 
@@ -173,6 +205,14 @@ export const TripCard = ({ trip }: TripCardProps) => {
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
         trip={trip}
+      />
+
+      <ArchiveConfirmDialog
+        isOpen={showArchiveDialog}
+        onClose={() => setShowArchiveDialog(false)}
+        onConfirm={handleArchiveTrip}
+        tripTitle={trip.title}
+        isArchiving={true}
       />
     </div>
   );

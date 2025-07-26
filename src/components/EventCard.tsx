@@ -1,9 +1,18 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, Users, Settings } from 'lucide-react';
+import { Calendar, MapPin, Users, Settings, MoreHorizontal, Archive } from 'lucide-react';
 import { EventData } from '../types/events';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { ArchiveConfirmDialog } from './ArchiveConfirmDialog';
+import { archiveTrip } from '../services/archiveService';
+import { useToast } from '../hooks/use-toast';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 interface EventCardProps {
   event: EventData;
@@ -11,12 +20,22 @@ interface EventCardProps {
 
 export const EventCard = ({ event }: EventCardProps) => {
   const navigate = useNavigate();
+  const [showArchiveDialog, setShowArchiveDialog] = useState(false);
+  const { toast } = useToast();
   const { accentColors } = useTripVariant();
 
   const handleViewEvent = () => {
     console.log('EventCard - Navigating to event ID:', event.id);
     console.log('EventCard - Full URL will be:', `/event/${event.id}`);
     navigate(`/event/${event.id}`);
+  };
+
+  const handleArchiveEvent = () => {
+    archiveTrip(event.id, 'event');
+    toast({
+      title: "Event archived",
+      description: `"${event.title}" has been archived. You can restore it from Settings.`,
+    });
   };
 
   const getCategoryColor = (category: string) => {
@@ -38,10 +57,29 @@ export const EventCard = ({ event }: EventCardProps) => {
 
   return (
     <div className={`bg-gradient-to-br ${getCategoryColor(event.category)} backdrop-blur-xl border rounded-3xl overflow-hidden transition-all duration-300 shadow-lg hover:scale-[1.02] relative group`}>
-      {/* Events Badge */}
-      <div className={`absolute top-4 right-4 z-10 bg-gradient-to-r ${accentColors.gradient} px-3 py-1 rounded-full flex items-center gap-1`}>
-        <Calendar size={14} className="text-white" />
-        <span className="text-sm font-bold text-white">EVENTS</span>
+      {/* Events Badge and Menu */}
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        <div className={`bg-gradient-to-r ${accentColors.gradient} px-3 py-1 rounded-full flex items-center gap-1`}>
+          <Calendar size={14} className="text-white" />
+          <span className="text-sm font-bold text-white">EVENTS</span>
+        </div>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="text-white/60 hover:text-white transition-colors opacity-0 group-hover:opacity-100 p-2 hover:bg-white/10 rounded-xl">
+              <MoreHorizontal size={16} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="bg-background border-border">
+            <DropdownMenuItem 
+              onClick={() => setShowArchiveDialog(true)}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              <Archive className="mr-2 h-4 w-4" />
+              Archive Event
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Header */}
@@ -136,6 +174,14 @@ export const EventCard = ({ event }: EventCardProps) => {
           Manage Event
         </button>
       </div>
+
+      <ArchiveConfirmDialog
+        isOpen={showArchiveDialog}
+        onClose={() => setShowArchiveDialog(false)}
+        onConfirm={handleArchiveEvent}
+        tripTitle={event.title}
+        isArchiving={true}
+      />
     </div>
   );
 };

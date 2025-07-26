@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { TripCard } from '../TripCard';
 import { ProTripCard } from '../ProTripCard';
 import { EventCard } from '../EventCard';
@@ -11,6 +11,7 @@ import { ProTripData } from '../../types/pro';
 import { EventData } from '../../types/events';
 import { TripCardSkeleton } from '../ui/loading-skeleton';
 import { EnhancedEmptyState } from '../ui/enhanced-empty-state';
+import { filterActiveTrips } from '../../services/archiveService';
 import { MapPin, Calendar, Briefcase } from 'lucide-react';
 
 interface Trip {
@@ -44,6 +45,25 @@ export const TripGrid = ({
 }: TripGridProps) => {
   const isMobile = useIsMobile();
 
+  // Filter out archived trips
+  const activeTrips = useMemo(() => filterActiveTrips(trips, 'consumer'), [trips]);
+  const activeProTrips = useMemo(() => {
+    const proTripArray = Object.values(proTrips);
+    const filtered = filterActiveTrips(proTripArray, 'pro');
+    return filtered.reduce((acc, trip) => {
+      acc[trip.id] = trip;
+      return acc;
+    }, {} as Record<string, ProTripData>);
+  }, [proTrips]);
+  const activeEvents = useMemo(() => {
+    const eventArray = Object.values(events);
+    const filtered = filterActiveTrips(eventArray, 'event');
+    return filtered.reduce((acc, event) => {
+      acc[event.id] = event;
+      return acc;
+    }, {} as Record<string, EventData>);
+  }, [events]);
+
   // Show loading skeleton
   if (loading) {
     return (
@@ -53,12 +73,12 @@ export const TripGrid = ({
     );
   }
 
-  // Check if we have content for the current view mode
+  // Check if we have content for the current view mode (using filtered data)
   const hasContent = viewMode === 'myTrips' 
-    ? trips.length > 0 
+    ? activeTrips.length > 0 
     : viewMode === 'tripsPro' 
-    ? Object.keys(proTrips).length > 0
-    : Object.keys(events).length > 0;
+    ? Object.keys(activeProTrips).length > 0
+    : Object.keys(activeEvents).length > 0;
 
   // Show enhanced empty state if no content
   if (!hasContent) {
@@ -102,11 +122,11 @@ export const TripGrid = ({
     return <EnhancedEmptyState {...getEmptyStateProps()} />;
   }
 
-  // Render content grid
+  // Render content grid (using filtered data)
   return (
     <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
       {viewMode === 'myTrips' ? (
-        trips.map((trip) => (
+        activeTrips.map((trip) => (
           <React.Fragment key={trip.id}>
             {isMobile ? (
               <MobileTripCard trip={trip} />
@@ -116,7 +136,7 @@ export const TripGrid = ({
           </React.Fragment>
         ))
       ) : viewMode === 'tripsPro' ? (
-        Object.values(proTrips).map((trip) => (
+        Object.values(activeProTrips).map((trip) => (
           <React.Fragment key={trip.id}>
             {isMobile ? (
               <MobileProTripCard trip={trip} />
@@ -126,7 +146,7 @@ export const TripGrid = ({
           </React.Fragment>
         ))
       ) : (
-        Object.values(events).map((event) => (
+        Object.values(activeEvents).map((event) => (
           <React.Fragment key={event.id}>
             {isMobile ? (
               <MobileEventCard event={event} />
