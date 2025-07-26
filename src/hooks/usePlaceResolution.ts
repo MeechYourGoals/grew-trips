@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from '@/integrations/supabase/client';
 
 interface LinkOption {
   type: string;
@@ -30,11 +30,6 @@ interface PlaceResolutionResult {
 export const usePlaceResolution = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL!,
-    import.meta.env.VITE_SUPABASE_ANON_KEY!
-  );
 
   const resolvePlaceName = async (placeName: string): Promise<PlaceResolutionResult> => {
     if (!placeName.trim()) {
