@@ -1,7 +1,6 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Search, MapPin } from 'lucide-react';
-import { SecureApiService } from '../services/secureApiService';
 
 interface GoogleMapsEmbedProps {
   className?: string;
@@ -11,32 +10,17 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const [embedUrl, setEmbedUrl] = useState('');
+  const apiKey = 'AIzaSyAWm0vayRrQJHpMc6XcShcge52hGTt9BV4';
   
-  const getSecureEmbedUrl = async (query: string = '') => {
-    try {
-      const searchTerm = query.trim() || 'New York City';
-      const response = await SecureApiService.getSecureEmbedUrl(searchTerm);
-      if (response.success) {
-        setEmbedUrl(response.embedUrl);
-      } else {
-        setHasError(true);
-      }
-    } catch (error) {
-      console.error('Failed to get secure embed URL:', error);
-      setHasError(true);
-    }
+  const getEmbedUrl = () => {
+    const query = searchQuery.trim() || 'New York City';
+    return `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(query)}&zoom=12`;
   };
 
-  useEffect(() => {
-    getSecureEmbedUrl();
-  }, []);
-
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setHasError(false);
-    await getSecureEmbedUrl(searchQuery);
   };
 
   const handleIframeLoad = () => {
@@ -96,21 +80,19 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
       )}
 
       {/* Google Maps Iframe */}
-      {embedUrl && (
-        <iframe
-          key={embedUrl}
-          src={embedUrl}
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          className="absolute inset-0 w-full h-full"
-          onLoad={handleIframeLoad}
-          onError={handleIframeError}
-        />
-      )}
+      <iframe
+        key={getEmbedUrl()}
+        src={getEmbedUrl()}
+        width="100%"
+        height="100%"
+        style={{ border: 0 }}
+        allowFullScreen
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        className="absolute inset-0 w-full h-full"
+        onLoad={handleIframeLoad}
+        onError={handleIframeError}
+      />
     </div>
   );
 };
