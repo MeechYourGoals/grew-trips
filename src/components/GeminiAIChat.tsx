@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Sparkles, WifiOff, Wifi, AlertCircle } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
-import { SciraAIService, TripContext } from '../services/sciraAI';
+import { TripContext } from '../types/tripContext';
 import { UniversalConciergeService, SearchResult } from '../services/universalConciergeService';
 import { ChatMessages } from './chat/ChatMessages';
 import { AiChatInput } from './chat/AiChatInput';
@@ -102,13 +102,15 @@ These results are ranked by semantic similarity. Would you like me to elaborate 
           setAiStatus('fallback');
           // Fall back to Universal Concierge
           const tripContext: TripContext = {
-            id: tripId,
+            tripId: tripId,
             title: 'Current Trip',
             location: basecamp?.address || 'Unknown location',
-            dateRange: 'Current dates',
-            basecamp,
-            preferences,
-            isPro: false
+            dateRange: { start: 'Today', end: 'Unknown' },
+            participants: [],
+            itinerary: [],
+            currentDate: new Date().toISOString(),
+            upcomingEvents: [],
+            recentUpdates: []
           };
           const fallbackResponse = await UniversalConciergeService.processMessage(inputMessage, tripContext);
           response = fallbackResponse.content;
@@ -118,13 +120,15 @@ These results are ranked by semantic similarity. Would you like me to elaborate 
         // Use Universal Concierge for general conversation
         setAiStatus('thinking');
         const tripContext: TripContext = {
-          id: tripId,
+          tripId: tripId,
           title: 'Current Trip',
           location: basecamp?.address || 'Unknown location',
-          dateRange: 'Current dates',
-          basecamp,
-          preferences,
-          isPro: false
+          dateRange: { start: 'Today', end: 'Unknown' },
+          participants: [],
+          itinerary: [],
+          currentDate: new Date().toISOString(),
+          upcomingEvents: [],
+          recentUpdates: []
         };
 
         const conciergeResponse = await UniversalConciergeService.processMessage(inputMessage, tripContext);

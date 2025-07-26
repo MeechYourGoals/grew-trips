@@ -2,7 +2,9 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { corsHeaders } from '../_shared/cors.ts'
 
 const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
-const ELEVENLABS_API_KEY = Deno.env.get('ELEVENLABS_API_KEY')
+const GOOGLE_CLOUD_PROJECT = Deno.env.get('GOOGLE_CLOUD_PROJECT')
+const GOOGLE_CLOUD_LOCATION = Deno.env.get('GOOGLE_CLOUD_LOCATION')
+const GOOGLE_SERVICE_ACCOUNT_KEY = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_KEY')
 
 interface VoiceRequest {
   audioBlob: string; // base64 encoded audio

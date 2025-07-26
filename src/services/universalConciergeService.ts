@@ -1,5 +1,6 @@
 import { supabase } from '../integrations/supabase/client';
-import { SciraAIService, TripContext } from './sciraAI';
+import { VertexAIService } from './vertexAIService';
+import { TripContext } from '../types/tripContext';
 
 export interface SearchResult {
   id: string;
@@ -139,7 +140,7 @@ export class UniversalConciergeService {
     try {
       // Check if this is a search-style query
       if (this.isSearchQuery(message)) {
-        const searchResults = await this.performUniversalSearch(message, tripContext.id);
+        const searchResults = await this.performUniversalSearch(message, tripContext.tripId);
         const searchResponse = this.formatSearchResults(searchResults);
         
         return {
@@ -150,19 +151,14 @@ export class UniversalConciergeService {
       }
 
       // For non-search queries, use the regular AI service
-      const aiResponse = await SciraAIService.querySciraAI(
+      const aiResponse = await VertexAIService.queryVertexAI(
         message,
-        SciraAIService.buildTripContext(tripContext),
-        {
-          temperature: 0.7,
-          maxTokens: 1024,
-          webSearch: true
-        }
+        VertexAIService.buildTripContext(tripContext)
       );
 
       return {
         content: aiResponse.content,
-        isFromFallback: aiResponse.isFromFallback
+        isFromFallback: false
       };
     } catch (error) {
       console.error('Concierge processing error:', error);

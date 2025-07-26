@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import { Send, Sparkles, MessageCircle, ExternalLink, AlertCircle, Wifi, WifiOff } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
-import { SciraAIService, TripContext } from '../services/sciraAI';
+import { VertexAIService } from '../services/vertexAIService';
+import { TripContext } from '../types/tripContext';
 import {
   Sheet,
   SheetContent,
@@ -35,7 +36,7 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
   const [isTyping, setIsTyping] = useState(false);
   const [aiStatus, setAiStatus] = useState<'connected' | 'fallback' | 'error'>('connected');
 
-  const canUseAI = isPlus || tripContext.isPro;
+  const canUseAI = isPlus || tripContext.isPro || false;
   const contextLimit = tripContext.isPro ? 'Advanced (5x larger)' : 'Standard';
 
   const handleSendMessage = async () => {
@@ -53,20 +54,11 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
     setIsTyping(true);
 
     try {
-      const context = SciraAIService.buildTripContext(tripContext);
-      const response = await SciraAIService.querySciraAI(inputMessage, context, {
-        temperature: 0.3,
-        maxTokens: tripContext.isPro ? 2048 : 1024,
-        webSearch: true,
-        citations: true
-      });
+      const context = VertexAIService.buildTripContext(tripContext);
+      const response = await VertexAIService.queryVertexAI(inputMessage, context);
       
       // Update AI status based on response
-      if (response.isFromFallback) {
-        setAiStatus('fallback');
-      } else {
-        setAiStatus('connected');
-      }
+      setAiStatus('connected');
       
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
@@ -74,7 +66,7 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
         content: response.content,
         timestamp: new Date().toISOString(),
         sources: response.sources,
-        isFromFallback: response.isFromFallback
+        isFromFallback: false
       };
       
       setMessages(prev => [...prev, assistantMessage]);

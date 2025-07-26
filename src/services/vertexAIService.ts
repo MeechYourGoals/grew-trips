@@ -1,5 +1,5 @@
 import { TripPreferences } from '../types/consumer';
-import { TripContext } from './sciraAI';
+import { TripContext } from '../types/tripContext';
 
 export interface VertexAIConfig {
   temperature?: number;

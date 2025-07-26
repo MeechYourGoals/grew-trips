@@ -1,4 +1,4 @@
-import { OpenAIService } from './OpenAIService';
+import { VertexAIService } from './vertexAIService';
 import { TripContext, TripContextService } from './tripContextService';
 
 export interface VoiceQuery {
@@ -84,11 +84,11 @@ export class VoiceAssistantService {
     ${contextPrompt}`;
 
     try {
-      const response = await OpenAIService.queryOpenAI(
+      const response = await VertexAIService.generateMessageWithTone(
         `User question: "${query}"
         
         Please provide a helpful, concise answer based on the trip context provided.`,
-        { tone: 'friendly', maxTokens: 150 }
+        'friendly'
       );
       
       return response || "I don't have specific information about that. You might want to check the trip details or ask the group.";
