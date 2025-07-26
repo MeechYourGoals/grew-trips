@@ -1,8 +1,10 @@
 
-import React, { useState } from 'react';
-import { X, Link, Sparkles, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Link, Sparkles, CheckCircle, MapPin, Search, Globe } from 'lucide-react';
 import { Button } from './ui/button';
 import { BasecampLocation, PlaceWithDistance } from '../types/basecamp';
+import { usePlaceResolution } from '../hooks/usePlaceResolution';
+import { detectInputType, normalizeUrl, formatPlaceQuery, extractPlaceComponents } from '../utils/smartInputDetector';
 
 interface AddPlaceModalProps {
   isOpen: boolean;
@@ -22,72 +24,99 @@ const categories = [
 ];
 
 export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPlaceModalProps) => {
-  const [url, setUrl] = useState('');
+  const [smartInput, setSmartInput] = useState('');
   const [placeName, setPlaceName] = useState('');
   const [calculateDistance, setCalculateDistance] = useState(!!basecamp);
   const [category, setCategory] = useState<string>('');
-  const [useAiSorting, setUseAiSorting] = useState(false);
+  const [useAiSorting, setUseAiSorting] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [selectedPlace, setSelectedPlace] = useState<any>(null);
+  const [inputType, setInputType] = useState<'url' | 'place_name' | null>(null);
+  
+  const { resolvePlaceName, categorizePlaceType, isLoading: placeLoading } = usePlaceResolution();
 
-  const classifyPlace = async (url: string, title: string): Promise<string> => {
-    const text = `${title} ${url}`.toLowerCase();
-    
-    if (text.includes('airbnb') || text.includes('hotel') || text.includes('hostel') || 
-        text.includes('apartment') || text.includes('accommodation') || text.includes('booking.com')) {
-      return 'hotel';
+  // Handle smart input changes and detection
+  useEffect(() => {
+    if (!smartInput.trim()) {
+      setInputType(null);
+      setSearchResults([]);
+      setSelectedPlace(null);
+      return;
     }
-    
-    if (text.includes('flight') || text.includes('airline') || text.includes('airport') ||
-        text.includes('uber') || text.includes('lyft') || text.includes('rental car')) {
-      return 'transportation';
+
+    const detection = detectInputType(smartInput);
+    setInputType(detection.type);
+
+    if (detection.type === 'place_name' && detection.isValid) {
+      // Debounce place search
+      const timeoutId = setTimeout(async () => {
+        const query = formatPlaceQuery(smartInput);
+        const result = await resolvePlaceName(query);
+        
+        if (result.success && result.place) {
+          setSearchResults([result.place]);
+          setSelectedPlace(result.place);
+          
+          // Auto-set place name if not already set
+          if (!placeName) {
+            setPlaceName(result.place.name);
+          }
+          
+          // Auto-categorize if enabled
+          if (useAiSorting && result.place.types) {
+            const autoCategory = categorizePlaceType(result.place.types);
+            setCategory(autoCategory);
+          }
+        }
+      }, 500);
+
+      return () => clearTimeout(timeoutId);
     }
-    
-    if (text.includes('restaurant') || text.includes('cafe') || text.includes('food') || 
-        text.includes('dining') || text.includes('michelin')) {
-      return 'restaurant';
-    }
-    
-    if (text.includes('bar') || text.includes('club') || text.includes('nightlife') || 
-        text.includes('cocktail') || text.includes('pub')) {
-      return 'nightlife';
-    }
-    
-    if (text.includes('gym') || text.includes('fitness') || text.includes('yoga') || 
-        text.includes('workout') || text.includes('sports')) {
-      return 'fitness';
-    }
-    
-    if (text.includes('museum') || text.includes('tour') || text.includes('attraction') || 
-        text.includes('activity') || text.includes('experience')) {
-      return 'attraction';
-    }
-    
-    return 'attraction';
-  };
+  }, [smartInput, resolvePlaceName, categorizePlaceType, useAiSorting, placeName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!url.trim()) return;
+    if (!smartInput.trim() || !placeName.trim()) return;
     
     setIsLoading(true);
     try {
+      let finalUrl = '';
       let finalCategory = category;
       
-      if (!category && useAiSorting) {
-        finalCategory = await classifyPlace(url, placeName);
+      // Determine final URL based on input type
+      if (inputType === 'url') {
+        finalUrl = normalizeUrl(smartInput);
+      } else if (selectedPlace) {
+        // Use Google Maps URL or website from selected place
+        finalUrl = selectedPlace.website || `https://www.google.com/maps/place/?q=place_id:${selectedPlace.place_id}`;
+      } else {
+        // Fallback to Google search
+        finalUrl = `https://www.google.com/search?q=${encodeURIComponent(smartInput)}`;
       }
       
+      // Auto-categorize if not manually set
       if (!finalCategory) {
-        finalCategory = 'attraction';
+        if (selectedPlace && selectedPlace.types) {
+          finalCategory = categorizePlaceType(selectedPlace.types);
+        } else {
+          finalCategory = 'attraction';
+        }
       }
 
       const newPlace: PlaceWithDistance = {
         id: Date.now().toString(),
-        name: placeName.trim() || 'New Place',
-        url: url.trim(),
+        name: placeName.trim(),
+        url: finalUrl,
         category: finalCategory as any,
-        calculatedAt: new Date().toISOString()
+        calculatedAt: new Date().toISOString(),
+        // Add place details if available
+        ...(selectedPlace && {
+          address: selectedPlace.formatted_address,
+          rating: selectedPlace.rating,
+          placeId: selectedPlace.place_id
+        })
       };
 
       console.log('Adding place:', { 
@@ -105,11 +134,14 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
       
       // Wait a moment then reset form and close modal
       setTimeout(() => {
-        setUrl('');
+        setSmartInput('');
         setPlaceName('');
         setCalculateDistance(!!basecamp);
         setCategory('');
-        setUseAiSorting(false);
+        setUseAiSorting(true);
+        setSearchResults([]);
+        setSelectedPlace(null);
+        setInputType(null);
         setShowSuccess(false);
         onClose();
       }, 1500);
@@ -154,26 +186,73 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* Helper Text */}
           <div className="bg-blue-500/10 border border-blue-500/30 rounded-lg p-3 text-sm text-blue-300">
-            Places you add will be saved to Links for easy access during your trip.
+            Enter a place name (e.g., "Starbucks Chicago IL") or URL to save it to your trip links.
           </div>
 
-          {/* URL Input */}
+          {/* Smart Input Field */}
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-2">
-              Place URL *
+              Place or URL *
             </label>
             <div className="relative">
-              <Link size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+              {inputType === 'url' ? (
+                <Globe size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+              ) : (
+                <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+              )}
               <input
-                type="url"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="https://..."
+                type="text"
+                value={smartInput}
+                onChange={(e) => setSmartInput(e.target.value)}
+                placeholder="Target Chicago IL, https://target.com, or business name..."
                 required
                 className="w-full bg-slate-900/50 border border-slate-600 rounded-lg pl-10 pr-4 py-3 text-white placeholder-slate-400 focus:outline-none focus:border-blue-500"
               />
+              {(placeLoading) && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-400"></div>
+                </div>
+              )}
             </div>
+            
+            {/* Input Type Indicator */}
+            {inputType && (
+              <div className="mt-2 text-xs text-slate-400 flex items-center gap-1">
+                {inputType === 'url' ? (
+                  <>
+                    <Globe size={12} />
+                    Detected as URL
+                  </>
+                ) : (
+                  <>
+                    <MapPin size={12} />
+                    Searching for places...
+                  </>
+                )}
+              </div>
+            )}
           </div>
+
+          {/* Place Search Results */}
+          {selectedPlace && inputType === 'place_name' && (
+            <div className="bg-slate-900/30 border border-slate-700 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <MapPin size={16} className="text-green-400 mt-1 flex-shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <h4 className="font-medium text-white text-sm">{selectedPlace.name}</h4>
+                  {selectedPlace.formatted_address && (
+                    <p className="text-xs text-slate-400 mt-1">{selectedPlace.formatted_address}</p>
+                  )}
+                  {selectedPlace.rating && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <span className="text-xs text-yellow-400">★</span>
+                      <span className="text-xs text-slate-300">{selectedPlace.rating}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Title Input */}
           <div>
@@ -190,7 +269,7 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
             />
           </div>
 
-          {/* AI Sorting Toggle */}
+          {/* AI Categorization Toggle */}
           <div className="flex items-center gap-3 p-3 bg-slate-900/30 rounded-lg border border-slate-700/50">
             <input
               type="checkbox"
@@ -201,7 +280,7 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
             />
             <label htmlFor="ai-sorting" className="flex items-center gap-2 text-sm text-slate-300">
               <Sparkles size={16} className="text-blue-400" />
-              Let AI categorize this place automatically
+              Auto-categorize based on place type
             </label>
           </div>
 
@@ -267,7 +346,7 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !url.trim() || !placeName.trim()}
+              disabled={isLoading || !smartInput.trim() || !placeName.trim()}
               className="flex-1 bg-blue-600 hover:bg-blue-700"
             >
               {isLoading ? 'Saving...' : 'Save Pin'}
