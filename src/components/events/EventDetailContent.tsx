@@ -55,6 +55,7 @@ export const EventDetailContent = ({
 
   const visibleTabs = tabs.filter(tab => {
     if (tab.organinerOnly && eventData.userRole !== 'organizer') return false;
+    if (tab.id === 'registration' && eventData.userRole !== 'organizer') return false;
     return true;
   });
 

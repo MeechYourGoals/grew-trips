@@ -16,28 +16,79 @@ interface AgendaBuilderProps {
 
 export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBuilderProps) => {
   const [selectedTrack, setSelectedTrack] = useState<string>('all');
-  const [rsvpedSessions, setRsvpedSessions] = useState<Set<string>>(new Set());
-  const [showAIRecommendations, setShowAIRecommendations] = useState<boolean>(false);
+  const [addedSessions, setAddedSessions] = useState<Set<string>>(new Set(['1', '3'])); // Pre-selected sessions for demo
 
-  const handleRSVP = (sessionId: string) => {
-    const newRsvped = new Set(rsvpedSessions);
-    if (newRsvped.has(sessionId)) {
-      newRsvped.delete(sessionId);
+  const handleAddToAgenda = (sessionId: string) => {
+    const newAdded = new Set(addedSessions);
+    if (newAdded.has(sessionId)) {
+      newAdded.delete(sessionId);
     } else {
-      newRsvped.add(sessionId);
+      newAdded.add(sessionId);
     }
-    setRsvpedSessions(newRsvped);
+    setAddedSessions(newAdded);
   };
 
   const filteredSessions = selectedTrack === 'all' 
     ? sessions 
     : sessions.filter(session => session.track === selectedTrack);
 
-  const recommendedSessions = sessions.filter(session => 
-    session.title.toLowerCase().includes('ai') || 
-    session.title.toLowerCase().includes('innovation') ||
-    session.title.toLowerCase().includes('tech')
-  ).slice(0, 3);
+  // Mock sessions data
+  const mockSessions = [
+    {
+      id: '1',
+      title: 'Future of AI in Web Development',
+      description: 'Exploring how artificial intelligence is transforming modern web development practices.',
+      startTime: '09:00',
+      endTime: '10:00',
+      location: 'Main Auditorium',
+      track: 'tech',
+      speaker: '1',
+      capacity: 200,
+      rsvpCount: 145,
+      materials: [{ title: 'Slides', type: 'pdf' }]
+    },
+    {
+      id: '2',
+      title: 'Building Scalable React Applications',
+      description: 'Best practices for architecting large-scale React applications with performance in mind.',
+      startTime: '10:30',
+      endTime: '11:30',
+      location: 'Conference Room A',
+      track: 'tech',
+      speaker: '2',
+      capacity: 100,
+      rsvpCount: 87,
+      materials: []
+    },
+    {
+      id: '3',
+      title: 'Design Systems for Modern Apps',
+      description: 'Creating consistent and maintainable design systems for enterprise applications.',
+      startTime: '14:00',
+      endTime: '15:00',
+      location: 'Workshop Room',
+      track: 'design',
+      speaker: '3',
+      capacity: 50,
+      rsvpCount: 38,
+      materials: [{ title: 'Design Kit', type: 'figma' }]
+    },
+    {
+      id: '4',
+      title: 'Product Strategy in 2024',
+      description: 'Strategic approaches to product development in an evolving market landscape.',
+      startTime: '15:30',
+      endTime: '16:30',
+      location: 'Main Auditorium',
+      track: 'business',
+      speaker: '4',
+      capacity: 200,
+      rsvpCount: 156,
+      materials: []
+    }
+  ];
+
+  const allSessions = mockSessions.length > 0 ? mockSessions : filteredSessions;
 
   const getSpeaker = (speakerId: string) => 
     speakers.find(speaker => speaker.id === speakerId);
@@ -58,65 +109,10 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
       <div className="flex items-center gap-3 mb-6">
         <Calendar size={24} className="text-blue-400" />
         <div>
-          <h2 className="text-xl font-semibold text-white">Multi-Track Agenda</h2>
-          <p className="text-gray-400 text-sm">Explore sessions across all conference tracks</p>
+          <h2 className="text-xl font-semibold text-white">Event Agenda</h2>
+          <p className="text-gray-400 text-sm">Browse sessions and build your personal agenda</p>
         </div>
       </div>
-
-      {/* AI Recommendations Toggle */}
-      {userRole === 'attendee' && (
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Brain size={20} className="text-purple-400" />
-            <span className="text-white font-medium">AI Recommendations</span>
-          </div>
-          <Button
-            variant={showAIRecommendations ? 'default' : 'outline'}
-            size="sm"
-            onClick={() => setShowAIRecommendations(!showAIRecommendations)}
-            className={showAIRecommendations ? 'bg-purple-600 text-white' : 'border-gray-600 text-gray-300'}
-          >
-            <Sparkles size={16} className="mr-2" />
-            {showAIRecommendations ? 'Hide' : 'Show'} Recommendations
-          </Button>
-        </div>
-      )}
-
-      {/* AI Recommendations Panel */}
-      {showAIRecommendations && userRole === 'attendee' && (
-        <div className="bg-gradient-to-r from-purple-900/20 to-blue-900/20 border border-purple-500/30 rounded-xl p-4 space-y-3">
-          <div className="flex items-center gap-2 text-purple-300">
-            <Sparkles size={16} />
-            <span className="font-medium">Recommended Sessions for You</span>
-          </div>
-          <div className="grid gap-3">
-            {recommendedSessions.map(session => {
-              const track = getTrack(session.track);
-              return (
-                <div key={session.id} className="bg-white/5 rounded-lg p-3 border border-white/10">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <h4 className="text-white font-medium text-sm">{session.title}</h4>
-                      <div className="flex items-center gap-4 mt-1 text-xs text-gray-400">
-                        <span>{formatTime(session.startTime)} - {formatTime(session.endTime)}</span>
-                        <span>{session.location}</span>
-                      </div>
-                    </div>
-                    <Button
-                      size="sm"
-                      variant={rsvpedSessions.has(session.id) ? 'default' : 'outline'}
-                      onClick={() => handleRSVP(session.id)}
-                      className={rsvpedSessions.has(session.id) ? 'bg-purple-600 text-white' : 'border-gray-600 text-gray-300'}
-                    >
-                      {rsvpedSessions.has(session.id) ? 'RSVP\'d' : 'RSVP'}
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
 
       <Tabs defaultValue="agenda" className="space-y-4">
         <TabsList className="bg-gray-800 border-gray-700">
@@ -137,7 +133,7 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
               onClick={() => setSelectedTrack('all')}
               className={selectedTrack === 'all' ? 'bg-blue-600 text-white' : 'border-gray-600 text-gray-300'}
             >
-              All Tracks
+              All Sessions
             </Button>
             {tracks.map(track => (
               <Button
@@ -155,10 +151,10 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
 
           {/* Sessions Grid */}
           <div className="grid gap-4">
-            {filteredSessions.map(session => {
+            {allSessions.map(session => {
               const speaker = getSpeaker(session.speaker);
               const track = getTrack(session.track);
-              const isRsvped = rsvpedSessions.has(session.id);
+              const isAdded = addedSessions.has(session.id);
               const isNearCapacity = session.rsvpCount / session.capacity > 0.8;
 
               return (
@@ -182,16 +178,14 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
                         <CardTitle className="text-white text-lg">{session.title}</CardTitle>
                         <p className="text-gray-400 text-sm mt-1">{session.description}</p>
                       </div>
-                      {userRole === 'attendee' && (
-                        <Button
-                          size="sm"
-                          variant={isRsvped ? 'default' : 'outline'}
-                          onClick={() => handleRSVP(session.id)}
-                          className={isRsvped ? 'bg-blue-600 text-white' : 'border-gray-600 text-gray-300'}
-                        >
-                          {isRsvped ? 'RSVP\'d' : 'RSVP'}
-                        </Button>
-                      )}
+                      <Button
+                        size="sm"
+                        variant={isAdded ? 'default' : 'outline'}
+                        onClick={() => handleAddToAgenda(session.id)}
+                        className={isAdded ? 'bg-green-600 text-white' : 'border-gray-600 text-gray-300'}
+                      >
+                        {isAdded ? '✓ Added' : '+ Add'}
+                      </Button>
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
@@ -257,18 +251,18 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
 
 
         <TabsContent value="my-schedule" className="space-y-4">
-          {rsvpedSessions.size === 0 ? (
+          {addedSessions.size === 0 ? (
             <Card className="bg-gray-800/50 border-gray-700">
               <CardContent className="p-8 text-center">
                 <Calendar size={48} className="text-gray-600 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-400 mb-2">No sessions in your schedule</h3>
-                <p className="text-gray-500 text-sm">RSVP to sessions to build your personal agenda</p>
+                <p className="text-gray-500 text-sm">Add sessions to build your personal agenda</p>
               </CardContent>
             </Card>
           ) : (
             <div className="space-y-4">
-              {filteredSessions
-                .filter(session => rsvpedSessions.has(session.id))
+              {allSessions
+                .filter(session => addedSessions.has(session.id))
                 .map(session => {
                   const speaker = getSpeaker(session.speaker);
                   const track = getTrack(session.track);

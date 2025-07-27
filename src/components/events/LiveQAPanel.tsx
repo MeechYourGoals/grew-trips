@@ -58,6 +58,16 @@ export const LiveQAPanel = ({ sessionId, eventId, userRole = 'attendee' }: LiveQ
         upvotes: 8,
         answered: false,
         created_at: new Date().toISOString()
+      },
+      {
+        id: '4',
+        user_name: 'David Wilson',
+        question: 'What are the best practices for implementing machine learning models in production?',
+        upvotes: 12,
+        answered: true,
+        answer: 'Focus on data quality, model monitoring, A/B testing, and gradual rollouts to ensure reliable performance.',
+        answered_by: 'Tech Lead',
+        created_at: new Date().toISOString()
       }
     ]);
   }, [sessionId]);
@@ -68,14 +78,22 @@ export const LiveQAPanel = ({ sessionId, eventId, userRole = 'attendee' }: LiveQ
   };
 
   const submitQuestion = async () => {
-    if (!newQuestion.trim() || !user) return;
+    if (!newQuestion.trim()) return;
+
+    // If user is not logged in, get name from prompt
+    let userName = user?.email?.split('@')[0] || 'Anonymous';
+    if (!user) {
+      const name = prompt('Please enter your name to ask a question:');
+      if (!name) return;
+      userName = name;
+    }
 
     setIsSubmitting(true);
     try {
       // Mock implementation - add to local state
       const newQ: Question = {
         id: Date.now().toString(),
-        user_name: user.email?.split('@')[0] || 'Anonymous',
+        user_name: userName,
         question: newQuestion.trim(),
         upvotes: 0,
         answered: false,
@@ -144,25 +162,23 @@ export const LiveQAPanel = ({ sessionId, eventId, userRole = 'attendee' }: LiveQ
       </div>
 
       {/* Submit New Question */}
-      {user && (
-        <div className="bg-white/5 border border-white/10 rounded-xl p-4">
-          <Textarea
-            value={newQuestion}
-            onChange={(e) => setNewQuestion(e.target.value)}
-            placeholder="Ask a question about this session..."
-            className="bg-gray-800/50 border-gray-600 text-white mb-3"
-            rows={3}
-          />
-          <Button
-            onClick={submitQuestion}
-            disabled={!newQuestion.trim() || isSubmitting}
-            className="bg-glass-orange hover:bg-glass-orange/80 text-white"
-          >
-            <Send size={16} className="mr-2" />
-            {isSubmitting ? 'Submitting...' : 'Submit Question'}
-          </Button>
-        </div>
-      )}
+      <div className="bg-white/5 border border-white/10 rounded-xl p-4">
+        <Textarea
+          value={newQuestion}
+          onChange={(e) => setNewQuestion(e.target.value)}
+          placeholder="Ask a question about this session..."
+          className="bg-gray-800/50 border-gray-600 text-white mb-3"
+          rows={3}
+        />
+        <Button
+          onClick={submitQuestion}
+          disabled={!newQuestion.trim() || isSubmitting}
+          className="bg-glass-orange hover:bg-glass-orange/80 text-white"
+        >
+          <Send size={16} className="mr-2" />
+          {isSubmitting ? 'Submitting...' : 'Submit Question'}
+        </Button>
+      </div>
 
       {/* Questions List */}
       <div className="space-y-4">
