@@ -1,7 +1,6 @@
 
 import { BasecampLocation, PlaceWithDistance, DistanceCalculationSettings } from '../types/basecamp';
-
-const GOOGLE_MAPS_API_KEY = 'AIzaSyAWm0vayRrQJHpMc6XcShcge52hGTt9BV4';
+import { GoogleMapsService } from '../services/googleMapsService';
 
 export class DistanceCalculator {
   private static cache = new Map<string, any>();
@@ -77,12 +76,9 @@ export class DistanceCalculator {
       : encodeURIComponent(place.address || '');
 
     const travelMode = mode === 'driving' ? 'DRIVING' : 'WALKING';
-    
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origin}&destinations=${destination}&mode=${travelMode}&key=${GOOGLE_MAPS_API_KEY}`;
 
     try {
-      const response = await fetch(url);
-      const data = await response.json();
+      const data = await GoogleMapsService.getDistanceMatrix(origin, destination, travelMode);
       
       if (data.status === 'OK' && data.rows[0]?.elements[0]?.status === 'OK') {
         const distanceText = data.rows[0].elements[0].distance.text;
@@ -103,9 +99,7 @@ export class DistanceCalculator {
 
   static async geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
     try {
-      const url = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${GOOGLE_MAPS_API_KEY}`;
-      const response = await fetch(url);
-      const data = await response.json();
+      const data = await GoogleMapsService.geocodeAddress(address);
       
       if (data.status === 'OK' && data.results[0]) {
         const location = data.results[0].geometry.location;

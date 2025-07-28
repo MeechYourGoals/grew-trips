@@ -1,6 +1,9 @@
 project_id = "yiitqkjrbskxumriujrh"
 
 [functions.getstream-token]
+verify_jwt = true
+
+[functions.google-maps-proxy]
 verify_jwt = false
 
 [functions.broadcasts-create]

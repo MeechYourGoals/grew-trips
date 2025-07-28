@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, MapPin } from 'lucide-react';
+import { GoogleMapsService } from '@/services/googleMapsService';
 
 interface GoogleMapsEmbedProps {
   className?: string;
@@ -10,17 +11,30 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
-  const apiKey = 'AIzaSyAWm0vayRrQJHpMc6XcShcge52hGTt9BV4';
+  const [embedUrl, setEmbedUrl] = useState('');
   
-  const getEmbedUrl = () => {
-    const query = searchQuery.trim() || 'New York City';
-    return `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(query)}&zoom=12`;
+  const loadEmbedUrl = async (query: string = 'New York City') => {
+    try {
+      setIsLoading(true);
+      setHasError(false);
+      const url = await GoogleMapsService.getEmbedUrl(query);
+      setEmbedUrl(url);
+    } catch (error) {
+      console.error('Error loading embed URL:', error);
+      setHasError(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  useEffect(() => {
+    loadEmbedUrl();
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setHasError(false);
+    const query = searchQuery.trim() || 'New York City';
+    loadEmbedUrl(query);
   };
 
   const handleIframeLoad = () => {
@@ -67,10 +81,7 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
             <h3 className="text-lg font-medium text-gray-300 mb-2">Map unavailable</h3>
             <p className="text-gray-500 text-sm mb-4">Unable to load Google Maps</p>
             <button 
-              onClick={() => {
-                setHasError(false);
-                setIsLoading(true);
-              }}
+              onClick={() => loadEmbedUrl(searchQuery.trim() || 'New York City')}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
             >
               Retry
@@ -80,19 +91,21 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
       )}
 
       {/* Google Maps Iframe */}
-      <iframe
-        key={getEmbedUrl()}
-        src={getEmbedUrl()}
-        width="100%"
-        height="100%"
-        style={{ border: 0 }}
-        allowFullScreen
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-        className="absolute inset-0 w-full h-full"
-        onLoad={handleIframeLoad}
-        onError={handleIframeError}
-      />
+      {embedUrl && (
+        <iframe
+          key={embedUrl}
+          src={embedUrl}
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          className="absolute inset-0 w-full h-full"
+          onLoad={handleIframeLoad}
+          onError={handleIframeError}
+        />
+      )}
     </div>
   );
 };

@@ -1,10 +1,7 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { StreamChat } from 'https://esm.sh/stream-chat@9.10.0';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { corsHeaders } from "../_shared/cors.ts";
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -13,7 +10,28 @@ serve(async (req) => {
   }
 
   try {
+    // Verify JWT token for authentication
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      throw new Error('Authorization header required');
+    }
+
+    const token = authHeader.replace('Bearer ', '');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
+    const { data: user, error: authError } = await supabase.auth.getUser(token);
+    
+    if (authError || !user.user) {
+      throw new Error('Invalid authentication token');
+    }
     const { user_id, user_name, user_avatar } = await req.json();
+    
+    // Ensure the authenticated user matches the requested user_id
+    if (user.user.id !== user_id) {
+      throw new Error('User ID mismatch');
+    }
 
     if (!user_id || !user_name) {
       throw new Error('Missing required fields: user_id, user_name');
