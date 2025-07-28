@@ -3,6 +3,8 @@ import { ProTripData } from '../types/pro';
 import { EventData } from '../types/events';
 import { proTripMockData } from '../data/proTripMockData';
 import { eventsMockData } from '../data/eventsMockData';
+import { secureStorageService } from './secureStorageService';
+import { useAuth } from '@/hooks/useAuth';
 
 type TripType = 'consumer' | 'pro' | 'event';
 
@@ -12,69 +14,62 @@ interface ArchiveState {
   event: Set<string>;
 }
 
-// Local storage keys
-const ARCHIVE_STORAGE_KEY = 'trips_archive_state';
-
-// Get current archive state from localStorage
-const getArchiveState = (): ArchiveState => {
+// Get current archive state from secure storage
+const getArchiveState = async (userId?: string): Promise<ArchiveState> => {
   try {
-    const stored = localStorage.getItem(ARCHIVE_STORAGE_KEY);
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      return {
-        consumer: new Set(parsed.consumer || []),
-        pro: new Set(parsed.pro || []),
-        event: new Set(parsed.event || [])
-      };
-    }
+    const archivedTrips = await secureStorageService.getArchivedTrips(userId);
+    return {
+      consumer: new Set(archivedTrips?.consumer || []),
+      pro: new Set(archivedTrips?.pro || []),
+      event: new Set(archivedTrips?.event || [])
+    };
   } catch (error) {
-    console.warn('Failed to parse archive state from localStorage:', error);
+    console.warn('Failed to get archive state:', error);
+    return {
+      consumer: new Set(),
+      pro: new Set(),
+      event: new Set()
+    };
   }
-  
-  return {
-    consumer: new Set(),
-    pro: new Set(),
-    event: new Set()
-  };
 };
 
-// Save archive state to localStorage
-const saveArchiveState = (state: ArchiveState): void => {
+// Save archive state to secure storage
+const saveArchiveState = async (state: ArchiveState, userId?: string): Promise<void> => {
   try {
-    const serializable = {
+    const archivedTrips = {
       consumer: Array.from(state.consumer),
       pro: Array.from(state.pro),
       event: Array.from(state.event)
     };
-    localStorage.setItem(ARCHIVE_STORAGE_KEY, JSON.stringify(serializable));
+    await secureStorageService.saveArchivedTrips(archivedTrips, userId);
   } catch (error) {
-    console.warn('Failed to save archive state to localStorage:', error);
+    console.warn('Failed to save archive state:', error);
   }
 };
 
 // Archive a trip
-export const archiveTrip = (tripId: string, tripType: TripType): void => {
-  const state = getArchiveState();
+export const archiveTrip = async (tripId: string, tripType: TripType, userId?: string): Promise<void> => {
+  const state = await getArchiveState(userId);
   state[tripType].add(tripId);
-  saveArchiveState(state);
+  await saveArchiveState(state, userId);
 };
 
 // Restore (unarchive) a trip
-export const restoreTrip = (tripId: string, tripType: TripType): void => {
-  const state = getArchiveState();
+export const restoreTrip = async (tripId: string, tripType: TripType, userId?: string): Promise<void> => {
+  const state = await getArchiveState(userId);
   state[tripType].delete(tripId);
-  saveArchiveState(state);
+  await saveArchiveState(state, userId);
 };
 
 // Check if a trip is archived
-export const isTripArchived = (tripId: string, tripType: TripType): boolean => {
-  const state = getArchiveState();
+export const isTripArchived = async (tripId: string, tripType: TripType, userId?: string): Promise<boolean> => {
+  const state = await getArchiveState(userId);
   return state[tripType].has(tripId);
 };
 
 // Get all archived trips
-export const getArchivedTrips = (userId?: string) => {
-  const state = getArchiveState();
+export const getArchivedTrips = async (userId?: string) => {
+  const state = await getArchiveState(userId);
   
   // Get archived consumer trips
   const archivedConsumerTrips = tripsData.filter(trip => 
@@ -100,17 +95,18 @@ export const getArchivedTrips = (userId?: string) => {
 };
 
 // Filter active (non-archived) trips
-export const filterActiveTrips = <T extends { id: string | number }>(
+export const filterActiveTrips = async <T extends { id: string | number }>(
   trips: T[], 
-  tripType: TripType
-): T[] => {
-  const state = getArchiveState();
+  tripType: TripType,
+  userId?: string
+): Promise<T[]> => {
+  const state = await getArchiveState(userId);
   return trips.filter(trip => !state[tripType].has(trip.id.toString()));
 };
 
 // Get trip archive status for display
-export const getTripArchiveStatus = (tripId: string, tripType: TripType) => {
-  const isArchived = isTripArchived(tripId, tripType);
+export const getTripArchiveStatus = async (tripId: string, tripType: TripType, userId?: string) => {
+  const isArchived = await isTripArchived(tripId, tripType, userId);
   return {
     isArchived,
     canArchive: !isArchived,
@@ -119,27 +115,31 @@ export const getTripArchiveStatus = (tripId: string, tripType: TripType) => {
 };
 
 // Bulk archive operations
-export const bulkArchiveTrips = (tripIds: string[], tripType: TripType): void => {
-  const state = getArchiveState();
+export const bulkArchiveTrips = async (tripIds: string[], tripType: TripType, userId?: string): Promise<void> => {
+  const state = await getArchiveState(userId);
   tripIds.forEach(id => state[tripType].add(id));
-  saveArchiveState(state);
+  await saveArchiveState(state, userId);
 };
 
-export const bulkRestoreTrips = (tripIds: string[], tripType: TripType): void => {
-  const state = getArchiveState();
+export const bulkRestoreTrips = async (tripIds: string[], tripType: TripType, userId?: string): Promise<void> => {
+  const state = await getArchiveState(userId);
   tripIds.forEach(id => state[tripType].delete(id));
-  saveArchiveState(state);
+  await saveArchiveState(state, userId);
 };
 
 // Clear all archived trips (for admin/reset purposes)
-export const clearAllArchivedTrips = (): void => {
-  localStorage.removeItem(ARCHIVE_STORAGE_KEY);
+export const clearAllArchivedTrips = async (userId?: string): Promise<void> => {
+  if (userId) {
+    await secureStorageService.saveArchivedTrips({ consumer: [], pro: [], event: [] }, userId);
+  } else {
+    localStorage.removeItem('trips_archive_state');
+  }
 };
 
 // Analytics helpers
-export const getArchiveAnalytics = () => {
-  const state = getArchiveState();
-  const archived = getArchivedTrips();
+export const getArchiveAnalytics = async (userId?: string) => {
+  const state = await getArchiveState(userId);
+  const archived = await getArchivedTrips(userId);
   
   return {
     totalArchived: archived.total,

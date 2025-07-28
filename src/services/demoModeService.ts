@@ -1,4 +1,6 @@
 
+import { secureStorageService } from './secureStorageService';
+
 interface MockMessage {
   id: string;
   trip_type?: string;
@@ -22,24 +24,22 @@ interface MockBroadcast {
 }
 
 class DemoModeService {
-  private demoModeKey = 'TRIPS_DEMO_MODE';
-
   getTripType(trip: any): string {
     if (!trip) return 'demo';
     if (trip.category === 'pro') return 'pro-trip';
     return 'consumer-trip';
   }
 
-  isDemoModeEnabled(): boolean {
-    return localStorage.getItem(this.demoModeKey) === 'true';
+  async isDemoModeEnabled(userId?: string): Promise<boolean> {
+    return await secureStorageService.isDemoModeEnabled(userId);
   }
 
-  enableDemoMode(): void {
-    localStorage.setItem(this.demoModeKey, 'true');
+  async enableDemoMode(userId?: string): Promise<void> {
+    await secureStorageService.setDemoMode(true, userId);
   }
 
-  disableDemoMode(): void {
-    localStorage.removeItem(this.demoModeKey);
+  async disableDemoMode(userId?: string): Promise<void> {
+    await secureStorageService.setDemoMode(false, userId);
   }
 
   async getMockMessages(tripType: string): Promise<MockMessage[]> {

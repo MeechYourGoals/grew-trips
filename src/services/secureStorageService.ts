@@ -1,0 +1,158 @@
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/hooks/useAuth';
+
+interface UserPreferences {
+  archived_trips?: {
+    consumer: string[];
+    pro: string[];
+    event: string[];
+  };
+  demo_mode_enabled?: boolean;
+  last_updated?: string;
+}
+
+export class SecureStorageService {
+  private static instance: SecureStorageService;
+  
+  private constructor() {}
+  
+  static getInstance(): SecureStorageService {
+    if (!SecureStorageService.instance) {
+      SecureStorageService.instance = new SecureStorageService();
+    }
+    return SecureStorageService.instance;
+  }
+
+  // Get user preferences from secure server-side storage
+  async getUserPreferences(userId: string): Promise<UserPreferences> {
+    try {
+      const { data, error } = await supabase
+        .from('user_preferences')
+        .select('preferences')
+        .eq('user_id', userId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') { // Not found error is ok
+        console.error('Error fetching user preferences:', error);
+        return {};
+      }
+
+      return data?.preferences || {};
+    } catch (error) {
+      console.error('Error in getUserPreferences:', error);
+      return {};
+    }
+  }
+
+  // Save user preferences to secure server-side storage
+  async saveUserPreferences(userId: string, preferences: UserPreferences): Promise<void> {
+    try {
+      const updatedPreferences = {
+        ...preferences,
+        last_updated: new Date().toISOString()
+      };
+
+      const { error } = await supabase
+        .from('user_preferences')
+        .upsert({
+          user_id: userId,
+          preferences: updatedPreferences
+        }, {
+          onConflict: 'user_id'
+        });
+
+      if (error) {
+        console.error('Error saving user preferences:', error);
+      }
+    } catch (error) {
+      console.error('Error in saveUserPreferences:', error);
+    }
+  }
+
+  // Fallback to localStorage for non-authenticated users (demo mode only)
+  private getLocalPreferences(key: string): any {
+    try {
+      const stored = localStorage.getItem(key);
+      return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+      console.warn('Failed to parse local preferences:', error);
+      return null;
+    }
+  }
+
+  private setLocalPreferences(key: string, value: any): void {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+      console.warn('Failed to save local preferences:', error);
+    }
+  }
+
+  // Archive operations with secure storage
+  async getArchivedTrips(userId?: string): Promise<UserPreferences['archived_trips']> {
+    if (userId) {
+      const preferences = await this.getUserPreferences(userId);
+      return preferences.archived_trips || { consumer: [], pro: [], event: [] };
+    } else {
+      // Fallback for demo mode
+      return this.getLocalPreferences('trips_archive_state') || { consumer: [], pro: [], event: [] };
+    }
+  }
+
+  async saveArchivedTrips(archivedTrips: UserPreferences['archived_trips'], userId?: string): Promise<void> {
+    if (userId) {
+      const preferences = await this.getUserPreferences(userId);
+      await this.saveUserPreferences(userId, {
+        ...preferences,
+        archived_trips: archivedTrips
+      });
+    } else {
+      // Fallback for demo mode
+      this.setLocalPreferences('trips_archive_state', archivedTrips);
+    }
+  }
+
+  // Demo mode operations with secure storage
+  async isDemoModeEnabled(userId?: string): Promise<boolean> {
+    if (userId) {
+      const preferences = await this.getUserPreferences(userId);
+      return preferences.demo_mode_enabled || false;
+    } else {
+      return localStorage.getItem('TRIPS_DEMO_MODE') === 'true';
+    }
+  }
+
+  async setDemoMode(enabled: boolean, userId?: string): Promise<void> {
+    if (userId) {
+      const preferences = await this.getUserPreferences(userId);
+      await this.saveUserPreferences(userId, {
+        ...preferences,
+        demo_mode_enabled: enabled
+      });
+    } else {
+      if (enabled) {
+        localStorage.setItem('TRIPS_DEMO_MODE', 'true');
+      } else {
+        localStorage.removeItem('TRIPS_DEMO_MODE');
+      }
+    }
+  }
+
+  // Clear all preferences (for logout/reset)
+  async clearUserPreferences(userId: string): Promise<void> {
+    try {
+      const { error } = await supabase
+        .from('user_preferences')
+        .delete()
+        .eq('user_id', userId);
+
+      if (error) {
+        console.error('Error clearing user preferences:', error);
+      }
+    } catch (error) {
+      console.error('Error in clearUserPreferences:', error);
+    }
+  }
+}
+
+export const secureStorageService = SecureStorageService.getInstance();

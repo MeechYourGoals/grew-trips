@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
+import { validateAndSanitizeInput, checkRateLimit, addSecurityHeaders } from "../_shared/security.ts";
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -8,6 +9,20 @@ serve(async (req) => {
   }
 
   try {
+    // Rate limiting
+    const clientIP = req.headers.get('x-forwarded-for') || 'unknown';
+    const rateLimit = checkRateLimit(clientIP, 100, 60000);
+    
+    if (!rateLimit.allowed) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded' }),
+        { 
+          status: 429, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
     const url = new URL(req.url);
     const endpoint = url.pathname.split('/').pop();
     
@@ -18,21 +33,37 @@ serve(async (req) => {
 
     switch (endpoint) {
       case 'embed-url': {
-        const { query } = await req.json();
-        if (!query) {
+        const requestData = await req.json();
+        const validation = validateAndSanitizeInput(requestData);
+        
+        if (!validation.isValid) {
+          throw new Error(validation.error || 'Invalid input');
+        }
+        
+        const { query } = validation.sanitized!;
+        if (!query || query.length === 0) {
           throw new Error('Query parameter is required');
         }
         
         const embedUrl = `https://www.google.com/maps/embed/v1/place?key=${apiKey}&q=${encodeURIComponent(query)}&zoom=12`;
         
-        return new Response(
+        const response = new Response(
           JSON.stringify({ embedUrl }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
+        
+        return addSecurityHeaders(response);
       }
 
       case 'distance-matrix': {
-        const { origins, destinations, mode = 'DRIVING' } = await req.json();
+        const requestData = await req.json();
+        const validation = validateAndSanitizeInput(requestData);
+        
+        if (!validation.isValid) {
+          throw new Error(validation.error || 'Invalid input');
+        }
+        
+        const { origins, destinations, mode = 'DRIVING' } = validation.sanitized!;
         if (!origins || !destinations) {
           throw new Error('Origins and destinations are required');
         }
@@ -42,14 +73,23 @@ serve(async (req) => {
         const response = await fetch(apiUrl);
         const data = await response.json();
         
-        return new Response(
+        const result = new Response(
           JSON.stringify(data),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
+        
+        return addSecurityHeaders(result);
       }
 
       case 'geocode': {
-        const { address } = await req.json();
+        const requestData = await req.json();
+        const validation = validateAndSanitizeInput(requestData);
+        
+        if (!validation.isValid) {
+          throw new Error(validation.error || 'Invalid input');
+        }
+        
+        const { address } = validation.sanitized!;
         if (!address) {
           throw new Error('Address parameter is required');
         }
@@ -59,10 +99,12 @@ serve(async (req) => {
         const response = await fetch(apiUrl);
         const data = await response.json();
         
-        return new Response(
+        const result = new Response(
           JSON.stringify(data),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
+        
+        return addSecurityHeaders(result);
       }
 
       default:
