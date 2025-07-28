@@ -6,8 +6,9 @@ export const useDemoMode = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const checkDemoMode = () => {
-      setIsDemoMode(demoModeService.isDemoModeEnabled());
+    const checkDemoMode = async () => {
+      const enabled = await demoModeService.isDemoModeEnabled();
+      setIsDemoMode(enabled);
       setIsLoading(false);
     };
 
@@ -24,13 +25,13 @@ export const useDemoMode = () => {
     return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
-  const enableDemoMode = () => {
-    demoModeService.enableDemoMode();
+  const enableDemoMode = async () => {
+    await demoModeService.enableDemoMode();
     setIsDemoMode(true);
   };
 
-  const disableDemoMode = () => {
-    demoModeService.disableDemoMode();
+  const disableDemoMode = async () => {
+    await demoModeService.disableDemoMode();
     setIsDemoMode(false);
   };
 

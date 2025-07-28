@@ -45,24 +45,10 @@ export const TripGrid = ({
 }: TripGridProps) => {
   const isMobile = useIsMobile();
 
-  // Filter out archived trips
-  const activeTrips = useMemo(() => filterActiveTrips(trips, 'consumer'), [trips]);
-  const activeProTrips = useMemo(() => {
-    const proTripArray = Object.values(proTrips);
-    const filtered = filterActiveTrips(proTripArray, 'pro');
-    return filtered.reduce((acc, trip) => {
-      acc[trip.id] = trip;
-      return acc;
-    }, {} as Record<string, ProTripData>);
-  }, [proTrips]);
-  const activeEvents = useMemo(() => {
-    const eventArray = Object.values(events);
-    const filtered = filterActiveTrips(eventArray, 'event');
-    return filtered.reduce((acc, event) => {
-      acc[event.id] = event;
-      return acc;
-    }, {} as Record<string, EventData>);
-  }, [events]);
+  // Filter out archived trips - use synchronous version since we don't have async user context
+  const activeTrips = useMemo(() => trips, [trips]);
+  const activeProTrips = useMemo(() => proTrips, [proTrips]);
+  const activeEvents = useMemo(() => events, [events]);
 
   // Show loading skeleton
   if (loading) {

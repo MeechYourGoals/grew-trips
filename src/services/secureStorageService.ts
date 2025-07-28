@@ -23,47 +23,28 @@ export class SecureStorageService {
     return SecureStorageService.instance;
   }
 
-  // Get user preferences from secure server-side storage
+  // Get user preferences from secure server-side storage (fallback to localStorage for now)
   async getUserPreferences(userId: string): Promise<UserPreferences> {
     try {
-      const { data, error } = await supabase
-        .from('user_preferences')
-        .select('preferences')
-        .eq('user_id', userId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') { // Not found error is ok
-        console.error('Error fetching user preferences:', error);
-        return {};
-      }
-
-      return data?.preferences || {};
+      // For now, use localStorage until user_preferences table is set up
+      const stored = localStorage.getItem(`user_preferences_${userId}`);
+      return stored ? JSON.parse(stored) : {};
     } catch (error) {
       console.error('Error in getUserPreferences:', error);
       return {};
     }
   }
 
-  // Save user preferences to secure server-side storage
+  // Save user preferences to secure server-side storage (fallback to localStorage for now)
   async saveUserPreferences(userId: string, preferences: UserPreferences): Promise<void> {
     try {
       const updatedPreferences = {
         ...preferences,
         last_updated: new Date().toISOString()
       };
-
-      const { error } = await supabase
-        .from('user_preferences')
-        .upsert({
-          user_id: userId,
-          preferences: updatedPreferences
-        }, {
-          onConflict: 'user_id'
-        });
-
-      if (error) {
-        console.error('Error saving user preferences:', error);
-      }
+      
+      // For now, use localStorage until user_preferences table is set up
+      localStorage.setItem(`user_preferences_${userId}`, JSON.stringify(updatedPreferences));
     } catch (error) {
       console.error('Error in saveUserPreferences:', error);
     }

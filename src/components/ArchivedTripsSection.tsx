@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
@@ -22,7 +22,15 @@ export const ArchivedTripsSection = () => {
   });
   
   const { toast } = useToast();
-  const archivedTrips = getArchivedTrips();
+  const [archivedTrips, setArchivedTrips] = useState<any>({ consumer: [], pro: [], events: [], total: 0 });
+
+  useEffect(() => {
+    const loadArchivedTrips = async () => {
+      const trips = await getArchivedTrips();
+      setArchivedTrips(trips);
+    };
+    loadArchivedTrips();
+  }, [confirmDialog.isOpen]);
 
   const handleRestoreClick = (tripId: string, tripTitle: string, tripType: 'consumer' | 'pro' | 'event') => {
     setConfirmDialog({
