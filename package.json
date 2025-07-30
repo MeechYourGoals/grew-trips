@@ -9,7 +9,11 @@
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "claude": "claude",
+    "claude:analyze": "claude analyze",
+    "claude:security": "claude security",
+    "claude:review": "claude review"
   },
   "dependencies": {
     "@11labs/react": "^0.1.4",
@@ -99,6 +103,7 @@
     "lovable-tagger": "^1.1.7",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.11",
+    "@anthropic-ai/claude-code": "^0.4.0",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
