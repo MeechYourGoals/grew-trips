@@ -1,31 +1,50 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, ExternalLink, AlertCircle, Loader2 } from 'lucide-react';
+import { Search, MapPin, ExternalLink, AlertCircle, Loader2, Home } from 'lucide-react';
+import { useBasecamp } from '@/contexts/BasecampContext';
 
 interface WorkingGoogleMapsProps {
   className?: string;
 }
 
 export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
+  const { basecamp, isBasecampSet } = useBasecamp();
   const [searchQuery, setSearchQuery] = useState('');
-  const [currentLocation, setCurrentLocation] = useState('New York City');
+  const [currentLocation, setCurrentLocation] = useState(() => {
+    // Initialize with basecamp address if available, otherwise default
+    return basecamp?.address || 'New York City';
+  });
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [embedUrl, setEmbedUrl] = useState('');
   
   // Generate Google Maps embed URL using search (no API key needed)
-  const generateEmbedUrl = (query: string) => {
+  const generateEmbedUrl = (query: string, coordinates?: { lat: number; lng: number }) => {
+    if (coordinates) {
+      // Use coordinates for more precise location
+      return `https://www.google.com/maps?q=${coordinates.lat},${coordinates.lng}&output=embed&z=14`;
+    }
     const encodedQuery = encodeURIComponent(query);
     // Use Google Maps search embed (works without API key)
     return `https://www.google.com/maps?q=${encodedQuery}&output=embed`;
   };
 
+  // Update current location when basecamp changes
+  useEffect(() => {
+    if (isBasecampSet && basecamp?.address && currentLocation !== basecamp.address) {
+      setCurrentLocation(basecamp.address);
+    }
+  }, [basecamp, isBasecampSet]);
+
   // Load embed URL when location changes
   useEffect(() => {
     setIsLoading(true);
     setHasError(false);
-    const url = generateEmbedUrl(currentLocation);
+    const coordinates = basecamp?.coordinates && currentLocation === basecamp.address 
+      ? basecamp.coordinates 
+      : undefined;
+    const url = generateEmbedUrl(currentLocation, coordinates);
     setEmbedUrl(url);
-  }, [currentLocation]);
+  }, [currentLocation, basecamp]);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,6 +56,12 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
 
   const handleQuickLocation = (location: string) => {
     setCurrentLocation(location);
+  };
+
+  const handleGoToBasecamp = () => {
+    if (basecamp?.address) {
+      setCurrentLocation(basecamp.address);
+    }
   };
 
   const handleIframeLoad = () => {
@@ -76,6 +101,22 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
       {/* Quick Location Buttons */}
       <div className="absolute top-20 left-4 right-4 z-20">
         <div className="flex gap-2 flex-wrap">
+          {/* Basecamp button (if set) */}
+          {isBasecampSet && (
+            <button
+              onClick={handleGoToBasecamp}
+              className={`px-3 py-1 rounded-full text-xs transition-all flex items-center gap-1 ${
+                currentLocation === basecamp?.address
+                  ? 'bg-green-600 text-white'
+                  : 'bg-green-100 text-green-800 hover:bg-green-200'
+              }`}
+            >
+              <Home size={12} />
+              Basecamp
+            </button>
+          )}
+          
+          {/* Quick location buttons */}
           {['New York City', 'Los Angeles', 'Chicago', 'Miami', 'London', 'Paris'].map((location) => (
             <button
               key={location}
@@ -96,8 +137,18 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
       <div className="absolute bottom-4 left-4 right-4 z-20">
         <div className="bg-white/95 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <MapPin size={16} className="text-blue-600" />
-            <span className="text-sm font-medium text-gray-800">{currentLocation}</span>
+            {isBasecampSet && currentLocation === basecamp?.address ? (
+              <Home size={16} className="text-green-600" />
+            ) : (
+              <MapPin size={16} className="text-blue-600" />
+            )}
+            <span className="text-sm font-medium text-gray-800">
+              {isBasecampSet && currentLocation === basecamp?.address ? (
+                <>Basecamp: {currentLocation}</>
+              ) : (
+                currentLocation
+              )}
+            </span>
           </div>
           <a
             href={`https://www.google.com/maps/search/${encodeURIComponent(currentLocation)}`}

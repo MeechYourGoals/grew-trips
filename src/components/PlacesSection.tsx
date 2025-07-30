@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AddPlaceModal } from './AddPlaceModal';
 import { WorkingGoogleMaps } from './WorkingGoogleMaps';
 import { SetBasecampSquare } from './SetBasecampSquare';
@@ -11,6 +11,7 @@ import { AddToCalendarData } from '../types/calendar';
 import { useFeatureToggle, DEFAULT_FEATURES } from '../hooks/useFeatureToggle';
 import { usePlacesLinkSync } from '../hooks/usePlacesLinkSync';
 import { Badge } from './ui/badge';
+import { useBasecamp } from '@/contexts/BasecampContext';
 
 interface PlacesSectionProps {
   tripId?: string;
@@ -23,8 +24,8 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
     trip_type: variant === 'consumer' ? 'consumer' : 'pro',
     enabled_features: [...DEFAULT_FEATURES] 
   });
+  const { basecamp: contextBasecamp, setBasecamp: setContextBasecamp, isBasecampSet } = useBasecamp();
   const [isAddPlaceModalOpen, setIsAddPlaceModalOpen] = useState(false);
-  const [basecamp, setBasecamp] = useState<BasecampLocation | undefined>();
   const [places, setPlaces] = useState<PlaceWithDistance[]>([]);
   const [distanceSettings] = useState<DistanceCalculationSettings>({
     preferredMode: 'driving',
@@ -32,11 +33,50 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
     showDistances: true
   });
 
-  const { createLinkFromPlace, removeLinkByPlaceId } = usePlacesLinkSync();
+  const { createLinkFromPlace, removeLinkByPlaceId, updateLinkByPlaceId } = usePlacesLinkSync();
+
+  // Recalculate distances for existing places when basecamp changes
+  useEffect(() => {
+    if (isBasecampSet && contextBasecamp && places.length > 0) {
+      const recalculateDistances = async () => {
+        const updatedPlaces = await Promise.all(
+          places.map(async (place) => {
+            try {
+              const distance = await DistanceCalculator.calculateDistance(
+                contextBasecamp,
+                place,
+                distanceSettings
+              );
+              
+              const updatedPlace = {
+                ...place,
+                distanceFromBasecamp: distance ? {
+                  [distanceSettings.preferredMode]: distance,
+                  unit: distanceSettings.unit as 'miles' | 'km',
+                  calculatedAt: new Date().toISOString()
+                } : undefined
+              };
+
+              // Update the corresponding link
+              updateLinkByPlaceId(place.id, updatedPlace);
+              return updatedPlace;
+            } catch (error) {
+              console.warn(`Failed to calculate distance for place ${place.id}:`, error);
+              return place;
+            }
+          })
+        );
+        
+        setPlaces(updatedPlaces);
+      };
+
+      recalculateDistances();
+    }
+  }, [contextBasecamp, isBasecampSet, distanceSettings.preferredMode, distanceSettings.unit]);
 
   const handleBasecampSet = async (newBasecamp: BasecampLocation) => {
     console.log('Setting basecamp:', newBasecamp);
-    setBasecamp(newBasecamp);
+    setContextBasecamp(newBasecamp);
     
     // Recalculate distances for existing places
     if (places.length > 0) {
@@ -48,7 +88,7 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
             distanceSettings
           );
           
-          return {
+          const updatedPlace = {
             ...place,
             distanceFromBasecamp: distance ? {
               ...place.distanceFromBasecamp,
@@ -56,6 +96,10 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
               unit: distanceSettings.unit
             } : undefined
           };
+
+          // Update the corresponding link
+          updateLinkByPlaceId(place.id, updatedPlace);
+          return updatedPlace;
         })
       );
       setPlaces(updatedPlaces);
@@ -66,9 +110,9 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
     console.log('Adding place:', newPlace);
     
     // Calculate distance if basecamp is set
-    if (basecamp && distanceSettings.showDistances) {
+    if (contextBasecamp && distanceSettings.showDistances) {
       const distance = await DistanceCalculator.calculateDistance(
-        basecamp,
+        contextBasecamp,
         newPlace,
         distanceSettings
       );
@@ -113,15 +157,15 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
       {/* Basecamp and Trip Pins Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Set Basecamp Square */}
-        <SetBasecampSquare 
-          basecamp={basecamp}
-          onBasecampSet={handleBasecampSet}
-        />
+          <SetBasecampSquare 
+            basecamp={contextBasecamp} 
+            onBasecampSet={handleBasecampSet} 
+          />
 
         {/* Trip Pins Card */}
         <TripPinsCard
           places={places}
-          basecamp={basecamp}
+          basecamp={contextBasecamp}
           onPlaceAdded={handlePlaceAdded}
           onPlaceRemoved={handlePlaceRemoved}
           onEventAdded={handleEventAdded}
@@ -135,7 +179,7 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
         isOpen={isAddPlaceModalOpen}
         onClose={() => setIsAddPlaceModalOpen(false)}
         onPlaceAdded={handlePlaceAdded}
-        basecamp={basecamp}
+        basecamp={contextBasecamp}
       />
     </div>
   );

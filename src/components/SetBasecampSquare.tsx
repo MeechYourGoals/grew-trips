@@ -2,13 +2,26 @@ import React, { useState } from 'react';
 import { Home, MapPin, Edit3, Clock, Navigation } from 'lucide-react';
 import { BasecampSelector } from './BasecampSelector';
 import { BasecampLocation } from '../types/basecamp';
+import { useBasecamp } from '@/contexts/BasecampContext';
 
 interface SetBasecampSquareProps {
+  // Optional props for backward compatibility
   basecamp?: BasecampLocation;
-  onBasecampSet: (basecamp: BasecampLocation) => void;
+  onBasecampSet?: (basecamp: BasecampLocation) => void;
 }
 
-export const SetBasecampSquare = ({ basecamp, onBasecampSet }: SetBasecampSquareProps) => {
+export const SetBasecampSquare = ({ basecamp: propBasecamp, onBasecampSet: propOnBasecampSet }: SetBasecampSquareProps) => {
+  const { basecamp: contextBasecamp, setBasecamp: setContextBasecamp, isBasecampSet } = useBasecamp();
+  
+  // Use context basecamp if available, otherwise fall back to props
+  const basecamp = contextBasecamp || propBasecamp;
+  
+  const handleBasecampSet = (newBasecamp: BasecampLocation) => {
+    // Always update context
+    setContextBasecamp(newBasecamp);
+    // Also call prop callback if provided (for backward compatibility)
+    propOnBasecampSet?.(newBasecamp);
+  };
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const formatAddress = (address: string) => {
@@ -145,12 +158,12 @@ export const SetBasecampSquare = ({ basecamp, onBasecampSet }: SetBasecampSquare
         </div>
       )}
 
-      <BasecampSelector
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onBasecampSet={onBasecampSet}
-        currentBasecamp={basecamp}
-      />
+        <BasecampSelector
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          onBasecampSet={handleBasecampSet}
+          currentBasecamp={basecamp}
+        />
     </div>
   );
 };
