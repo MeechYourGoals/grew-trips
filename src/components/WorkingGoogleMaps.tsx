@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Search, MapPin, ExternalLink } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, MapPin, ExternalLink, AlertCircle, Loader2 } from 'lucide-react';
 
 interface WorkingGoogleMapsProps {
   className?: string;
@@ -8,12 +8,24 @@ interface WorkingGoogleMapsProps {
 export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [currentLocation, setCurrentLocation] = useState('New York City');
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+  const [embedUrl, setEmbedUrl] = useState('');
   
-  // Generate Google Maps embed URL directly (no API key needed for basic embeds)
+  // Generate Google Maps embed URL using search (no API key needed)
   const generateEmbedUrl = (query: string) => {
     const encodedQuery = encodeURIComponent(query);
-    return `https://www.google.com/maps/embed/v1/place?key=AIzaSyBFVLmOVzZGGqhj8hj8yYZkzMnJWzwKabc&q=${encodedQuery}&zoom=14`;
+    // Use Google Maps search embed (works without API key)
+    return `https://www.google.com/maps?q=${encodedQuery}&output=embed`;
   };
+
+  // Load embed URL when location changes
+  useEffect(() => {
+    setIsLoading(true);
+    setHasError(false);
+    const url = generateEmbedUrl(currentLocation);
+    setEmbedUrl(url);
+  }, [currentLocation]);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +39,23 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
     setCurrentLocation(location);
   };
 
-  const currentEmbedUrl = generateEmbedUrl(currentLocation);
+  const handleIframeLoad = () => {
+    setIsLoading(false);
+    setHasError(false);
+  };
+
+  const handleIframeError = () => {
+    setIsLoading(false);
+    setHasError(true);
+  };
+
+  const retryLoad = () => {
+    setHasError(false);
+    setIsLoading(true);
+    // Force reload by updating the embed URL
+    const url = generateEmbedUrl(currentLocation);
+    setEmbedUrl(url + '&retry=' + Date.now());
+  };
 
   return (
     <div className={`relative w-full h-full bg-gray-900 rounded-3xl overflow-hidden ${className}`}>
@@ -82,19 +110,62 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
         </div>
       </div>
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center z-10">
+          <div className="text-center text-white">
+            <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4" />
+            <p className="text-sm">Loading map...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Error State */}
+      {hasError && (
+        <div className="absolute inset-0 bg-gray-800 flex items-center justify-center z-10">
+          <div className="text-center text-white max-w-sm mx-auto p-6">
+            <AlertCircle className="w-12 h-12 mx-auto mb-4 text-red-400" />
+            <h3 className="text-lg font-semibold mb-2">Map Unavailable</h3>
+            <p className="text-sm text-gray-300 mb-4">
+              Unable to load the map for "{currentLocation}". You can still view this location on Google Maps.
+            </p>
+            <div className="space-y-2">
+              <button
+                onClick={retryLoad}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
+              >
+                Try Again
+              </button>
+              <a
+                href={`https://www.google.com/maps/search/${encodeURIComponent(currentLocation)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors inline-block text-center"
+              >
+                Open in Google Maps
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Google Maps Iframe */}
-      <iframe
-        key={currentEmbedUrl}
-        src={currentEmbedUrl}
-        width="100%"
-        height="100%"
-        style={{ border: 0 }}
-        allowFullScreen
-        loading="lazy"
-        referrerPolicy="no-referrer-when-downgrade"
-        className="absolute inset-0 w-full h-full"
-        title="Google Maps"
-      />
+      {embedUrl && !hasError && (
+        <iframe
+          key={embedUrl}
+          src={embedUrl}
+          width="100%"
+          height="100%"
+          style={{ border: 0 }}
+          allowFullScreen
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          className="absolute inset-0 w-full h-full"
+          title="Google Maps"
+          onLoad={handleIframeLoad}
+          onError={handleIframeError}
+        />
+      )}
     </div>
   );
 };
