@@ -23,7 +23,7 @@ export interface ChatMessage {
 }
 
 export class OpenAIService {
-  private static baseUrl = '/functions/v1/openai-chat';
+  private static baseUrl = 'https://yiitqkjrbskxumriujrh.functions.supabase.co/openai-chat';
 
   static async analyzeReviews(url: string): Promise<OpenAIReviewResult> {
     try {

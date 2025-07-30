@@ -1,5 +1,5 @@
 import { supabase } from '../integrations/supabase/client';
-import { VertexAIService } from './vertexAIService';
+import { OpenAIService } from './OpenAIService';
 import { TripContext } from '../types/tripContext';
 
 export interface SearchResult {
@@ -150,14 +150,15 @@ export class UniversalConciergeService {
         };
       }
 
-      // For non-search queries, use the regular AI service
-      const aiResponse = await VertexAIService.queryVertexAI(
+      // For non-search queries, use the OpenAI service
+      const aiResponse = await OpenAIService.queryOpenAI(
         message,
-        VertexAIService.buildTripContext(tripContext)
+        {},
+        tripContext
       );
 
       return {
-        content: aiResponse.content,
+        content: aiResponse,
         isFromFallback: false
       };
     } catch (error) {
