@@ -27,7 +27,7 @@ export const InviteModal = ({ isOpen, onClose, tripName, tripId }: InviteModalPr
     handleShare,
     handleEmailInvite,
     handleSMSInvite
-  } = useInviteLink({ isOpen, tripName, requireApproval, expireIn7Days });
+  } = useInviteLink({ isOpen, tripId, tripName, requireApproval, expireIn7Days });
 
   if (!isOpen) return null;
 
