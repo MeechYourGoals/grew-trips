@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { AddPlaceModal } from './AddPlaceModal';
-import { GoogleMapsEmbed } from './GoogleMapsEmbed';
+import { WorkingGoogleMaps } from './WorkingGoogleMaps';
 import { SetBasecampSquare } from './SetBasecampSquare';
 import { TripPinsCard } from './TripPinsCard';
 import { BasecampLocation, PlaceWithDistance, DistanceCalculationSettings } from '../types/basecamp';
@@ -106,7 +106,7 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
       {/* Hero Map Section - Full Width */}
       <div className="mb-8">
         <div className="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl shadow-black/50 h-96">
-          <GoogleMapsEmbed className="w-full h-full" />
+          <WorkingGoogleMaps className="w-full h-full" />
         </div>
       </div>
 
