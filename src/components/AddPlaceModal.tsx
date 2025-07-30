@@ -74,7 +74,7 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
 
       return () => clearTimeout(timeoutId);
     }
-  }, [smartInput, resolvePlaceName, categorizePlaceType, useAiSorting]);
+  }, [smartInput, resolvePlaceName, categorizePlaceType, useAiSorting, placeName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
