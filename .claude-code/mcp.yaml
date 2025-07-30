@@ -1,0 +1,21 @@
+fileSystem:
+  enabled: true
+  recursive: true
+  include:
+    - src
+    - supabase/functions
+    - supabase/migrations
+  fileTypes:
+    ts: true
+    tsx: true
+    js: true
+    jsx: true
+supabase:
+  projectId: yiitqkjrbskxumriujrh
+  realtime: true
+  securityContext: hardened
+webSearch:
+  enable: true
+  apis:
+    - travel
+    - venues

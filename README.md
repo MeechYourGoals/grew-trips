@@ -85,7 +85,10 @@ environment variables:
 - `STREAM_API_KEY` and `STREAM_API_SECRET` – credentials for the GetStream
   chat service used by `/functions/getstream-token`.
 
-For local development, create a `supabase/.env.local` file containing these
 variables so they are loaded when running `supabase functions serve`.
 When deploying, set the same variables using `supabase secrets set` so the
 deployed functions have access to them.
+
+## Claude Code
+
+Run `npm run claude` to launch Claude Code for advanced code analysis and MCP integration. See [docs/claude-code.md](docs/claude-code.md) for setup details.

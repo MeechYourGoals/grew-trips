@@ -1,0 +1,29 @@
+claude:
+  project: travel-platform
+  mcp:
+    fileSystem:
+      root: '.'
+      recursive: true
+      fileTypes:
+        - ts
+        - tsx
+        - edge-functions
+    database:
+      provider: supabase
+      connection: env:SUPABASE_URL
+      realtime: true
+      securityContext: hardened
+    webSearch:
+      enable: true
+      sources:
+        - travel-api
+        - location-info
+  workflows:
+    codeReview: true
+    securityAudit: true
+    performance: true
+    architecture: true
+  mobile:
+    framework: capacitor
+  chat:
+    provider: getstream
