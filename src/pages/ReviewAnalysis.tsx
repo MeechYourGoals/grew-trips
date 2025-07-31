@@ -1,19 +1,26 @@
 
-import React, { useState } from 'react';
-import { BarChart3, MessageSquare, Sparkles, RefreshCw, Check, X, Edit2 } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { BarChart3, MessageSquare, Sparkles, RefreshCw, Check, X, Edit2, Volume2, Play, Pause } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { useReviewAnalysis } from '../hooks/useAiFeatures';
+import { useReviewAnalysis, useAudioOverview } from '../hooks/useAiFeatures';
 import { ReviewAnalysisHeader } from '../components/review/ReviewAnalysisHeader';
 import { AnalysisResults } from '../components/review/AnalysisResults';
 import { ReviewChat } from '../components/review/ReviewChat';
 import { ReviewEmptyState } from '../components/review/ReviewEmptyState';
+import { AudioPlayer } from '../components/audio/AudioPlayer';
+import { AudioTranscript } from '../components/audio/AudioTranscript';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '../components/ui/button';
+import { Switch } from '../components/ui/switch';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
 const ReviewAnalysis = () => {
   const navigate = useNavigate();
   const reviewAnalysis = useReviewAnalysis();
+  const audioOverview = useAudioOverview();
+  const audioRef = useRef<HTMLAudioElement>(null);
+  
   const [urls, setUrls] = useState({
     google: '',
     yelp: '',
@@ -27,12 +34,45 @@ const ReviewAnalysis = () => {
   const [isEditingVenue, setIsEditingVenue] = useState(false);
   const [tempVenueName, setTempVenueName] = useState('');
   const [venueUrl, setVenueUrl] = useState('');
+  const [includeAudio, setIncludeAudio] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
 
   const handleAnalyze = () => {
     const allUrls = Object.values(urls).filter(url => url.trim());
     if (allUrls.length > 0) {
       reviewAnalysis.analyzeReviews(allUrls.join(','));
+      if (includeAudio) {
+        audioOverview.generateAudio(allUrls.join(','));
+      }
     }
+  };
+
+  const togglePlayback = () => {
+    if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    if (audioRef.current) {
+      setCurrentTime(audioRef.current.currentTime);
+    }
+  };
+
+  const handleAudioEnded = () => {
+    setIsPlaying(false);
+  };
+
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
   const handleChatSubmit = () => {
@@ -132,7 +172,7 @@ const ReviewAnalysis = () => {
               <div className="flex items-center gap-3">
                 <div className="flex items-center gap-2">
                   <BarChart3 size={24} className="text-white" />
-                  <h1 className="text-xl font-bold">AI Sentiment Analysis</h1>
+                  <h1 className="text-xl font-bold">AI Review & Audio Summaries</h1>
                   <span className="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">Premium</span>
                 </div>
               </div>
@@ -206,6 +246,19 @@ const ReviewAnalysis = () => {
               className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white placeholder-gray-500 focus:border-purple-500 focus:outline-none"
               placeholder="https://example.com/venue-reviews"
             />
+          </div>
+
+          {/* Audio Toggle */}
+          <div className="flex items-center gap-3 mb-4">
+            <Switch 
+              id="include-audio" 
+              checked={includeAudio} 
+              onCheckedChange={setIncludeAudio}
+            />
+            <label htmlFor="include-audio" className="text-gray-300 text-sm">
+              <Volume2 size={16} className="inline mr-2" />
+              Generate AI Audio Overview
+            </label>
           </div>
           
           <p className="text-gray-400 text-sm">Change the venue name to analyze competitor sentiment or compare different locations</p>
@@ -321,6 +374,54 @@ const ReviewAnalysis = () => {
               </div>
             ))}
           </div>
+        )}
+
+        {/* Audio Overview Section */}
+        {audioOverview.result && (
+          <div className="mt-8 space-y-6">
+            <h3 className="text-xl font-bold text-white mb-4">Audio Overview</h3>
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <AudioPlayer
+                isPlaying={isPlaying}
+                onTogglePlayback={togglePlayback}
+                currentTime={currentTime}
+                duration={audioOverview.result.duration}
+                formatTime={formatTime}
+              />
+              
+              <AudioTranscript summary={audioOverview.result.summary} />
+            </div>
+
+            <audio
+              ref={audioRef}
+              src={audioOverview.result.audioUrl}
+              onTimeUpdate={handleTimeUpdate}
+              onEnded={handleAudioEnded}
+              style={{ display: 'none' }}
+            />
+          </div>
+        )}
+
+        {/* Loading States */}
+        {(reviewAnalysis.isLoading || audioOverview.isLoading) && (
+          <Card className="bg-gray-900 border-gray-700 mt-6">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-3">
+                <RefreshCw className="animate-spin" size={20} />
+                <div>
+                  <p className="text-white font-medium">
+                    {reviewAnalysis.isLoading && audioOverview.isLoading 
+                      ? 'Generating analysis and audio overview...' 
+                      : reviewAnalysis.isLoading 
+                      ? 'Analyzing reviews...' 
+                      : 'Generating audio overview...'}
+                  </p>
+                  <p className="text-gray-400 text-sm">This may take a moment</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
       </div>
     </div>

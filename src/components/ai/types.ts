@@ -6,5 +6,5 @@ export interface AiFeatureConfig {
   route: string;
 }
 
-export type AiFeatureType = 'reviews' | 'audio';
+export type AiFeatureType = 'reviews';
 export type PlanType = 'plus' | 'premium';

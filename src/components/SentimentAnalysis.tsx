@@ -4,12 +4,10 @@ import { AiFeatureCard } from './AiFeatureCard';
 
 export const SentimentAnalysis = () => {
   return (
-    <div className="grid md:grid-cols-2 gap-6 w-full">
-      {/* Universal Review Summaries - Left Side */}
-      <AiFeatureCard feature="reviews" planRequired="plus" />
-
-      {/* Audio Overviews - Right Side */}
-      <AiFeatureCard feature="audio" planRequired="premium" />
+    <div className="flex justify-center w-full">
+      <div className="max-w-md w-full">
+        <AiFeatureCard feature="reviews" planRequired="plus" />
+      </div>
     </div>
   );
 };

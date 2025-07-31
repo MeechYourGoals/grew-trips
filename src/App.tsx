@@ -13,7 +13,7 @@ import ItineraryAssignmentPage from "./pages/ItineraryAssignmentPage";
 import ProTripDetail from "./pages/ProTripDetail";
 import EventDetail from "./pages/EventDetail";
 import ReviewAnalysis from "./pages/ReviewAnalysis";
-import AudioOverviews from "./pages/AudioOverviews";
+
 import NotFound from "./pages/NotFound";
 import JoinTrip from "./pages/JoinTrip";
 import SearchPage from "./pages/SearchPage";
@@ -50,9 +50,8 @@ const App = () => (
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/more" element={<MorePage />} />
                 <Route path="/archive" element={<ArchivePage />} />
-                {/* AI Feature routes - Merged audio overviews into review analysis */}
+                {/* AI Feature routes */}
                 <Route path="/ai/review-analysis" element={<ReviewAnalysis />} />
-                <Route path="/ai/audio-overviews" element={<AudioOverviews />} />
                 <Route path="/admin/scheduled-messages" element={<AdminDashboard />} />
                 {/* Catch-all route for 404 */}
                 <Route path="*" element={<NotFound />} />

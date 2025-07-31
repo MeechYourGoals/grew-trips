@@ -47,3 +47,32 @@ export const useAudioOverview = () => {
     clearResult: () => setResult(null),
   };
 };
+
+// Unified hook that combines both text and audio analysis
+export const useReviewSummary = () => {
+  const reviewAnalysis = useReviewAnalysis();
+  const audioOverview = useAudioOverview();
+  
+  const generateSummary = (url: string, options: { includeAudio?: boolean; tripId?: string } = {}) => {
+    reviewAnalysis.analyzeReviews(url);
+    if (options.includeAudio) {
+      audioOverview.generateAudio(url, options.tripId);
+    }
+  };
+
+  return {
+    generateSummary,
+    textResult: reviewAnalysis.result,
+    audioResult: audioOverview.result,
+    isLoadingText: reviewAnalysis.isLoading,
+    isLoadingAudio: audioOverview.isLoading,
+    isLoading: reviewAnalysis.isLoading || audioOverview.isLoading,
+    textError: reviewAnalysis.error,
+    audioError: audioOverview.error,
+    error: reviewAnalysis.error || audioOverview.error,
+    clearResults: () => {
+      reviewAnalysis.clearResult();
+      audioOverview.clearResult();
+    }
+  };
+};

@@ -18,8 +18,8 @@ const MorePage = () => {
   const features = [
     {
       icon: Brain,
-      title: 'AI Trip Insights',
-      description: 'AI-powered trip analysis, review summaries, and audio overviews',
+      title: 'AI Review & Audio Summaries',
+      description: 'AI-powered review analysis with text summaries and audio overviews',
       badge: 'AI',
       color: 'text-blue-400',
       action: () => navigate('/ai/review-analysis')
