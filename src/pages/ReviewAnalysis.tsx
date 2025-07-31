@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { BarChart3, MessageSquare, Sparkles, RefreshCw, Check, X, Edit2, Volume2, Play, Pause } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { useReviewAnalysis, useAudioOverview } from '../hooks/useAiFeatures';
@@ -37,13 +37,20 @@ const ReviewAnalysis = () => {
   const [includeAudio, setIncludeAudio] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
+  const [placesService, setPlacesService] = useState<any>(null);
+  const [predictions, setPredictions] = useState<any[]>([]);
+  const [showPredictions, setShowPredictions] = useState(false);
 
   const handleAnalyze = () => {
+    // Use venue URL if provided, otherwise try to generate analysis from venue name
+    const targetUrl = venueUrl.trim() || venueName;
     const allUrls = Object.values(urls).filter(url => url.trim());
-    if (allUrls.length > 0) {
-      reviewAnalysis.analyzeReviews(allUrls.join(','));
+    const analysisTarget = allUrls.length > 0 ? allUrls.join(',') : targetUrl;
+    
+    if (analysisTarget) {
+      reviewAnalysis.analyzeReviews(analysisTarget);
       if (includeAudio) {
-        audioOverview.generateAudio(allUrls.join(','));
+        audioOverview.generateAudio(analysisTarget);
       }
     }
   };
@@ -106,6 +113,57 @@ const ReviewAnalysis = () => {
   const handleCancelEdit = () => {
     setTempVenueName('');
     setIsEditingVenue(false);
+  };
+
+  // Initialize Google Places Autocomplete
+  useEffect(() => {
+    const initializePlaces = async () => {
+      if ((window as any).google?.maps?.places) {
+        const service = new (window as any).google.maps.places.AutocompleteService();
+        setPlacesService(service);
+      }
+    };
+    
+    if (!(window as any).google) {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places`;
+      script.async = true;
+      script.onload = initializePlaces;
+      document.head.appendChild(script);
+    } else {
+      initializePlaces();
+    }
+  }, []);
+
+  const handleVenueSearch = (query: string) => {
+    setTempVenueName(query);
+    
+    if (placesService && query.length > 2) {
+      placesService.getPlacePredictions(
+        {
+          input: query,
+          types: ['establishment'],
+        },
+        (predictions: any, status: any) => {
+          if (status === 'OK' && predictions) {
+            setPredictions(predictions);
+            setShowPredictions(true);
+          } else {
+            setPredictions([]);
+            setShowPredictions(false);
+          }
+        }
+      );
+    } else {
+      setPredictions([]);
+      setShowPredictions(false);
+    }
+  };
+
+  const handleSelectPrediction = (prediction: any) => {
+    setTempVenueName(prediction.description);
+    setPredictions([]);
+    setShowPredictions(false);
   };
 
   // Mock data matching the screenshots
@@ -178,13 +236,26 @@ const ReviewAnalysis = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <Button variant="outline" className="border-gray-600 text-gray-300 hover:text-white">
+              <Button 
+                variant="outline" 
+                className="border-gray-600 text-gray-300 hover:text-white"
+                onClick={() => {
+                  reviewAnalysis.clearResult?.();
+                  audioOverview.clearResult?.();
+                  setUrls({ google: '', yelp: '', facebook: '', tripadvisor: '' });
+                  setVenueUrl('');
+                }}
+              >
                 <RefreshCw size={16} className="mr-2" />
                 Refresh
               </Button>
-              <Button className="bg-purple-600 hover:bg-purple-700 text-white">
+              <Button 
+                className="bg-purple-600 hover:bg-purple-700 text-white"
+                onClick={handleAnalyze}
+                disabled={reviewAnalysis.isLoading || audioOverview.isLoading}
+              >
                 <Sparkles size={16} className="mr-2" />
-                Analyze Reviews
+                {reviewAnalysis.isLoading || audioOverview.isLoading ? 'Analyzing...' : 'Analyze Reviews'}
               </Button>
             </div>
           </div>
@@ -208,16 +279,32 @@ const ReviewAnalysis = () => {
               </button>
             </div>
           ) : (
-            <div className="space-y-4 mb-4">
+            <div className="space-y-4 mb-4 relative">
               <div className="flex items-center gap-3">
-                <input
-                  type="text"
-                  value={tempVenueName}
-                  onChange={(e) => setTempVenueName(e.target.value)}
-                  className="flex-1 bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-purple-500 focus:outline-none"
-                  placeholder="Enter venue name"
-                  autoFocus
-                />
+                <div className="flex-1 relative">
+                  <input
+                    type="text"
+                    value={tempVenueName}
+                    onChange={(e) => handleVenueSearch(e.target.value)}
+                    className="w-full bg-gray-800 border border-gray-600 rounded-lg px-4 py-2 text-white focus:border-purple-500 focus:outline-none"
+                    placeholder="Search for venue..."
+                    autoFocus
+                  />
+                  {showPredictions && predictions.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+                      {predictions.map((prediction) => (
+                        <button
+                          key={prediction.place_id}
+                          onClick={() => handleSelectPrediction(prediction)}
+                          className="w-full text-left px-4 py-3 hover:bg-gray-700 text-white border-b border-gray-700 last:border-b-0"
+                        >
+                          <div className="font-medium">{prediction.structured_formatting.main_text}</div>
+                          <div className="text-sm text-gray-400">{prediction.structured_formatting.secondary_text}</div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 <button
                   onClick={handleSaveVenue}
                   className="text-green-400 hover:text-green-300 transition-colors"
