@@ -136,7 +136,7 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: `I'm experiencing technical difficulties. Please try again in a moment. Error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        content: `I'm experiencing technical difficulties. Please try again in a moment.`,
         timestamp: new Date().toISOString(),
         isFromOpenAI: false
       };
@@ -174,15 +174,15 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
   const getStatusText = () => {
     switch (aiStatus) {
       case 'connected':
-        return 'OpenAI Connected';
+        return 'Ready';
       case 'limited':
-        return 'Limited Mode';
+        return 'Limited Service';
       case 'error':
-        return 'Connection Error';
+        return 'Unavailable';
       case 'thinking':
         return 'Thinking...';
       case 'checking':
-        return 'Checking Status...';
+        return 'Starting up...';
       default:
         return 'Ready';
     }
@@ -212,17 +212,12 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
           <Sparkles size={20} className="text-white" />
         </div>
         <div className="flex-1">
-          <h3 className="text-lg font-semibold text-white">OpenAI Concierge</h3>
+          <h3 className="text-lg font-semibold text-white">Concierge</h3>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1">
               {getStatusIcon()}
               <span className={`text-xs ${getStatusColor()}`}>{getStatusText()}</span>
             </div>
-            {healthStatus && (
-              <span className="text-xs text-gray-500">
-                • {healthStatus.model} • {healthStatus.latency}ms
-              </span>
-            )}
           </div>
         </div>
         <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 px-3 py-1 rounded-full">
@@ -244,7 +239,7 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 mb-4">
           <p className="text-yellow-300 text-sm flex items-center gap-2">
             <AlertCircle size={14} />
-            Limited Mode: OpenAI service unavailable, using fallback responses
+            Your concierge is experiencing technical difficulties
           </p>
         </div>
       )}
@@ -253,16 +248,7 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mb-4">
           <p className="text-red-300 text-sm flex items-center gap-2">
             <WifiOff size={14} />
-            Connection Error: Unable to reach OpenAI service
-          </p>
-        </div>
-      )}
-
-      {aiStatus === 'connected' && (
-        <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-3 mb-4">
-          <p className="text-green-300 text-sm flex items-center gap-2">
-            <CheckCircle size={14} />
-            ✅ Live OpenAI GPT-4 with full trip context
+            Your concierge is currently unavailable
           </p>
         </div>
       )}
@@ -270,14 +256,14 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
       {/* Empty State */}
       {messages.length === 0 && (
         <div className="text-center py-8 mb-6">
-          <h4 className="text-white font-medium mb-3">Your AI Travel Concierge</h4>
+          <h4 className="text-white font-medium mb-3">Your Travel Concierge</h4>
           <div className="text-sm text-gray-300 space-y-2 max-w-md mx-auto">
-            <p>Powered by OpenAI GPT-4 with full trip context:</p>
+            <p>Ask me anything about your trip:</p>
             <div className="text-xs text-gray-400 space-y-1">
-              <p>• "Where should I eat tonight?" (uses your Basecamp location)</p>
-              <p>• "What's my Basecamp?" (shows current basecamp info)</p>
-              <p>• "/context" (debug: show full context sent to OpenAI)</p>
-              <p>• "/health" (check OpenAI API status)</p>
+              <p>• "Where should I eat tonight?"</p>
+              <p>• "Where are we staying again?" (shows current basecamp)</p>
+              <p>• "What time is dinner again?"</p>
+              <p>• "What's the address of the day party location we're going to tomorrow?"</p>
             </div>
           </div>
         </div>

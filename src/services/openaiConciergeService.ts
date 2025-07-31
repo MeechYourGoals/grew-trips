@@ -34,14 +34,11 @@ export class OpenAIConciergeService {
     try {
       const { data, error } = await supabase.functions.invoke('openai-chat', {
         body: {
-          messages: [
-            {
-              role: 'user',
-              content: 'Health check - please respond with just "OK"'
-            }
-          ],
-          temperature: 0,
-          max_tokens: 10
+          message: 'Health check - please respond with just "OK"',
+          config: {
+            temperature: 0,
+            maxTokens: 10
+          }
         }
       });
 
@@ -101,7 +98,7 @@ User Preferences:
         ).join('\n')
       : 'No recent updates';
 
-    return `You are an expert travel concierge powered by OpenAI GPT-4. You provide ultra-personalized, context-rich assistance for travelers.
+    return `You are an expert travel concierge. You provide ultra-personalized, context-rich assistance for travelers.
 
 CURRENT TRIP CONTEXT:
 - Trip: ${tripContext.title}
@@ -129,7 +126,7 @@ INSTRUCTIONS:
 - Provide specific, actionable advice with addresses and details when possible
 - If asked about confirmation numbers or trip details, reference the provided context
 - Always mention distances from Basecamp when relevant
-- End every response with "This reply is powered by OpenAI." to confirm you're using the live API
+- Be conversational and helpful
 
 Use the trip context and Basecamp to provide the most helpful, personalized response possible.`;
   }
@@ -145,25 +142,6 @@ Use the trip context and Basecamp to provide the most helpful, personalized resp
     chatHistory: Array<{role: string, content: string}> = []
   ): Promise<OpenAIResponse> {
     
-    // Handle debug command
-    if (userMessage.trim() === '/context') {
-      const systemPrompt = this.buildSystemPrompt(tripContext, basecamp, preferences);
-      return {
-        success: true,
-        content: `**DEBUG: Current System Prompt Being Sent to OpenAI:**\n\n\`\`\`\n${systemPrompt}\n\`\`\`\n\nThis reply is powered by OpenAI.`,
-        isFromOpenAI: true
-      };
-    }
-
-    // Handle health check command
-    if (userMessage.trim() === '/health') {
-      const health = await this.healthCheck();
-      return {
-        success: true,
-        content: `**OpenAI Health Check:**\n- Status: ${health.isHealthy ? '✅ Healthy' : '❌ Unhealthy'}\n- Model: ${health.model}\n- Latency: ${health.latency}ms\n${health.error ? `- Error: ${health.error}` : ''}\n\nThis reply is powered by OpenAI.`,
-        isFromOpenAI: health.isHealthy
-      };
-    }
 
     try {
       const systemPrompt = this.buildSystemPrompt(tripContext, basecamp, preferences);
@@ -192,10 +170,15 @@ Use the trip context and Basecamp to provide the most helpful, personalized resp
 
       const { data, error } = await supabase.functions.invoke('openai-chat', {
         body: {
-          messages,
-          temperature: 0.7,
-          max_tokens: 1000,
-          model: 'gpt-4.1-2025-04-14'
+          message: userMessage,
+          tripContext,
+          chatHistory,
+          config: {
+            model: 'gpt-4.1-2025-04-14',
+            temperature: 0.7,
+            maxTokens: 1000,
+            systemPrompt: systemPrompt
+          }
         }
       });
 
@@ -204,22 +187,20 @@ Use the trip context and Basecamp to provide the most helpful, personalized resp
         throw new Error(`OpenAI API Error: ${error.message || 'Unknown error'}`);
       }
 
-      if (!data?.content) {
-        throw new Error('Empty response from OpenAI');
+      if (!data?.response) {
+        throw new Error('Empty response from AI service');
       }
 
-      console.log('✅ OpenAI Response:', {
+      console.log('✅ AI Response:', {
         success: true,
-        contentLength: data.content.length,
-        model: data.model,
+        contentLength: data.response.length,
         usage: data.usage
       });
 
       return {
         success: true,
-        content: data.content,
+        content: data.response,
         usage: data.usage,
-        model: data.model,
         isFromOpenAI: true
       };
 
@@ -237,9 +218,7 @@ Use the trip context and Basecamp to provide the most helpful, personalized resp
 
       return {
         success: false,
-        content: isAPIFailure 
-          ? `I'm experiencing connectivity issues with the OpenAI service. Please try again in a moment. (Error: ${errorMessage})`
-          : `I encountered an unexpected error: ${errorMessage}`,
+        content: "I'm experiencing technical difficulties right now. Please try again in a moment.",
         error: errorMessage,
         isFromOpenAI: false
       };

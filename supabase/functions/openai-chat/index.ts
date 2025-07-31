@@ -114,7 +114,8 @@ serve(async (req) => {
         response: aiResponse,
         usage,
         sentimentScore,
-        success: true
+        success: true,
+        model: config.model || 'gpt-4.1-2025-04-14'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -140,23 +141,13 @@ function buildSystemPrompt(tripContext: any, analysisType: string, customPrompt?
 
   if (tripContext) {
     basePrompt += `\n\nTrip Context:
-- Destination: ${tripContext.destination || 'Not specified'}
-- Dates: ${tripContext.startDate || 'TBD'} to ${tripContext.endDate || 'TBD'}
+- Destination: ${tripContext.location || 'Not specified'}
+- Dates: ${tripContext.dateRange || 'TBD'}
 - Participants: ${tripContext.participants?.length || 0} people
-- Budget: ${tripContext.budget ? `$${tripContext.budget}` : 'Not specified'}`
+- Budget: Not specified`
 
-    if (tripContext.basecamp) {
-      basePrompt += `\n- Basecamp: ${tripContext.basecamp.name} at ${tripContext.basecamp.address}`
-    }
-
-    if (tripContext.preferences) {
-      const prefs = tripContext.preferences
-      if (prefs.dietary?.length > 0) {
-        basePrompt += `\n- Dietary preferences: ${prefs.dietary.join(', ')}`
-      }
-      if (prefs.vibe?.length > 0) {
-        basePrompt += `\n- Preferred activities: ${prefs.vibe.join(', ')}`
-      }
+    if (tripContext.accommodation) {
+      basePrompt += `\n- Accommodation: ${tripContext.accommodation}`
     }
   }
 
