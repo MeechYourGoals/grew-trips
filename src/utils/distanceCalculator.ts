@@ -101,12 +101,8 @@ export class DistanceCalculator {
     try {
       const data = await GoogleMapsService.geocodeAddress(address);
       
-      if (data.status === 'OK' && data.results[0]) {
-        const location = data.results[0].geometry.location;
-        return { lat: location.lat, lng: location.lng };
-      }
-      
-      return null;
+      // GoogleMapsService.geocodeAddress already returns parsed coordinates or null
+      return data;
     } catch (error) {
       console.error('Error geocoding address:', error);
       return null;

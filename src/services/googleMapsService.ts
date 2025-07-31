@@ -38,8 +38,34 @@ export class GoogleMapsService {
     });
   }
 
-  static async geocodeAddress(address: string): Promise<any> {
-    return await this.callProxy('geocode', { address });
+  static async geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
+    try {
+      const result = await this.callProxy('geocode', { address });
+      
+      if (result.results && result.results.length > 0) {
+        const location = result.results[0].geometry?.location;
+        if (location && location.lat && location.lng) {
+          return {
+            lat: location.lat,
+            lng: location.lng
+          };
+        }
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Geocoding error:', error);
+      return null;
+    }
+  }
+
+  static async getPlaceAutocomplete(input: string): Promise<any> {
+    try {
+      return await this.callProxy('autocomplete', { input });
+    } catch (error) {
+      console.error('Autocomplete error:', error);
+      return { predictions: [] };
+    }
   }
 
   static async searchPlacesNearBasecamp(

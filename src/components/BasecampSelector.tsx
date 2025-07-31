@@ -19,33 +19,32 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Enhanced address input with basic autocomplete functionality
+  // Enhanced address input with Google Places autocomplete
   const handleAddressChange = async (value: string) => {
     setAddress(value);
     setSelectedSuggestionIndex(-1);
     
     if (value.length > 2) {
+      setIsLoadingSuggestions(true);
       try {
-        // For now, provide basic suggestions based on common patterns
-        const basicSuggestions = [
-          `${value} Hotel`,
-          `${value} Airbnb`,
-          `${value} Resort`,
-          `${value} Downtown`,
-          `${value} Airport`
-        ].filter(suggestion => 
-          suggestion.toLowerCase() !== value.toLowerCase()
-        );
-        
-        setSuggestions(basicSuggestions.slice(0, 5));
-        setShowSuggestions(true);
+        const result = await GoogleMapsService.getPlaceAutocomplete(value);
+        if (result.predictions && result.predictions.length > 0) {
+          setSuggestions(result.predictions);
+          setShowSuggestions(true);
+        } else {
+          setSuggestions([]);
+          setShowSuggestions(false);
+        }
       } catch (error) {
         console.error('Error getting suggestions:', error);
         setSuggestions([]);
         setShowSuggestions(false);
+      } finally {
+        setIsLoadingSuggestions(false);
       }
     } else {
       setSuggestions([]);
@@ -53,8 +52,8 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
     }
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setAddress(suggestion);
+  const handleSuggestionClick = (suggestion: any) => {
+    setAddress(suggestion.description);
     setShowSuggestions(false);
     setSuggestions([]);
   };
@@ -181,24 +180,39 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
               />
               
               {/* Autocomplete Suggestions */}
-              {showSuggestions && suggestions.length > 0 && (
+              {(showSuggestions || isLoadingSuggestions) && (
                 <div 
                   ref={suggestionsRef}
                   className="absolute top-full left-0 right-0 bg-gray-800 border border-gray-700 rounded-xl mt-1 shadow-lg z-20 max-h-60 overflow-y-auto"
                 >
-                  {suggestions.map((suggestion, index) => (
-                    <button
-                      key={index}
-                      type="button"
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className={`w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors text-white text-sm flex items-center gap-2 ${
-                        index === selectedSuggestionIndex ? 'bg-gray-700' : ''
-                      }`}
-                    >
-                      <MapPin size={14} className="text-gray-400" />
-                      {suggestion}
-                    </button>
-                  ))}
+                  {isLoadingSuggestions ? (
+                    <div className="px-4 py-3 text-gray-400 text-sm">
+                      Loading suggestions...
+                    </div>
+                  ) : suggestions.length > 0 ? (
+                    suggestions.map((suggestion, index) => (
+                      <button
+                        key={suggestion.place_id || index}
+                        type="button"
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        className={`w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors text-white text-sm flex items-center gap-2 ${
+                          index === selectedSuggestionIndex ? 'bg-gray-700' : ''
+                        }`}
+                      >
+                        <MapPin size={14} className="text-gray-400" />
+                        <div>
+                          <div className="font-medium">
+                            {suggestion.structured_formatting?.main_text || suggestion.description}
+                          </div>
+                          {suggestion.structured_formatting?.secondary_text && (
+                            <div className="text-xs text-gray-500">
+                              {suggestion.structured_formatting.secondary_text}
+                            </div>
+                          )}
+                        </div>
+                      </button>
+                    ))
+                  ) : null}
                 </div>
               )}
             </div>

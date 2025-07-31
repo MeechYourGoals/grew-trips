@@ -160,6 +160,34 @@ serve(async (req) => {
         return addSecurityHeaders(result);
       }
 
+      case 'autocomplete': {
+        const validation = validateAndSanitizeInput(data);
+        
+        if (!validation.isValid) {
+          throw new Error(validation.error || 'Invalid input');
+        }
+        
+        const { input } = validation.sanitized!;
+        if (!input) {
+          throw new Error('Input parameter is required');
+        }
+
+        console.log('Autocomplete request for:', input);
+        const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&types=establishment|geocode&key=${apiKey}`;
+        
+        const apiResponse = await fetch(apiUrl);
+        const apiData = await apiResponse.json();
+        
+        console.log('Autocomplete API response:', apiData);
+        
+        const result = new Response(
+          JSON.stringify(apiData),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+        
+        return addSecurityHeaders(result);
+      }
+
       default:
         throw new Error(`Invalid endpoint: ${endpoint}`);
     }
