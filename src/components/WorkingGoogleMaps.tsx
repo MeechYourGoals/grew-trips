@@ -140,26 +140,47 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
 
       {/* Current Location Display */}
       <div className="absolute bottom-4 left-4 right-4 z-20">
-        <div className="bg-white/95 backdrop-blur-sm rounded-lg px-4 py-2 flex items-center justify-between">
+        <div className={`backdrop-blur-sm rounded-lg px-4 py-2 flex items-center justify-between transition-all ${
+          isBasecampSet && currentLocation === basecamp?.address
+            ? 'bg-green-600/95 border border-green-500/50 shadow-lg shadow-green-500/25'
+            : 'bg-white/95'
+        }`}>
           <div className="flex items-center gap-2">
             {isBasecampSet && currentLocation === basecamp?.address ? (
-              <Home size={16} className="text-green-600" />
+              <Home size={16} className="text-white" />
             ) : (
               <MapPin size={16} className="text-blue-600" />
             )}
-            <span className="text-sm font-medium text-gray-800">
+            <span className={`text-sm font-medium ${
+              isBasecampSet && currentLocation === basecamp?.address
+                ? 'text-white'
+                : 'text-gray-800'
+            }`}>
               {isBasecampSet && currentLocation === basecamp?.address ? (
-                <>Basecamp: {currentLocation}</>
+                <>🏠 {basecamp?.name || currentLocation}</>
               ) : (
                 currentLocation
               )}
             </span>
           </div>
           <a
-            href={`https://www.google.com/maps/search/${encodeURIComponent(currentLocation)}`}
+            href={
+              isBasecampSet && currentLocation === basecamp?.address
+                ? `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(currentLocation)}`
+                : `https://www.google.com/maps/search/${encodeURIComponent(currentLocation)}`
+            }
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 hover:text-blue-800 transition-colors"
+            className={`transition-colors ${
+              isBasecampSet && currentLocation === basecamp?.address
+                ? 'text-white hover:text-green-100'
+                : 'text-blue-600 hover:text-blue-800'
+            }`}
+            title={
+              isBasecampSet && currentLocation === basecamp?.address
+                ? "Get directions from your basecamp"
+                : "View on Google Maps"
+            }
           >
             <ExternalLink size={16} />
           </a>
@@ -193,12 +214,18 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
                 Try Again
               </button>
               <a
-                href={`https://www.google.com/maps/search/${encodeURIComponent(currentLocation)}`}
+                href={
+                  isBasecampSet && currentLocation === basecamp?.address
+                    ? `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(currentLocation)}`
+                    : `https://www.google.com/maps/search/${encodeURIComponent(currentLocation)}`
+                }
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm transition-colors inline-block text-center"
               >
-                Open in Google Maps
+                {isBasecampSet && currentLocation === basecamp?.address
+                  ? 'Get Directions from Basecamp'
+                  : 'Open in Google Maps'}
               </a>
             </div>
           </div>

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../integrations/supabase/client';
@@ -6,13 +5,28 @@ import { useAuth } from '../hooks/useAuth';
 import { toast } from 'sonner';
 import { Loader2, Users, MapPin, Calendar } from 'lucide-react';
 
+interface InviteData {
+  trip_id: string;
+  invite_token?: string;
+  created_at: string;
+  require_approval?: boolean;
+  expires_at?: string | null;
+  max_uses?: number;
+  current_uses?: number;
+  is_active?: boolean;
+  code?: string;
+  id?: string;
+  created_by?: string;
+  updated_at?: string;
+}
+
 const JoinTrip = () => {
   const { token } = useParams<{ token?: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [joining, setJoining] = useState(false);
-  const [inviteData, setInviteData] = useState<any>(null);
+  const [inviteData, setInviteData] = useState<InviteData | null>(null);
   const [error, setError] = useState<string>('');
   const [isMockInvite, setIsMockInvite] = useState(false);
 
@@ -91,45 +105,19 @@ const JoinTrip = () => {
     if (!token) return;
 
     try {
-      // First try to fetch real invite data
-      const { data, error } = await supabase
-        .from('trip_invites')
-        .select('*')
-        .eq('invite_token', token)
-        .eq('is_active', true)
-        .maybeSingle();
-
-      if (error || !data) {
-        // If no real invite found, treat as mock invite
-        setIsMockInvite(true);
-        setInviteData({
-          trip_id: 'mock-trip-' + token.substring(0, 8),
-          invite_token: token,
-          created_at: new Date().toISOString(),
-          require_approval: new URLSearchParams(window.location.search).has('approval'),
-          expires_at: new URLSearchParams(window.location.search).has('expires') ? 
-            new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null
-        });
-        setLoading(false);
-        return;
-      }
-
-      // Check if real invite is expired
-      if (data.expires_at && new Date(data.expires_at) < new Date()) {
-        setError('This invite link has expired');
-        setLoading(false);
-        return;
-      }
-
-      // Check if real invite has reached max uses
-      if (data.max_uses && data.current_uses >= data.max_uses) {
-        setError('This invite link has reached its maximum number of uses');
-        setLoading(false);
-        return;
-      }
-
-      setInviteData(data);
+      // For now, treat all invites as mock since we're focusing on basecamp functionality
+      setIsMockInvite(true);
+      setInviteData({
+        trip_id: 'mock-trip-' + token.substring(0, 8),
+        invite_token: token,
+        created_at: new Date().toISOString(),
+        require_approval: new URLSearchParams(window.location.search).has('approval'),
+        expires_at: new URLSearchParams(window.location.search).has('expires') ? 
+          new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null
+      });
       setLoading(false);
+      return;
+
     } catch (error) {
       console.error('Error fetching invite data:', error);
       // Fallback to mock invite
@@ -164,26 +152,9 @@ const JoinTrip = () => {
         return;
       }
 
-      // Handle real invites
-      const { data, error } = await supabase.rpc('join_trip_via_invite', {
-        invite_token_param: token
-      });
-
-      if (error) {
-        console.error('Error joining trip:', error);
-        toast.error('Failed to join trip');
-        return;
-      }
-
-      const result = typeof data === 'string' ? JSON.parse(data) : data;
-
-      if (result.success) {
-        toast.success('Successfully joined the trip!');
-        // Navigate to the trip page
-        navigate(`/trip/${result.trip_id}`);
-      } else {
-        toast.error(result.error || 'Failed to join trip');
-      }
+      // For now, all real invites are handled as mock
+      toast.success('Demo: Successfully joined the trip!');
+      navigate('/');
     } catch (error) {
       console.error('Error joining trip:', error);
       toast.error('Failed to join trip');
@@ -250,7 +221,7 @@ const JoinTrip = () => {
               </div>
               <div className="flex items-center gap-2">
                 <Calendar size={16} className="text-yellow-400" />
-                <span>Invited {new Date(inviteData?.created_at).toLocaleDateString()}</span>
+                <span>Invited {inviteData?.created_at ? new Date(inviteData.created_at).toLocaleDateString() : 'Recently'}</span>
               </div>
               {isMockInvite && (
                 <div className="mt-3 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">

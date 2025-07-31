@@ -1,9 +1,8 @@
-
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { MapPin, Home, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { BasecampLocation } from '../types/basecamp';
-import { DistanceCalculator } from '../utils/distanceCalculator';
+import { GoogleMapsService } from '../services/googleMapsService';
 
 interface BasecampSelectorProps {
   isOpen: boolean;
@@ -17,14 +16,88 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
   const [name, setName] = useState(currentBasecamp?.name || '');
   const [type, setType] = useState<'hotel' | 'airbnb' | 'other'>(currentBasecamp?.type || 'hotel');
   const [isLoading, setIsLoading] = useState(false);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const suggestionsRef = useRef<HTMLDivElement>(null);
+
+  // Enhanced address input with basic autocomplete functionality
+  const handleAddressChange = async (value: string) => {
+    setAddress(value);
+    setSelectedSuggestionIndex(-1);
+    
+    if (value.length > 2) {
+      try {
+        // For now, provide basic suggestions based on common patterns
+        const basicSuggestions = [
+          `${value} Hotel`,
+          `${value} Airbnb`,
+          `${value} Resort`,
+          `${value} Downtown`,
+          `${value} Airport`
+        ].filter(suggestion => 
+          suggestion.toLowerCase() !== value.toLowerCase()
+        );
+        
+        setSuggestions(basicSuggestions.slice(0, 5));
+        setShowSuggestions(true);
+      } catch (error) {
+        console.error('Error getting suggestions:', error);
+        setSuggestions([]);
+        setShowSuggestions(false);
+      }
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setAddress(suggestion);
+    setShowSuggestions(false);
+    setSuggestions([]);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (!showSuggestions || suggestions.length === 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown':
+        e.preventDefault();
+        setSelectedSuggestionIndex(prev => 
+          prev < suggestions.length - 1 ? prev + 1 : 0
+        );
+        break;
+      case 'ArrowUp':
+        e.preventDefault();
+        setSelectedSuggestionIndex(prev => 
+          prev > 0 ? prev - 1 : suggestions.length - 1
+        );
+        break;
+      case 'Enter':
+        e.preventDefault();
+        if (selectedSuggestionIndex >= 0) {
+          handleSuggestionClick(suggestions[selectedSuggestionIndex]);
+        }
+        break;
+      case 'Escape':
+        setShowSuggestions(false);
+        setSuggestions([]);
+        setSelectedSuggestionIndex(-1);
+        break;
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!address.trim()) return;
     
     setIsLoading(true);
+    setShowSuggestions(false);
+    
     try {
-      const coordinates = await DistanceCalculator.geocodeAddress(address);
+      const coordinates = await GoogleMapsService.geocodeAddress(address);
       
       if (coordinates) {
         const basecamp: BasecampLocation = {
@@ -46,6 +119,22 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
       setIsLoading(false);
     }
   };
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        suggestionsRef.current && 
+        !suggestionsRef.current.contains(event.target as Node) &&
+        !inputRef.current?.contains(event.target as Node)
+      ) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   if (!isOpen) return null;
 
@@ -72,20 +161,46 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
+          <div className="relative">
             <label className="block text-sm font-semibold text-white mb-2">
               Basecamp Address *
             </label>
             <div className="relative">
-              <MapPin size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <MapPin size={18} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10" />
               <input
+                ref={inputRef}
                 type="text"
                 value={address}
-                onChange={(e) => setAddress(e.target.value)}
+                onChange={(e) => handleAddressChange(e.target.value)}
+                onKeyDown={handleKeyDown}
+                onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
                 placeholder="Enter hotel, Airbnb, or main lodging address..."
                 required
                 className="w-full bg-gray-800 border border-gray-700 rounded-xl pl-12 pr-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
+                autoComplete="off"
               />
+              
+              {/* Autocomplete Suggestions */}
+              {showSuggestions && suggestions.length > 0 && (
+                <div 
+                  ref={suggestionsRef}
+                  className="absolute top-full left-0 right-0 bg-gray-800 border border-gray-700 rounded-xl mt-1 shadow-lg z-20 max-h-60 overflow-y-auto"
+                >
+                  {suggestions.map((suggestion, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className={`w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors text-white text-sm flex items-center gap-2 ${
+                        index === selectedSuggestionIndex ? 'bg-gray-700' : ''
+                      }`}
+                    >
+                      <MapPin size={14} className="text-gray-400" />
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
@@ -119,7 +234,7 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
 
           <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
             <p className="text-sm text-green-300">
-              💡 Your basecamp will be used to calculate distances to all places you add to this trip.
+              💡 Your basecamp will be used as the starting point for directions and calculating distances to places.
             </p>
           </div>
 
