@@ -1,5 +1,5 @@
 
-import { VertexAIService } from './vertexAIService';
+import { OpenAIService } from './OpenAIService';
 
 export interface ReviewAnalysisResult {
   text: string;
@@ -24,7 +24,7 @@ export interface AiFeatureResponse<T> {
 export class AiFeatureService {
   static async analyzeReviews(url: string): Promise<AiFeatureResponse<ReviewAnalysisResult>> {
     try {
-      const result = await VertexAIService.analyzeReviews(url);
+      const result = await OpenAIService.analyzeReviews(url);
       return { success: true, data: result };
     } catch (error) {
       console.error('Review Analysis Error:', error);
@@ -41,7 +41,7 @@ export class AiFeatureService {
     }
 
     try {
-      const result = await VertexAIService.generateAudioSummary(url, userId, tripId);
+      const result = await OpenAIService.generateAudioSummary(url, userId, tripId);
       return { success: true, data: result };
     } catch (error) {
       console.error('Audio Overview Error:', error);

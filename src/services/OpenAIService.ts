@@ -177,4 +177,79 @@ export class OpenAIService {
       throw error;
     }
   }
+
+  static async generateMessageWithTone(prompt: string, tone: 'friendly' | 'professional' | 'urgent' | 'direct' | 'cheerful' = 'professional'): Promise<string> {
+    try {
+      const result = await this.callOpenAI({
+        message: prompt,
+        analysisType: 'chat',
+        config: {
+          model: 'gpt-4.1-2025-04-14',
+          tone,
+          systemPrompt: `Generate a ${tone} message based on the user's request. Keep it clear, concise, and appropriate for the specified tone.`
+        }
+      });
+
+      return result.response;
+    } catch (error) {
+      console.error('Message generation error:', error);
+      throw error;
+    }
+  }
+
+  static buildTripContext(tripContext: any): string {
+    if (!tripContext) return '';
+    
+    let context = `Trip: ${tripContext.title || 'Untitled'}\n`;
+    
+    if (tripContext.location) context += `Location: ${tripContext.location}\n`;
+    if (tripContext.dateRange) context += `Dates: ${tripContext.dateRange}\n`;
+    if (tripContext.accommodation) context += `Accommodation: ${tripContext.accommodation}\n`;
+    
+    if (tripContext.participants && tripContext.participants.length > 0) {
+      context += `Participants: ${tripContext.participants.slice(0, 10).join(', ')}\n`;
+    }
+    
+    if (tripContext.itinerary && tripContext.itinerary.length > 0) {
+      context += `Recent Itinerary:\n`;
+      tripContext.itinerary.slice(0, 5).forEach((item: any) => {
+        context += `- ${item.time || ''} ${item.title || item.activity}\n`;
+      });
+    }
+    
+    if (tripContext.upcomingEvents && tripContext.upcomingEvents.length > 0) {
+      context += `Upcoming Events:\n`;
+      tripContext.upcomingEvents.slice(0, 3).forEach((event: any) => {
+        context += `- ${event.time} ${event.title} at ${event.location}\n`;
+      });
+    }
+    
+    return context;
+  }
+
+  static async queryWithContext(query: string, context: string = '', config: any = {}): Promise<{ content: string; sources?: any[] }> {
+    try {
+      const fullConfig = { 
+        model: 'gpt-4.1-2025-04-14',
+        temperature: 0.3,
+        maxTokens: 2048,
+        ...config 
+      };
+
+      const result = await this.callOpenAI({
+        message: query,
+        tripContext: context,
+        analysisType: 'chat',
+        config: fullConfig
+      });
+
+      return {
+        content: result.response,
+        sources: result.sources || []
+      };
+    } catch (error) {
+      console.error('OpenAI context query error:', error);
+      throw error;
+    }
+  }
 }

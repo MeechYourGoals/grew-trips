@@ -26,7 +26,7 @@ export const AISplitHelper = ({
     
     setIsCalculating(true);
     
-    // Mock AI calculation - in real implementation, this would call Gemini API
+    // Mock AI calculation - in real implementation, this would call OpenAI API
     setTimeout(() => {
       const mockSuggestions = [
         "Based on typical dinner receipts, I suggest splitting between 4-6 people.",

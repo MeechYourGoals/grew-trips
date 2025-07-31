@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Send, Sparkles, MessageCircle, ExternalLink, AlertCircle, Wifi, WifiOff } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
-import { VertexAIService } from '../services/vertexAIService';
+import { OpenAIService } from '../services/OpenAIService';
 import { TripContext } from '../types/tripContext';
 import {
   Sheet,
@@ -54,8 +54,8 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
     setIsTyping(true);
 
     try {
-      const context = VertexAIService.buildTripContext(tripContext);
-      const response = await VertexAIService.queryVertexAI(inputMessage, context);
+      const context = OpenAIService.buildTripContext(tripContext);
+      const response = await OpenAIService.queryWithContext(inputMessage, context);
       
       // Update AI status based on response
       setAiStatus('connected');

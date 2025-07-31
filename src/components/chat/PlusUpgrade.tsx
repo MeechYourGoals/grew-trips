@@ -4,7 +4,7 @@ import { Crown, Sparkles, Send, MessageCircle } from 'lucide-react';
 import { useConsumerSubscription } from '../../hooks/useConsumerSubscription';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 
-export const GeminiPlusUpgrade = () => {
+export const PlusUpgrade = () => {
   const { upgradeToPlus } = useConsumerSubscription();
   const { accentColors } = useTripVariant();
 

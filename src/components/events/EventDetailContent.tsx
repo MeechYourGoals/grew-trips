@@ -3,7 +3,7 @@ import React from 'react';
 import { Crown, Sparkles, Users, Calendar, UserCheck, Network, TrendingUp, ClipboardList, BarChart3 } from 'lucide-react';
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
-import { GeminiAIChat } from '../GeminiAIChat';
+import { OpenAIChat } from '../OpenAIChat';
 
 import { RegistrationTab } from './RegistrationTab';
 import { AgendaBuilder } from './AgendaBuilder';
@@ -121,8 +121,8 @@ export const EventDetailContent = ({
         return <PlacesSection />;
       case 'ai-chat':
         return (
-          <GeminiAIChat 
-            tripId={tripId} 
+          <OpenAIChat 
+            tripId={tripId}
             basecamp={basecamp}
             preferences={tripPreferences}
           />

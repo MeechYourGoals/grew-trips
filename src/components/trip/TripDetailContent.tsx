@@ -4,7 +4,7 @@ import { Crown, Sparkles } from 'lucide-react';
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
 import { TripPreferences } from '../TripPreferences';
-import { GeminiAIChat } from '../GeminiAIChat';
+import { OpenAIChat } from '../OpenAIChat';
 
 import { TripPreferences as TripPreferencesType } from '../../types/consumer';
 import { useTripVariant } from '../../contexts/TripVariantContext';
@@ -56,8 +56,8 @@ export const TripDetailContent = ({
         );
       case 'ai-chat':
         return (
-          <GeminiAIChat 
-            tripId={tripId} 
+          <OpenAIChat 
+            tripId={tripId}
             basecamp={basecamp}
             preferences={tripPreferences}
           />

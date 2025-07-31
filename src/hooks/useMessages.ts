@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Channel, MessageResponse } from 'stream-chat';
 import { useGetStream } from './useGetStream';
 import { Message, ScheduledMessage } from '../types/messaging';
-import { VertexAIService } from '../services/vertexAIService';
+import { OpenAIService } from '../services/OpenAIService';
 
 interface ChannelMap {
   [tripId: string]: Channel;
@@ -65,7 +65,7 @@ export const useMessages = () => {
   };
 
   const scheduleMessage = async (content: string, sendAt: Date, tripId?: string, tourId?: string) => {
-    const priority = await VertexAIService.classifyPriority(content);
+    const priority = await OpenAIService.classifyPriority(content);
     try {
       await fetch('/api/message-scheduler', {
         method: 'POST',

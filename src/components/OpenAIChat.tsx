@@ -7,9 +7,9 @@ import { OpenAIConciergeService, OpenAIResponse } from '../services/openaiConcie
 import { useBasecamp } from '../contexts/BasecampContext';
 import { ChatMessages } from './chat/ChatMessages';
 import { AiChatInput } from './chat/AiChatInput';
-import { GeminiPlusUpgrade } from './chat/GeminiPlusUpgrade';
+import { PlusUpgrade } from './chat/PlusUpgrade';
 
-interface GeminiAIChatProps {
+interface OpenAIChatProps {
   tripId: string;
   basecamp?: { name: string; address: string };
   preferences?: TripPreferences;
@@ -28,7 +28,7 @@ interface ChatMessage {
   };
 }
 
-export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProps) => {
+export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) => {
   const { isPlus } = useConsumerSubscription();
   const { basecamp: globalBasecamp } = useBasecamp();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -202,7 +202,7 @@ export const GeminiAIChat = ({ tripId, basecamp, preferences }: GeminiAIChatProp
   };
 
   if (!isPlus) {
-    return <GeminiPlusUpgrade />;
+    return <PlusUpgrade />;
   }
 
   return (

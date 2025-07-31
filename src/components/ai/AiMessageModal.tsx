@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Send, Sparkles, Clock, Calendar, FileText, Lightbulb } from 'lucide-react';
 import { useMessages } from '../../hooks/useMessages';
-import { VertexAIService } from '../../services/vertexAIService';
+import { OpenAIService } from '../../services/OpenAIService';
 import { MessageService, MessageTemplate } from '../../services/MessageService';
 import { MessageTemplateLibrary } from '../MessageTemplateLibrary';
 import {
@@ -114,11 +114,11 @@ export const AiMessageModal = ({
         if (prompt.includes('Fill template:')) {
           // Let AI enhance the filled template
           const contextualPrompt = buildContextualPrompt(prompt, finalContent);
-          finalContent = await VertexAIService.generateMessageWithTone(contextualPrompt, tone);
+          finalContent = await OpenAIService.generateMessageWithTone(contextualPrompt, tone);
         }
       } else {
         const contextualPrompt = buildContextualPrompt(prompt);
-        finalContent = await VertexAIService.generateMessageWithTone(contextualPrompt, tone);
+        finalContent = await OpenAIService.generateMessageWithTone(contextualPrompt, tone);
       }
       
       setGeneratedMessage(finalContent);
