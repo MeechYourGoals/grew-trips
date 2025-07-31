@@ -4,7 +4,7 @@ import { CalendarIcon, DollarSign, Shield, FileCheck, Tv, Award } from 'lucide-r
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
 import { CommentsWall } from '../CommentsWall';
-import { OpenAIChat } from '../OpenAIChat';
+import { PerplexityChat } from '../PerplexityChat';
 
 import { TeamTab } from './TeamTab';
 import { TripTasksTab } from '../todo/TripTasksTab';
@@ -160,7 +160,7 @@ export const ProTabContent = ({
         );
       case 'ai-chat':
         return (
-          <OpenAIChat 
+          <PerplexityChat 
             tripId={tripId}
             basecamp={basecamp}
             preferences={tripPreferences}

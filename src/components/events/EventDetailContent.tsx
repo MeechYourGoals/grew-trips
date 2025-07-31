@@ -3,7 +3,7 @@ import React from 'react';
 import { Crown, Sparkles, Users, Calendar, UserCheck, Network, TrendingUp, ClipboardList, BarChart3 } from 'lucide-react';
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
-import { OpenAIChat } from '../OpenAIChat';
+import { PerplexityChat } from '../PerplexityChat';
 
 import { RegistrationTab } from './RegistrationTab';
 import { AgendaBuilder } from './AgendaBuilder';
@@ -121,7 +121,7 @@ export const EventDetailContent = ({
         return <PlacesSection />;
       case 'ai-chat':
         return (
-          <OpenAIChat 
+          <PerplexityChat 
             tripId={tripId}
             basecamp={basecamp}
             preferences={tripPreferences}
