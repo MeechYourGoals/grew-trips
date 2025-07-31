@@ -76,7 +76,7 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: config.model || 'sonar-medium-online',
+        model: config.model || 'sonar',
         messages,
         temperature: config.temperature || 0.7,
         max_tokens: config.maxTokens || 2048,
@@ -118,7 +118,7 @@ serve(async (req) => {
         citations,
         sources: citations,
         success: true,
-        model: config.model || 'sonar-medium-online'
+        model: config.model || 'sonar'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

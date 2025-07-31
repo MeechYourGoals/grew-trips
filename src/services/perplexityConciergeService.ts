@@ -83,7 +83,7 @@ Always provide helpful, specific, and current information. When providing recomm
         chatHistory,
         config: {
           systemPrompt,
-          model: 'sonar-medium-online',
+          model: 'sonar',
           temperature: 0.7,
           maxTokens: 2048
         }

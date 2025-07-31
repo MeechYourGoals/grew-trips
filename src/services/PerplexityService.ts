@@ -38,7 +38,7 @@ export class PerplexityService {
         body: {
           message: 'Hello, this is a health check.',
           config: {
-            model: 'sonar-medium-online',
+            model: 'sonar',
             temperature: 0.1,
             maxTokens: 50
           }
@@ -59,7 +59,7 @@ export class PerplexityService {
       if (data?.success) {
         return {
           healthy: true,
-          model: data.model || 'sonar-medium-online',
+          model: data.model || 'sonar',
           latency
         };
       }
@@ -103,7 +103,7 @@ export class PerplexityService {
           tripContext: options.tripContext,
           chatHistory: options.chatHistory || [],
           config: {
-            model: 'sonar-medium-online',
+            model: 'sonar',
             temperature: 0.7,
             maxTokens: 2048,
             ...options.config
