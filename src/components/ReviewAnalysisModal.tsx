@@ -28,6 +28,16 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
   const [placesService, setPlacesService] = useState<any>(null);
   const [showResults, setShowResults] = useState(false);
 
+  // Auto-show results when modal opens for demo purposes
+  useEffect(() => {
+    if (isOpen) {
+      const timer = setTimeout(() => setShowResults(true), 300);
+      return () => clearTimeout(timer);
+    } else {
+      setShowResults(false);
+    }
+  }, [isOpen]);
+
   // Initialize Google Places Autocomplete
   useEffect(() => {
     const initializePlaces = async () => {
