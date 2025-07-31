@@ -32,12 +32,15 @@ export class OpenAIConciergeService {
     const startTime = Date.now();
     
     try {
+      console.log('🏥 Starting OpenAI health check...');
+      
       const { data, error } = await supabase.functions.invoke('openai-chat', {
         body: {
-          message: 'Health check - please respond with just "OK"',
+          message: 'Health check - please respond with just "Ready"',
           config: {
             temperature: 0,
-            maxTokens: 10
+            maxTokens: 10,
+            model: 'gpt-4.1-2025-04-14'
           }
         }
       });
@@ -45,8 +48,20 @@ export class OpenAIConciergeService {
       const latency = Date.now() - startTime;
 
       if (error) {
+        console.error('🚨 Supabase function error:', error);
         throw new Error(error.message || 'Health check failed');
       }
+
+      if (!data?.success) {
+        console.error('🚨 OpenAI API error:', data?.error);
+        throw new Error(data?.error || 'OpenAI API not responding correctly');
+      }
+
+      console.log('✅ OpenAI health check successful:', {
+        latency,
+        model: data.model,
+        response: data.response?.substring(0, 50)
+      });
 
       return {
         isHealthy: true,
@@ -55,11 +70,13 @@ export class OpenAIConciergeService {
       };
       
     } catch (error) {
-      console.error('OpenAI health check failed:', error);
+      const latency = Date.now() - startTime;
+      console.error('❌ OpenAI health check failed:', error);
+      
       return {
         isHealthy: false,
         model: 'unknown',
-        latency: Date.now() - startTime,
+        latency,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
     }

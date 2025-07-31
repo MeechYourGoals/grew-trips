@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Sparkles, WifiOff, Wifi, AlertCircle, CheckCircle, Activity } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
@@ -37,24 +38,35 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
   const [aiStatus, setAiStatus] = useState<'checking' | 'connected' | 'limited' | 'error' | 'thinking'>('checking');
   const [healthStatus, setHealthStatus] = useState<{ isHealthy: boolean; model: string; latency: number } | null>(null);
 
-  // Health check on component mount
+  // Health check on component mount and periodically
   useEffect(() => {
     const checkHealth = async () => {
+      console.log('🔍 Checking OpenAI health...');
       try {
         const health = await OpenAIConciergeService.healthCheck();
+        console.log('💡 Health check result:', health);
         setHealthStatus(health);
         setAiStatus(health.isHealthy ? 'connected' : 'limited');
       } catch (error) {
-        console.error('Health check failed:', error);
+        console.error('❌ Health check failed:', error);
         setAiStatus('error');
       }
     };
 
     checkHealth();
-  }, []);
+    
+    // Retry health check every 30 seconds if not connected
+    const healthInterval = setInterval(() => {
+      if (aiStatus !== 'connected') {
+        checkHealth();
+      }
+    }, 30000);
+
+    return () => clearInterval(healthInterval);
+  }, [aiStatus]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || isTyping) return;
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -70,12 +82,15 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
     setAiStatus('thinking');
 
     try {
+      console.log('🚀 Sending message to OpenAI:', currentInput.substring(0, 100) + '...');
+      
       // Get full trip context
       let tripContext;
       try {
         tripContext = await TripContextService.getTripContext(tripId, false);
+        console.log('📝 Trip context loaded:', tripContext.title);
       } catch (error) {
-        console.warn('Could not fetch trip context, using minimal context');
+        console.warn('⚠️ Could not fetch trip context, using minimal context:', error);
         tripContext = {
           tripId,
           title: 'Current Trip',
@@ -111,6 +126,12 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
         chatHistory
       );
 
+      console.log('✅ OpenAI response received:', {
+        success: response.success,
+        isFromOpenAI: response.isFromOpenAI,
+        contentLength: response.content.length
+      });
+
       // Update AI status based on response
       if (response.success && response.isFromOpenAI) {
         setAiStatus('connected');
@@ -130,13 +151,13 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
       setMessages(prev => [...prev, assistantMessage]);
 
     } catch (error) {
-      console.error('OpenAI Chat error:', error);
+      console.error('❌ OpenAI Chat error:', error);
       setAiStatus('error');
       
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: `I'm experiencing technical difficulties. Please try again in a moment.`,
+        content: `I'm having trouble connecting to my AI services right now. This could be due to:\n\n• API configuration issues\n• Network connectivity problems\n• Service overload\n\nPlease try again in a moment. If the issue persists, the system administrator may need to check the OpenAI API configuration.`,
         timestamp: new Date().toISOString(),
         isFromOpenAI: false
       };
@@ -174,7 +195,7 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
   const getStatusText = () => {
     switch (aiStatus) {
       case 'connected':
-        return 'Ready';
+        return `Ready${healthStatus?.model ? ` (${healthStatus.model})` : ''}`;
       case 'limited':
         return 'Limited Service';
       case 'error':
@@ -218,6 +239,11 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
               {getStatusIcon()}
               <span className={`text-xs ${getStatusColor()}`}>{getStatusText()}</span>
             </div>
+            {healthStatus && (
+              <span className="text-xs text-gray-500">
+                • {healthStatus.latency}ms
+              </span>
+            )}
           </div>
         </div>
         <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 px-3 py-1 rounded-full">
@@ -239,7 +265,7 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-3 mb-4">
           <p className="text-yellow-300 text-sm flex items-center gap-2">
             <AlertCircle size={14} />
-            Your concierge is experiencing technical difficulties
+            Your concierge is experiencing technical difficulties. Responses may be limited.
           </p>
         </div>
       )}
@@ -248,7 +274,16 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
         <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-3 mb-4">
           <p className="text-red-300 text-sm flex items-center gap-2">
             <WifiOff size={14} />
-            Your concierge is currently unavailable
+            Your concierge is currently unavailable. Please check your connection and try again.
+          </p>
+        </div>
+      )}
+
+      {aiStatus === 'connected' && messages.length === 0 && (
+        <div className="bg-green-500/5 border border-green-500/20 rounded-xl p-3 mb-4">
+          <p className="text-green-300 text-sm flex items-center gap-2">
+            <CheckCircle size={14} />
+            Your AI concierge is ready! Ask me anything about your trip.
           </p>
         </div>
       )}
@@ -261,9 +296,9 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
             <p>Ask me anything about your trip:</p>
             <div className="text-xs text-gray-400 space-y-1">
               <p>• "Where should I eat tonight?"</p>
-              <p>• "Where are we staying again?" (shows current basecamp)</p>
+              <p>• "What's our accommodation details?"</p>
               <p>• "What time is dinner again?"</p>
-              <p>• "What's the address of the day party location we're going to tomorrow?"</p>
+              <p>• "What's the weather like today?"</p>
             </div>
           </div>
         </div>
@@ -281,6 +316,7 @@ export const OpenAIChat = ({ tripId, basecamp, preferences }: OpenAIChatProps) =
         onSendMessage={handleSendMessage}
         onKeyPress={handleKeyPress}
         isTyping={isTyping}
+        disabled={aiStatus === 'error'}
       />
     </div>
   );
