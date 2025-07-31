@@ -1,8 +1,8 @@
 
 {
-  "name": "Junto - Travel Planning Platform",
-  "short_name": "Junto",
-  "description": "Professional trip management and collaborative travel planning platform",
+  "name": "Chravel - Travel Planning Platform",
+  "short_name": "Chravel",
+  "description": "Chat-powered professional trip management and collaborative travel planning platform",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#181A21",

@@ -33,7 +33,7 @@ const JoinTrip = () => {
   // Set document head for rich link previews
   useEffect(() => {
     // Update page title and meta tags for social sharing
-    document.title = 'Join Trip - Tryps';
+    document.title = 'Join Trip - Chravel';
     
     // Add Open Graph meta tags
     const updateMetaTag = (property: string, content: string) => {
@@ -80,7 +80,7 @@ const JoinTrip = () => {
     if (!token) return;
 
     // Try to open the app via deep link first
-    const deepLinkUrl = `tryps://join-trip/${token}`;
+    const deepLinkUrl = `chravel://join-trip/${token}`;
     
     // Check if we're on mobile and try to open the app
     if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {

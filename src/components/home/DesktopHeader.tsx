@@ -37,8 +37,8 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
     <>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight" aria-label="Junto Home">
-            Junto
+          <h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight" aria-label="Chravel Home">
+            Chravel
           </h1>
           <p className="text-muted-foreground">
             {viewMode === 'myTrips' 

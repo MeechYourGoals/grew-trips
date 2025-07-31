@@ -3,7 +3,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'app.lovable.20feaa0409464c68a68d0eb88cc1b9c4',
-  appName: 'juntotrips',
+  appName: 'chravel',
   webDir: 'dist',
   server: {
     url: 'https://20feaa04-0946-4c68-a68d-0eb88cc1b9c4.lovableproject.com?forceHideBadge=true',
@@ -20,7 +20,7 @@ const config: CapacitorConfig = {
     }
   },
   ios: {
-    scheme: "Junto Trips"
+    scheme: "Chravel"
   },
   android: {
     allowMixedContent: true

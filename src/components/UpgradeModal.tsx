@@ -225,8 +225,8 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
               <div className="w-16 h-16 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <CalendarPlus size={32} className="text-white" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Junto Events</h3>
-              <p className="text-gray-300 mb-4">Junto Events brings all your event management needs into one professional suite—connecting venues, schedules, attendees, and teams with real-time updates, collaboration, budgeting, and bulletproof communications. Streamline every step, from invitations to analytics, with robust security and branding for your ambitions.</p>
+              <h3 className="text-2xl font-bold text-white mb-2">Chravel Events</h3>
+              <p className="text-gray-300 mb-4">Chravel Events brings all your event management needs into one professional suite—connecting venues, schedules, attendees, and teams with real-time updates, collaboration, budgeting, and bulletproof communications. Streamline every step, from invitations to analytics, with robust security and branding for your ambitions.</p>
             </div>
 
             {/* Events Features Grid */}

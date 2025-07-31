@@ -6,26 +6,36 @@ interface UseInviteLinkProps {
   tripName: string;
   requireApproval: boolean;
   expireIn7Days: boolean;
+  tripId?: string;
+  proTripId?: string;
 }
 
-export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days }: UseInviteLinkProps) => {
+export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days, tripId, proTripId }: UseInviteLinkProps) => {
   const [copied, setCopied] = useState(false);
   const [inviteLink, setInviteLink] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Generate mock invite link immediately when modal opens
+  // Generate real trip link immediately when modal opens
   useEffect(() => {
     if (isOpen) {
-      generateMockInviteLink();
+      generateTripLink();
     }
-  }, [isOpen, requireApproval, expireIn7Days]);
+  }, [isOpen, requireApproval, expireIn7Days, tripId, proTripId]);
 
-  const generateMockInviteLink = () => {
-    const mockToken = crypto.randomUUID();
-    let baseUrl = 'https://junto.app/join';
+  const generateTripLink = () => {
+    let baseUrl = 'https://chravel.app';
+    let tripUrl = '';
     
-    // Create universal link that handles both app and web
-    let inviteUrl = `${baseUrl}/${mockToken}`;
+    // Generate actual trip URL based on trip type
+    if (proTripId) {
+      tripUrl = `${baseUrl}/tour/pro/${proTripId}`;
+    } else if (tripId) {
+      tripUrl = `${baseUrl}/trip/${tripId}`;
+    } else {
+      // Fallback to join link if no specific trip ID
+      const mockToken = crypto.randomUUID();
+      tripUrl = `${baseUrl}/join/${mockToken}`;
+    }
     
     // Add parameters for settings
     const params = new URLSearchParams();
@@ -33,17 +43,17 @@ export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days
     if (expireIn7Days) params.append('expires', '7d');
     
     if (params.toString()) {
-      inviteUrl += `?${params.toString()}`;
+      tripUrl += `?${params.toString()}`;
     }
 
-    setInviteLink(inviteUrl);
+    setInviteLink(tripUrl);
     setLoading(false);
   };
 
   const regenerateInviteToken = () => {
     setLoading(true);
-    // Generate new mock link
-    generateMockInviteLink();
+    // Generate new trip link
+    generateTripLink();
     toast.success('New invite link generated!');
   };
 
@@ -86,7 +96,7 @@ export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days
     const body = encodeURIComponent(
       `Hi there!\n\nYou're invited to join my trip "${tripName}"!\n\n` +
       `Click here to join: ${inviteLink}\n\n` +
-      `If you have the Junto app installed, this link will open it directly. ` +
+      `If you have the Chravel app installed, this link will open it directly. ` +
       `Otherwise, you can join through your browser!\n\nSee you there!`
     );
     window.open(`mailto:?subject=${subject}&body=${body}`);
@@ -96,7 +106,7 @@ export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days
     if (!inviteLink) return;
     
     const message = encodeURIComponent(
-      `You're invited to join my trip "${tripName}"! ${inviteLink} (Opens in Junto app if installed)`
+      `You're invited to join my trip "${tripName}"! ${inviteLink} (Opens in Chravel app if installed)`
     );
     window.open(`sms:?body=${message}`);
   };

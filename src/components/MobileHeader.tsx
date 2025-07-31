@@ -27,8 +27,8 @@ export const MobileHeader = ({
     <>
       <div className="flex items-center justify-between mb-6 bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-4">
         <div>
-          <h1 className="text-xl font-semibold text-foreground tracking-tight" aria-label="Junto Home">
-            Junto
+          <h1 className="text-xl font-semibold text-foreground tracking-tight" aria-label="Chravel Home">
+            Chravel
           </h1>
         </div>
         
