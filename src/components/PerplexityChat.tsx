@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Sparkles, WifiOff, Wifi, AlertCircle, CheckCircle, Activity, Search } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
@@ -108,8 +109,11 @@ export const PerplexityChat = ({ tripId, basecamp, preferences }: PerplexityChat
         content: msg.content
       }));
 
-      // Prepare basecamp location for the service call
-      const basecampLocation = globalBasecamp || (basecamp ? {
+      // Prepare basecamp location for the service call - ensure name is always present
+      const basecampLocation = globalBasecamp ? {
+        name: globalBasecamp.name || 'Basecamp',
+        address: globalBasecamp.address
+      } : (basecamp ? {
         name: basecamp.name || 'Basecamp',
         address: basecamp.address
       } : undefined);
