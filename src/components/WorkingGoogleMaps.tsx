@@ -49,7 +49,12 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      setCurrentLocation(searchQuery.trim());
+      // If we have a basecamp, search near basecamp location
+      let searchLocation = searchQuery.trim();
+      if (isBasecampSet && basecamp?.address) {
+        searchLocation = `${searchQuery.trim()} near ${basecamp.address}`;
+      }
+      setCurrentLocation(searchLocation);
       setSearchQuery('');
     }
   };
@@ -92,7 +97,7 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search locations on map..."
+            placeholder={isBasecampSet ? `Search near your basecamp...` : "Search locations on map..."}
             className="w-full bg-white/95 backdrop-blur-sm border border-gray-300 rounded-xl pl-10 pr-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-lg text-sm"
           />
         </form>

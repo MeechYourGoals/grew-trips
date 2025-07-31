@@ -59,22 +59,24 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
           setSearchResults([result.place]);
           setSelectedPlace(result.place);
           
-          // Auto-set place name if not already set
-          if (!placeName) {
+          // Auto-set place name if not already set - only set once to avoid loop
+          if (!placeName && result.place.name !== placeName) {
             setPlaceName(result.place.name);
           }
           
           // Auto-categorize if enabled
           if (useAiSorting && result.place.types) {
             const autoCategory = categorizePlaceType(result.place.types);
-            setCategory(autoCategory);
+            if (autoCategory !== category) {
+              setCategory(autoCategory);
+            }
           }
         }
       }, 500);
 
       return () => clearTimeout(timeoutId);
     }
-  }, [smartInput, resolvePlaceName, categorizePlaceType, useAiSorting, placeName]);
+  }, [smartInput, resolvePlaceName, categorizePlaceType, useAiSorting]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

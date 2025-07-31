@@ -1,11 +1,50 @@
-# Concierge Setup Instructions
+# Setup Instructions for Basecamp and Concierge Features
 
-## Critical Setup Required
+## Overview
+This document provides step-by-step instructions to set up the Concierge chat and Basecamp location features.
 
-Your Concierge chat is currently showing "Limited Mode" because the `OPENAI_API_KEY` secret is missing from your Supabase project.
+## 🗺️ **Part 1: Google Maps API Configuration (CRITICAL for Basecamp)**
 
-### ✅ **Step 1: Add OpenAI API Key to Supabase Secrets**
+The "Could not find address" error you're seeing is because the Google Maps API key is missing.
 
+### ✅ **Step 1: Create Google Cloud Project and Enable APIs**
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing one
+3. Enable the following APIs:
+   - **Maps Embed API**
+   - **Geocoding API** 
+   - **Distance Matrix API**
+   - **Places API**
+
+### ✅ **Step 2: Create API Key**
+1. Go to APIs & Services → Credentials
+2. Click "Create Credentials" → "API Key"
+3. Copy the generated API key
+4. **Important**: Restrict the API key to your domain for security
+
+### ✅ **Step 3: Add GOOGLE_MAPS_API_KEY to Supabase Secrets**
+1. Go to your Supabase dashboard
+2. Navigate to **Project Settings** → **Environment Variables**
+3. Click **Add Variable**
+4. Name: `GOOGLE_MAPS_API_KEY`
+5. Value: Your Google Maps API key
+6. Click **Save**
+
+### ✅ **Step 4: Re-deploy Edge Function**
+- In your Supabase dashboard, go to **Edge Functions**
+- Find `google-maps-proxy` function and click **Deploy**
+- Wait for deployment to complete
+
+### ✅ **Step 5: Test Basecamp Setup**
+1. Go to Places tab in your trip
+2. Try setting a basecamp (e.g., "SoFi Stadium, Los Angeles")
+3. It should geocode successfully without "Could not find address" error
+4. Map should center on your basecamp location
+5. All searches should now show distance from basecamp
+
+## 🤖 **Part 2: OpenAI API Configuration (for Concierge Chat)**
+
+### ✅ **Step 1: Add OPENAI_API_KEY to Supabase Secrets**
 1. **Get your OpenAI API Key:**
    - Go to [OpenAI Platform](https://platform.openai.com/api-keys)
    - Create a new API key if you don't have one
@@ -19,82 +58,79 @@ Your Concierge chat is currently showing "Limited Mode" because the `OPENAI_API_
    - Value: Your OpenAI API key
    - Click **Save**
 
-3. **Re-deploy Edge Functions:**
-   - After adding the secret, you MUST re-deploy the edge function
-   - In your Supabase dashboard, go to **Edge Functions**
-   - Find `openai-chat` function and click **Deploy**
-   - Wait for deployment to complete
+### ✅ **Step 2: Re-deploy Edge Functions**
+- In your Supabase dashboard, go to **Edge Functions**
+- Find `openai-chat` function and click **Deploy**
+- Wait for deployment to complete
 
-### ✅ **Step 2: Test the Integration**
-
-1. Go back to your trip page
-2. Open the Concierge chat (PLUS feature)
+### ✅ **Step 3: Test the Setup**
+1. Open your trip page
+2. Navigate to the Chat tab
 3. Try asking: "Where should I eat tonight?"
-4. You should get real AI responses instead of "Limited Mode"
+4. You should receive real AI responses, not fallback messages
 
-### ✅ **What's Fixed**
+## 🎯 **Expected Behavior After Full Setup**
 
-**UI/UX Improvements:**
+### Basecamp Integration:
+- ✅ Set any address as your trip's basecamp (e.g., "SoFi Stadium")
+- ✅ All map searches automatically center around basecamp
+- ✅ Distance calculations from basecamp to any location
+- ✅ "Search near basecamp" functionality in maps
+- ✅ When searching for "restaurants", results show distance from SoFi Stadium
+
+### Concierge Chat:
+- ✅ Natural language questions about your trip
+- ✅ Location-aware recommendations using basecamp context
+- ✅ Real-time AI responses powered by OpenAI (no "Limited Mode")
+- ✅ Trip-specific information queries
+
+### UI/UX Improvements Already Applied:
 - ✅ Removed all "OpenAI" branding from user interface
-- ✅ Changed "OpenAI Concierge" to just "Concierge"
-- ✅ Updated example queries to be more natural:
-  - "Where should I eat tonight?"
-  - "Where are we staying again?" (shows basecamp)
-  - "What time is dinner again?"
-  - "What's the address of the day party location we're going to tomorrow?"
-- ✅ Removed debug commands like "/context" and "/health" from examples
+- ✅ Changed to just "Concierge" 
+- ✅ Updated example queries to be more natural
+- ✅ Removed debug commands from examples
 - ✅ Improved error messages to be user-friendly
-- ✅ Removed technical jargon from status messages
 
-**Technical Fixes:**
-- ✅ Fixed request format mismatch between frontend and edge function
-- ✅ Updated edge function to properly handle the new request structure
-- ✅ Improved system prompt integration
-- ✅ Enhanced error handling throughout the pipeline
-- ✅ Removed all fallback logic and debug commands
-- ✅ Streamlined the entire chat flow
+## 🔧 **Troubleshooting**
 
-### 🚨 **Expected Behavior After Setup**
+### Basecamp Issues:
+- **"Could not find address" error**: Google Maps API key missing or APIs not enabled
+- **Map not loading**: Check browser console for API key errors
+- **Distance calculations failing**: Ensure Distance Matrix API is enabled
 
-**Before Setup (Current):**
-- Status shows "Limited Service" or "Unavailable"
-- User sees "Your concierge is experiencing technical difficulties"
-- No real AI responses
+### Concierge Issues:
+- **"Limited Mode" or "Service Unavailable"**: OpenAI API key missing or invalid
+- **No responses**: Check Supabase Edge Function logs
+- **Slow responses**: Normal for first request after deployment
 
-**After Setup (Target):**
-- Status shows "Ready" with green checkmark
-- Users get real, contextual AI responses about their trip
-- Concierge uses trip context, basecamp location, and preferences
-- Responses are personalized to the specific trip details
+### Checking Logs:
+- Go to Supabase Dashboard → Edge Functions → [function-name] → Logs
+- Check both `google-maps-proxy` and `openai-chat` function logs
 
-### 🔧 **Troubleshooting**
+## 💰 **Cost Information**
 
-If you're still seeing issues after setup:
+### Google Maps APIs:
+- Most APIs have free monthly quotas
+- Typical usage: $5-20/month for active trip planning
+- Set spending limits in Google Cloud Console
 
-1. **Check API Key Format:**
-   - Must start with `sk-`
-   - No extra spaces or characters
-   - Key must be active and have credits
+### OpenAI APIs:
+- Charges per token used
+- Typical trip questions: $0.01-0.05 per interaction
+- Set usage limits in OpenAI dashboard
 
-2. **Verify Edge Function Deployment:**
-   - Check Supabase Edge Functions logs
-   - Look for "OpenAI API key not configured" errors
-   - Re-deploy if needed
+## 🔒 **Security Notes**
 
-3. **Test API Key:**
-   - You can test your OpenAI key directly at: https://platform.openai.com/playground
-
-4. **Check Network Logs:**
-   - Open browser dev tools
-   - Look for 400/401 errors to the openai-chat function
-   - Should return 200 with AI responses
-
-### 💡 **Cost Information**
-
-- OpenAI charges per token used
-- Typical trip questions cost $0.01-0.05 per interaction
-- Set usage limits in your OpenAI dashboard if desired
+- Restrict Google Maps API key to your domain
+- Monitor API usage in respective consoles
+- Set spending limits to prevent unexpected charges
+- Keep API keys secure and never commit to version control
 
 ---
 
-Once you complete Step 1 and Step 2, your Concierge will provide real, intelligent responses about the user's trip without any technical jargon or OpenAI branding visible to end users.
+**Priority Order:**
+1. Set up Google Maps API first (fixes basecamp errors)
+2. Set up OpenAI API second (enables real concierge responses)
+3. Test both features together for full integration
+
+Once both are configured, users can set "SoFi Stadium" as basecamp and search for "restaurants" to see results sorted by distance from SoFi Stadium, with the AI concierge providing contextual recommendations.

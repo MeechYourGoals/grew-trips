@@ -23,18 +23,18 @@ serve(async (req) => {
       );
     }
 
-    const url = new URL(req.url);
-    const endpoint = url.pathname.split('/').pop();
+    const requestData = await req.json();
+    const { endpoint, ...data } = requestData;
     
     const apiKey = Deno.env.get('GOOGLE_MAPS_API_KEY');
     if (!apiKey) {
+      console.error('Google Maps API key not found in environment');
       throw new Error('Google Maps API key not configured');
     }
 
     switch (endpoint) {
       case 'embed-url': {
-        const requestData = await req.json();
-        const validation = validateAndSanitizeInput(requestData);
+        const validation = validateAndSanitizeInput(data);
         
         if (!validation.isValid) {
           throw new Error(validation.error || 'Invalid input');
@@ -56,8 +56,7 @@ serve(async (req) => {
       }
 
       case 'distance-matrix': {
-        const requestData = await req.json();
-        const validation = validateAndSanitizeInput(requestData);
+        const validation = validateAndSanitizeInput(data);
         
         if (!validation.isValid) {
           throw new Error(validation.error || 'Invalid input');
@@ -70,11 +69,13 @@ serve(async (req) => {
 
         const apiUrl = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${origins}&destinations=${destinations}&mode=${mode}&key=${apiKey}`;
         
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+        const apiResponse = await fetch(apiUrl);
+        const apiData = await apiResponse.json();
+        
+        console.log('Distance Matrix API response:', apiData);
         
         const result = new Response(
-          JSON.stringify(data),
+          JSON.stringify(apiData),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
         
@@ -82,8 +83,7 @@ serve(async (req) => {
       }
 
       case 'geocode': {
-        const requestData = await req.json();
-        const validation = validateAndSanitizeInput(requestData);
+        const validation = validateAndSanitizeInput(data);
         
         if (!validation.isValid) {
           throw new Error(validation.error || 'Invalid input');
@@ -94,13 +94,66 @@ serve(async (req) => {
           throw new Error('Address parameter is required');
         }
 
+        console.log('Geocoding address:', address);
         const apiUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
         
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+        const apiResponse = await fetch(apiUrl);
+        const apiData = await apiResponse.json();
+        
+        console.log('Geocoding API response:', apiData);
         
         const result = new Response(
-          JSON.stringify(data),
+          JSON.stringify(apiData),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+        
+        return addSecurityHeaders(result);
+      }
+
+      case 'places-search': {
+        const validation = validateAndSanitizeInput(data);
+        
+        if (!validation.isValid) {
+          throw new Error(validation.error || 'Invalid input');
+        }
+        
+        const { query, location, radius = 5000 } = validation.sanitized!;
+        if (!query || !location) {
+          throw new Error('Query and location parameters are required');
+        }
+
+        const apiUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&location=${location}&radius=${radius}&key=${apiKey}`;
+        
+        const apiResponse = await fetch(apiUrl);
+        const apiData = await apiResponse.json();
+        
+        const result = new Response(
+          JSON.stringify(apiData),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+        
+        return addSecurityHeaders(result);
+      }
+
+      case 'place-details': {
+        const validation = validateAndSanitizeInput(data);
+        
+        if (!validation.isValid) {
+          throw new Error(validation.error || 'Invalid input');
+        }
+        
+        const { placeId } = validation.sanitized!;
+        if (!placeId) {
+          throw new Error('PlaceId parameter is required');
+        }
+
+        const apiUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&key=${apiKey}`;
+        
+        const apiResponse = await fetch(apiUrl);
+        const apiData = await apiResponse.json();
+        
+        const result = new Response(
+          JSON.stringify(apiData),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
         
@@ -108,7 +161,7 @@ serve(async (req) => {
       }
 
       default:
-        throw new Error('Invalid endpoint');
+        throw new Error(`Invalid endpoint: ${endpoint}`);
     }
 
   } catch (error) {
