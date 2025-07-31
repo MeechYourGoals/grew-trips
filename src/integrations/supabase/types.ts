@@ -66,6 +66,8 @@ export type Database = {
           notification_settings: Json | null
           phone: string | null
           role: string | null
+          show_email: boolean | null
+          show_phone: boolean | null
           updated_at: string
           user_id: string
         }
@@ -81,6 +83,8 @@ export type Database = {
           notification_settings?: Json | null
           phone?: string | null
           role?: string | null
+          show_email?: boolean | null
+          show_phone?: boolean | null
           updated_at?: string
           user_id: string
         }
@@ -96,6 +100,8 @@ export type Database = {
           notification_settings?: Json | null
           phone?: string | null
           role?: string | null
+          show_email?: boolean | null
+          show_phone?: boolean | null
           updated_at?: string
           user_id?: string
         }
@@ -161,6 +167,105 @@ export type Database = {
           updated_at?: string
           user_id?: string
           value?: string
+        }
+        Relationships: []
+      }
+      trip_invites: {
+        Row: {
+          code: string
+          created_at: string
+          created_by: string
+          current_uses: number
+          expires_at: string | null
+          id: string
+          is_active: boolean
+          max_uses: number | null
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          created_by: string
+          current_uses?: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          created_by?: string
+          current_uses?: number
+          expires_at?: string | null
+          id?: string
+          is_active?: boolean
+          max_uses?: number | null
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trip_receipts: {
+        Row: {
+          amount: number
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          receipt_url: string | null
+          trip_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          receipt_url?: string | null
+          trip_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          receipt_url?: string | null
+          trip_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_preferences: {
+        Row: {
+          created_at: string
+          id: string
+          preferences: Json
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          preferences?: Json
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          preferences?: Json
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
