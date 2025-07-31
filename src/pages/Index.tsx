@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { MobileHeader } from '../components/MobileHeader';
 import { CreateTripModal } from '../components/CreateTripModal';
-import { SentimentAnalysis } from '../components/SentimentAnalysis';
+
 import { UpgradeModal } from '../components/UpgradeModal';
 import { SettingsMenu } from '../components/SettingsMenu';
 import { TripStatsOverview } from '../components/home/TripStatsOverview';
@@ -170,10 +170,6 @@ const Index = () => {
           />
         </div>
 
-        {/* AI Sentiment Analysis Section */}
-        <div className="mt-12 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-          <SentimentAnalysis />
-        </div>
       </div>
 
       {/* Modals */}
