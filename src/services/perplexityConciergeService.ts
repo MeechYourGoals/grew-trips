@@ -1,7 +1,7 @@
 import { PerplexityService, PerplexityResponse } from './PerplexityService';
 import { TripContext } from '../types/tripContext';
 
-export { PerplexityResponse };
+export type { PerplexityResponse };
 
 export interface HealthCheckResult {
   healthy: boolean;

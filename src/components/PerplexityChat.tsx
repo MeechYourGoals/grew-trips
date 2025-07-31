@@ -108,11 +108,17 @@ export const PerplexityChat = ({ tripId, basecamp, preferences }: PerplexityChat
         content: msg.content
       }));
 
+      // Prepare basecamp location for the service call
+      const basecampLocation = globalBasecamp || (basecamp ? {
+        name: basecamp.name || 'Basecamp',
+        address: basecamp.address
+      } : undefined);
+
       // Send to Perplexity
       const response: PerplexityResponse = await PerplexityConciergeService.sendMessage(
         currentInput,
         tripContext,
-        globalBasecamp || basecamp,
+        basecampLocation,
         preferences,
         chatHistory
       );
