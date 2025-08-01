@@ -36,7 +36,7 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
     isLoading, 
     error, 
     textResult, 
-    audioResult, 
+     
     clearResults 
   } = useReviewSummary();
 
@@ -191,10 +191,7 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
 
     setIsShowingMockData(false);
     const query = venueUrl && validateUrl(venueUrl) ? venueUrl : venueName;
-    await generateSummary(query, { 
-      includeAudio, 
-      tripId 
-    });
+    await generateSummary(query);
   };
 
   const togglePlayback = () => {
@@ -310,7 +307,7 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
                 <BarChart3 className="w-6 h-6 text-primary" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-white">AI Review & Audio Summaries</h2>
+                <h2 className="text-2xl font-bold text-white">AI Review Summaries</h2>
                 <p className="text-gray-400 text-sm">Analyze reviews from multiple platforms with AI-powered insights</p>
               </div>
             </div>
@@ -388,20 +385,8 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
               />
             </div>
 
-            {/* Audio Toggle and Analyze Button */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Switch 
-                  id="include-audio" 
-                  checked={includeAudio} 
-                  onCheckedChange={setIncludeAudio}
-                />
-                <label htmlFor="include-audio" className="text-gray-300 text-sm">
-                  <Volume2 size={16} className="inline mr-2" />
-                  Generate AI Audio Overview
-                </label>
-              </div>
-              
+            {/* Analyze Button */}
+            <div className="flex items-center justify-end">
               <Button 
                 className="bg-primary hover:bg-primary/90 text-white"
                 onClick={handleAnalyze}
@@ -541,31 +526,6 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
                 </div>
               )}
 
-              {/* Audio Overview Section */}
-              {includeAudio && (
-                <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
-                    <Volume2 className="w-5 h-5 text-primary" />
-                    <h3 className="text-lg font-semibold text-white">Audio Overview</h3>
-                  </div>
-                  <p className="text-gray-300 text-sm mb-4">
-                    AI-generated audio summary covering key insights from {displayData?.platforms.reduce((acc, p) => acc + p.reviewsAnalyzed, 0) || 0} reviews across all platforms.
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <Button
-                      onClick={togglePlayback}
-                      size="sm"
-                      variant="outline"
-                      className="border-gray-600 text-gray-300 hover:bg-gray-700"
-                    >
-                      {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
-                    </Button>
-                    <span className="text-sm text-gray-400">
-                      {isShowingMockData ? '2:34 demo audio available' : '2:34 audio summary available'}
-                    </span>
-                  </div>
-                </div>
-              )}
             </>
           )}
         </div>

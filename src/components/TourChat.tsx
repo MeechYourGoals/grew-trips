@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Send, Radio, Users, MessageCircle } from 'lucide-react';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useMessages } from '../hooks/useMessages';
-import { VoiceAssistant } from './VoiceAssistant';
+
 import { useParams } from 'react-router-dom';
 import { proTripMockData } from '../data/proTripMockData';
 import { AiMessageModal } from './ai/AiMessageModal';
@@ -131,7 +131,6 @@ export const TourChat = () => {
             className={`w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 pr-20 text-white placeholder-gray-400 focus:outline-none focus:border-${accentColors.primary} resize-none`}
           />
           <div className="absolute right-2 bottom-2 flex items-center gap-2">
-            <VoiceAssistant isProTrip={true} />
             <button
               onClick={handleSendMessage}
               disabled={!message.trim()}

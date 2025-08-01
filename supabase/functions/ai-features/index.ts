@@ -8,7 +8,7 @@ const corsHeaders = {
 }
 
 interface RequestBody {
-  feature: 'review-analysis' | 'audio-overview' | 'message-template' | 'priority-classify' | 'send-time-suggest';
+  feature: 'review-analysis' | 'message-template' | 'priority-classify' | 'send-time-suggest';
   url?: string;
   content?: string;
   template_id?: string;
@@ -50,14 +50,14 @@ serve(async (req) => {
     }
 
     // URL validation only for features that need it
-    if ((feature === 'review-analysis' || feature === 'audio-overview') && !url) {
+    if (feature === 'review-analysis' && !url) {
       return new Response(
         JSON.stringify({ error: 'Missing URL parameter' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    if ((feature === 'review-analysis' || feature === 'audio-overview') && url) {
+    if (feature === 'review-analysis' && url) {
       try {
         new URL(url)
       } catch {
@@ -72,8 +72,6 @@ serve(async (req) => {
 
     if (feature === 'review-analysis') {
       result = { result: await analyzeReviews(url!) }
-    } else if (feature === 'audio-overview') {
-      result = { result: await generateAudioOverview(url!, userId, tripId) }
     } else if (feature === 'message-template') {
       result = await generateMessageWithTemplate(template_id, context || {}, supabase)
     } else if (feature === 'priority-classify') {
@@ -221,68 +219,6 @@ async function analyzeReviews(url: string) {
   }
 }
 
-async function generateAudioOverview(url: string, userId?: string, tripId?: string) {
-  console.log('Generating audio overview for:', url)
-  
-  const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY')
-  if (!perplexityApiKey) {
-    throw new Error('Missing Perplexity API key')
-  }
-  
-  try {
-    const message = `Create a concise, engaging audio script summary of this business/restaurant: ${url}
-    
-    Make it sound like a friendly travel guide giving insider tips. Include:
-    - What makes this place special
-    - Key highlights from reviews
-    - What to expect (atmosphere, service, food style)
-    - Any insider tips or recommendations
-    - Keep it under 2 minutes when spoken
-    
-    Write in a conversational, enthusiastic tone as if you're talking to a friend.`;
-
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${perplexityApiKey}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama-3.1-sonar-large-128k-online',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an enthusiastic travel guide who creates engaging audio scripts about restaurants and businesses. Write conversational, friendly content that sounds great when spoken aloud.'
-          },
-          {
-            role: 'user',
-            content: message
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 1000,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}))
-      throw new Error(`Perplexity API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`)
-    }
-
-    const data = await response.json();
-    const audioScript = data.choices[0].message.content;
-    
-    return {
-      summary: audioScript,
-      audioUrl: '/mock-audio-url.mp3', // Would integrate with TTS service in the future
-      duration: 120,
-      fileKey: 'generated-audio-key'
-    };
-  } catch (error) {
-    console.error('Error generating audio overview:', error);
-    throw error;
-  }
-}
 
 async function generateMessageWithTemplate(templateId: string | undefined, context: Record<string, any>, supabase: any) {
   if (!templateId) {

@@ -14,12 +14,6 @@ export interface ReviewAnalysisResult {
   totalReviews: number;
 }
 
-export interface AudioOverviewResult {
-  summary: string;
-  audioUrl: string;
-  duration: number;
-  fileKey?: string;
-}
 
 export interface AiFeatureResponse<T> {
   success: boolean;
@@ -49,32 +43,6 @@ export class AiFeatureService {
     }
   }
 
-  static async generateAudioOverview(url: string, userId?: string, tripId?: string): Promise<AiFeatureResponse<AudioOverviewResult>> {
-    if (!userId) {
-      return { success: false, error: 'User not authenticated' };
-    }
-
-    try {
-      const { data, error } = await supabase.functions.invoke('ai-features', {
-        body: {
-          feature: 'audio-overview',
-          url,
-          userId,
-          tripId
-        }
-      });
-
-      if (error) throw error;
-      
-      return { success: true, data: data.result };
-    } catch (error) {
-      console.error('Audio Overview Error:', error);
-      return {
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      };
-    }
-  }
 }
 
 // URL validation utilities
