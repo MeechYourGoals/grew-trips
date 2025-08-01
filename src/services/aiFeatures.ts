@@ -1,11 +1,17 @@
 
-import { OpenAIService } from './OpenAIService';
+import { supabase } from '@/integrations/supabase/client';
 
 export interface ReviewAnalysisResult {
   text: string;
   sentiment: 'positive' | 'negative' | 'neutral';
   score: number;
   platforms: string[];
+  summary: string;
+  themes: string[];
+  pros: string[];
+  cons: string[];
+  rating: number;
+  totalReviews: number;
 }
 
 export interface AudioOverviewResult {
@@ -24,8 +30,16 @@ export interface AiFeatureResponse<T> {
 export class AiFeatureService {
   static async analyzeReviews(url: string): Promise<AiFeatureResponse<ReviewAnalysisResult>> {
     try {
-      const result = await OpenAIService.analyzeReviews(url);
-      return { success: true, data: result };
+      const { data, error } = await supabase.functions.invoke('ai-features', {
+        body: {
+          feature: 'review-analysis',
+          url
+        }
+      });
+
+      if (error) throw error;
+      
+      return { success: true, data: data.result };
     } catch (error) {
       console.error('Review Analysis Error:', error);
       return {
@@ -41,8 +55,18 @@ export class AiFeatureService {
     }
 
     try {
-      const result = await OpenAIService.generateAudioSummary(url, userId, tripId);
-      return { success: true, data: result };
+      const { data, error } = await supabase.functions.invoke('ai-features', {
+        body: {
+          feature: 'audio-overview',
+          url,
+          userId,
+          tripId
+        }
+      });
+
+      if (error) throw error;
+      
+      return { success: true, data: data.result };
     } catch (error) {
       console.error('Audio Overview Error:', error);
       return {
