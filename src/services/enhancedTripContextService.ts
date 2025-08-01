@@ -231,23 +231,38 @@ export class EnhancedTripContextService {
   }
 
   private static async getChatHistory(tripId: string): Promise<ChatMessage[]> {
+    // Include both regular messages and broadcasts for contextual awareness
     return [
       {
         id: 'msg-1',
-        content: 'Super excited for this trip! The weather looks perfect ☀️',
-        author: 'Emma',
-        timestamp: '2025-01-15T09:30:00Z',
+        content: 'Super excited for this trip! Has everyone seen the weather forecast?',
+        author: 'Sarah Chen',
+        timestamp: '2025-01-15T05:42:00Z',
         sentiment: 'positive'
       },
       {
-        id: 'msg-2', 
+        id: 'broadcast-1',
+        content: '📢 BROADCAST: Just booked my flight! Landing at 3:30 PM on Friday ✈️',
+        author: 'Marcus Johnson',
+        timestamp: '2025-01-15T05:42:00Z',
+        sentiment: 'positive'
+      },
+      {
+        id: 'msg-2',
+        content: 'Found an amazing restaurant for dinner - sending the link now!',
+        author: 'Priya Patel',
+        timestamp: '2025-01-15T05:42:00Z',
+        sentiment: 'positive'
+      },
+      {
+        id: 'msg-3',
         content: 'Should we make dinner reservations somewhere nice for Saturday?',
         author: 'Alex',
         timestamp: '2025-01-15T10:15:00Z',
         sentiment: 'neutral'
       },
       {
-        id: 'msg-3',
+        id: 'msg-4',
         content: 'I found this amazing rooftop bar with great views!',
         author: 'Marcus',
         timestamp: '2025-01-15T11:45:00Z',
