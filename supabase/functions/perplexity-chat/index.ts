@@ -143,32 +143,96 @@ function buildSystemPrompt(tripContext: any, analysisType: string, customPrompt?
   let basePrompt = "You are Concierge, an intelligent travel assistant with access to real-time web information. Provide helpful, specific recommendations and current information about destinations, activities, and travel planning."
 
   if (tripContext) {
-    basePrompt += `\n\nTrip Context:
-- Destination: ${tripContext.location || 'Not specified'}
-- Dates: ${tripContext.dateRange || 'TBD'}
-- Participants: ${tripContext.participants?.length || 0} people
-- Budget: Not specified`
+    basePrompt += `\n\n=== TRIP CONTEXT ===`
+    basePrompt += `\nDestination: ${tripContext.location || 'Not specified'}`
+    
+    if (typeof tripContext.dateRange === 'object') {
+      basePrompt += `\nTravel Dates: ${tripContext.dateRange.start} to ${tripContext.dateRange.end}`
+    } else if (tripContext.dateRange) {
+      basePrompt += `\nTravel Dates: ${tripContext.dateRange}`
+    }
+    
+    basePrompt += `\nParticipants: ${tripContext.participants?.length || 0} people`
+    
+    if (tripContext.participants?.length) {
+      basePrompt += ` (${tripContext.participants.map(p => p.name || p).join(', ')})`
+    }
 
     if (tripContext.accommodation) {
-      basePrompt += `\n- Accommodation: ${tripContext.accommodation}`
+      const accommodation = typeof tripContext.accommodation === 'object' 
+        ? `${tripContext.accommodation.name} at ${tripContext.accommodation.address}`
+        : tripContext.accommodation
+      basePrompt += `\nAccommodation: ${accommodation}`
+    }
+
+    if (tripContext.basecamp) {
+      basePrompt += `\nCurrent Basecamp: ${tripContext.basecamp.name} at ${tripContext.basecamp.address}`
+    }
+
+    // Enhanced contextual information
+    if (tripContext.preferences) {
+      basePrompt += `\n\n=== GROUP PREFERENCES ===`
+      const prefs = tripContext.preferences
+      if (prefs.dietary?.length) basePrompt += `\nDietary: ${prefs.dietary.join(', ')}`
+      if (prefs.vibe?.length) basePrompt += `\nVibes: ${prefs.vibe.join(', ')}`
+      if (prefs.entertainment?.length) basePrompt += `\nEntertainment: ${prefs.entertainment.join(', ')}`
+      if (prefs.budgetMin && prefs.budgetMax) {
+        basePrompt += `\nBudget Range: $${prefs.budgetMin} - $${prefs.budgetMax} per person`
+      }
+    }
+
+    if (tripContext.visitedPlaces?.length) {
+      basePrompt += `\n\n=== ALREADY VISITED ===`
+      basePrompt += `\n${tripContext.visitedPlaces.join(', ')}`
+      basePrompt += `\nNote: Avoid recommending these places unless specifically asked.`
+    }
+
+    if (tripContext.spendingPatterns) {
+      basePrompt += `\n\n=== SPENDING PATTERNS ===`
+      basePrompt += `\nTotal Spent: $${tripContext.spendingPatterns.totalSpent?.toFixed(2) || '0'}`
+      basePrompt += `\nAverage per Person: $${tripContext.spendingPatterns.avgPerPerson?.toFixed(2) || '0'}`
+    }
+
+    if (tripContext.links?.length) {
+      basePrompt += `\n\n=== SHARED LINKS & IDEAS ===`
+      tripContext.links.forEach(link => {
+        basePrompt += `\n- ${link.title} (${link.category}, ${link.votes} votes): ${link.description}`
+      })
+    }
+
+    if (tripContext.chatHistory?.length) {
+      basePrompt += `\n\n=== RECENT GROUP SENTIMENT ===`
+      const recentMessages = tripContext.chatHistory.slice(-3)
+      const positiveCount = recentMessages.filter(m => m.sentiment === 'positive').length
+      const mood = positiveCount >= 2 ? 'Positive' : positiveCount >= 1 ? 'Mixed' : 'Neutral'
+      basePrompt += `\nGroup Mood: ${mood}`
+    }
+
+    if (tripContext.upcomingEvents?.length) {
+      basePrompt += `\n\n=== UPCOMING SCHEDULE ===`
+      tripContext.upcomingEvents.forEach(event => {
+        basePrompt += `\n- ${event.title} on ${event.date}`
+        if (event.time) basePrompt += ` at ${event.time}`
+        if (event.location) basePrompt += ` (${event.location})`
+      })
     }
   }
 
   switch (analysisType) {
     case 'sentiment':
-      basePrompt += "\n\nAnalyze the sentiment of messages and provide insights into group mood and engagement."
+      basePrompt += "\n\n=== ANALYSIS TYPE: SENTIMENT ===\nAnalyze the sentiment of messages and provide insights into group mood and engagement."
       break
     case 'review':
-      basePrompt += "\n\nAnalyze reviews and provide comprehensive summaries with sentiment analysis and key insights."
+      basePrompt += "\n\n=== ANALYSIS TYPE: REVIEW ===\nAnalyze reviews and provide comprehensive summaries with sentiment analysis and key insights."
       break
     case 'audio':
-      basePrompt += "\n\nCreate engaging audio summaries that highlight key information and insights."
+      basePrompt += "\n\n=== ANALYSIS TYPE: AUDIO ===\nCreate engaging audio summaries that highlight key information and insights."
       break
     case 'image':
-      basePrompt += "\n\nAnalyze images in the context of travel planning and provide relevant insights and recommendations."
+      basePrompt += "\n\n=== ANALYSIS TYPE: IMAGE ===\nAnalyze images in the context of travel planning and provide relevant insights and recommendations."
       break
     default:
-      basePrompt += "\n\nProvide helpful, specific recommendations with current information. Use web search to find the most up-to-date details about restaurants, attractions, events, and travel conditions. Always cite your sources when providing specific information."
+      basePrompt += "\n\n=== INSTRUCTIONS ===\nProvide helpful, specific recommendations with current information. Use web search to find the most up-to-date details about restaurants, attractions, events, and travel conditions. Consider all the context above when making recommendations. Always cite your sources when providing specific information."
   }
 
   return basePrompt

@@ -2,19 +2,10 @@ import { Trip, getTripById, generateTripMockData } from '../data/tripsData';
 import { proTripMockData } from '../data/proTripMockData';
 import { ProTripData } from '../types/pro';
 
-export interface TripContext {
-  tripId: string;
-  title: string;
-  location: string;
-  dateRange: string;
-  participants: string[];
-  itinerary: any[];
-  accommodation?: string;
-  currentDate: string;
-  upcomingEvents: any[];
-  recentUpdates: string[];
-  confirmationNumbers: Record<string, string>;
-}
+// Use the enhanced TripContext from types
+import { TripContext } from '../types/tripContext';
+
+export type { TripContext };
 
 export class TripContextService {
   static async getTripContext(tripId: string, isProTrip = false): Promise<TripContext> {
@@ -44,12 +35,22 @@ export class TripContextService {
       title: trip.title,
       location: trip.location,
       dateRange: trip.dateRange,
-      participants: trip.participants.map(p => p.name),
-      itinerary: mockData.itinerary,
+      participants: trip.participants.map(p => ({ id: p.id.toString(), name: p.name, role: 'participant' })),
+      itinerary: mockData.itinerary.map((day, index) => ({
+        id: index.toString(),
+        title: `Day ${index + 1}`,
+        date: day.date,
+        events: day.events
+      })),
       accommodation: mockData.basecamp.name,
       currentDate: today,
       upcomingEvents: this.getUpcomingEvents(mockData.itinerary, today),
-      recentUpdates: mockData.broadcasts.map(b => b.content),
+      recentUpdates: mockData.broadcasts.map((b, i) => ({
+        id: i.toString(),
+        type: 'broadcast',
+        message: b.content,
+        timestamp: b.timestamp
+      })),
       confirmationNumbers: {
         hotel: 'HTL-' + Math.random().toString(36).substr(2, 9),
         rental_car: 'CAR-' + Math.random().toString(36).substr(2, 9),
@@ -71,12 +72,22 @@ export class TripContextService {
       title: proTrip.title,
       location: proTrip.location,
       dateRange: proTrip.dateRange,
-      participants: proTrip.participants.map(p => p.name),
-      itinerary: proTrip.itinerary || [],
+      participants: proTrip.participants.map(p => ({ id: p.id.toString(), name: p.name, role: p.role })),
+      itinerary: (proTrip.itinerary || []).map((day, index) => ({
+        id: index.toString(),
+        title: `Day ${index + 1}`,
+        date: day.date,
+        events: day.events
+      })),
       accommodation: `${proTrip.location} Accommodation`,
       currentDate: today,
       upcomingEvents: this.getUpcomingEvents(proTrip.itinerary || [], today),
-      recentUpdates: [proTrip.description],
+      recentUpdates: [{
+        id: '1',
+        type: 'description',
+        message: proTrip.description,
+        timestamp: today
+      }],
       confirmationNumbers: {
         venue: 'VEN-' + Math.random().toString(36).substr(2, 9),
         transportation: 'TRN-' + Math.random().toString(36).substr(2, 9),
@@ -99,7 +110,7 @@ export class TripContextService {
   }
 
   static formatContextForAI(context: TripContext): string {
-    const participantList = context.participants.join(', ');
+    const participantList = context.participants.map(p => p.name).join(', ');
     const upcomingEventsList = context.upcomingEvents
       .map(event => `- ${event.title} at ${event.time} (${event.location})`)
       .join('\n');
@@ -125,7 +136,7 @@ CONFIRMATION NUMBERS:
 ${confirmationsList}
 
 RECENT UPDATES:
-${context.recentUpdates.map(update => `- ${update}`).join('\n')}
+${context.recentUpdates.map(update => `- ${update.message}`).join('\n')}
     `.trim();
   }
 }
