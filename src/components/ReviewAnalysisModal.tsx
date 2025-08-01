@@ -17,7 +17,7 @@ interface ReviewAnalysisModalProps {
 
 export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisModalProps) => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const [venueName, setVenueName] = useState('');
+  const [venueName, setVenueName] = useState('Brew & Beans Coffee House');
   const [venueUrl, setVenueUrl] = useState('');
   const [includeAudio, setIncludeAudio] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -28,6 +28,7 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
   const [predictions, setPredictions] = useState<any[]>([]);
   const [showPredictions, setShowPredictions] = useState(false);
   const [placesService, setPlacesService] = useState<any>(null);
+  const [isShowingMockData, setIsShowingMockData] = useState(true);
 
   // Use the real AI features hooks
   const { 
@@ -39,12 +40,79 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
     clearResults 
   } = useReviewSummary();
 
-  // Clear results when modal opens
+  // Mock data for default display
+  const mockAnalysisData = {
+    platforms: [
+      {
+        name: 'Google',
+        sentiment: 'Very Positive',
+        summary: 'Customers consistently praise the high-quality coffee and cozy atmosphere. The artisan approach to coffee making and comfortable study environment are frequently highlighted. Some mention slower service during peak hours.',
+        reviewsAnalyzed: 247,
+        themes: [
+          { name: 'Coffee Quality', score: 85, quote: 'Best espresso in town, perfectly balanced with rich crema' },
+          { name: 'Atmosphere & Ambiance', score: 78, quote: 'Perfect spot for studying, quiet and comfortable seating' },
+          { name: 'Service Speed', score: 12, quote: 'Service can be slow during morning rush, but staff is friendly' },
+          { name: 'Wi-Fi & Study Space', score: 82, quote: 'Great for remote work, strong Wi-Fi and plenty of outlets' },
+          { name: 'Pricing', score: 23, quote: 'A bit pricey but the quality justifies the cost' }
+        ],
+        sentimentScore: 72,
+        positiveReviews: 68
+      },
+      {
+        name: 'Yelp',
+        sentiment: 'Very Positive',
+        summary: 'Yelp reviewers appreciate the authentic coffee experience and knowledgeable baristas. The locally-sourced beans and commitment to quality brewing methods receive positive feedback. Pricing concerns are occasionally mentioned.',
+        reviewsAnalyzed: 156,
+        themes: [
+          { name: 'Coffee Quality', score: 81, quote: 'Best espresso in town, perfectly balanced with rich crema' },
+          { name: 'Atmosphere & Ambiance', score: 74, quote: 'Perfect spot for studying, quiet and comfortable seating' },
+          { name: 'Service Speed', score: 11, quote: 'Service can be slow during morning rush, but staff is friendly' },
+          { name: 'Wi-Fi & Study Space', score: 78, quote: 'Great for remote work, strong Wi-Fi and plenty of outlets' },
+          { name: 'Pricing', score: 22, quote: 'A bit pricey but the quality justifies the cost' }
+        ],
+        sentimentScore: 68,
+        positiveReviews: 64
+      },
+      {
+        name: 'Facebook',
+        sentiment: 'Very Positive',
+        summary: 'Facebook reviews highlight the community feel and regular customer loyalty. The friendly staff and consistent quality are frequently praised. Study-friendly environment and Wi-Fi quality receive positive mentions.',
+        reviewsAnalyzed: 89,
+        themes: [
+          { name: 'Coffee Quality', score: 88, quote: 'Best espresso in town, perfectly balanced with rich crema' },
+          { name: 'Atmosphere & Ambiance', score: 80, quote: 'Perfect spot for studying, quiet and comfortable seating' },
+          { name: 'Service Speed', score: 12, quote: 'Service can be slow during morning rush, but staff is friendly' },
+          { name: 'Wi-Fi & Study Space', score: 84, quote: 'Great for remote work, strong Wi-Fi and plenty of outlets' },
+          { name: 'Pricing', score: 24, quote: 'A bit pricey but the quality justifies the cost' }
+        ],
+        sentimentScore: 75,
+        positiveReviews: 71
+      },
+      {
+        name: 'Other',
+        sentiment: 'Positive',
+        summary: 'Reviews from TripAdvisor, Foursquare, and other platforms consistently mention the excellent coffee quality and welcoming atmosphere. Popular with both locals and tourists visiting the area.',
+        reviewsAnalyzed: 134,
+        themes: [
+          { name: 'Coffee Quality', score: 83, quote: 'Outstanding coffee quality that rivals the best cafes in the city' },
+          { name: 'Atmosphere & Ambiance', score: 76, quote: 'Cozy neighborhood feel with friendly regulars' },
+          { name: 'Service Speed', score: 15, quote: 'Worth the wait for such quality coffee and service' },
+          { name: 'Wi-Fi & Study Space', score: 79, quote: 'Reliable internet and comfortable workspace setup' },
+          { name: 'Pricing', score: 25, quote: 'Fair pricing for the quality and atmosphere provided' }
+        ],
+        sentimentScore: 70,
+        positiveReviews: 67
+      }
+    ]
+  };
+
+  // Clear results when modal opens but keep mock data
   useEffect(() => {
     if (isOpen) {
       clearResults();
-      setVenueName('');
+      setVenueName('Brew & Beans Coffee House');
       setVenueUrl('');
+      setIsShowingMockData(true);
     }
   }, [isOpen, clearResults]);
 
@@ -121,6 +189,7 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
       return;
     }
 
+    setIsShowingMockData(false);
     const query = venueUrl && validateUrl(venueUrl) ? venueUrl : venueName;
     await generateSummary(query, { 
       includeAudio, 
@@ -227,6 +296,9 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
   };
 
   const reviewData = parseReviewData(textResult);
+  
+  // Use mock data by default, real data after analysis
+  const displayData = isShowingMockData ? mockAnalysisData : reviewData;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -362,8 +434,8 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
             </div>
           )}
 
-          {/* Results Section */}
-          {textResult && (
+          {/* Results Section - Show by default with mock data */}
+          {(isShowingMockData || textResult) && displayData && (
             <>
               {/* Platform Toggle */}
               <div className="flex gap-4">
@@ -392,13 +464,13 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
               {/* Content */}
               {activeView === 'overview' ? (
                 <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {reviewData?.platforms.slice(0, 4).map((platform) => (
+                {displayData?.platforms.slice(0, 4).map((platform) => (
                     <div key={platform.name} className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
                       <div className="flex items-center justify-between mb-4">
                         <h3 className="text-lg font-bold text-white">{platform.name}</h3>
                         <span className={`text-white text-xs px-2 py-1 rounded-full ${
-                          platform.sentiment === 'Positive' ? 'bg-green-600' :
-                          platform.sentiment === 'Negative' ? 'bg-red-600' :
+                          platform.sentiment.includes('Positive') ? 'bg-green-600' :
+                          platform.sentiment.includes('Negative') ? 'bg-red-600' :
                           'bg-gray-600'
                         }`}>
                           {platform.sentiment}
@@ -416,14 +488,14 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {reviewData?.platforms.map((platform) => (
+                  {displayData?.platforms.map((platform) => (
                     <div key={platform.name} className="bg-gray-800/50 border border-gray-700 rounded-xl p-6">
                       <div className="flex items-center justify-between mb-6">
                         <div className="flex items-center gap-3">
                           <h3 className="text-xl font-bold text-white">{platform.name}</h3>
                           <span className={`text-white text-xs px-2 py-1 rounded-full ${
-                            platform.sentiment === 'Positive' ? 'bg-green-600' :
-                            platform.sentiment === 'Negative' ? 'bg-red-600' :
+                            platform.sentiment.includes('Positive') ? 'bg-green-600' :
+                            platform.sentiment.includes('Negative') ? 'bg-red-600' :
                             'bg-gray-600'
                           }`}>
                             {platform.sentiment}
@@ -477,7 +549,7 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
                     <h3 className="text-lg font-semibold text-white">Audio Overview</h3>
                   </div>
                   <p className="text-gray-300 text-sm mb-4">
-                    AI-generated audio summary covering key insights from {reviewData?.platforms.reduce((acc, p) => acc + p.reviewsAnalyzed, 0) || 0} reviews across all platforms.
+                    AI-generated audio summary covering key insights from {displayData?.platforms.reduce((acc, p) => acc + p.reviewsAnalyzed, 0) || 0} reviews across all platforms.
                   </p>
                   <div className="flex items-center gap-4">
                     <Button
@@ -489,7 +561,7 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
                       {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
                     </Button>
                     <span className="text-sm text-gray-400">
-                      2:34 audio summary available
+                      {isShowingMockData ? '2:34 demo audio available' : '2:34 audio summary available'}
                     </span>
                   </div>
                 </div>
