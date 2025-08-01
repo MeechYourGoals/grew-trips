@@ -98,14 +98,14 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
     if (isOpen) {
       clearResults();
       setIsShowingMockData(true);
-      setHasPerformedSearch(false);
-      // Reset to default venue only if no search has been performed yet
-      if (!hasPerformedSearch) {
+      // Only set default venue name on first open if no venue is set
+      if (!venueName || venueName === '') {
         setVenueName('Brew and Beans Coffee House');
         setSelectedPlace(null);
+        setHasPerformedSearch(false);
       }
     }
-  }, [isOpen, clearResults, hasPerformedSearch]);
+  }, [isOpen, clearResults]);
 
   const handleVenueSearch = async (query: string) => {
     if (query.trim() === '') {
@@ -151,14 +151,18 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
   };
 
   const handleSaveVenue = () => {
-    setVenueName(editingName);
-    setIsEditing(false);
-    setHasPerformedSearch(true);
-    
-    // If it's a new venue name, clear selected place to force new search
-    if (editingName !== venueName) {
-      setSelectedPlace(null);
+    if (editingName.trim()) {
+      setVenueName(editingName.trim());
+      setHasPerformedSearch(true);
+      
+      // If it's a new venue name, clear selected place to force new search
+      if (editingName.trim() !== venueName) {
+        setSelectedPlace(null);
+      }
     }
+    setIsEditing(false);
+    setPredictions([]);
+    setShowPredictions(false);
   };
 
   const handleCancelEdit = () => {
@@ -245,15 +249,11 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
               <div className="relative mb-4">
                 <div className="flex items-center gap-2">
                   <Input
-                    value={isEditing ? editingName : venueName}
+                    value={editingName}
                     onChange={(e) => {
                       const value = e.target.value;
-                      if (isEditing) {
-                        setEditingName(value);
-                      } else {
-                        setVenueName(value);
-                        handleVenueSearch(value);
-                      }
+                      setEditingName(value);
+                      handleVenueSearch(value);
                     }}
                     className="bg-gray-800 border-gray-600 text-white"
                     placeholder="Enter venue name..."
@@ -267,7 +267,7 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
                   </Button>
                 </div>
                 
-                {showPredictions && predictions.length > 0 && !isEditing && (
+                {showPredictions && predictions.length > 0 && isEditing && (
                   <div className="absolute top-full left-0 right-0 bg-gray-800 border border-gray-700 rounded-md mt-1 max-h-40 overflow-y-auto z-50">
                     {predictions.map((prediction, index) => (
                       <div
