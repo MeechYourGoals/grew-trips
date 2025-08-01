@@ -110,18 +110,35 @@ async function analyzeReviews(url: string) {
   }
   
   try {
-    const message = `Analyze all available reviews for this business/restaurant: ${url}
-    
-    Please provide a comprehensive analysis including:
-    1. Overall sentiment (positive/negative/neutral)
-    2. Sentiment score (0-1 scale)
-    3. Main themes mentioned in reviews
-    4. Top pros and cons
-    5. Summary of what reviewers are saying
-    6. Estimated rating and total number of reviews if available
-    7. Which platforms have reviews (Google, Yelp, TripAdvisor, etc.)
-    
-    Format your response as a structured analysis that covers all these points clearly.`;
+    const message = `You are a Review Insights Assistant. Research and analyze reviews for: ${url}
+
+    CRITICAL: Return your analysis in this EXACT format for each platform:
+
+    Platform: Google
+    Summary: [2-3 sentence summary of Google reviews]
+    Reviews: [number] reviews analyzed
+    Sentiment: [positive/negative/neutral]
+    Theme: [theme name] - [representative quote] ([theme name])
+
+    Platform: Yelp  
+    Summary: [2-3 sentence summary of Yelp reviews]
+    Reviews: [number] reviews analyzed
+    Sentiment: [positive/negative/neutral]
+    Theme: [theme name] - [representative quote] ([theme name])
+
+    Platform: Facebook
+    Summary: [2-3 sentence summary of Facebook reviews]
+    Reviews: [number] reviews analyzed  
+    Sentiment: [positive/negative/neutral]
+    Theme: [theme name] - [representative quote] ([theme name])
+
+    Platform: Other
+    Summary: [summary from TripAdvisor, Trustpilot, and other sources]
+    Reviews: [number] reviews analyzed
+    Sentiment: [positive/negative/neutral]
+    Theme: [theme name] - [representative quote] ([theme name])
+
+    Find REAL reviews and data. Do not use placeholder content.`;
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
