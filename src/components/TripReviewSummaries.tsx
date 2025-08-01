@@ -22,19 +22,19 @@ export const TripReviewSummaries = ({ tripId, className = "" }: TripReviewSummar
               <div className="p-2 bg-primary/20 rounded-lg">
                 <Globe className="w-5 h-5 text-primary" />
               </div>
-              <CardTitle className="text-white text-xl">Review & Audio Summaries</CardTitle>
+              <CardTitle className="text-white text-xl">Concierge Review Summaries</CardTitle>
             </div>
             <PremiumBadge />
           </div>
           <p className="text-gray-400 text-sm">
-            Get instant AI text & audio overviews for any restaurant or place—try as a demo, full access for subscribers.
+            Get instant AI-powered insights and review summaries for any restaurant or place—try as a demo, full access for subscribers.
           </p>
         </CardHeader>
 
         <CardContent className="space-y-6">
           <div className="text-center space-y-4">
             <p className="text-gray-300">
-              Analyze reviews from Google, Yelp, Facebook and more with AI-powered insights and audio summaries.
+              Analyze reviews from Google, Yelp, Facebook and more with AI-powered insights and detailed summaries.
             </p>
             <Button
               onClick={() => setShowModal(true)}

@@ -23,7 +23,27 @@ serve(async (req) => {
       );
     }
 
-    const requestData = await req.json();
+    // Better request parsing with validation
+    let requestData;
+    try {
+      const requestText = await req.text();
+      console.log('Request body:', requestText);
+      
+      if (!requestText || requestText.trim() === '') {
+        throw new Error('Empty request body');
+      }
+      
+      requestData = JSON.parse(requestText);
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError);
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON in request body', details: parseError.message }),
+        { 
+          status: 400, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
     const { endpoint, ...data } = requestData;
     
     const apiKey = Deno.env.get('GOOGLE_MAPS_API_KEY');
