@@ -8,6 +8,7 @@ import { Progress } from './ui/progress';
 import { PremiumBadge } from './PremiumBadge';
 import { useReviewSummary } from '@/hooks/useAiFeatures';
 import { validateUrl } from '@/services/aiFeatures';
+import { GoogleMapsService } from '@/services/googleMapsService';
 
 interface ReviewAnalysisModalProps {
   isOpen: boolean;
@@ -27,7 +28,7 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
   const [tempVenueName, setTempVenueName] = useState('');
   const [predictions, setPredictions] = useState<any[]>([]);
   const [showPredictions, setShowPredictions] = useState(false);
-  const [placesService, setPlacesService] = useState<any>(null);
+  const [selectedPlace, setSelectedPlace] = useState<any>(null);
   const [isShowingMockData, setIsShowingMockData] = useState(true);
 
   // Use the real AI features hooks
@@ -116,53 +117,42 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
     }
   }, [isOpen, clearResults]);
 
-  // Initialize Google Places Autocomplete
+  // Reset states when modal opens
   useEffect(() => {
-    const initializePlaces = async () => {
-      if ((window as any).google?.maps?.places) {
-        const service = new (window as any).google.maps.places.AutocompleteService();
-        setPlacesService(service);
-      }
-    };
-    
-    if (!(window as any).google) {
-      const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places`;
-      script.async = true;
-      script.onload = initializePlaces;
-      document.head.appendChild(script);
-    } else {
-      initializePlaces();
+    if (isOpen) {
+      setSelectedPlace(null);
+      setPredictions([]);
+      setShowPredictions(false);
     }
-  }, []);
+  }, [isOpen]);
 
-  const handleVenueSearch = (query: string) => {
+  const handleVenueSearch = async (query: string) => {
     setTempVenueName(query);
     
-    if (placesService && query.length > 2) {
-      placesService.getPlacePredictions(
-        {
-          input: query,
-          types: ['establishment'],
-        },
-        (predictions: any, status: any) => {
-          if (status === 'OK' && predictions) {
-            setPredictions(predictions);
-            setShowPredictions(true);
-          } else {
-            setPredictions([]);
-            setShowPredictions(false);
-          }
+    if (query.length > 2) {
+      try {
+        const result = await GoogleMapsService.getPlaceAutocomplete(query);
+        if (result.predictions && result.predictions.length > 0) {
+          setPredictions(result.predictions);
+          setShowPredictions(true);
+        } else {
+          setPredictions([]);
+          setShowPredictions(false);
         }
-      );
+      } catch (error) {
+        console.error('Error fetching place predictions:', error);
+        setPredictions([]);
+        setShowPredictions(false);
+      }
     } else {
       setPredictions([]);
       setShowPredictions(false);
     }
   };
 
-  const handleSelectPrediction = (prediction: any) => {
+  const handleSelectPrediction = async (prediction: any) => {
     setTempVenueName(prediction.description);
+    setSelectedPlace(prediction);
     setPredictions([]);
     setShowPredictions(false);
   };
@@ -175,8 +165,11 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
   const handleSaveVenue = () => {
     if (tempVenueName.trim()) {
       setVenueName(tempVenueName.trim());
+      // Clear mock data flag when a real venue is selected
+      setIsShowingMockData(false);
     }
     setIsEditingVenue(false);
+    setShowPredictions(false);
   };
 
   const handleCancelEdit = () => {
@@ -190,8 +183,16 @@ export const ReviewAnalysisModal = ({ isOpen, onClose, tripId }: ReviewAnalysisM
     }
 
     setIsShowingMockData(false);
-    const query = venueUrl && validateUrl(venueUrl) ? venueUrl : venueName;
-    await generateSummary(query);
+    
+    // Create venue object for analysis
+    const venueData = {
+      name: venueName,
+      url: venueUrl || '',
+      place_id: selectedPlace?.place_id || '',
+      address: selectedPlace?.description || venueName
+    };
+    
+    await generateSummary(venueData);
   };
 
   const togglePlayback = () => {

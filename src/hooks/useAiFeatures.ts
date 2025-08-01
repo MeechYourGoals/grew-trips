@@ -29,8 +29,10 @@ export const useReviewAnalysis = () => {
 export const useReviewSummary = () => {
   const reviewAnalysis = useReviewAnalysis();
   
-  const generateSummary = (url: string) => {
-    reviewAnalysis.analyzeReviews(url);
+  const generateSummary = (venueData: any) => {
+    // Handle both string URLs and venue objects
+    const query = typeof venueData === 'string' ? venueData : venueData.name;
+    reviewAnalysis.analyzeReviews(query);
   };
 
   return {

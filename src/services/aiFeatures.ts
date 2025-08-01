@@ -22,13 +22,21 @@ export interface AiFeatureResponse<T> {
 }
 
 export class AiFeatureService {
-  static async analyzeReviews(url: string): Promise<AiFeatureResponse<ReviewAnalysisResult>> {
+  static async analyzeReviews(query: string | any): Promise<AiFeatureResponse<ReviewAnalysisResult>> {
     try {
+      // Handle both string queries and venue objects
+      const requestBody = typeof query === 'string' 
+        ? { feature: 'review-analysis', url: query }
+        : { 
+            feature: 'review-analysis', 
+            venue_name: query.name || query,
+            url: query.url || '',
+            place_id: query.place_id || '',
+            address: query.address || ''
+          };
+
       const { data, error } = await supabase.functions.invoke('ai-features', {
-        body: {
-          feature: 'review-analysis',
-          url
-        }
+        body: requestBody
       });
 
       if (error) throw error;

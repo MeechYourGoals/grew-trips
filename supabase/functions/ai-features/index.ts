@@ -10,6 +10,9 @@ const corsHeaders = {
 interface RequestBody {
   feature: 'review-analysis' | 'message-template' | 'priority-classify' | 'send-time-suggest';
   url?: string;
+  venue_name?: string;
+  place_id?: string;
+  address?: string;
   content?: string;
   template_id?: string;
   context?: Record<string, any>;
@@ -39,7 +42,7 @@ serve(async (req) => {
     }
 
     // Parse request body
-    const { feature, url, content, template_id, context, userId, tripId }: RequestBody = await req.json()
+    const { feature, url, venue_name, place_id, address, content, template_id, context, userId, tripId }: RequestBody = await req.json()
 
     // Validate input based on feature type
     if (!feature) {
@@ -49,10 +52,10 @@ serve(async (req) => {
       )
     }
 
-    // URL validation only for features that need it
-    if (feature === 'review-analysis' && !url) {
+    // Validation for review analysis - need either URL or venue name
+    if (feature === 'review-analysis' && !url && !venue_name) {
       return new Response(
-        JSON.stringify({ error: 'Missing URL parameter' }),
+        JSON.stringify({ error: 'Missing URL or venue name parameter' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
@@ -71,7 +74,7 @@ serve(async (req) => {
     let result;
 
     if (feature === 'review-analysis') {
-      result = { result: await analyzeReviews(url!) }
+      result = { result: await analyzeReviews(url, venue_name, address, place_id) }
     } else if (feature === 'message-template') {
       result = await generateMessageWithTemplate(template_id, context || {}, supabase)
     } else if (feature === 'priority-classify') {
@@ -99,8 +102,8 @@ serve(async (req) => {
   }
 })
 
-async function analyzeReviews(url: string) {
-  console.log('Analyzing reviews for:', url)
+async function analyzeReviews(url?: string, venue_name?: string, address?: string, place_id?: string) {
+  console.log('Analyzing reviews for:', { url, venue_name, address, place_id })
   
   const perplexityApiKey = Deno.env.get('PERPLEXITY_API_KEY')
   if (!perplexityApiKey) {
@@ -108,35 +111,57 @@ async function analyzeReviews(url: string) {
   }
   
   try {
-    const message = `You are a Review Insights Assistant. Research and analyze reviews for: ${url}
+    // Build search query based on available information
+    let searchQuery = '';
+    if (url) {
+      searchQuery = `Analyze reviews for this URL: ${url}`;
+    } else if (venue_name) {
+      searchQuery = `Find and analyze reviews for "${venue_name}"`;
+      if (address) {
+        searchQuery += ` located at ${address}`;
+      }
+    }
 
-    CRITICAL: Return your analysis in this EXACT format for each platform:
+    const message = `You are a Review Insights Assistant for Lovable, responsible for gathering, summarizing, and analyzing real-time, authentic reviews from across the web.
 
-    Platform: Google
-    Summary: [2-3 sentence summary of Google reviews]
-    Reviews: [number] reviews analyzed
-    Sentiment: [positive/negative/neutral]
-    Theme: [theme name] - [representative quote] ([theme name])
+Your core job: ${searchQuery}
 
-    Platform: Yelp  
-    Summary: [2-3 sentence summary of Yelp reviews]
-    Reviews: [number] reviews analyzed
-    Sentiment: [positive/negative/neutral]
-    Theme: [theme name] - [representative quote] ([theme name])
+Research and synthesize real reviews for this venue across the web — focusing on Google, Yelp, Facebook, and any other reputable platforms you find.
 
-    Platform: Facebook
-    Summary: [2-3 sentence summary of Facebook reviews]
-    Reviews: [number] reviews analyzed  
-    Sentiment: [positive/negative/neutral]
-    Theme: [theme name] - [representative quote] ([theme name])
+CRITICAL: Return your analysis in this EXACT format for each platform:
 
-    Platform: Other
-    Summary: [summary from TripAdvisor, Trustpilot, and other sources]
-    Reviews: [number] reviews analyzed
-    Sentiment: [positive/negative/neutral]
-    Theme: [theme name] - [representative quote] ([theme name])
+Platform: Google
+Summary: [2-3 sentence summary of Google reviews with specific details]
+Reviews: [actual number] reviews analyzed
+Sentiment: [positive/negative/neutral/mixed]
+Theme: [specific theme] - [actual representative quote from review] ([theme name])
 
-    Find REAL reviews and data. Do not use placeholder content.`;
+Platform: Yelp
+Summary: [2-3 sentence summary of Yelp reviews with specific details]
+Reviews: [actual number] reviews analyzed
+Sentiment: [positive/negative/neutral/mixed]
+Theme: [specific theme] - [actual representative quote from review] ([theme name])
+
+Platform: Facebook
+Summary: [2-3 sentence summary of Facebook reviews with specific details]
+Reviews: [actual number] reviews analyzed
+Sentiment: [positive/negative/neutral/mixed]
+Theme: [specific theme] - [actual representative quote from review] ([theme name])
+
+Platform: Other
+Summary: [summary from TripAdvisor, OpenTable, Trustpilot, Zomato, and other sources with platform names]
+Reviews: [actual number] reviews analyzed across all other platforms
+Sentiment: [positive/negative/neutral/mixed]
+Theme: [specific theme] - [actual representative quote from review] ([theme name])
+
+Context variables:
+Venue Name: ${venue_name || 'N/A'}
+Address: ${address || 'N/A'}
+Review URL: ${url || 'N/A'}
+Place ID: ${place_id || 'N/A'}
+Query Date: ${new Date().toISOString().split('T')[0]}
+
+Find REAL reviews and data. Never use fictional, placeholder, or default data — always provide factual, current, web-sourced information. If no reviews are found for a source, clearly indicate as much.`;
 
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
       method: 'POST',
