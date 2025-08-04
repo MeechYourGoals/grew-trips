@@ -60,13 +60,35 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
             />
           </div>
 
-          <button
-            onClick={onUpgrade}
-            className="bg-gradient-to-r from-[hsl(45,95%,58%)] to-[hsl(45,90%,65%)] hover:from-[hsl(45,90%,55%)] hover:to-[hsl(45,85%,62%)] text-black px-4 py-2 h-12 rounded-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm"
-          >
-            <Crown size={18} />
-            Upgrade to Plus/Pro
-          </button>
+          <div className="flex items-center gap-3">
+            {viewMode === 'tripsPro' && (
+              <button
+                onClick={() => {/* Schedule demo */}}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 h-12 rounded-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm"
+              >
+                <Crown size={18} />
+                Schedule Demo
+              </button>
+            )}
+            {viewMode === 'events' && (
+              <button
+                onClick={() => {/* See pricing */}}
+                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-4 py-2 h-12 rounded-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm"
+              >
+                <Crown size={18} />
+                See Pricing
+              </button>
+            )}
+            {viewMode === 'myTrips' && (
+              <button
+                onClick={onUpgrade}
+                className="bg-gradient-to-r from-[hsl(45,95%,58%)] to-[hsl(45,90%,65%)] hover:from-[hsl(45,90%,55%)] hover:to-[hsl(45,85%,62%)] text-black px-4 py-2 h-12 rounded-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm"
+              >
+                <Crown size={18} />
+                Upgrade to Plus
+              </button>
+            )}
+          </div>
           
           {/* Consistent sized buttons container */}
           <div className="flex items-center gap-3">

@@ -2,13 +2,21 @@
 import React, { useState } from 'react';
 import { MobileHeader } from '../components/MobileHeader';
 import { CreateTripModal } from '../components/CreateTripModal';
-
 import { UpgradeModal } from '../components/UpgradeModal';
 import { SettingsMenu } from '../components/SettingsMenu';
 import { TripStatsOverview } from '../components/home/TripStatsOverview';
 import { TripViewToggle } from '../components/home/TripViewToggle';
 import { DesktopHeader } from '../components/home/DesktopHeader';
 import { TripGrid } from '../components/home/TripGrid';
+
+// New conversion components
+import { PersistentCTABar } from '../components/conversion/PersistentCTABar';
+import { ProductStatusBadge } from '../components/conversion/ProductStatusBadge';
+import { SocialProofSection } from '../components/conversion/SocialProofSection';
+import { FeatureShowcase } from '../components/conversion/FeatureShowcase';
+import { PricingSection } from '../components/conversion/PricingSection';
+import { DemoModal } from '../components/conversion/DemoModal';
+
 import { useAuth } from '../hooks/useAuth';
 import { useIsMobile } from '../hooks/use-mobile';
 import { proTripMockData } from '../data/proTripMockData';
@@ -20,6 +28,8 @@ const Index = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
+  const [showPricingModal, setShowPricingModal] = useState(false);
   const [viewMode, setViewMode] = useState('myTrips');
   const [isLoading, setIsLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('');
@@ -107,6 +117,14 @@ const Index = () => {
     setIsCreateModalOpen(true);
   };
 
+  const handleScheduleDemo = () => {
+    setIsDemoModalOpen(true);
+  };
+
+  const handleSeePricing = () => {
+    setShowPricingModal(true);
+  };
+
   const filteredData = getFilteredData();
 
   return (
@@ -138,6 +156,11 @@ const Index = () => {
           />
         )}
 
+        {/* Product Status Badge */}
+        <div className="animate-fade-in mb-6">
+          <ProductStatusBadge />
+        </div>
+
         {/* Enhanced Toggle with smooth transitions */}
         <div className="animate-fade-in">
           <TripViewToggle
@@ -159,7 +182,7 @@ const Index = () => {
         )}
 
         {/* Main Content - Trip Cards with enhanced loading and empty states */}
-        <div className="mb-8 animate-fade-in" style={{ animationDelay: '0.2s' }}>
+        <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.2s' }}>
           <TripGrid
             viewMode={viewMode}
             trips={filteredData.trips}
@@ -170,7 +193,30 @@ const Index = () => {
           />
         </div>
 
+        {/* Social Proof Section */}
+        <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+          <SocialProofSection />
+        </div>
+
+        {/* Feature Showcase */}
+        <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+          <FeatureShowcase />
+        </div>
+
+        {/* Pricing Section */}
+        <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+          <PricingSection />
+        </div>
+
       </div>
+
+      {/* Persistent CTA Bar */}
+      <PersistentCTABar
+        viewMode={viewMode}
+        onPlanTrip={handleCreateTrip}
+        onScheduleDemo={handleScheduleDemo}
+        onSeePricing={handleSeePricing}
+      />
 
       {/* Modals */}
       <CreateTripModal 
@@ -186,6 +232,12 @@ const Index = () => {
       <SettingsMenu 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
+      />
+
+      <DemoModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
+        demoType={viewMode === 'events' ? 'events' : 'pro'}
       />
     </div>
   );

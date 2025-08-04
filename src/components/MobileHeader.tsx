@@ -33,13 +33,33 @@ export const MobileHeader = ({
         </div>
         
         <div className="flex items-center gap-2">
-          <button
-            onClick={onCreateTrip}
-            className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black p-3 rounded-xl transition-all duration-300 shadow-lg"
-            title="New Trip"
-          >
-            <Plus size={20} />
-          </button>
+          {viewMode === 'myTrips' && (
+            <button
+              onClick={onCreateTrip}
+              className="bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-700 hover:to-yellow-600 text-black p-3 rounded-xl transition-all duration-300 shadow-lg"
+              title="Plan Your Trip"
+            >
+              <Plus size={20} />
+            </button>
+          )}
+          {viewMode === 'tripsPro' && (
+            <button
+              onClick={() => {/* Schedule demo */}}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-3 rounded-xl transition-all duration-300 shadow-lg text-sm font-medium"
+              title="Schedule Demo"
+            >
+              Demo
+            </button>
+          )}
+          {viewMode === 'events' && (
+            <button
+              onClick={() => {/* See pricing */}}
+              className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-4 py-3 rounded-xl transition-all duration-300 shadow-lg text-sm font-medium"
+              title="See Pricing"
+            >
+              Pricing
+            </button>
+          )}
           
           <button
             onClick={() => setIsMenuOpen(true)}
