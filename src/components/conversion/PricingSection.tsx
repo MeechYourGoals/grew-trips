@@ -25,6 +25,7 @@ interface PricingTier {
   cta: string;
   popular?: boolean;
   enterprise?: boolean;
+  ctaAction?: () => void;
 }
 
 const pricingTiers: PricingTier[] = [
@@ -45,7 +46,7 @@ const pricingTiers: PricingTier[] = [
   },
   {
     id: 'plus',
-    name: 'Plus',
+    name: 'Chravel Plus',
     price: '$12',
     description: 'AI-powered planning for smart travelers',
     icon: <Crown size={24} />,
@@ -63,7 +64,7 @@ const pricingTiers: PricingTier[] = [
   },
   {
     id: 'pro',
-    name: 'Trips Pro',
+    name: 'Chravel Pro',
     price: 'Custom',
     description: 'Enterprise trip management',
     icon: <Building size={24} />,
@@ -78,11 +79,12 @@ const pricingTiers: PricingTier[] = [
       'Custom integrations'
     ],
     cta: 'Schedule Demo',
+    ctaAction: () => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo',
     enterprise: true
   },
   {
     id: 'events',
-    name: 'Events',
+    name: 'Chravel Events',
     price: 'Custom',
     description: 'Professional event coordination',
     icon: <CalendarPlus size={24} />,
@@ -97,6 +99,7 @@ const pricingTiers: PricingTier[] = [
       'Dedicated support'
     ],
     cta: 'Contact Sales',
+    ctaAction: () => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo',
     enterprise: true
   }
 ];
@@ -228,7 +231,7 @@ export const PricingSection = () => {
                     ? 'bg-accent hover:bg-accent/90' 
                     : 'bg-secondary hover:bg-secondary/90'
                 }`}
-                onClick={() => handlePlanSelect(tier.id)}
+                onClick={tier.ctaAction || (() => handlePlanSelect(tier.id))}
               >
                 {tier.cta}
               </Button>

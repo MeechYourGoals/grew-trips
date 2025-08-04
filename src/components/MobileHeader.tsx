@@ -44,7 +44,7 @@ export const MobileHeader = ({
           )}
           {viewMode === 'tripsPro' && (
             <button
-              onClick={() => {/* Schedule demo */}}
+              onClick={() => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo'}
               className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-3 rounded-xl transition-all duration-300 shadow-lg text-sm font-medium"
               title="Schedule Demo"
             >
@@ -53,7 +53,12 @@ export const MobileHeader = ({
           )}
           {viewMode === 'events' && (
             <button
-              onClick={() => {/* See pricing */}}
+              onClick={() => {
+                const pricingSection = document.querySelector('#pricing-section');
+                if (pricingSection) {
+                  pricingSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
               className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-4 py-3 rounded-xl transition-all duration-300 shadow-lg text-sm font-medium"
               title="See Pricing"
             >

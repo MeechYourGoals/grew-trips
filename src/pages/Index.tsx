@@ -30,6 +30,7 @@ const Index = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [showPricingModal, setShowPricingModal] = useState(false);
+  const [isPricingSectionVisible, setIsPricingSectionVisible] = useState(false);
   const [viewMode, setViewMode] = useState('myTrips');
   const [isLoading, setIsLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('');
@@ -122,7 +123,12 @@ const Index = () => {
   };
 
   const handleSeePricing = () => {
-    setShowPricingModal(true);
+    setIsPricingSectionVisible(true);
+    // Scroll to pricing section
+    const pricingSection = document.querySelector('#pricing-section');
+    if (pricingSection) {
+      pricingSection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const filteredData = getFilteredData();

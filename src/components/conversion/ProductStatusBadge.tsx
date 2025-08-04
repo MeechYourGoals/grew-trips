@@ -13,37 +13,15 @@ export const ProductStatusBadge = ({ className = '' }: ProductStatusBadgeProps) 
       <div className="flex items-center gap-2">
         <Badge variant="secondary" className="bg-green-500/20 text-green-400 border-green-500/30 flex items-center gap-2">
           <CheckCircle size={14} />
-          Live & Available Now
+          Demo mode live – full launch coming soon
         </Badge>
-        <Badge variant="outline" className="border-primary/30 text-primary">
-          Beta v2.1
-        </Badge>
-      </div>
-
-      {/* Platform Availability */}
-      <div className="flex items-center gap-3 text-sm text-muted-foreground">
-        <span className="font-medium">Available on:</span>
-        <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1">
-            <Globe size={16} className="text-green-400" />
-            <span>Web</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Smartphone size={16} className="text-green-400" />
-            <span>iOS/Android</span>
-          </div>
-          <div className="flex items-center gap-1">
-            <Monitor size={16} className="text-green-400" />
-            <span>Desktop</span>
-          </div>
-        </div>
       </div>
 
       {/* Launch Timeline */}
       <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-2">
         <div className="flex items-center gap-2">
           <Clock size={12} />
-          <span>Pro features rolling out Q2 2025 • Events platform Q3 2025</span>
+          <span>Chravel Pro features launching Q4 2025 • Chravel Events platform launching Q1 2026</span>
         </div>
       </div>
     </div>

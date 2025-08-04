@@ -23,7 +23,7 @@ export const PersistentCTABar = ({
       case 'tripsPro':
         return (
           <Button 
-            onClick={onScheduleDemo}
+            onClick={() => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo'}
             className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2 shadow-lg"
           >
             <Phone size={16} />

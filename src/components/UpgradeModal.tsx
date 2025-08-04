@@ -62,7 +62,7 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
               }`}
             >
               <Building size={18} />
-              Trips Pro
+              Chravel Pro
             </button>
             <button
               onClick={() => setSelectedPlan('events')}
@@ -141,7 +141,7 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
               <div className="w-16 h-16 bg-gradient-to-r from-yellow-500 to-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Building size={32} className="text-black" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-2">Trips Pro</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">Chravel Pro</h3>
               <p className="text-gray-300">Enterprise software for professional trip management</p>
             </div>
 

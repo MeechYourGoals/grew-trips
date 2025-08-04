@@ -49,7 +49,7 @@ export const ProUpgradeModal = ({ isOpen, onClose }: ProUpgradeModalProps) => {
               <Crown size={isMobile ? 20 : 24} className="text-white" />
             </div>
             <div>
-              <h2 className={`font-bold text-white ${isMobile ? 'text-xl' : 'text-3xl'}`}>Upgrade to Trips Pro</h2>
+              <h2 className={`font-bold text-white ${isMobile ? 'text-xl' : 'text-3xl'}`}>Upgrade to Chravel Pro</h2>
               <p className={`text-gray-400 ${isMobile ? 'text-sm' : ''}`}>Enterprise software for professional trip management</p>
             </div>
           </div>

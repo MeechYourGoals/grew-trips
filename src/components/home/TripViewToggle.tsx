@@ -34,7 +34,7 @@ export const TripViewToggle = ({ viewMode, onViewModeChange }: TripViewTogglePro
           className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-[hsl(210,8%,45%)] data-[state=on]:to-[hsl(210,10%,55%)] data-[state=on]:text-white transition-all font-medium flex items-center gap-2 ${isMobile ? 'text-sm' : ''}`}
         >
           <Crown size={isMobile ? 16 : 18} />
-          <span className={isMobile ? 'text-sm' : ''}>Trips Pro</span>
+          <span className={isMobile ? 'text-sm' : ''}>Chravel Pro</span>
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="events" 
