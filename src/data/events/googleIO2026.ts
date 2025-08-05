@@ -35,7 +35,7 @@ export const googleIO2026Event: EventData = {
     ]
   },
   groupChatEnabled: true,
-  attendanceExpected: 7500,
+  attendanceExpected: 2000,
   capacity: 7500,
   registrationStatus: 'open',
   checkedInCount: 0,

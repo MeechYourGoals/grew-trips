@@ -14,6 +14,16 @@ interface GenericTrip {
 export const calculatePeopleCount = (
   trip: GenericTrip | ProTripData | EventData
 ): string => {
+  // For EventData, prioritize attendanceExpected over participants count
+  if ('attendanceExpected' in trip && trip.attendanceExpected && trip.attendanceExpected > 0) {
+    const count = trip.attendanceExpected;
+    if (count >= 10000) return `${Math.floor(count / 1000)}K+`;
+    if (count >= 1000) return `${Math.floor(count / 1000)}K+`;
+    if (count > 99) return "99+";
+    return count.toString();
+  }
+  
+  // Fallback to participants count for ProTripData or when attendanceExpected is not available
   const count = trip.participants?.length || 0;
   if (count === 0) return "—";
   if (count > 99) return "99+";
