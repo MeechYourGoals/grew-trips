@@ -9,12 +9,38 @@ export const ohioStateNotreDame: ProTripData = {
   category: 'Sports',
   proTripCategory: 'Sports & Athletics',
   tags: ['Sports', 'NCAA Division I', 'Football'],
-  participants: [
-    { id: 1, name: 'Ryan Day', avatar: '/images/avatars/blank-01.png', role: 'Coaches' },
-    { id: 2, name: 'Marvin Harrison Jr.', avatar: '/images/avatars/blank-02.png', role: 'Players' },
-    { id: 3, name: 'Kyle McCord', avatar: '/images/avatars/blank-03.png', role: 'Players' },
-    { id: 4, name: 'Kate Hoke', avatar: '/images/avatars/blank-04.png', role: 'Medical Staff' }
-  ],
+  participants: Array.from({ length: 150 }, (_, i) => {
+    const id = 301 + i;
+    const avatars = [
+      '/images/avatars/blank-01.png',
+      '/images/avatars/blank-02.png',
+      '/images/avatars/blank-03.png',
+      '/images/avatars/blank-04.png',
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face'
+    ];
+    
+    if (i < 15) {
+      const coaches = ['Ryan Day', 'Offensive Coordinator', 'Defensive Coordinator', 'Special Teams Coach', 'QB Coach', 'RB Coach', 'WR Coach', 'OL Coach', 'DL Coach', 'LB Coach', 'DB Coach', 'Strength Coach', 'Assistant Coach 1', 'Assistant Coach 2', 'Graduate Assistant'];
+      return { id, name: coaches[i] || `Coach ${i + 1}`, avatar: avatars[i % avatars.length], role: 'Coaches' };
+    } else if (i < 100) {
+      const positions = ['QB', 'RB', 'WR', 'TE', 'OL', 'DL', 'LB', 'DB', 'K', 'P', 'LS'];
+      const position = positions[i % positions.length];
+      const playerNumber = Math.floor((i - 15) / 11) + 1;
+      return { id, name: `${position} Player ${playerNumber}`, avatar: avatars[i % avatars.length], role: 'Players' };
+    } else if (i < 115) {
+      const medical = ['Head Team Doctor', 'Orthopedic Surgeon', 'Athletic Trainer 1', 'Athletic Trainer 2', 'Athletic Trainer 3', 'Physical Therapist', 'Massage Therapist', 'Nutritionist', 'Mental Health Specialist', 'Team Chaplain', 'Equipment Manager', 'Assistant Equipment Manager', 'Video Coordinator', 'Technology Specialist', 'Academic Advisor'];
+      return { id, name: medical[i - 100] || `Medical Staff ${i - 99}`, avatar: avatars[i % avatars.length], role: 'Medical Staff' };
+    } else if (i < 135) {
+      const admin = ['Athletic Director', 'Team Manager', 'Operations Manager', 'Travel Coordinator', 'Compliance Officer', 'Sports Information Director', 'Media Relations', 'Security Chief', 'Bus Driver 1', 'Bus Driver 2', 'Team Chef', 'Logistics Coordinator', 'Administrative Assistant 1', 'Administrative Assistant 2', 'Guest Relations'];
+      return { id, name: admin[i - 115] || `Admin Staff ${i - 114}`, avatar: avatars[i % avatars.length], role: 'Management' };
+    } else {
+      const support = ['Team Photographer', 'Video Production', 'Broadcasting Coordinator', 'Alumni Relations', 'Fan Experience Coordinator', 'Band Director', 'Cheerleading Coach', 'Mascot Coordinator', 'Facility Operations', 'Maintenance Supervisor', 'Security Officer 1', 'Security Officer 2', 'VIP Host', 'Game Operations', 'Emergency Coordinator'];
+      return { id, name: support[i - 135] || `Support Staff ${i - 134}`, avatar: avatars[i % avatars.length], role: 'Support Staff' };
+    }
+  }),
   budget: {
     total: 250000,
     spent: 75000,

@@ -8,12 +8,36 @@ export const paulGeorgeEliteAau: ProTripData = {
   dateRange: 'Jul 8 - Jul 14, 2025',
   category: 'Sports – Team Trip',
   tags: ['Sports – Team Trip', 'Basketball', 'AAU', 'Nationals'],
-  participants: [
-    { id: 101, name: 'Matt Barnes', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face', role: 'Coaches' },
-    { id: 102, name: 'Brandon Lincoln', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Directors' },
-    { id: 103, name: 'Carter Bryant', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Players' },
-    { id: 104, name: 'Jaden DePina', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Players' }
-  ],
+  participants: Array.from({ length: 120 }, (_, i) => {
+    const id = 101 + i;
+    const avatars = [
+      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=40&h=40&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=40&h=40&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?w=40&h=40&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=40&h=40&fit=crop&crop=face',
+      'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=40&h=40&fit=crop&crop=face'
+    ];
+    
+    if (i < 10) {
+      const coaches = ['Matt Barnes', 'Brandon Lincoln', 'Byron Joseph', 'Jerald Dickson', 'Dave McClure', 'Travis Oscar', 'Eddie Cruz', 'Paul George', 'Assistant Coach 1', 'Assistant Coach 2'];
+      return { id, name: coaches[i] || `Coach ${i + 1}`, avatar: avatars[i % avatars.length], role: 'Coaches' };
+    } else if (i < 20) {
+      const staff = ['Team Manager', 'Equipment Manager', 'Team Doctor', 'Athletic Trainer', 'Team Photographer', 'Video Coordinator', 'Nutrition Specialist', 'Transportation Coordinator', 'Team Administrator', 'Academic Advisor'];
+      return { id, name: staff[i - 10] || `Staff ${i - 9}`, avatar: avatars[i % avatars.length], role: 'Staff' };
+    } else if (i < 100) {
+      const playerNames = ['Carter Bryant', 'Jaden DePina', 'James Evans Jr.', 'Ifiok Peter', 'Michael Johnson', 'David Williams', 'Chris Brown', 'Kevin Davis', 'Anthony Miller', 'Brandon Wilson'];
+      const playerIndex = (i - 20) % playerNames.length;
+      const teamNumber = Math.floor((i - 20) / 10) + 1;
+      return { id, name: `${playerNames[playerIndex]} (T${teamNumber})`, avatar: avatars[i % avatars.length], role: 'Players' };
+    } else {
+      const chaperones = ['Parent Chaperone', 'Team Volunteer', 'Guardian', 'Family Representative'];
+      const chaperoneIndex = (i - 100) % chaperones.length;
+      return { id, name: `${chaperones[chaperoneIndex]} ${i - 99}`, avatar: avatars[i % avatars.length], role: 'Chaperones' };
+    }
+  }),
   budget: {
     total: 45000,
     spent: 18500,
