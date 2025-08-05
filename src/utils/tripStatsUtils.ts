@@ -28,12 +28,32 @@ export const calculateDaysCount = (dateRange: string): string => {
     // Handle various date range formats
     if (dateRange.includes(" - ")) {
       const [startStr, endStr] = dateRange.split(" - ");
-      const start = new Date(startStr);
-      const end = new Date(endStr);
       
-      if (isNaN(start.getTime()) || isNaN(end.getTime())) return "—";
+      // Parse dates more intelligently
+      // Handle formats like "Feb 1 - May 31, 2025" and "Sep 13 - Sep 14, 2025"
+      let startDate: Date;
+      let endDate: Date;
       
-      const diffTime = Math.abs(end.getTime() - start.getTime());
+      // Check if the dateRange has a year at the end
+      const yearMatch = dateRange.match(/, (\d{4})$/);
+      const year = yearMatch ? yearMatch[1] : new Date().getFullYear().toString();
+      
+      // Clean the start and end strings
+      const cleanStartStr = startStr.trim();
+      const cleanEndStr = endStr.replace(/, \d{4}$/, '').trim();
+      
+      // Add year to both dates if not present
+      const startWithYear = cleanStartStr.includes(',') ? cleanStartStr : `${cleanStartStr}, ${year}`;
+      const endWithYear = cleanEndStr.includes(',') ? cleanEndStr : `${cleanEndStr}, ${year}`;
+      
+      startDate = new Date(startWithYear);
+      endDate = new Date(endWithYear);
+      
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        return "—";
+      }
+      
+      const diffTime = Math.abs(endDate.getTime() - startDate.getTime());
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // +1 to include both start and end days
       
       return diffDays.toString();
