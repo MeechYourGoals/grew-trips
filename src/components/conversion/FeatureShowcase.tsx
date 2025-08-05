@@ -31,15 +31,13 @@ const features: Feature[] = [
     title: 'AI Concierge',
     description: 'Chat with AI for personalized recommendations based on your location and preferences',
     icon: <Sparkles size={24} />,
-    isNew: true,
-    demo: 'concierge'
+    isNew: true
   },
   {
     id: 'basecamp',
     title: 'Smart Basecamp',
     description: 'Get location-aware recommendations within perfect travel distance from your home base',
-    icon: <MapPin size={24} />,
-    demo: 'basecamp'
+    icon: <MapPin size={24} />
   },
   {
     id: 'chat',
@@ -82,16 +80,16 @@ const features: Feature[] = [
 
 const beforeAfterScenarios = [
   {
-    title: "Planning a 12-person bachelor party in Tulum",
-    before: "15+ group chats, scattered Google docs, missed payments, last-minute chaos",
-    after: "One shared trip space, real-time coordination, budget tracking, stress-free execution",
-    savings: "78% less coordination time"
+    title: "Organizing a multi-family Disney World trip for 18 guests",
+    before: "10+ group texts, lost itineraries, last-minute changes, confusion over tickets and park reservations",
+    after: "One shared digital trip board, synchronized schedules, automated reminder notifications, group budgeting, and everyone on the same page from airport to park parade",
+    savings: "75% less pre-trip stress"
   },
   {
-    title: "Managing a 50-person music tour across 30 cities",
+    title: "Managing a 33-person music tour across 30 cities",
     before: "Email chains, Excel sheets, manual check-ins, budget overruns",
     after: "Automated updates, role-based access, expense tracking, seamless logistics",
-    savings: "$45K saved per tour"
+    savings: "$30K saved per tour"
   }
 ];
 
@@ -151,7 +149,7 @@ export const FeatureShowcase = () => {
             Powerful features for every type of trip
           </h2>
           <p className="text-lg text-muted-foreground">
-            Click any feature to see it in action
+            Everything you need for seamless trip coordination
           </p>
         </div>
 
