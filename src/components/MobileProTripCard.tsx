@@ -7,6 +7,7 @@ import { ProTripData } from '../types/pro';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { TravelerTooltip } from './ui/traveler-tooltip';
 import { calculatePeopleCount, calculateDaysCount, calculateProTripPlacesCount } from '../utils/tripStatsUtils';
+import { processTeamMembers, processRoles } from '../utils/teamDisplayUtils';
 
 interface MobileProTripCardProps {
   trip: ProTripData;
@@ -30,6 +31,9 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
     ...participant,
     avatar: participant.avatar || `https://images.unsplash.com/photo-${1649972904349 + index}-6e44c42644a7?w=40&h=40&fit=crop&crop=face`
   }));
+
+  // Process team members for display (mobile shows max 5)
+  const { visible: visibleMembers, overflow: memberOverflow } = processTeamMembers(participantsWithAvatars, 5);
 
   return (
     <div className="bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/20 rounded-2xl overflow-hidden transition-all duration-300 shadow-lg hover:scale-[1.02]">
@@ -98,11 +102,11 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
           
           <div className="flex items-center">
             <div className="flex -space-x-2">
-              {participantsWithAvatars.slice(0, 3).map((participant, index) => (
+              {visibleMembers.map((participant, index) => (
                 <TravelerTooltip key={participant.id} name={`${participant.name} - ${participant.role}`}>
                   <div
                     className="relative"
-                    style={{ zIndex: participantsWithAvatars.length - index }}
+                    style={{ zIndex: visibleMembers.length - index }}
                   >
                     <img
                       src={participant.avatar}
@@ -113,9 +117,9 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
                 </TravelerTooltip>
               ))}
             </div>
-            {participantsWithAvatars.length > 3 && (
+            {memberOverflow > 0 && (
               <div className="w-8 h-8 rounded-full bg-gray-700 border-2 border-gray-900 flex items-center justify-center text-xs font-medium text-white ml-1">
-                +{participantsWithAvatars.length - 3}
+                +{memberOverflow}
               </div>
             )}
           </div>

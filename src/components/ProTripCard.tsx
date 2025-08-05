@@ -11,6 +11,7 @@ import { useTripVariant } from '../contexts/TripVariantContext';
 import { archiveTrip } from '../services/archiveService';
 import { useToast } from '../hooks/use-toast';
 import { calculatePeopleCount, calculateDaysCount, calculateProTripPlacesCount } from '../utils/tripStatsUtils';
+import { processTeamMembers, processRoles } from '../utils/teamDisplayUtils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,6 +68,10 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
     ...participant,
     avatar: participant.avatar || `https://images.unsplash.com/photo-${1649972904349 + index}-6e44c42644a7?w=40&h=40&fit=crop&crop=face`
   }));
+
+  // Process team members and roles for display
+  const { visible: visibleMembers, overflow: memberOverflow } = processTeamMembers(participantsWithAvatars, 5);
+  const { visible: visibleRoles, overflow: roleOverflow } = processRoles(participantsWithAvatars, 5);
 
   return (
     <div className={`bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-md border border-white/20 rounded-3xl p-6 hover:bg-white/15 transition-all duration-300 hover:scale-105 hover:shadow-xl group hover:border-${accentColors.primary}/50 relative overflow-hidden`}>
@@ -192,20 +197,25 @@ export const ProTripCard = ({ trip }: ProTripCardProps) => {
         </div>
         
         <div className="flex -space-x-3 mb-2">
-          {participantsWithAvatars.map((participant, index) => (
+          {visibleMembers.map((participant, index) => (
             <TravelerTooltip key={participant.id} name={`${participant.name} - ${participant.role}`}>
               <img
                 src={participant.avatar}
                 alt={`${participant.name} - ${participant.role}`}
                 className={`w-10 h-10 rounded-full border-2 border-white/30 hover:scale-110 transition-transform duration-200 hover:border-${accentColors.primary}`}
-                style={{ zIndex: participantsWithAvatars.length - index }}
+                style={{ zIndex: visibleMembers.length - index }}
               />
             </TravelerTooltip>
           ))}
+          {memberOverflow > 0 && (
+            <div className="w-10 h-10 rounded-full bg-white/20 border-2 border-white/30 flex items-center justify-center text-xs font-medium text-white">
+              +{memberOverflow}
+            </div>
+          )}
         </div>
 
         <div className="text-xs text-white/60">
-          Roles: {participantsWithAvatars.map(p => p.role).join(', ')}
+          Roles: {visibleRoles.join(', ')}{roleOverflow > 0 && ` +${roleOverflow} more`}
         </div>
       </div>
 
