@@ -15,6 +15,7 @@ import { ChatControlsSection } from './events/ChatControlsSection';
 import { HeatMapDashboard } from './events/HeatMapDashboard';
 import { EmergencyBroadcast } from './events/EmergencyBroadcast';
 import { useIsMobile } from '../hooks/use-mobile';
+import { getFeatureTierEmoji, getTierLegend } from '../utils/featureTiers';
 
 interface EventsSettingsProps {
   currentUserId: string;
@@ -30,16 +31,16 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
     { id: 'setup', label: 'Event Setup', icon: Calendar },
     { id: 'profile', label: 'Event Profile', icon: Calendar },
     { id: 'chat', label: 'Chat Controls', icon: Users },
-    { id: 'ticketing', label: 'Ticketing & Billing', icon: CreditCard },
+    { id: 'ticketing', label: `Ticketing & Billing ${getFeatureTierEmoji('ticketing', 'events')}`, icon: CreditCard },
     { id: 'attendees', label: 'Attendee Types', icon: Users },
     { id: 'agenda', label: 'Agenda Builder', icon: Clock },
-    { id: 'exhibitors', label: 'Exhibitors & Sponsors', icon: Building },
-    { id: 'networking', label: 'Communication Rules', icon: Network },
+    { id: 'exhibitors', label: `Exhibitors & Sponsors ${getFeatureTierEmoji('exhibitors', 'events')}`, icon: Building },
+    { id: 'networking', label: `Communication Rules ${getFeatureTierEmoji('networking', 'events')}`, icon: Network },
     { id: 'broadcasts', label: 'Segmented Broadcasts', icon: Megaphone },
     { id: 'emergency', label: 'Emergency Broadcast', icon: Activity },
-    { id: 'engagement', label: 'Live Engagement', icon: Activity },
+    { id: 'engagement', label: `Live Engagement ${getFeatureTierEmoji('live-engagement', 'events')}`, icon: Activity },
     { id: 'heatmap', label: 'Heat Map Dashboard', icon: BarChart },
-    { id: 'analytics', label: 'Event Analytics', icon: BarChart }
+    { id: 'analytics', label: `Event Analytics ${getFeatureTierEmoji('analytics', 'events')}`, icon: BarChart }
   ];
 
   const handleEventDataChange = (data: any) => {
@@ -145,6 +146,19 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
               </button>
             );
           })}
+        </div>
+        
+        {/* Legend */}
+        <div className="mt-8 pt-4 border-t border-white/10">
+          <h3 className="text-sm font-medium text-gray-400 mb-2">Feature Tiers</h3>
+          <div className="space-y-1">
+            {getTierLegend().map((tier) => (
+              <div key={tier.label} className="flex items-center gap-2 text-xs text-gray-500">
+                <span>{tier.emoji}</span>
+                <span>{tier.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { User, Bell, CreditCard, Shield, Settings, Wallet, Calendar, Link, ChevronDown, Archive } from 'lucide-react';
+import { getFeatureTierEmoji, getTierLegend } from '../utils/featureTiers';
 import { TravelWallet } from './TravelWallet';
 import { ConsumerProfileSection } from './consumer/ConsumerProfileSection';
 import { ConsumerBillingSection } from './consumer/ConsumerBillingSection';
@@ -23,10 +24,10 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
 
   const sections = [
     { id: 'profile', label: 'Profile', icon: User },
-    { id: 'billing', label: 'Billing & Subscription', icon: CreditCard },
-    { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-    { id: 'calendar-sync', label: 'Calendar Sync', icon: Calendar },
-    { id: 'connected-accounts', label: 'Connected Accounts', icon: Link },
+    { id: 'billing', label: `Billing & Subscription ${getFeatureTierEmoji('billing', 'consumer')}`, icon: CreditCard },
+    { id: 'travel-wallet', label: `Travel Wallet ${getFeatureTierEmoji('travel-wallet', 'consumer')}`, icon: Wallet },
+    { id: 'calendar-sync', label: `Calendar Sync ${getFeatureTierEmoji('calendar-sync', 'consumer')}`, icon: Calendar },
+    { id: 'connected-accounts', label: `Connected Accounts ${getFeatureTierEmoji('connected-accounts', 'consumer')}`, icon: Link },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'privacy', label: 'Privacy & Security', icon: Shield },
     { id: 'settings', label: 'General Settings', icon: Settings },
@@ -134,6 +135,19 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
               </button>
             );
           })}
+        </div>
+        
+        {/* Legend */}
+        <div className="mt-8 pt-4 border-t border-white/10">
+          <h3 className="text-sm font-medium text-gray-400 mb-2">Feature Tiers</h3>
+          <div className="space-y-1">
+            {getTierLegend().map((tier) => (
+              <div key={tier.label} className="flex items-center gap-2 text-xs text-gray-500">
+                <span>{tier.emoji}</span>
+                <span>{tier.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

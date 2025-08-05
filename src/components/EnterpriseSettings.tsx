@@ -14,6 +14,7 @@ import { ShowSchedule } from './enterprise/ShowSchedule';
 import { ScoutingExport } from './enterprise/ScoutingExport';
 import { TripCategory } from '../types/enterprise';
 import { useIsMobile } from '../hooks/use-mobile';
+import { getFeatureTierEmoji, getTierLegend } from '../utils/featureTiers';
 
 interface EnterpriseSettingsProps {
   organizationId: string;
@@ -51,10 +52,10 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
 
     const categorySpecificSections: Record<TripCategory, any[]> = {
       'sports-pro': [
-        { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'game-schedule', label: 'Game Schedule', icon: Calendar },
-        { id: 'travel-wallet', label: 'Travel Wallet (Org)', icon: Wallet },
-        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
+        { id: 'seats', label: `Team & Roles ${getFeatureTierEmoji('seats', 'enterprise')}`, icon: Users },
+        { id: 'game-schedule', label: `Game Schedule ${getFeatureTierEmoji('game-schedule', 'enterprise')}`, icon: Calendar },
+        { id: 'travel-wallet', label: `Travel Wallet (Org) ${getFeatureTierEmoji('travel-wallet', 'enterprise')}`, icon: Wallet },
+        { id: 'notifications', label: `Notifications & Broadcast ${getFeatureTierEmoji('notifications', 'enterprise')}`, icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
       'sports-college': [
@@ -302,6 +303,19 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
               </button>
             );
           })}
+        </div>
+        
+        {/* Legend */}
+        <div className="mt-8 pt-4 border-t border-white/10">
+          <h3 className="text-sm font-medium text-gray-400 mb-2">Feature Tiers</h3>
+          <div className="space-y-1">
+            {getTierLegend().map((tier) => (
+              <div key={tier.label} className="flex items-center gap-2 text-xs text-gray-500">
+                <span>{tier.emoji}</span>
+                <span>{tier.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

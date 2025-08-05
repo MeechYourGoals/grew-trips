@@ -33,11 +33,11 @@ export const PersistentCTABar = ({
       case 'events':
         return (
           <Button 
-            onClick={onSeePricing}
+            onClick={() => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo'}
             className="bg-secondary hover:bg-secondary/90 text-secondary-foreground flex items-center gap-2 shadow-lg"
           >
-            <DollarSign size={16} />
-            See Pricing
+            <Phone size={16} />
+            Schedule a Demo
           </Button>
         );
       default:
