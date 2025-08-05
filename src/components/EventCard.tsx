@@ -7,6 +7,7 @@ import { useTripVariant } from '../contexts/TripVariantContext';
 import { ArchiveConfirmDialog } from './ArchiveConfirmDialog';
 import { archiveTrip } from '../services/archiveService';
 import { useToast } from '../hooks/use-toast';
+import { calculatePeopleCount, calculateDaysCount, calculateEventPlacesCount } from '../utils/tripStatsUtils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -107,6 +108,31 @@ export const EventCard = ({ event }: EventCardProps) => {
 
       {/* Content */}
       <div className="p-6">
+        {/* Stats Grid - People, Days, Places */}
+        <div className="grid grid-cols-3 gap-4 mb-6 bg-black/20 backdrop-blur-sm rounded-2xl p-4 border border-white/10">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Users size={14} className={`text-${accentColors.primary}`} />
+              <span className="text-xs text-white/60 uppercase tracking-wide">People</span>
+            </div>
+            <div className="text-lg font-bold text-white">{calculatePeopleCount(event)}</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Calendar size={14} className={`text-${accentColors.primary}`} />
+              <span className="text-xs text-white/60 uppercase tracking-wide">Days</span>
+            </div>
+            <div className="text-lg font-bold text-white">{calculateDaysCount(event.dateRange)}</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <MapPin size={14} className={`text-${accentColors.primary}`} />
+              <span className="text-xs text-white/60 uppercase tracking-wide">Places</span>
+            </div>
+            <div className="text-lg font-bold text-white">{calculateEventPlacesCount(event)}</div>
+          </div>
+        </div>
+
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
           {event.tags.slice(0, 3).map((tag, index) => (

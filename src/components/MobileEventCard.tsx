@@ -5,6 +5,7 @@ import { Calendar, MapPin, Users, Settings } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 import { EventData } from '../types/events';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { calculatePeopleCount, calculateDaysCount, calculateEventPlacesCount } from '../utils/tripStatsUtils';
 
 interface MobileEventCardProps {
   event: EventData;
@@ -73,6 +74,31 @@ export const MobileEventCard = ({ event }: MobileEventCardProps) => {
 
       {/* Mobile Content */}
       <div className="p-4">
+        {/* Stats Grid - People, Days, Places */}
+        <div className="grid grid-cols-3 gap-3 mb-4 bg-black/20 backdrop-blur-sm rounded-xl p-3 border border-white/10">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Users size={12} className={`text-${accentColors.primary}`} />
+              <span className="text-xs text-white/60 uppercase tracking-wide">People</span>
+            </div>
+            <div className="text-sm font-bold text-white">{calculatePeopleCount(event)}</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <Calendar size={12} className={`text-${accentColors.primary}`} />
+              <span className="text-xs text-white/60 uppercase tracking-wide">Days</span>
+            </div>
+            <div className="text-sm font-bold text-white">{calculateDaysCount(event.dateRange)}</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1 mb-1">
+              <MapPin size={12} className={`text-${accentColors.primary}`} />
+              <span className="text-xs text-white/60 uppercase tracking-wide">Places</span>
+            </div>
+            <div className="text-sm font-bold text-white">{calculateEventPlacesCount(event)}</div>
+          </div>
+        </div>
+
         {/* Tags */}
         <div className="flex flex-wrap gap-1 mb-4">
           {event.tags.slice(0, 2).map((tag, index) => (
