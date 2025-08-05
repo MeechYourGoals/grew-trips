@@ -3,11 +3,13 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, MapPin, Users, Crown } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import { Avatar, AvatarImage, AvatarFallback } from './ui/avatar';
 import { ProTripData } from '../types/pro';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { TravelerTooltip } from './ui/traveler-tooltip';
 import { calculatePeopleCount, calculateDaysCount, calculateProTripPlacesCount } from '../utils/tripStatsUtils';
 import { processTeamMembers, processRoles } from '../utils/teamDisplayUtils';
+import { getInitials } from '../utils/avatarUtils';
 
 interface MobileProTripCardProps {
   trip: ProTripData;
@@ -26,11 +28,8 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
 
   if (!isMobile) return null;
 
-  // Ensure all participants have proper avatar URLs
-  const participantsWithAvatars = trip.participants.map((participant, index) => ({
-    ...participant,
-    avatar: participant.avatar || `https://images.unsplash.com/photo-${1649972904349 + index}-6e44c42644a7?w=40&h=40&fit=crop&crop=face`
-  }));
+  // Process participants for display
+  const participantsWithAvatars = trip.participants;
 
   // Process team members for display (mobile shows max 5)
   const { visible: visibleMembers, overflow: memberOverflow } = processTeamMembers(participantsWithAvatars, 5);
@@ -108,11 +107,12 @@ export const MobileProTripCard = ({ trip }: MobileProTripCardProps) => {
                     className="relative"
                     style={{ zIndex: visibleMembers.length - index }}
                   >
-                    <img
-                      src={participant.avatar}
-                      alt={`${participant.name} - ${participant.role}`}
-                      className="w-8 h-8 rounded-full border-2 border-gray-900"
-                    />
+                    <Avatar className="w-8 h-8 border-2 border-gray-900">
+                      <AvatarImage src={participant.avatar} alt={`${participant.name} - ${participant.role}`} />
+                      <AvatarFallback className="bg-primary/20 text-primary font-semibold text-xs">
+                        {getInitials(participant.name)}
+                      </AvatarFallback>
+                    </Avatar>
                   </div>
                 </TravelerTooltip>
               ))}
