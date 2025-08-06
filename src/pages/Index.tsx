@@ -8,6 +8,7 @@ import { TripStatsOverview } from '../components/home/TripStatsOverview';
 import { TripViewToggle } from '../components/home/TripViewToggle';
 import { DesktopHeader } from '../components/home/DesktopHeader';
 import { TripGrid } from '../components/home/TripGrid';
+import { RecommendationFilters } from '../components/home/RecommendationFilters';
 
 // New conversion components
 import { PersistentCTABar } from '../components/conversion/PersistentCTABar';
@@ -34,6 +35,7 @@ const Index = () => {
   const [viewMode, setViewMode] = useState('myTrips');
   const [isLoading, setIsLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('');
+  const [recsFilter, setRecsFilter] = useState('all');
   const { user } = useAuth();
   const isMobile = useIsMobile();
 
@@ -169,10 +171,20 @@ const Index = () => {
 
         {/* Enhanced Toggle with smooth transitions */}
         <div className="animate-fade-in">
-          <TripViewToggle
-            viewMode={viewMode}
+          <TripViewToggle 
+            viewMode={viewMode} 
             onViewModeChange={handleViewModeChange}
           />
+
+          {/* Travel Recommendations Filters */}
+          {viewMode === 'travelRecs' && (
+            <div className="mb-6">
+              <RecommendationFilters 
+                activeFilter={recsFilter}
+                onFilterChange={setRecsFilter}
+              />
+            </div>
+          )}
         </div>
 
         {/* Trip Stats Overview with loading state */}
@@ -196,6 +208,7 @@ const Index = () => {
             events={filteredData.events}
             loading={isLoading}
             onCreateTrip={handleCreateTrip}
+            activeFilter={recsFilter}
           />
         </div>
 

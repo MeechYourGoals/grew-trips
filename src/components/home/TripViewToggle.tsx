@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { MapPin, Crown, Calendar } from 'lucide-react';
+import { MapPin, Crown, Calendar, Compass } from 'lucide-react';
 import { useIsMobile } from '../../hooks/use-mobile';
 
 interface TripViewToggleProps {
@@ -42,6 +42,13 @@ export const TripViewToggle = ({ viewMode, onViewModeChange }: TripViewTogglePro
         >
           <Calendar size={isMobile ? 16 : 18} />
           <span className={isMobile ? 'text-sm' : ''}>Events</span>
+        </ToggleGroupItem>
+        <ToggleGroupItem 
+          value="travelRecs" 
+          className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-glass-accent-orange data-[state=on]:to-glass-accent-orange-light data-[state=on]:text-white transition-all font-medium flex items-center gap-2 ${isMobile ? 'text-sm' : ''}`}
+        >
+          <Compass size={isMobile ? 16 : 18} />
+          <span className={isMobile ? 'text-sm' : ''}>Travel Recs</span>
         </ToggleGroupItem>
       </ToggleGroup>
     </div>

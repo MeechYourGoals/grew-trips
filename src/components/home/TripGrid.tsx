@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { TripCard } from '../TripCard';
 import { ProTripCard } from '../ProTripCard';
@@ -6,13 +5,15 @@ import { EventCard } from '../EventCard';
 import { MobileTripCard } from '../MobileTripCard';
 import { MobileProTripCard } from '../MobileProTripCard';
 import { MobileEventCard } from '../MobileEventCard';
+import { RecommendationCard } from '../RecommendationCard';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { ProTripData } from '../../types/pro';
 import { EventData } from '../../types/events';
 import { TripCardSkeleton } from '../ui/loading-skeleton';
 import { EnhancedEmptyState } from '../ui/enhanced-empty-state';
 import { filterActiveTrips } from '../../services/archiveService';
-import { MapPin, Calendar, Briefcase } from 'lucide-react';
+import { recommendationsData, getRecommendationsByType } from '../../data/recommendationsData';
+import { MapPin, Calendar, Briefcase, Compass } from 'lucide-react';
 
 interface Trip {
   id: number;
@@ -33,6 +34,7 @@ interface TripGridProps {
   events: Record<string, EventData>;
   loading?: boolean;
   onCreateTrip?: () => void;
+  activeFilter?: string;
 }
 
 export const TripGrid = ({ 
@@ -41,7 +43,8 @@ export const TripGrid = ({
   proTrips, 
   events, 
   loading = false,
-  onCreateTrip 
+  onCreateTrip,
+  activeFilter = 'all'
 }: TripGridProps) => {
   const isMobile = useIsMobile();
 
@@ -49,6 +52,12 @@ export const TripGrid = ({
   const activeTrips = useMemo(() => trips, [trips]);
   const activeProTrips = useMemo(() => proTrips, [proTrips]);
   const activeEvents = useMemo(() => events, [events]);
+
+  // Get filtered recommendations for travel recs view
+  const filteredRecommendations = useMemo(() => {
+    if (viewMode !== 'travelRecs') return [];
+    return getRecommendationsByType(activeFilter === 'all' ? undefined : activeFilter);
+  }, [viewMode, activeFilter]);
 
   // Show loading skeleton
   if (loading) {
@@ -64,7 +73,11 @@ export const TripGrid = ({
     ? activeTrips.length > 0 
     : viewMode === 'tripsPro' 
     ? Object.keys(activeProTrips).length > 0
-    : Object.keys(activeEvents).length > 0;
+    : viewMode === 'events'
+    ? Object.keys(activeEvents).length > 0
+    : viewMode === 'travelRecs'
+    ? filteredRecommendations.length > 0
+    : false;
 
   // Show enhanced empty state if no content
   if (!hasContent) {
@@ -93,6 +106,14 @@ export const TripGrid = ({
             description: 'Organize conferences, meetings, and professional events with comprehensive management tools.',
             actionLabel: 'Create Event',
             onAction: onCreateTrip
+          };
+        case 'travelRecs':
+          return {
+            icon: Compass,
+            title: 'No recommendations found',
+            description: 'Try adjusting your filters or explore different categories to discover amazing travel experiences.',
+            actionLabel: 'View All Recommendations',
+            onAction: () => console.log('View all recommendations')
           };
         default:
           return {
@@ -131,7 +152,7 @@ export const TripGrid = ({
             )}
           </React.Fragment>
         ))
-      ) : (
+      ) : viewMode === 'events' ? (
         Object.values(activeEvents).map((event) => (
           <React.Fragment key={event.id}>
             {isMobile ? (
@@ -141,7 +162,16 @@ export const TripGrid = ({
             )}
           </React.Fragment>
         ))
-      )}
+      ) : viewMode === 'travelRecs' ? (
+        filteredRecommendations.map((recommendation) => (
+          <RecommendationCard
+            key={recommendation.id}
+            recommendation={recommendation}
+            onSaveToTrip={(id) => console.log('Save to trip:', id)}
+            onBookNow={(id) => console.log('Book now:', id)}
+          />
+        ))
+      ) : null}
     </div>
   );
 };
