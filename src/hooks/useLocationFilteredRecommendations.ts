@@ -23,7 +23,19 @@ export const useLocationFilteredRecommendations = (
     if (filterLocation) {
       filtered = filtered.filter(rec => 
         rec.city.toLowerCase().includes(filterLocation.toLowerCase()) ||
-        rec.location.toLowerCase().includes(filterLocation.toLowerCase())
+        rec.location.toLowerCase().includes(filterLocation.toLowerCase()) ||
+        // For transportation, also show global/multi-city services
+        (rec.type === 'transportation' && (
+          rec.location.includes('Multiple Cities') || 
+          rec.location.includes('All Major Airports') ||
+          rec.location.includes('Business Travel Worldwide') ||
+          rec.location.includes('Multi-City Business Travel') ||
+          rec.distance === 'Available citywide' ||
+          rec.distance === 'Worldwide availability' ||
+          rec.distance === 'All locations' ||
+          rec.distance === 'Global coverage' ||
+          rec.distance === 'Available for teams'
+        ))
       );
     }
 

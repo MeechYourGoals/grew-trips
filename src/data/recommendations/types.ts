@@ -1,7 +1,7 @@
 
 export interface Recommendation {
   id: number;
-  type: 'hotel' | 'restaurant' | 'activity' | 'tour' | 'experience';
+  type: 'hotel' | 'restaurant' | 'activity' | 'tour' | 'experience' | 'transportation';
   title: string;
   location: string;
   city: string;

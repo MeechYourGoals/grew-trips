@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
-import { Hotel, UtensilsCrossed, MapPin, Camera, Star } from 'lucide-react';
+import { Hotel, UtensilsCrossed, MapPin, Camera, Star, Car } from 'lucide-react';
 
 interface RecommendationFiltersProps {
   activeFilter: string;
@@ -15,6 +15,7 @@ const filters = [
   { id: 'activity', label: 'Activities', icon: MapPin },
   { id: 'tour', label: 'Tours', icon: Camera },
   { id: 'experience', label: 'Experiences', icon: Star },
+  { id: 'transportation', label: 'Transportation', icon: Car },
 ];
 
 export const RecommendationFilters = ({ activeFilter, onFilterChange }: RecommendationFiltersProps) => {
