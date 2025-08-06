@@ -175,19 +175,9 @@ const Index = () => {
             viewMode={viewMode} 
             onViewModeChange={handleViewModeChange}
           />
-
-          {/* Travel Recommendations Filters */}
-          {viewMode === 'travelRecs' && (
-            <div className="mb-6">
-              <RecommendationFilters 
-                activeFilter={recsFilter}
-                onFilterChange={setRecsFilter}
-              />
-            </div>
-          )}
         </div>
 
-        {/* Trip Stats Overview with loading state */}
+        {/* Trip Stats Overview with loading state - moved above filters for travel recs */}
         {!isMobile && (
           <div className="animate-fade-in" style={{ animationDelay: '0.1s' }}>
             <TripStatsOverview 
@@ -195,6 +185,17 @@ const Index = () => {
               viewMode={viewMode} 
               activeFilter={activeFilter}
               onFilterClick={handleFilterClick}
+            />
+          </div>
+        )}
+
+        {/* Travel Recommendations Filters with inline search */}
+        {viewMode === 'travelRecs' && (
+          <div className="mb-6">
+            <RecommendationFilters 
+              activeFilter={recsFilter}
+              onFilterChange={setRecsFilter}
+              showInlineSearch={true}
             />
           </div>
         )}

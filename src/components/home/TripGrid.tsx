@@ -165,25 +165,17 @@ export const TripGrid = ({
   // Render content grid (using filtered data)
   return (
     <div className="space-y-6">
-      {/* Location search bar for travel recs */}
-      {viewMode === 'travelRecs' && (
-        <div className="space-y-4">
-          <LocationSearchBar
-            onLocationSelect={setManualLocation}
-            currentLocation={manualLocation}
-          />
-          {activeLocation && (
-            <Alert className="border-info/50 bg-info/10">
-              <Info className="h-4 w-4" />
-              <AlertDescription>
-                {isBasecampLocation 
-                  ? `Showing recommendations for ${activeLocation} (from your Basecamp)`
-                  : `Showing recommendations for ${activeLocation} (manually selected)`
-                }
-              </AlertDescription>
-            </Alert>
-          )}
-        </div>
+      {/* Location alert for travel recs */}
+      {viewMode === 'travelRecs' && activeLocation && (
+        <Alert className="border-info/50 bg-info/10 mb-6">
+          <Info className="h-4 w-4" />
+          <AlertDescription>
+            {isBasecampLocation 
+              ? `Showing recommendations for ${activeLocation} (from your Basecamp)`
+              : `Showing recommendations for ${activeLocation} (manually selected)`
+            }
+          </AlertDescription>
+        </Alert>
       )}
 
       <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
