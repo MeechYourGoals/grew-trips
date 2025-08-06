@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { X, Crown, Building, Sparkles, MessageCircle, Settings, Zap, Users, Shield, TrendingUp, Star, BarChart3, Calendar, Wallet, Globe, Phone, CalendarPlus, UserCheck, Clock, FileText, DollarSign, TrendingDown, Mail, Ticket, Megaphone, Paintbrush } from 'lucide-react';
+import { X, Crown, Building, Sparkles, MessageCircle, Settings, Zap, Users, Shield, TrendingUp, Star, BarChart3, Calendar, Wallet, Globe, Phone, CalendarPlus, UserCheck, Clock, FileText, DollarSign, TrendingDown, Mail, Ticket, Megaphone, Paintbrush, Camera } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
-import { TRIPS_PLUS_PRICE } from '../types/consumer';
+import { TRIPS_PLUS_PRICE, TRIPS_PLUS_ANNUAL_PRICE } from '../types/consumer';
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -10,6 +10,7 @@ interface UpgradeModalProps {
 
 export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
   const [selectedPlan, setSelectedPlan] = useState<'plus' | 'pro' | 'events'>('plus');
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
   const { upgradeToPlus, isLoading } = useConsumerSubscription();
 
   if (!isOpen) return null;
@@ -24,6 +25,16 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
       // TODO: Implement Pro activation logic
       onClose();
     }
+  };
+
+  const getPlusPrice = () => {
+    return billingCycle === 'monthly' ? TRIPS_PLUS_PRICE : TRIPS_PLUS_ANNUAL_PRICE;
+  };
+
+  const calculateSavings = () => {
+    const monthlyCost = TRIPS_PLUS_PRICE * 12;
+    const annualCost = TRIPS_PLUS_ANNUAL_PRICE;
+    return Math.round(((monthlyCost - annualCost) / monthlyCost) * 100);
   };
 
   return (
@@ -124,10 +135,40 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
               </div>
             </div>
 
+            {/* Billing Toggle */}
+            {selectedPlan === 'plus' && (
+              <div className="flex items-center justify-center gap-4 mb-6">
+                <span className={`text-sm ${billingCycle === 'monthly' ? 'text-white font-medium' : 'text-gray-400'}`}>
+                  Monthly
+                </span>
+                <button
+                  onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'annual' : 'monthly')}
+                  className="relative w-12 h-6 bg-gray-700 rounded-full transition-colors"
+                >
+                  <div className={`absolute top-1 w-4 h-4 bg-glass-orange rounded-full transition-transform ${
+                    billingCycle === 'annual' ? 'translate-x-7' : 'translate-x-1'
+                  }`} />
+                </button>
+                <span className={`text-sm ${billingCycle === 'annual' ? 'text-white font-medium' : 'text-gray-400'}`}>
+                  Annual
+                </span>
+                {billingCycle === 'annual' && (
+                  <div className="bg-green-500/20 text-green-400 px-2 py-1 rounded-lg text-xs font-medium">
+                    Save {calculateSavings()}%
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Pricing */}
             <div className="text-center">
               <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-glass-orange/30 rounded-2xl p-6 mb-6">
-                <div className="text-4xl font-bold text-white mb-2">${TRIPS_PLUS_PRICE}/month</div>
+                <div className="text-4xl font-bold text-white mb-2">
+                  ${getPlusPrice()}{billingCycle === 'monthly' ? '/month' : '/year'}
+                </div>
+                {billingCycle === 'annual' && (
+                  <div className="text-green-400 text-sm mb-2">Save {calculateSavings()}% with annual billing</div>
+                )}
                 <p className="text-gray-300 mb-4">7-day free trial • Cancel anytime</p>
                 <div className="text-sm text-glass-yellow">
                   No credit card required for trial

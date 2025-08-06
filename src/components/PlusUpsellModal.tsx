@@ -1,7 +1,7 @@
-import React from 'react';
-import { X, Crown, Sparkles, MessageCircle, Settings, Zap } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Crown, Sparkles, MessageCircle, Settings, Zap, Camera } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
-import { TRIPS_PLUS_PRICE } from '../types/consumer';
+import { TRIPS_PLUS_PRICE, TRIPS_PLUS_ANNUAL_PRICE } from '../types/consumer';
 
 interface PlusUpsellModalProps {
   isOpen: boolean;
@@ -10,12 +10,23 @@ interface PlusUpsellModalProps {
 
 export const PlusUpsellModal = ({ isOpen, onClose }: PlusUpsellModalProps) => {
   const { upgradeToPlus, isLoading } = useConsumerSubscription();
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
 
   if (!isOpen) return null;
 
   const handleUpgrade = async () => {
     await upgradeToPlus();
     onClose();
+  };
+
+  const getPlusPrice = () => {
+    return billingCycle === 'monthly' ? TRIPS_PLUS_PRICE : TRIPS_PLUS_ANNUAL_PRICE;
+  };
+
+  const calculateSavings = () => {
+    const monthlyCost = TRIPS_PLUS_PRICE * 12;
+    const annualCost = TRIPS_PLUS_ANNUAL_PRICE;
+    return Math.round(((monthlyCost - annualCost) / monthlyCost) * 100);
   };
 
   return (
@@ -72,6 +83,14 @@ export const PlusUpsellModal = ({ isOpen, onClose }: PlusUpsellModalProps) => {
             <h3 className="text-lg font-bold text-white mb-2">Contextual Chat</h3>
             <p className="text-gray-300 text-sm">Real-time assistance for planning activities, finding restaurants, and making the most of your trip.</p>
           </div>
+
+          <div className="bg-gradient-to-br from-cyan-500/10 to-blue-500/10 border border-cyan-500/20 rounded-2xl p-6">
+            <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center mb-4">
+              <Camera size={24} className="text-white" />
+            </div>
+            <h3 className="text-lg font-bold text-white mb-2">Photo Sharing</h3>
+            <p className="text-gray-300 text-sm">Share and organize trip photos with your group in beautiful albums and memories.</p>
+          </div>
         </div>
 
         {/* Comparison */}
@@ -81,15 +100,18 @@ export const PlusUpsellModal = ({ isOpen, onClose }: PlusUpsellModalProps) => {
             <div>
               <h4 className="text-white font-medium mb-3">Free Plan</h4>
               <ul className="space-y-2 text-sm text-gray-400">
-                <li>• Basic trip planning</li>
-                <li>• Manual place discovery</li>
-                <li>• Limited group features</li>
-                <li>• Standard chat</li>
+                <li>• Up to 5 trips (delete to add new)</li>
+                <li>• Basic group chat</li>
+                <li>• Group to-do list</li>
+                <li>• Shared trip calendar</li>
+                <li>• Up to 10 participants</li>
               </ul>
             </div>
             <div>
               <h4 className="text-white font-medium mb-3">Plus</h4>
               <ul className="space-y-2 text-sm text-green-300">
+                <li>• Unlimited trips & participants</li>
+                <li>• Photo sharing</li>
                 <li>• AI-powered recommendations</li>
                 <li>• Smart preference matching</li>
                 <li>• Basecamp-aware suggestions</li>
@@ -101,10 +123,38 @@ export const PlusUpsellModal = ({ isOpen, onClose }: PlusUpsellModalProps) => {
           </div>
         </div>
 
+        {/* Billing Toggle */}
+        <div className="flex items-center justify-center gap-4 mb-6">
+          <span className={`text-sm ${billingCycle === 'monthly' ? 'text-white font-medium' : 'text-gray-400'}`}>
+            Monthly
+          </span>
+          <button
+            onClick={() => setBillingCycle(billingCycle === 'monthly' ? 'annual' : 'monthly')}
+            className="relative w-12 h-6 bg-gray-700 rounded-full transition-colors"
+          >
+            <div className={`absolute top-1 w-4 h-4 bg-glass-orange rounded-full transition-transform ${
+              billingCycle === 'annual' ? 'translate-x-7' : 'translate-x-1'
+            }`} />
+          </button>
+          <span className={`text-sm ${billingCycle === 'annual' ? 'text-white font-medium' : 'text-gray-400'}`}>
+            Annual
+          </span>
+          {billingCycle === 'annual' && (
+            <div className="bg-green-500/20 text-green-400 px-2 py-1 rounded-lg text-xs font-medium">
+              Save {calculateSavings()}%
+            </div>
+          )}
+        </div>
+
         {/* Pricing */}
         <div className="text-center">
           <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 backdrop-blur-sm border border-glass-orange/30 rounded-2xl p-6 mb-6">
-            <div className="text-4xl font-bold text-white mb-2">${TRIPS_PLUS_PRICE}/month</div>
+            <div className="text-4xl font-bold text-white mb-2">
+              ${getPlusPrice()}{billingCycle === 'monthly' ? '/month' : '/year'}
+            </div>
+            {billingCycle === 'annual' && (
+              <div className="text-green-400 text-sm mb-2">Save {calculateSavings()}% with annual billing</div>
+            )}
             <p className="text-gray-300 mb-4">7-day free trial • Cancel anytime</p>
             <div className="text-sm text-glass-yellow">
               No credit card required for trial

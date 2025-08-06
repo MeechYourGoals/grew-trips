@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Crown } from 'lucide-react';
 import { useConsumerSubscription } from '../../hooks/useConsumerSubscription';
-import { TRIPS_PLUS_PRICE } from '../../types/consumer';
+import { TRIPS_PLUS_PRICE, TRIPS_PLUS_ANNUAL_PRICE } from '../../types/consumer';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
 
 export const ConsumerBillingSection = () => {
@@ -14,10 +14,11 @@ export const ConsumerBillingSection = () => {
       name: 'Free',
       price: 0,
       features: [
-        'Create up to 3 trips',
+        'Up to 5 trips total - delete to add new',
         'Invite up to 10 people per trip',
         'Basic itinerary planning',
-        'Photo sharing',
+        'Group to-do list',
+        'Shared trip calendar',
         'Basic chat functionality',
         'Mobile app access'
       ]
@@ -27,6 +28,9 @@ export const ConsumerBillingSection = () => {
       price: TRIPS_PLUS_PRICE,
       features: [
         'Everything in Free',
+        'Unlimited trips',
+        'Unlimited participants',
+        'Photo sharing',
         'Concierge AI Assistant',
         'Smart trip recommendations',
         'Basecamp-aware suggestions',

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
+import { TRIPS_PLUS_PRICE, TRIPS_PLUS_ANNUAL_PRICE } from '../../types/consumer';
 import { 
   Check, 
   Crown, 
@@ -12,7 +13,8 @@ import {
   Shield,
   Zap,
   BarChart3,
-  Phone
+  Phone,
+  Camera
 } from 'lucide-react';
 
 interface PricingTier {
@@ -33,12 +35,13 @@ const pricingTiers: PricingTier[] = [
     id: 'free',
     name: 'Free',
     price: '$0',
-    description: 'Perfect for trying out Chravel',
+    description: 'Try Chravel free for up to 5 trips. To add another, simply delete a past trip.',
     icon: <Users size={24} />,
     features: [
-      'Up to 3 trips',
+      'Up to 5 trips (delete to add new)',
       'Basic group chat',
-      'Photo sharing',
+      'Group to-do list',
+      'Shared trip calendar',
       'Simple itinerary planning',
       'Up to 10 participants'
     ],
@@ -47,17 +50,19 @@ const pricingTiers: PricingTier[] = [
   {
     id: 'plus',
     name: 'Chravel Plus',
-    price: '$12',
-    description: 'AI-powered planning for smart travelers',
+    price: '$9.99',
+    description: 'All the best of Chravel: AI concierge, unlimited trips, smart recommendations, photo sharing, and more.',
     icon: <Crown size={24} />,
     features: [
+      'Everything in Free',
       'Unlimited trips',
+      'Unlimited participants',
+      'Photo sharing',
       'AI Concierge chat',
       'Smart recommendations',
       'Basecamp intelligence',
       'Advanced preferences',
-      'Priority support',
-      'Unlimited participants'
+      'Priority support'
     ],
     cta: 'Start 7-Day Trial',
     popular: true
@@ -133,6 +138,16 @@ export const PricingSection = () => {
     // Handle plan selection logic
   };
 
+  const getPlusPrice = () => {
+    return billingCycle === 'monthly' ? `$${TRIPS_PLUS_PRICE}` : `$${TRIPS_PLUS_ANNUAL_PRICE}`;
+  };
+
+  const calculateSavings = () => {
+    const monthlyCost = TRIPS_PLUS_PRICE * 12;
+    const annualCost = TRIPS_PLUS_ANNUAL_PRICE;
+    return Math.round(((monthlyCost - annualCost) / monthlyCost) * 100);
+  };
+
   return (
     <div className="w-full space-y-12">
       {/* Header */}
@@ -162,7 +177,7 @@ export const PricingSection = () => {
           </span>
           {billingCycle === 'annual' && (
             <Badge variant="secondary" className="bg-green-500/20 text-green-400">
-              Save 20%
+              Save {calculateSavings()}%
             </Badge>
           )}
         </div>
@@ -202,13 +217,18 @@ export const PricingSection = () => {
               <CardTitle className="text-xl">{tier.name}</CardTitle>
               <div className="space-y-2">
                 <div className="text-3xl font-bold text-foreground">
-                  {tier.price}
-                  {tier.price !== '$0' && tier.price !== 'Custom' && (
+                  {tier.id === 'plus' ? getPlusPrice() : tier.price}
+                  {((tier.id === 'plus' && tier.price !== '$0') || (tier.price !== '$0' && tier.price !== 'Custom')) && (
                     <span className="text-lg text-muted-foreground font-normal">
                       /{billingCycle === 'monthly' ? 'mo' : 'yr'}
                     </span>
                   )}
                 </div>
+                {tier.id === 'plus' && billingCycle === 'annual' && (
+                  <div className="text-sm text-green-400 font-medium">
+                    Save {calculateSavings()}%
+                  </div>
+                )}
                 <p className="text-sm text-muted-foreground">{tier.description}</p>
               </div>
             </CardHeader>

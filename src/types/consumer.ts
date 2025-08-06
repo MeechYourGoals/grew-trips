@@ -64,3 +64,4 @@ export const LIFESTYLE_OPTIONS = [
 ];
 
 export const TRIPS_PLUS_PRICE = 9.99;
+export const TRIPS_PLUS_ANNUAL_PRICE = 99.99;
