@@ -14,6 +14,223 @@ export type Database = {
   }
   public: {
     Tables: {
+      ad_cards: {
+        Row: {
+          campaign_id: string
+          category: string
+          clicks: number | null
+          created_at: string
+          cta_text: string | null
+          description: string
+          external_link: string
+          id: string
+          image_url: string
+          impressions: number | null
+          is_sponsored: boolean | null
+          location_city: string | null
+          location_coordinates: Json | null
+          moderation_notes: string | null
+          moderation_status: string | null
+          sponsor_badge: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          campaign_id: string
+          category: string
+          clicks?: number | null
+          created_at?: string
+          cta_text?: string | null
+          description: string
+          external_link: string
+          id?: string
+          image_url: string
+          impressions?: number | null
+          is_sponsored?: boolean | null
+          location_city?: string | null
+          location_coordinates?: Json | null
+          moderation_notes?: string | null
+          moderation_status?: string | null
+          sponsor_badge?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          campaign_id?: string
+          category?: string
+          clicks?: number | null
+          created_at?: string
+          cta_text?: string | null
+          description?: string
+          external_link?: string
+          id?: string
+          image_url?: string
+          impressions?: number | null
+          is_sponsored?: boolean | null
+          location_city?: string | null
+          location_coordinates?: Json | null
+          moderation_notes?: string | null
+          moderation_status?: string | null
+          sponsor_badge?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ad_cards_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advertiser_profiles: {
+        Row: {
+          business_address: string | null
+          business_description: string | null
+          company_logo_url: string | null
+          company_name: string
+          contact_email: string
+          contact_phone: string | null
+          created_at: string
+          id: string
+          is_verified: boolean | null
+          updated_at: string
+          user_id: string
+          website_url: string | null
+        }
+        Insert: {
+          business_address?: string | null
+          business_description?: string | null
+          company_logo_url?: string | null
+          company_name: string
+          contact_email: string
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          is_verified?: boolean | null
+          updated_at?: string
+          user_id: string
+          website_url?: string | null
+        }
+        Update: {
+          business_address?: string | null
+          business_description?: string | null
+          company_logo_url?: string | null
+          company_name?: string
+          contact_email?: string
+          contact_phone?: string | null
+          created_at?: string
+          id?: string
+          is_verified?: boolean | null
+          updated_at?: string
+          user_id?: string
+          website_url?: string | null
+        }
+        Relationships: []
+      }
+      campaign_performance: {
+        Row: {
+          ad_card_id: string
+          campaign_id: string
+          clicks: number | null
+          created_at: string
+          ctr: number | null
+          date: string
+          id: string
+          impressions: number | null
+        }
+        Insert: {
+          ad_card_id: string
+          campaign_id: string
+          clicks?: number | null
+          created_at?: string
+          ctr?: number | null
+          date?: string
+          id?: string
+          impressions?: number | null
+        }
+        Update: {
+          ad_card_id?: string
+          campaign_id?: string
+          clicks?: number | null
+          created_at?: string
+          ctr?: number | null
+          date?: string
+          id?: string
+          impressions?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_performance_ad_card_id_fkey"
+            columns: ["ad_card_id"]
+            isOneToOne: false
+            referencedRelation: "ad_cards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_performance_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaigns: {
+        Row: {
+          advertiser_id: string
+          budget_amount: number | null
+          created_at: string
+          end_date: string | null
+          id: string
+          name: string
+          start_date: string | null
+          status: string
+          total_clicks: number | null
+          total_impressions: number | null
+          updated_at: string
+        }
+        Insert: {
+          advertiser_id: string
+          budget_amount?: number | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          name: string
+          start_date?: string | null
+          status?: string
+          total_clicks?: number | null
+          total_impressions?: number | null
+          updated_at?: string
+        }
+        Update: {
+          advertiser_id?: string
+          budget_amount?: number | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          name?: string
+          start_date?: string | null
+          status?: string
+          total_clicks?: number | null
+          total_impressions?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_advertiser_id_fkey"
+            columns: ["advertiser_id"]
+            isOneToOne: false
+            referencedRelation: "advertiser_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invite_links: {
         Row: {
           code: string
@@ -52,6 +269,47 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      moderation_queue: {
+        Row: {
+          ad_card_id: string
+          assigned_moderator: string | null
+          id: string
+          notes: string | null
+          priority: number | null
+          reviewed_at: string | null
+          status: string
+          submitted_at: string
+        }
+        Insert: {
+          ad_card_id: string
+          assigned_moderator?: string | null
+          id?: string
+          notes?: string | null
+          priority?: number | null
+          reviewed_at?: string | null
+          status?: string
+          submitted_at?: string
+        }
+        Update: {
+          ad_card_id?: string
+          assigned_moderator?: string | null
+          id?: string
+          notes?: string | null
+          priority?: number | null
+          reviewed_at?: string | null
+          status?: string
+          submitted_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "moderation_queue_ad_card_id_fkey"
+            columns: ["ad_card_id"]
+            isOneToOne: false
+            referencedRelation: "ad_cards"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
