@@ -1,8 +1,8 @@
 
 import React, { useState } from 'react';
-import { X, User, Bell, Crown, LogOut, Megaphone } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { X, User, Bell, Crown, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { AdvertiserSettings } from './AdvertiserSettings';
 import { ProUpgradeModal } from './ProUpgradeModal';
 import { EnterpriseSettings } from './EnterpriseSettings';
 import { ConsumerSettings } from './ConsumerSettings';
@@ -19,10 +19,9 @@ interface SettingsMenuProps {
 
 export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   const { user, signOut } = useAuth();
-  const navigate = useNavigate();
   const [showProModal, setShowProModal] = useState(false);
   const [activeSection, setActiveSection] = useState('profile');
-  const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise' | 'events'>('consumer');
+  const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise' | 'events' | 'advertiser'>('consumer');
   const { accentColors } = useTripVariant();
 
   // Create mock user for demo mode when no real user is authenticated
@@ -105,12 +104,12 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
             </button>
           </div>
 
-          {/* Settings Type Toggle - Updated to include Events */}
+          {/* Settings Type Toggle - Updated to include Advertiser */}
           <div className="flex-shrink-0 p-6 border-b border-white/20">
-            <div className="bg-white/10 rounded-xl p-1 flex">
+            <div className="bg-white/10 rounded-xl p-1 grid grid-cols-4">
               <button
                 onClick={() => setSettingsType('consumer')}
-                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
                   settingsType === 'consumer'
                     ? `bg-${accentColors.primary} text-white`
                     : 'text-gray-400 hover:text-white'
@@ -120,7 +119,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
               </button>
               <button
                 onClick={() => setSettingsType('enterprise')}
-                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
                   settingsType === 'enterprise'
                     ? `bg-${accentColors.primary} text-white`
                     : 'text-gray-400 hover:text-white'
@@ -130,13 +129,23 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
               </button>
               <button
                 onClick={() => setSettingsType('events')}
-                className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+                className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
                   settingsType === 'events'
                     ? `bg-${accentColors.primary} text-white`
                     : 'text-gray-400 hover:text-white'
                 }`}
               >
                 Events
+              </button>
+              <button
+                onClick={() => setSettingsType('advertiser')}
+                className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+                  settingsType === 'advertiser'
+                    ? `bg-${accentColors.primary} text-white`
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                Advertiser
               </button>
             </div>
           </div>
@@ -154,27 +163,19 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
                   currentUserId={currentUser.id} 
                 />
               </div>
-            ) : (
+            ) : settingsType === 'events' ? (
               <div className="flex-1 min-h-0">
                 <EventsSettings currentUserId={currentUser.id} />
+              </div>
+            ) : (
+              <div className="flex-1 min-h-0">
+                <AdvertiserSettings currentUserId={currentUser.id} />
               </div>
             )}
 
             {/* Sign Out Button - Only show for consumer settings */}
             {settingsType === 'consumer' && (
-              <div className="flex-shrink-0 p-6 bg-white/5 border-t border-white/20 space-y-3">
-                {/* Advertiser Hub Button */}
-                <button
-                  onClick={() => {
-                    navigate('/advertiser');
-                    onClose();
-                  }}
-                  className="w-full flex items-center justify-center gap-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 font-medium py-3 rounded-xl transition-colors"
-                >
-                  <Megaphone size={16} />
-                  Advertiser Hub
-                </button>
-                
+              <div className="flex-shrink-0 p-6 bg-white/5 border-t border-white/20">
                 <button
                   onClick={currentSignOut}
                   className="w-full flex items-center justify-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium py-3 rounded-xl transition-colors"
