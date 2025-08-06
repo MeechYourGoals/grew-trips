@@ -15,6 +15,7 @@ export interface Recommendation {
     text: string;
     action: 'book' | 'reserve' | 'view' | 'save';
   };
+  externalLink: string;
   userRecommendations?: {
     count: number;
     names: string[];
@@ -44,6 +45,7 @@ export const recommendationsData: Recommendation[] = [
       text: 'Book Now',
       action: 'book'
     },
+    externalLink: 'https://www.fourseasons.com/miamib/',
     userRecommendations: {
       count: 3,
       names: ['Sarah M.', 'Tom R.', 'Lisa K.']
@@ -70,6 +72,7 @@ export const recommendationsData: Recommendation[] = [
       text: 'Reserve',
       action: 'reserve'
     },
+    externalLink: 'https://www.joesstonecrab.com/',
     userRecommendations: {
       count: 8,
       names: ['Tom R.', 'Maria S.', 'Alex P.', 'Jennifer L.']
@@ -90,11 +93,13 @@ export const recommendationsData: Recommendation[] = [
       'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop'
     ],
     tags: ['Adventure', 'Sightseeing', 'Water Sports', 'Speedboat'],
-    isSponsored: false,
+    isSponsored: true,
+    sponsorBadge: 'Promoted',
     ctaButton: {
       text: 'Book Tour',
       action: 'book'
     },
+    externalLink: 'https://www.miamivicespeedboat.com/',
     userRecommendations: {
       count: 5,
       names: ['Mike D.', 'Emma W.', 'Carlos R.']
@@ -115,11 +120,13 @@ export const recommendationsData: Recommendation[] = [
       'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&h=400&fit=crop'
     ],
     tags: ['Architecture', 'Walking Tour', 'History', 'Cultural'],
-    isSponsored: false,
+    isSponsored: true,
+    sponsorBadge: 'Promoted',
     ctaButton: {
       text: 'Join Tour',
       action: 'book'
     },
+    externalLink: 'https://www.artdecomiami.com/',
     userRecommendations: {
       count: 12,
       names: ['Anna B.', 'David L.', 'Rachel M.', 'James K.']
@@ -147,6 +154,7 @@ export const recommendationsData: Recommendation[] = [
       text: 'Reserve Table',
       action: 'reserve'
     },
+    externalLink: 'https://komodomiami.com/',
     userRecommendations: {
       count: 6,
       names: ['Sophia C.', 'Marcus T.', 'Isabella R.']
@@ -167,16 +175,158 @@ export const recommendationsData: Recommendation[] = [
       'https://images.unsplash.com/photo-1548366086-7f1b76106622?w=600&h=400&fit=crop'
     ],
     tags: ['Wildlife', 'Adventure', 'Nature', 'Airboat'],
-    isSponsored: false,
+    isSponsored: true,
+    sponsorBadge: 'Promoted',
     ctaButton: {
       text: 'Book Adventure',
       action: 'book'
     },
+    externalLink: 'https://www.evergladesairboat.com/',
     userRecommendations: {
       count: 9,
       names: ['Kevin Z.', 'Emily C.', 'Ryan M.', 'Nicole S.']
     },
     distance: '45 minutes from Miami',
+    isAvailable: true
+  },
+  // Additional entries to ensure minimum 2 per category
+  {
+    id: 7,
+    type: 'hotel',
+    title: 'The Setai Miami Beach',
+    location: 'Miami Beach, FL',
+    description: 'Contemporary luxury with Asian-inspired design, pristine beachfront, and award-winning spa.',
+    rating: 4.9,
+    priceLevel: 4,
+    images: [
+      'https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=400&fit=crop'
+    ],
+    tags: ['Luxury', 'Beachfront', 'Spa', 'Contemporary'],
+    isSponsored: true,
+    sponsorBadge: 'Featured',
+    promoText: 'Free room upgrade for Chravel users!',
+    ctaButton: {
+      text: 'Book Now',
+      action: 'book'
+    },
+    externalLink: 'https://www.setai.com/',
+    userRecommendations: {
+      count: 7,
+      names: ['Michael T.', 'Jessica P.', 'David L.', 'Amanda R.']
+    },
+    distance: '0.5 miles from your hotel',
+    isAvailable: true
+  },
+  {
+    id: 8,
+    type: 'restaurant',
+    title: 'Zuma Miami',
+    location: 'Downtown Miami, FL',
+    description: 'Contemporary Japanese robatayaki cuisine with stunning Biscayne Bay views and premium sake selection.',
+    rating: 4.7,
+    priceLevel: 4,
+    images: [
+      'https://images.unsplash.com/photo-1552566635-dcc4ec5f7077?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=600&h=400&fit=crop'
+    ],
+    tags: ['Japanese', 'Robatayaki', 'Waterfront', 'Premium'],
+    isSponsored: true,
+    sponsorBadge: 'Promoted',
+    promoText: 'Complimentary sake tasting with dinner',
+    ctaButton: {
+      text: 'Reserve',
+      action: 'reserve'
+    },
+    externalLink: 'https://zumarestaurant.com/locations/miami/',
+    userRecommendations: {
+      count: 11,
+      names: ['Carlos M.', 'Elena V.', 'Robert K.', 'Diana S.']
+    },
+    distance: '2.8 miles from your location',
+    isAvailable: true
+  },
+  {
+    id: 9,
+    type: 'activity',
+    title: 'Wynwood Art District Walking Tour',
+    location: 'Wynwood, Miami, FL',
+    description: 'Guided exploration of world-famous street art murals and galleries in Miami\'s vibrant arts district.',
+    rating: 4.6,
+    priceLevel: 2,
+    images: [
+      'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=600&h=400&fit=crop'
+    ],
+    tags: ['Street Art', 'Cultural', 'Walking Tour', 'Photography'],
+    isSponsored: true,
+    sponsorBadge: 'Promoted',
+    ctaButton: {
+      text: 'Book Tour',
+      action: 'book'
+    },
+    externalLink: 'https://www.wynwoodwalks.com/',
+    userRecommendations: {
+      count: 15,
+      names: ['Artist M.', 'Gallery K.', 'Photo T.', 'Culture L.']
+    },
+    distance: '4.2 miles from your hotel',
+    isAvailable: true
+  },
+  {
+    id: 10,
+    type: 'tour',
+    title: 'Miami Food & Culture Tour',
+    location: 'Little Havana, Miami, FL',
+    description: 'Authentic culinary journey through Little Havana with Cuban coffee, traditional pastries, and live music.',
+    rating: 4.8,
+    priceLevel: 2,
+    images: [
+      'https://images.unsplash.com/photo-1551218808-94e220e084d2?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?w=600&h=400&fit=crop'
+    ],
+    tags: ['Cuban Culture', 'Food Tour', 'Live Music', 'Authentic'],
+    isSponsored: true,
+    sponsorBadge: 'Featured',
+    promoText: 'Free cafecito with every tour!',
+    ctaButton: {
+      text: 'Join Tour',
+      action: 'book'
+    },
+    externalLink: 'https://www.miamifoodtours.com/',
+    userRecommendations: {
+      count: 18,
+      names: ['Maria C.', 'Jose R.', 'Cuban A.', 'Food B.']
+    },
+    distance: '6.1 miles from your location',
+    isAvailable: true
+  },
+  {
+    id: 11,
+    type: 'experience',
+    title: 'VIP Nightclub Package at LIV',
+    location: 'South Beach, Miami, FL',
+    description: 'Exclusive VIP table service at Miami\'s premier nightclub with bottle service and priority entry.',
+    rating: 4.5,
+    priceLevel: 4,
+    images: [
+      'https://images.unsplash.com/photo-1566737236500-c8ac43014a8e?w=600&h=400&fit=crop',
+      'https://images.unsplash.com/photo-1574391884720-bbc428f95817?w=600&h=400&fit=crop'
+    ],
+    tags: ['VIP', 'Nightlife', 'Bottle Service', 'Exclusive'],
+    isSponsored: true,
+    sponsorBadge: 'Promoted',
+    promoText: 'Skip the line with VIP access!',
+    ctaButton: {
+      text: 'Reserve VIP',
+      action: 'book'
+    },
+    externalLink: 'https://www.livnightclub.com/',
+    userRecommendations: {
+      count: 9,
+      names: ['Party A.', 'VIP B.', 'Night C.']
+    },
+    distance: '1.1 miles from your hotel',
     isAvailable: true
   }
 ];

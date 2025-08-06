@@ -9,13 +9,11 @@ import { useIsMobile } from '../hooks/use-mobile';
 interface RecommendationCardProps {
   recommendation: Recommendation;
   onSaveToTrip?: (id: number) => void;
-  onBookNow?: (id: number) => void;
 }
 
 export const RecommendationCard = ({ 
   recommendation, 
-  onSaveToTrip, 
-  onBookNow 
+  onSaveToTrip
 }: RecommendationCardProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const isMobile = useIsMobile();
@@ -37,9 +35,7 @@ export const RecommendationCard = ({
   };
 
   const handleCTA = () => {
-    if (recommendation.ctaButton.action === 'book' || recommendation.ctaButton.action === 'reserve') {
-      onBookNow?.(recommendation.id);
-    }
+    window.open(recommendation.externalLink, '_blank', 'noopener,noreferrer');
   };
 
   return (

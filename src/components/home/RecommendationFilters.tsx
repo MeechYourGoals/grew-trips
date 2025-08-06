@@ -19,7 +19,7 @@ const filters = [
 
 export const RecommendationFilters = ({ activeFilter, onFilterChange }: RecommendationFiltersProps) => {
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
+    <div className="flex justify-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
       {filters.map((filter) => {
         const Icon = filter.icon;
         const isActive = activeFilter === filter.id;

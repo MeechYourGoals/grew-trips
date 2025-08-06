@@ -168,7 +168,6 @@ export const TripGrid = ({
             key={recommendation.id}
             recommendation={recommendation}
             onSaveToTrip={(id) => console.log('Save to trip:', id)}
-            onBookNow={(id) => console.log('Book now:', id)}
           />
         ))
       ) : null}
