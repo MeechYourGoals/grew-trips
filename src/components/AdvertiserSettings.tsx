@@ -51,34 +51,16 @@ export const AdvertiserSettings = ({ currentUserId }: AdvertiserSettingsProps) =
     try {
       console.log('Checking advertiser profile...');
       
-      // Get auth token
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) {
-        throw new Error('Not authenticated');
-      }
-
-      // Make direct fetch call with action as URL parameter
-      const url = new URL(`https://jmjiyekmxwsxkfnqwyaa.supabase.co/functions/v1/advertiser-management`);
-      url.searchParams.append('action', 'get-profile');
-      
-      const response = await fetch(url.toString(), {
+      const { data, error } = await supabase.functions.invoke('advertiser-management', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imptaml5ZWtteHdzeGtmbnF3eWFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjEwMDgsImV4cCI6MjA2OTQ5NzAwOH0.SAas0HWvteb9TbYNJFDf8Itt8mIsDtKOK6QwBcwINhI'
-        },
-        body: JSON.stringify({})
+        body: { action: 'get-profile' }
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      if (error) {
+        throw error;
       }
 
-      const data = await response.json();
       console.log('Profile check response:', data);
-      
       setAdvertiserProfile(data?.profile || null);
       
       if (data?.profile) {
@@ -107,30 +89,15 @@ export const AdvertiserSettings = ({ currentUserId }: AdvertiserSettingsProps) =
     try {
       console.log('Loading campaigns...');
       
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) {
-        throw new Error('Not authenticated');
-      }
-
-      const url = new URL(`https://jmjiyekmxwsxkfnqwyaa.supabase.co/functions/v1/advertiser-management`);
-      url.searchParams.append('action', 'get-campaigns');
-      
-      const response = await fetch(url.toString(), {
+      const { data, error } = await supabase.functions.invoke('advertiser-management', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imptaml5ZWtteHdzeGtmbnF3eWFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjEwMDgsImV4cCI6MjA2OTQ5NzAwOH0.SAas0HWvteb9TbYNJFDf8Itt8mIsDtKOK6QwBcwINhI'
-        },
-        body: JSON.stringify({})
+        body: { action: 'get-campaigns' }
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      if (error) {
+        throw error;
       }
 
-      const data = await response.json();
       console.log('Campaigns response:', data);
       setCampaigns(data?.campaigns || []);
     } catch (error) {
@@ -143,30 +110,15 @@ export const AdvertiserSettings = ({ currentUserId }: AdvertiserSettingsProps) =
     try {
       console.log('Loading ad cards...');
       
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) {
-        throw new Error('Not authenticated');
-      }
-
-      const url = new URL(`https://jmjiyekmxwsxkfnqwyaa.supabase.co/functions/v1/advertiser-management`);
-      url.searchParams.append('action', 'get-ad-cards');
-      
-      const response = await fetch(url.toString(), {
+      const { data, error } = await supabase.functions.invoke('advertiser-management', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json',
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imptaml5ZWtteHdzeGtmbnF3eWFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjEwMDgsImV4cCI6MjA2OTQ5NzAwOH0.SAas0HWvteb9TbYNJFDf8Itt8mIsDtKOK6QwBcwINhI'
-        },
-        body: JSON.stringify({})
+        body: { action: 'get-ad-cards' }
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      if (error) {
+        throw error;
       }
 
-      const data = await response.json();
       console.log('Ad cards response:', data);
       setAdCards(data?.ad_cards || []);
     } catch (error) {
