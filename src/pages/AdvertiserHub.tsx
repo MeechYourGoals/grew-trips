@@ -20,12 +20,30 @@ const AdvertiserHub = () => {
 
   const checkAdvertiserProfile = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('advertiser-management', {
-        body: { action: 'get-profile' }
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.access_token) {
+        throw new Error('Not authenticated');
+      }
+
+      const url = new URL(`https://jmjiyekmxwsxkfnqwyaa.supabase.co/functions/v1/advertiser-management`);
+      url.searchParams.append('action', 'get-profile');
+      
+      const response = await fetch(url.toString(), {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json',
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imptaml5ZWtteHdzeGtmbnF3eWFhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM5MjEwMDgsImV4cCI6MjA2OTQ5NzAwOH0.SAas0HWvteb9TbYNJFDf8Itt8mIsDtKOK6QwBcwINhI'
+        },
+        body: JSON.stringify({})
       });
-      
-      if (error) throw error;
-      
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+
+      const data = await response.json();
       setAdvertiserProfile(data.profile);
     } catch (error) {
       console.error('Error checking advertiser profile:', error);
