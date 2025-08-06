@@ -12,7 +12,7 @@ import { EventData } from '../../types/events';
 import { TripCardSkeleton } from '../ui/loading-skeleton';
 import { EnhancedEmptyState } from '../ui/enhanced-empty-state';
 import { filterActiveTrips } from '../../services/archiveService';
-import { recommendationsData, getRecommendationsByType } from '../../data/recommendationsData';
+import { useRecommendations } from '../../hooks/useRecommendations';
 import { MapPin, Calendar, Briefcase, Compass } from 'lucide-react';
 
 interface Trip {
@@ -54,10 +54,9 @@ export const TripGrid = ({
   const activeEvents = useMemo(() => events, [events]);
 
   // Get filtered recommendations for travel recs view
-  const filteredRecommendations = useMemo(() => {
-    if (viewMode !== 'travelRecs') return [];
-    return getRecommendationsByType(activeFilter === 'all' ? undefined : activeFilter);
-  }, [viewMode, activeFilter]);
+  const { recommendations: filteredRecommendations } = useRecommendations(
+    viewMode === 'travelRecs' ? activeFilter : 'all'
+  );
 
   // Show loading skeleton
   if (loading) {
@@ -76,7 +75,7 @@ export const TripGrid = ({
     : viewMode === 'events'
     ? Object.keys(activeEvents).length > 0
     : viewMode === 'travelRecs'
-    ? filteredRecommendations.length > 0
+    ? (viewMode === 'travelRecs' ? filteredRecommendations.length > 0 : false)
     : false;
 
   // Show enhanced empty state if no content

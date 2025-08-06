@@ -48,7 +48,7 @@ export const TripViewToggle = ({ viewMode, onViewModeChange }: TripViewTogglePro
           className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-glass-accent-orange data-[state=on]:to-glass-accent-orange-light data-[state=on]:text-white transition-all font-medium flex items-center gap-2 ${isMobile ? 'text-sm' : ''}`}
         >
           <Compass size={isMobile ? 16 : 18} />
-          <span className={isMobile ? 'text-sm' : ''}>Travel Recs</span>
+          <span className={isMobile ? 'text-sm' : ''}>Chravel Recs</span>
         </ToggleGroupItem>
       </ToggleGroup>
     </div>

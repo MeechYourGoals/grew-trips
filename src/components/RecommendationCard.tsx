@@ -3,7 +3,7 @@ import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { MapPin, Star, ChevronLeft, ChevronRight, Users, Bookmark } from 'lucide-react';
-import { Recommendation } from '../data/recommendationsData';
+import { Recommendation } from '../data/recommendations';
 import { useIsMobile } from '../hooks/use-mobile';
 
 interface RecommendationCardProps {
