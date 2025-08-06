@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { TripCard } from '../TripCard';
 import { ProTripCard } from '../ProTripCard';
 import { EventCard } from '../EventCard';
@@ -6,14 +6,16 @@ import { MobileTripCard } from '../MobileTripCard';
 import { MobileProTripCard } from '../MobileProTripCard';
 import { MobileEventCard } from '../MobileEventCard';
 import { RecommendationCard } from '../RecommendationCard';
+import { LocationSearchBar } from './LocationSearchBar';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { ProTripData } from '../../types/pro';
 import { EventData } from '../../types/events';
 import { TripCardSkeleton } from '../ui/loading-skeleton';
 import { EnhancedEmptyState } from '../ui/enhanced-empty-state';
 import { filterActiveTrips } from '../../services/archiveService';
-import { useRecommendations } from '../../hooks/useRecommendations';
-import { MapPin, Calendar, Briefcase, Compass } from 'lucide-react';
+import { useLocationFilteredRecommendations } from '../../hooks/useLocationFilteredRecommendations';
+import { MapPin, Calendar, Briefcase, Compass, Info } from 'lucide-react';
+import { Alert, AlertDescription } from '../ui/alert';
 
 interface Trip {
   id: number;
@@ -47,15 +49,21 @@ export const TripGrid = ({
   activeFilter = 'all'
 }: TripGridProps) => {
   const isMobile = useIsMobile();
+  const [manualLocation, setManualLocation] = useState<string>('');
 
   // Filter out archived trips - use synchronous version since we don't have async user context
   const activeTrips = useMemo(() => trips, [trips]);
   const activeProTrips = useMemo(() => proTrips, [proTrips]);
   const activeEvents = useMemo(() => events, [events]);
 
-  // Get filtered recommendations for travel recs view
-  const { recommendations: filteredRecommendations } = useRecommendations(
-    viewMode === 'travelRecs' ? activeFilter : 'all'
+  // Get location-filtered recommendations for travel recs view
+  const { 
+    recommendations: filteredRecommendations, 
+    activeLocation, 
+    isBasecampLocation 
+  } = useLocationFilteredRecommendations(
+    viewMode === 'travelRecs' ? activeFilter : 'all',
+    viewMode === 'travelRecs' ? manualLocation : undefined
   );
 
   // Show loading skeleton
@@ -75,7 +83,7 @@ export const TripGrid = ({
     : viewMode === 'events'
     ? Object.keys(activeEvents).length > 0
     : viewMode === 'travelRecs'
-    ? (viewMode === 'travelRecs' ? filteredRecommendations.length > 0 : false)
+    ? filteredRecommendations.length > 0
     : false;
 
   // Show enhanced empty state if no content
@@ -109,10 +117,12 @@ export const TripGrid = ({
         case 'travelRecs':
           return {
             icon: Compass,
-            title: 'No recommendations found',
-            description: 'Try adjusting your filters or explore different categories to discover amazing travel experiences.',
-            actionLabel: 'View All Recommendations',
-            onAction: () => console.log('View all recommendations')
+            title: activeLocation ? `No recommendations found in ${activeLocation}` : 'No recommendations found',
+            description: activeLocation 
+              ? 'Try searching for a different city or explore all recommendations.' 
+              : 'Try searching for a specific city to see local recommendations.',
+            actionLabel: 'Clear Location Filter',
+            onAction: () => setManualLocation('')
           };
         default:
           return {
@@ -125,51 +135,98 @@ export const TripGrid = ({
       }
     };
 
-    return <EnhancedEmptyState {...getEmptyStateProps()} />;
+    return (
+      <div className="space-y-6">
+        {/* Show location search for travel recs even when empty */}
+        {viewMode === 'travelRecs' && (
+          <div className="space-y-4">
+            <LocationSearchBar
+              onLocationSelect={setManualLocation}
+              currentLocation={manualLocation}
+            />
+            {activeLocation && (
+              <Alert className="border-info/50 bg-info/10">
+                <Info className="h-4 w-4" />
+                <AlertDescription>
+                  {isBasecampLocation 
+                    ? `Showing recommendations for ${activeLocation} (from your Basecamp)`
+                    : `Showing recommendations for ${activeLocation} (manually selected)`
+                  }
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        )}
+        <EnhancedEmptyState {...getEmptyStateProps()} />
+      </div>
+    );
   }
 
   // Render content grid (using filtered data)
   return (
-    <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
-      {viewMode === 'myTrips' ? (
-        activeTrips.map((trip) => (
-          <React.Fragment key={trip.id}>
-            {isMobile ? (
-              <MobileTripCard trip={trip} />
-            ) : (
-              <TripCard trip={trip} />
-            )}
-          </React.Fragment>
-        ))
-      ) : viewMode === 'tripsPro' ? (
-        Object.values(activeProTrips).map((trip) => (
-          <React.Fragment key={trip.id}>
-            {isMobile ? (
-              <MobileProTripCard trip={trip} />
-            ) : (
-              <ProTripCard trip={trip} />
-            )}
-          </React.Fragment>
-        ))
-      ) : viewMode === 'events' ? (
-        Object.values(activeEvents).map((event) => (
-          <React.Fragment key={event.id}>
-            {isMobile ? (
-              <MobileEventCard event={event} />
-            ) : (
-              <EventCard event={event} />
-            )}
-          </React.Fragment>
-        ))
-      ) : viewMode === 'travelRecs' ? (
-        filteredRecommendations.map((recommendation) => (
-          <RecommendationCard
-            key={recommendation.id}
-            recommendation={recommendation}
-            onSaveToTrip={(id) => console.log('Save to trip:', id)}
+    <div className="space-y-6">
+      {/* Location search bar for travel recs */}
+      {viewMode === 'travelRecs' && (
+        <div className="space-y-4">
+          <LocationSearchBar
+            onLocationSelect={setManualLocation}
+            currentLocation={manualLocation}
           />
-        ))
-      ) : null}
+          {activeLocation && (
+            <Alert className="border-info/50 bg-info/10">
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                {isBasecampLocation 
+                  ? `Showing recommendations for ${activeLocation} (from your Basecamp)`
+                  : `Showing recommendations for ${activeLocation} (manually selected)`
+                }
+              </AlertDescription>
+            </Alert>
+          )}
+        </div>
+      )}
+
+      <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
+        {viewMode === 'myTrips' ? (
+          activeTrips.map((trip) => (
+            <React.Fragment key={trip.id}>
+              {isMobile ? (
+                <MobileTripCard trip={trip} />
+              ) : (
+                <TripCard trip={trip} />
+              )}
+            </React.Fragment>
+          ))
+        ) : viewMode === 'tripsPro' ? (
+          Object.values(activeProTrips).map((trip) => (
+            <React.Fragment key={trip.id}>
+              {isMobile ? (
+                <MobileProTripCard trip={trip} />
+              ) : (
+                <ProTripCard trip={trip} />
+              )}
+            </React.Fragment>
+          ))
+        ) : viewMode === 'events' ? (
+          Object.values(activeEvents).map((event) => (
+            <React.Fragment key={event.id}>
+              {isMobile ? (
+                <MobileEventCard event={event} />
+              ) : (
+                <EventCard event={event} />
+              )}
+            </React.Fragment>
+          ))
+        ) : viewMode === 'travelRecs' ? (
+          filteredRecommendations.map((recommendation) => (
+            <RecommendationCard
+              key={recommendation.id}
+              recommendation={recommendation}
+              onSaveToTrip={(id) => console.log('Save to trip:', id)}
+            />
+          ))
+        ) : null}
+      </div>
     </div>
   );
 };

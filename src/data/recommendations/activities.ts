@@ -1,3 +1,4 @@
+
 import { Recommendation } from './types';
 
 export const activityRecommendations: Recommendation[] = [
@@ -6,6 +7,8 @@ export const activityRecommendations: Recommendation[] = [
     type: 'activity',
     title: 'Miami Vice Speedboat Tour',
     location: 'Downtown Miami, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'High-speed adventure through Biscayne Bay with celebrity home tours and Miami skyline views.',
     rating: 4.7,
     priceLevel: 2,
@@ -33,6 +36,8 @@ export const activityRecommendations: Recommendation[] = [
     type: 'activity',
     title: 'Wynwood Art District Walking Tour',
     location: 'Wynwood, Miami, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'Guided exploration of world-famous street art murals and galleries in Miami\'s vibrant arts district.',
     rating: 4.6,
     priceLevel: 2,

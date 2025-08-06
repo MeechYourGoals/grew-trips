@@ -1,3 +1,4 @@
+
 import { useMemo } from 'react';
 import { getRecommendationsByType, Recommendation } from '../data/recommendations';
 

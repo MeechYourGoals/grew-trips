@@ -1,3 +1,4 @@
+
 import { Recommendation } from './types';
 
 export const restaurantRecommendations: Recommendation[] = [
@@ -6,6 +7,8 @@ export const restaurantRecommendations: Recommendation[] = [
     type: 'restaurant',
     title: "Joe's Stone Crab",
     location: 'Miami Beach, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'Iconic Miami dining institution serving the finest stone crab since 1913. Seasonal menu with fresh seafood.',
     rating: 4.6,
     priceLevel: 3,
@@ -33,6 +36,8 @@ export const restaurantRecommendations: Recommendation[] = [
     type: 'restaurant',
     title: 'Komodo Miami',
     location: 'Brickell, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'Southeast Asian cuisine in a stunning multi-level venue with indoor and outdoor dining.',
     rating: 4.5,
     priceLevel: 3,
@@ -61,6 +66,8 @@ export const restaurantRecommendations: Recommendation[] = [
     type: 'restaurant',
     title: 'Zuma Miami',
     location: 'Downtown Miami, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'Contemporary Japanese robatayaki cuisine with stunning Biscayne Bay views and premium sake selection.',
     rating: 4.7,
     priceLevel: 4,

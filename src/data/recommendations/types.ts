@@ -1,8 +1,11 @@
+
 export interface Recommendation {
   id: number;
   type: 'hotel' | 'restaurant' | 'activity' | 'tour' | 'experience';
   title: string;
   location: string;
+  city: string;
+  coordinates?: { lat: number; lng: number };
   description: string;
   rating: number;
   priceLevel: 1 | 2 | 3 | 4; // $ to $$$$

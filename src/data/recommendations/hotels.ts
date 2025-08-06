@@ -1,3 +1,4 @@
+
 import { Recommendation } from './types';
 
 export const hotelRecommendations: Recommendation[] = [
@@ -6,6 +7,8 @@ export const hotelRecommendations: Recommendation[] = [
     type: 'hotel',
     title: 'Four Seasons Ocean Drive',
     location: 'Miami Beach, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'Luxury beachfront hotel with stunning ocean views, world-class spa, and rooftop pool.',
     rating: 4.8,
     priceLevel: 4,
@@ -34,6 +37,8 @@ export const hotelRecommendations: Recommendation[] = [
     type: 'hotel',
     title: 'The Setai Miami Beach',
     location: 'Miami Beach, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'Contemporary luxury with Asian-inspired design, pristine beachfront, and award-winning spa.',
     rating: 4.9,
     priceLevel: 4,

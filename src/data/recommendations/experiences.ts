@@ -1,3 +1,4 @@
+
 import { Recommendation } from './types';
 
 export const experienceRecommendations: Recommendation[] = [
@@ -6,6 +7,8 @@ export const experienceRecommendations: Recommendation[] = [
     type: 'experience',
     title: 'Art Deco Walking Tour',
     location: 'South Beach, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'Guided tour through the largest collection of Art Deco architecture in the world.',
     rating: 4.4,
     priceLevel: 1,
@@ -33,6 +36,8 @@ export const experienceRecommendations: Recommendation[] = [
     type: 'experience',
     title: 'VIP Nightclub Package at LIV',
     location: 'South Beach, Miami, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'Exclusive VIP table service at Miami\'s premier nightclub with bottle service and priority entry.',
     rating: 4.5,
     priceLevel: 4,

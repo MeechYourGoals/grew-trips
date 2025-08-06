@@ -1,3 +1,4 @@
+
 import { Recommendation } from './types';
 
 export const tourRecommendations: Recommendation[] = [
@@ -6,6 +7,8 @@ export const tourRecommendations: Recommendation[] = [
     type: 'tour',
     title: 'Everglades Airboat Adventure',
     location: 'Everglades National Park, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'Thrilling airboat ride through the Everglades with wildlife viewing and gator encounters.',
     rating: 4.6,
     priceLevel: 2,
@@ -33,6 +36,8 @@ export const tourRecommendations: Recommendation[] = [
     type: 'tour',
     title: 'Miami Food & Culture Tour',
     location: 'Little Havana, Miami, FL',
+    city: 'Miami',
+    coordinates: { lat: 25.7617, lng: -80.1918 },
     description: 'Authentic culinary journey through Little Havana with Cuban coffee, traditional pastries, and live music.',
     rating: 4.8,
     priceLevel: 2,
