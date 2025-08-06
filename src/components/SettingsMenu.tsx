@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { X, User, Bell, Crown, LogOut } from 'lucide-react';
+import { X, User, Bell, Crown, LogOut, Megaphone } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { ProUpgradeModal } from './ProUpgradeModal';
 import { EnterpriseSettings } from './EnterpriseSettings';
@@ -18,6 +19,7 @@ interface SettingsMenuProps {
 
 export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [showProModal, setShowProModal] = useState(false);
   const [activeSection, setActiveSection] = useState('profile');
   const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise' | 'events'>('consumer');
@@ -160,7 +162,19 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
 
             {/* Sign Out Button - Only show for consumer settings */}
             {settingsType === 'consumer' && (
-              <div className="flex-shrink-0 p-6 bg-white/5 border-t border-white/20">
+              <div className="flex-shrink-0 p-6 bg-white/5 border-t border-white/20 space-y-3">
+                {/* Advertiser Hub Button */}
+                <button
+                  onClick={() => {
+                    navigate('/advertiser');
+                    onClose();
+                  }}
+                  className="w-full flex items-center justify-center gap-2 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 font-medium py-3 rounded-xl transition-colors"
+                >
+                  <Megaphone size={16} />
+                  Advertiser Hub
+                </button>
+                
                 <button
                   onClick={currentSignOut}
                   className="w-full flex items-center justify-center gap-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 font-medium py-3 rounded-xl transition-colors"
