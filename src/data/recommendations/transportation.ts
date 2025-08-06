@@ -31,26 +31,26 @@ export const transportationRecommendations: Recommendation[] = [
   {
     id: 102,
     type: 'transportation',
-    title: 'American Airlines - Business Class Special',
-    location: 'Los Angeles International Airport, CA',
-    city: 'Los Angeles',
-    coordinates: { lat: 34.0522, lng: -118.2437 },
-    description: 'Exclusive Chravel offer: Save 15% on Business Class bookings with priority boarding and lounge access.',
-    rating: 4.7,
-    priceLevel: 4,
+    title: 'TripAdvisor - Experience Discovery',
+    location: 'Worldwide Travel Experiences',
+    city: 'Global',
+    coordinates: { lat: 40.7128, lng: -74.0060 },
+    description: 'Discover and compare top experiences worldwide. Read millions of reviews from real travelers.',
+    rating: 4.6,
+    priceLevel: 2,
     images: [
-      'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&h=400&fit=crop'
+      'https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=600&h=400&fit=crop'
     ],
-    tags: ['Airline', 'Business Class', 'Exclusive Offer'],
+    tags: ['Travel Planning', 'Reviews', 'Experiences'],
     isSponsored: true,
     sponsorBadge: 'Promoted',
-    promoText: '15% off Business Class',
+    promoText: 'Compare top experiences worldwide',
     ctaButton: {
-      text: 'Book Now',
-      action: 'book'
+      text: 'Discover Experiences',
+      action: 'view'
     },
-    externalLink: 'https://www.aa.com/',
-    distance: '8 miles from your location',
+    externalLink: 'https://www.tripadvisor.com/',
+    distance: 'Worldwide coverage',
     isAvailable: true
   },
   
@@ -83,26 +83,26 @@ export const transportationRecommendations: Recommendation[] = [
   {
     id: 104,
     type: 'transportation',
-    title: 'Delta Airlines - International Comfort+',
-    location: 'Hartsfield-Jackson Atlanta International Airport, GA',
-    city: 'Atlanta',
-    coordinates: { lat: 33.7490, lng: -84.3880 },
-    description: 'Upgrade to Comfort+ on international routes with extra legroom, priority boarding, and complimentary drinks.',
-    rating: 4.5,
+    title: 'Virgin Atlantic - Premium Transatlantic',
+    location: 'Heathrow Airport, London',
+    city: 'London',
+    coordinates: { lat: 51.5074, lng: -0.1278 },
+    description: 'Fly Virgin to London and beyond with award-winning service, premium entertainment, and luxury amenities.',
+    rating: 4.7,
     priceLevel: 3,
     images: [
-      'https://images.unsplash.com/photo-1556388158-158dc515f85b?w=600&h=400&fit=crop'
+      'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=600&h=400&fit=crop'
     ],
-    tags: ['Airline', 'Comfort+', 'International'],
+    tags: ['Airline', 'International', 'Premium Service'],
     isSponsored: true,
     sponsorBadge: 'Promoted',
-    promoText: 'Free Comfort+ upgrade available',
+    promoText: 'Fly Virgin to London for less',
     ctaButton: {
-      text: 'Upgrade Now',
+      text: 'Book Flight',
       action: 'book'
     },
-    externalLink: 'https://www.delta.com/',
-    distance: '22 miles from your location',
+    externalLink: 'https://www.virgin-atlantic.com/',
+    distance: 'International routes',
     isAvailable: true
   },
 
@@ -130,31 +130,6 @@ export const transportationRecommendations: Recommendation[] = [
     },
     externalLink: 'https://www.hertz.com/',
     distance: '0.8 miles from your hotel',
-    isAvailable: true
-  },
-  {
-    id: 106,
-    type: 'transportation',
-    title: 'Hertz - Airport Express Service',
-    location: 'Los Angeles International Airport, CA',
-    city: 'Los Angeles',
-    coordinates: { lat: 34.0522, lng: -118.2437 },
-    description: 'Skip the counter with Hertz Gold Plus Rewards. Express pickup and return service at LAX.',
-    rating: 4.6,
-    priceLevel: 2,
-    images: [
-      'https://images.unsplash.com/photo-1502489597346-dad15683d4c2?w=600&h=400&fit=crop'
-    ],
-    tags: ['Car Rental', 'Airport Service', 'Express Pickup'],
-    isSponsored: true,
-    sponsorBadge: 'Promoted',
-    promoText: 'Skip the counter - Express service',
-    ctaButton: {
-      text: 'Book Express',
-      action: 'book'
-    },
-    externalLink: 'https://www.hertz.com/',
-    distance: '2 miles from airport',
     isAvailable: true
   },
 
@@ -187,25 +162,25 @@ export const transportationRecommendations: Recommendation[] = [
   {
     id: 108,
     type: 'transportation',
-    title: 'Uber - Group Travel Solutions',
-    location: 'New York, NY',
-    city: 'New York',
+    title: 'Lyft - Reliable City Rides',
+    location: 'Major Cities Nationwide',
+    city: 'Multiple Cities',
     coordinates: { lat: 40.7128, lng: -74.0060 },
-    description: 'Uber XL and Uber Black SUV for your group trips. Reliable transportation for 6+ passengers.',
-    rating: 4.7,
-    priceLevel: 3,
+    description: 'Safe, friendly rides when you need them. New user discount available for Chravel members.',
+    rating: 4.5,
+    priceLevel: 2,
     images: [
       'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=600&h=400&fit=crop'
     ],
-    tags: ['Rideshare', 'Group Travel', 'SUV Service'],
+    tags: ['Rideshare', 'City Travel', 'New User Offer'],
     isSponsored: true,
     sponsorBadge: 'Promoted',
-    promoText: 'Perfect for group trips',
+    promoText: 'New user discount for Chravel',
     ctaButton: {
-      text: 'Book Group Ride',
+      text: 'Get Ride',
       action: 'book'
     },
-    externalLink: 'https://www.uber.com/',
+    externalLink: 'https://www.lyft.com/',
     distance: 'Available citywide',
     isAvailable: true
   },
@@ -239,26 +214,26 @@ export const transportationRecommendations: Recommendation[] = [
   {
     id: 110,
     type: 'transportation',
-    title: 'Waymo - Airport Connections',
-    location: 'Phoenix Sky Harbor International Airport, AZ',
-    city: 'Phoenix',
-    coordinates: { lat: 33.4484, lng: -112.0740 },
-    description: 'Seamless airport transfers with Waymo\'s autonomous vehicles. Pre-book your ride for guaranteed availability.',
+    title: 'Hotels.com - Compare & Save',
+    location: 'Global Hotel Network',
+    city: 'Worldwide',
+    coordinates: { lat: 40.7128, lng: -74.0060 },
+    description: 'Compare hotel prices and earn rewards. Get one night free for every 10 nights booked.',
     rating: 4.4,
     priceLevel: 2,
     images: [
-      'https://images.unsplash.com/photo-1551632436-cbf8dd35adfa?w=600&h=400&fit=crop'
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&h=400&fit=crop'
     ],
-    tags: ['Autonomous', 'Airport Transfer', 'Pre-booking'],
+    tags: ['Lodging', 'Price Comparison', 'Rewards Program'],
     isSponsored: true,
     sponsorBadge: 'Promoted',
-    promoText: 'Pre-book for guaranteed rides',
+    promoText: 'Collect 10 nights, get 1 free',
     ctaButton: {
-      text: 'Pre-book Ride',
-      action: 'book'
+      text: 'Find Hotels',
+      action: 'view'
     },
-    externalLink: 'https://waymo.com/',
-    distance: '5 miles from airport',
+    externalLink: 'https://www.hotels.com/',
+    distance: 'Global coverage',
     isAvailable: true
   },
 
@@ -291,26 +266,26 @@ export const transportationRecommendations: Recommendation[] = [
   {
     id: 112,
     type: 'transportation',
-    title: 'Orbitz - Last-Minute Flight Deals',
-    location: 'All Major Airports',
-    city: 'Los Angeles',
-    coordinates: { lat: 34.0522, lng: -118.2437 },
-    description: 'Score incredible last-minute flight deals. Mobile-exclusive offers and instant booking confirmation.',
-    rating: 4.3,
+    title: 'Airbnb - Unique Stays',
+    location: 'Unique Homes Worldwide',
+    city: 'Global',
+    coordinates: { lat: 37.7749, lng: -122.4194 },
+    description: 'Stay in unique homes and experiences around the world. First-time booking discount available.',
+    rating: 4.6,
     priceLevel: 2,
     images: [
-      'https://images.unsplash.com/photo-1569154941061-e231b4725ef1?w=600&h=400&fit=crop'
+      'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=400&fit=crop'
     ],
-    tags: ['Travel Booking', 'Last-Minute Deals', 'Mobile Exclusive'],
+    tags: ['Lodging', 'Unique Stays', 'Local Experiences'],
     isSponsored: true,
     sponsorBadge: 'Promoted',
-    promoText: 'Mobile-exclusive last-minute deals',
+    promoText: 'First booking discount available',
     ctaButton: {
-      text: 'See Deals',
+      text: 'Find Stay',
       action: 'view'
     },
-    externalLink: 'https://www.orbitz.com/',
-    distance: 'All locations',
+    externalLink: 'https://www.airbnb.com/',
+    distance: 'Worldwide availability',
     isAvailable: true
   },
 
@@ -343,26 +318,26 @@ export const transportationRecommendations: Recommendation[] = [
   {
     id: 114,
     type: 'transportation',
-    title: 'Navan - Team Travel Coordination',
-    location: 'Multi-City Business Travel',
-    city: 'Atlanta',
-    coordinates: { lat: 33.7490, lng: -84.3880 },
-    description: 'Coordinate team travel with automated approvals, real-time tracking, and integrated expense management.',
-    rating: 4.8,
-    priceLevel: 3,
+    title: 'Booking.com - Global Hotel Booking',
+    location: 'Hotels & Accommodations Worldwide',
+    city: 'Global',
+    coordinates: { lat: 52.3676, lng: 4.9041 },
+    description: 'Book accommodations worldwide with free cancellation. Genius member benefits available.',
+    rating: 4.5,
+    priceLevel: 2,
     images: [
-      'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&h=400&fit=crop'
+      'https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=600&h=400&fit=crop'
     ],
-    tags: ['Corporate Travel', 'Team Coordination', 'Automated Approvals'],
+    tags: ['Lodging', 'Global Booking', 'Free Cancellation'],
     isSponsored: true,
     sponsorBadge: 'Promoted',
-    promoText: 'Perfect for team travel',
+    promoText: 'Free cancellation on most stays',
     ctaButton: {
-      text: 'Start Trial',
+      text: 'Book Stay',
       action: 'view'
     },
-    externalLink: 'https://navan.com/',
-    distance: 'Available for teams',
+    externalLink: 'https://www.booking.com/',
+    distance: 'Global coverage',
     isAvailable: true
   }
 ];
