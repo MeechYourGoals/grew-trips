@@ -6,7 +6,7 @@ import {
   MessageSquare, 
   MapPin, 
   Calendar, 
-  Users, 
+  CheckSquare, 
   Sparkles, 
   Settings, 
   Camera, 
@@ -52,11 +52,10 @@ const features: Feature[] = [
     icon: <Calendar size={24} />
   },
   {
-    id: 'team',
-    title: 'Team Management',
-    description: 'Role-based permissions and advanced team coordination for professional trips',
-    icon: <Users size={24} />,
-    isPro: true
+    id: 'todolist',
+    title: 'Shared To-Do List',
+    description: 'Keep everyone accountable with shared tasks, due dates, and completion tracking for seamless trip coordination',
+    icon: <CheckSquare size={24} />
   },
   {
     id: 'preferences',
