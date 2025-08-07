@@ -190,7 +190,7 @@ Always provide helpful, specific, and current information. When providing recomm
         chatHistory,
         config: {
           systemPrompt,
-          model: 'sonar',
+          model: 'llama-3.1-sonar-large-128k-online',
           temperature: 0.7,
           maxTokens: 2048
         }
