@@ -34,21 +34,36 @@ export const AdvertiserOnboarding = ({ onProfileCreated }: AdvertiserOnboardingP
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('advertiser-management', {
-        method: 'POST',
-        body: { action: 'create-profile', ...formData }
-      });
+      console.log('🔍 Creating advertiser profile...');
+      
+      // Get current user
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError || !userData.user) {
+        throw new Error('User not authenticated');
+      }
+
+      // Direct database insert
+      const { data, error } = await supabase
+        .from('advertiser_profiles')
+        .insert({
+          user_id: userData.user.id,
+          ...formData
+        })
+        .select()
+        .single();
 
       if (error) {
-        throw error;
+        throw new Error(`Profile creation failed: ${error.message}`);
       }
+
+      console.log('✅ Profile created:', data);
 
       toast({
         title: "Profile Created",
         description: "Your advertiser profile has been created successfully!",
       });
 
-      onProfileCreated(data.profile);
+      onProfileCreated(data);
     } catch (error: any) {
       console.error('Error creating profile:', error);
       toast({

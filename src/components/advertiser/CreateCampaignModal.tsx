@@ -33,27 +33,50 @@ export const CreateCampaignModal = ({ isOpen, onClose, onCampaignCreated }: Crea
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('advertiser-management', {
-        method: 'POST',
-        body: { 
-          action: 'create-campaign',
+      console.log('🔍 Creating campaign...');
+      
+      // Get current user and their advertiser profile
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+      if (userError || !userData.user) {
+        throw new Error('User not authenticated');
+      }
+
+      const { data: profileData, error: profileError } = await supabase
+        .from('advertiser_profiles')
+        .select('id')
+        .eq('user_id', userData.user.id)
+        .single();
+
+      if (profileError) {
+        throw new Error(`Profile lookup failed: ${profileError.message}`);
+      }
+
+      // Direct database insert
+      const { data, error } = await supabase
+        .from('campaigns')
+        .insert({
+          advertiser_id: profileData.id,
           name: formData.name,
           start_date: formData.start_date ? new Date(formData.start_date).toISOString() : null,
           end_date: formData.end_date ? new Date(formData.end_date).toISOString() : null,
-          budget_amount: formData.budget_amount ? parseFloat(formData.budget_amount) : null
-        }
-      });
+          budget_amount: formData.budget_amount ? parseFloat(formData.budget_amount) : null,
+          status: 'draft'
+        })
+        .select()
+        .single();
 
       if (error) {
-        throw error;
+        throw new Error(`Campaign creation failed: ${error.message}`);
       }
+
+      console.log('✅ Campaign created:', data);
 
       toast({
         title: "Campaign Created",
         description: "Your campaign has been created successfully!",
       });
 
-      onCampaignCreated(data.campaign);
+      onCampaignCreated(data);
       onClose();
       
       // Reset form

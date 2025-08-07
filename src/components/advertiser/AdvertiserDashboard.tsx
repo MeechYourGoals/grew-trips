@@ -58,17 +58,32 @@ export const AdvertiserDashboard = ({ profile, onProfileUpdate }: AdvertiserDash
 
   const loadCampaigns = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('advertiser-management', {
-        method: 'POST',
-        body: { action: 'get-campaigns' }
-      });
+      console.log('🔍 Loading campaigns...');
+      
+      // Direct database query through the advertiser_profiles relationship
+      const { data: profileData, error: profileError } = await supabase
+        .from('advertiser_profiles')
+        .select('id')
+        .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+        .single();
 
-      if (error) {
-        throw error;
+      if (profileError) {
+        throw new Error(`Profile lookup failed: ${profileError.message}`);
       }
 
-      setCampaigns(data?.campaigns || []);
-    } catch (error) {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('advertiser_id', profileData.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw new Error(`Campaigns query failed: ${error.message}`);
+      }
+
+      console.log('✅ Campaigns loaded:', data);
+      setCampaigns(data || []);
+    } catch (error: any) {
       console.error('Error loading campaigns:', error);
       setCampaigns([]);
     }
@@ -76,17 +91,36 @@ export const AdvertiserDashboard = ({ profile, onProfileUpdate }: AdvertiserDash
 
   const loadAdCards = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('advertiser-management', {
-        method: 'POST',
-        body: { action: 'get-ad-cards' }
-      });
+      console.log('🔍 Loading ad cards...');
+      
+      // Get advertiser profile id first
+      const { data: profileData, error: profileError } = await supabase
+        .from('advertiser_profiles')
+        .select('id')
+        .eq('user_id', (await supabase.auth.getUser()).data.user?.id)
+        .single();
 
-      if (error) {
-        throw error;
+      if (profileError) {
+        throw new Error(`Profile lookup failed: ${profileError.message}`);
       }
 
-      setAdCards(data?.ad_cards || []);
-    } catch (error) {
+      // Get ad cards through campaigns relationship
+      const { data, error } = await supabase
+        .from('ad_cards')
+        .select(`
+          *,
+          campaigns!inner(advertiser_id)
+        `)
+        .eq('campaigns.advertiser_id', profileData.id)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        throw new Error(`Ad cards query failed: ${error.message}`);
+      }
+
+      console.log('✅ Ad cards loaded:', data);
+      setAdCards(data || []);
+    } catch (error: any) {
       console.error('Error loading ad cards:', error);
       setAdCards([]);
     }
