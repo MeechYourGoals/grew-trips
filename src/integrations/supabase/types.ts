@@ -170,6 +170,75 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_chat_messages: {
+        Row: {
+          author_name: string
+          content: string
+          created_at: string
+          id: string
+          sentiment: string | null
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_name: string
+          content: string
+          created_at?: string
+          id?: string
+          sentiment?: string | null
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_name?: string
+          content?: string
+          created_at?: string
+          id?: string
+          sentiment?: string | null
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trip_files: {
+        Row: {
+          ai_summary: string | null
+          content_text: string | null
+          created_at: string
+          extracted_events: number
+          file_type: string
+          id: string
+          name: string
+          trip_id: string
+          updated_at: string
+          uploaded_by: string
+        }
+        Insert: {
+          ai_summary?: string | null
+          content_text?: string | null
+          created_at?: string
+          extracted_events?: number
+          file_type: string
+          id?: string
+          name: string
+          trip_id: string
+          updated_at?: string
+          uploaded_by: string
+        }
+        Update: {
+          ai_summary?: string | null
+          content_text?: string | null
+          created_at?: string
+          extracted_events?: number
+          file_type?: string
+          id?: string
+          name?: string
+          trip_id?: string
+          updated_at?: string
+          uploaded_by?: string
+        }
+        Relationships: []
+      }
       trip_invites: {
         Row: {
           code: string
@@ -206,6 +275,129 @@ export type Database = {
           max_uses?: number | null
           trip_id?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      trip_links: {
+        Row: {
+          added_by: string
+          category: string | null
+          created_at: string
+          description: string | null
+          id: string
+          title: string
+          trip_id: string
+          updated_at: string
+          url: string
+          votes: number
+        }
+        Insert: {
+          added_by: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          title: string
+          trip_id: string
+          updated_at?: string
+          url: string
+          votes?: number
+        }
+        Update: {
+          added_by?: string
+          category?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          title?: string
+          trip_id?: string
+          updated_at?: string
+          url?: string
+          votes?: number
+        }
+        Relationships: []
+      }
+      trip_polls: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          options: Json
+          question: string
+          status: string
+          total_votes: number
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          options?: Json
+          question: string
+          status?: string
+          total_votes?: number
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          options?: Json
+          question?: string
+          status?: string
+          total_votes?: number
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trip_preferences: {
+        Row: {
+          accessibility: Json
+          budget_max: number
+          budget_min: number
+          business: Json
+          created_at: string
+          dietary: Json
+          entertainment: Json
+          id: string
+          lifestyle: Json
+          time_preference: string
+          trip_id: string
+          updated_at: string
+          vibe: Json
+        }
+        Insert: {
+          accessibility?: Json
+          budget_max?: number
+          budget_min?: number
+          business?: Json
+          created_at?: string
+          dietary?: Json
+          entertainment?: Json
+          id?: string
+          lifestyle?: Json
+          time_preference?: string
+          trip_id: string
+          updated_at?: string
+          vibe?: Json
+        }
+        Update: {
+          accessibility?: Json
+          budget_max?: number
+          budget_min?: number
+          business?: Json
+          created_at?: string
+          dietary?: Json
+          entertainment?: Json
+          id?: string
+          lifestyle?: Json
+          time_preference?: string
+          trip_id?: string
+          updated_at?: string
+          vibe?: Json
         }
         Relationships: []
       }

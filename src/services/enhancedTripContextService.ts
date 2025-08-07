@@ -1,3 +1,4 @@
+
 import { Trip, getTripById, generateTripMockData } from '../data/tripsData';
 import { proTripMockData } from '../data/proTripMockData';
 import { ProTripData } from '../types/pro';
@@ -142,7 +143,8 @@ export class EnhancedTripContextService {
 
   private static async getTripFiles(tripId: string): Promise<TripFile[]> {
     try {
-      const { data, error } = await supabase
+      // Use untyped supabase to avoid TS errors until types are regenerated
+      const { data, error } = await (supabase as any)
         .from('trip_files')
         .select(`
           id,
@@ -152,8 +154,7 @@ export class EnhancedTripContextService {
           ai_summary,
           extracted_events,
           uploaded_by,
-          created_at,
-          profiles:uploaded_by(display_name)
+          created_at
         `)
         .eq('trip_id', tripId)
         .order('created_at', { ascending: false });
@@ -163,14 +164,14 @@ export class EnhancedTripContextService {
         return [];
       }
 
-      return (data || []).map(file => ({
+      return (data || []).map((file: any) => ({
         id: file.id,
         name: file.name,
         type: file.file_type,
         content: file.content_text,
         extractedEvents: file.extracted_events || 0,
         aiSummary: file.ai_summary,
-        uploadedBy: file.profiles?.display_name || 'Unknown',
+        uploadedBy: 'Unknown',
         uploadedAt: file.created_at
       }));
     } catch (error) {
@@ -204,7 +205,7 @@ export class EnhancedTripContextService {
 
   private static async getTripLinks(tripId: string): Promise<TripLink[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('trip_links')
         .select(`
           id,
@@ -214,8 +215,7 @@ export class EnhancedTripContextService {
           category,
           votes,
           added_by,
-          created_at,
-          profiles:added_by(display_name)
+          created_at
         `)
         .eq('trip_id', tripId)
         .order('votes', { ascending: false });
@@ -225,14 +225,14 @@ export class EnhancedTripContextService {
         return [];
       }
 
-      return (data || []).map(link => ({
+      return (data || []).map((link: any) => ({
         id: link.id,
         url: link.url,
         title: link.title,
         description: link.description,
         category: link.category,
         votes: link.votes || 0,
-        addedBy: link.profiles?.display_name || 'Unknown',
+        addedBy: 'Unknown',
         addedAt: link.created_at
       }));
     } catch (error) {
@@ -243,7 +243,7 @@ export class EnhancedTripContextService {
 
   private static async getTripPolls(tripId: string): Promise<TripPoll[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('trip_polls')
         .select(`
           id,
@@ -252,8 +252,7 @@ export class EnhancedTripContextService {
           total_votes,
           status,
           created_by,
-          created_at,
-          profiles:created_by(display_name)
+          created_at
         `)
         .eq('trip_id', tripId)
         .order('created_at', { ascending: false });
@@ -263,14 +262,14 @@ export class EnhancedTripContextService {
         return [];
       }
 
-      return (data || []).map(poll => ({
+      return (data || []).map((poll: any) => ({
         id: poll.id,
         question: poll.question,
         options: Array.isArray(poll.options) ? poll.options : [],
         totalVotes: poll.total_votes || 0,
-        createdBy: poll.profiles?.display_name || 'Unknown',
+        createdBy: 'Unknown',
         createdAt: poll.created_at,
-        status: poll.status as 'active' | 'closed'
+        status: (poll.status as 'active' | 'closed') || 'active'
       }));
     } catch (error) {
       console.warn('Error fetching trip polls:', error);
@@ -280,7 +279,7 @@ export class EnhancedTripContextService {
 
   private static async getChatHistory(tripId: string): Promise<ChatMessage[]> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('trip_chat_messages')
         .select(`
           id,
@@ -298,7 +297,7 @@ export class EnhancedTripContextService {
         return [];
       }
 
-      return (data || []).map(message => ({
+      return (data || []).map((message: any) => ({
         id: message.id,
         content: message.content,
         author: message.author_name,
@@ -338,11 +337,11 @@ export class EnhancedTripContextService {
 
   private static async getTripPreferences(tripId: string): Promise<any> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('trip_preferences')
         .select('*')
         .eq('trip_id', tripId)
-        .single();
+        .maybeSingle();
 
       if (error || !data) {
         console.warn('Failed to fetch trip preferences:', error);
@@ -417,8 +416,8 @@ export class EnhancedTripContextService {
       });
 
     const positiveMessages = chatHistory.filter(m => m.sentiment === 'positive').length;
-    const consensusLevel: 'high' | 'medium' | 'low' = positiveMessages / chatHistory.length > 0.7 ? 'high' : 
-                          positiveMessages / chatHistory.length > 0.4 ? 'medium' : 'low';
+    const ratio = chatHistory.length ? (positiveMessages / chatHistory.length) : 0;
+    const consensusLevel: 'high' | 'medium' | 'low' = ratio > 0.7 ? 'high' : ratio > 0.4 ? 'medium' : 'low';
 
     return { mostActiveParticipants, recentDecisions, consensusLevel };
   }
