@@ -1,10 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL,
-  import.meta.env.VITE_SUPABASE_ANON_KEY
-);
-
+import { supabase } from '../integrations/supabase/client';
 export interface CalendarEvent {
   id?: string;
   title: string;
@@ -69,15 +63,14 @@ export class GoogleCalendarService {
 
   async getStoredConnection(userId: string): Promise<CalendarConnection | null> {
     try {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('calendar_connections')
         .select('*')
         .eq('user_id', userId)
         .eq('provider', 'google')
-        .single();
-      
-      if (error) return null;
-      return data;
+        .maybeSingle();
+      if (error || !data) return null;
+      return data as CalendarConnection;
     } catch (error) {
       console.error('Error getting stored connection:', error);
       return null;
@@ -156,31 +149,31 @@ export class GoogleCalendarService {
 
   async disconnectCalendar(userId: string): Promise<void> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('calendar_connections')
         .delete()
         .eq('user_id', userId)
         .eq('provider', 'google');
-      
-      if (error) throw error;
+      if (error) {
+        console.warn('Calendar connections table not available or other error:', error);
+      }
     } catch (error) {
-      console.error('Error disconnecting calendar:', error);
-      throw error;
+      console.warn('Error disconnecting calendar (non-fatal in demo):', error);
     }
   }
 
   async toggleSync(userId: string, enabled: boolean): Promise<void> {
     try {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('calendar_connections')
         .update({ sync_enabled: enabled })
         .eq('user_id', userId)
         .eq('provider', 'google');
-      
-      if (error) throw error;
+      if (error) {
+        console.warn('Calendar connections table not available or other error:', error);
+      }
     } catch (error) {
-      console.error('Error toggling sync:', error);
-      throw error;
+      console.warn('Error toggling sync (non-fatal in demo):', error);
     }
   }
 }

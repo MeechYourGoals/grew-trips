@@ -93,19 +93,19 @@ export const ReceiptUploadModal = ({
         const newReceipt: Receipt = {
           id: data.receipt.id,
           tripId: data.receipt.trip_id,
-          uploaderId: data.receipt.uploader_id,
+          uploaderId: data.receipt.user_id,
           uploaderName: user.displayName || 'User',
-          fileUrl: data.receipt.file_url,
-          totalAmount: data.receipt.total_amount,
-          currency: data.receipt.currency,
-          parsedData: data.parsed_data,
+          fileUrl: data.receipt.receipt_url,
+          totalAmount: data.receipt.amount,
+          currency: null,
+          parsedData: undefined,
           preferredMethod,
           splitCount,
-          perPersonAmount: splitCount && data.receipt.total_amount ? data.receipt.total_amount / splitCount : undefined,
+          perPersonAmount: splitCount && data.receipt.amount ? data.receipt.amount / splitCount : undefined,
           createdAt: data.receipt.created_at
         };
 
-        setTotalAmount(data.receipt.total_amount ? String(data.receipt.total_amount) : '');
+        setTotalAmount(data.receipt.amount ? String(data.receipt.amount) : '');
         onReceiptUploaded(newReceipt);
         setSelectedFile(null);
         setSplitCount(undefined);

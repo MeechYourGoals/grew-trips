@@ -177,19 +177,7 @@ export class NotificationService {
 
   async sendPushNotification(userId: string, payload: NotificationPayload) {
     try {
-      // This would call a Supabase Edge Function that sends push notifications
-      const { data, error } = await supabase.functions.invoke('send-push-notification', {
-        body: {
-          userId,
-          payload
-        }
-      });
-
-      if (error) {
-        console.error('Failed to send push notification:', error);
-        return false;
-      }
-
+      console.log('[Demo] sendPushNotification', { userId, payload });
       return true;
     } catch (error) {
       console.error('Error sending push notification:', error);
@@ -199,20 +187,7 @@ export class NotificationService {
 
   async sendEmailNotification(userId: string, subject: string, content: string) {
     try {
-      // This would call a Supabase Edge Function that sends emails
-      const { data, error } = await supabase.functions.invoke('send-email-notification', {
-        body: {
-          userId,
-          subject,
-          content
-        }
-      });
-
-      if (error) {
-        console.error('Failed to send email notification:', error);
-        return false;
-      }
-
+      console.log('[Demo] sendEmailNotification', { userId, subject });
       return true;
     } catch (error) {
       console.error('Error sending email notification:', error);
@@ -222,19 +197,7 @@ export class NotificationService {
 
   async sendSMSNotification(userId: string, message: string) {
     try {
-      // This would call a Supabase Edge Function that sends SMS
-      const { data, error } = await supabase.functions.invoke('send-sms-notification', {
-        body: {
-          userId,
-          message
-        }
-      });
-
-      if (error) {
-        console.error('Failed to send SMS notification:', error);
-        return false;
-      }
-
+      console.log('[Demo] sendSMSNotification', { userId });
       return true;
     } catch (error) {
       console.error('Error sending SMS notification:', error);

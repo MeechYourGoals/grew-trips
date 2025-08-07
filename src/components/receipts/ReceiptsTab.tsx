@@ -18,22 +18,22 @@ export const ReceiptsTab = ({ tripId }: ReceiptsTabProps) => {
 
   useEffect(() => {
     const fetchReceipts = async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('trip_receipts')
-        .select('id, trip_id, uploader_id, file_url, total_amount, currency, parsed_data, created_at, profiles:uploader_id(display_name)')
+        .select('id, trip_id, user_id, receipt_url, amount, created_at')
         .eq('trip_id', tripId)
         .order('created_at', { ascending: false });
 
       if (!error && data) {
-        const mapped = data.map((r: any) => ({
+        const mapped = (data as any[]).map((r: any) => ({
           id: r.id,
           tripId: r.trip_id,
-          uploaderId: r.uploader_id,
-          uploaderName: r.profiles?.display_name ?? undefined,
-          fileUrl: r.file_url,
-          totalAmount: r.total_amount,
-          currency: r.currency,
-          parsedData: r.parsed_data,
+          uploaderId: r.user_id,
+          uploaderName: undefined,
+          fileUrl: r.receipt_url,
+          totalAmount: r.amount,
+          currency: null,
+          parsedData: undefined,
           preferredMethod: 'venmo',
           createdAt: r.created_at
         })) as Receipt[];
