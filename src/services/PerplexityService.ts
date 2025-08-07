@@ -102,12 +102,12 @@ export class PerplexityService {
           message,
           tripContext: options.tripContext,
           chatHistory: options.chatHistory || [],
-          config: {
-            model: 'sonar',
-            temperature: 0.7,
-            maxTokens: 2048,
-            ...options.config
-          },
+                      config: {
+              model: 'llama-3.1-sonar-large-128k-online',
+              temperature: 0.7,
+              maxTokens: 2048,
+              ...options.config
+            },
           imageBase64: options.imageBase64,
           analysisType: options.analysisType || 'chat'
         }

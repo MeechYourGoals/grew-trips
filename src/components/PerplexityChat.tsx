@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Sparkles, WifiOff, Wifi, AlertCircle, CheckCircle, Activity, Search } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
-import { TripContextService } from '../services/tripContextService';
+import { EnhancedTripContextService } from '../services/enhancedTripContextService';
 import { PerplexityConciergeService, PerplexityResponse } from '../services/perplexityConciergeService';
 import { useBasecamp } from '../contexts/BasecampContext';
 import { ChatMessages } from './chat/ChatMessages';
@@ -86,7 +86,7 @@ export const PerplexityChat = ({ tripId, basecamp, preferences }: PerplexityChat
       // Get full trip context
       let tripContext;
       try {
-        tripContext = await TripContextService.getTripContext(tripId, false);
+        tripContext = await EnhancedTripContextService.getEnhancedTripContext(tripId, false);
       } catch (error) {
         tripContext = {
           tripId,

@@ -5,6 +5,7 @@ import { corsHeaders } from "../_shared/cors.ts"
 const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!
+const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant'
@@ -44,7 +45,8 @@ serve(async (req) => {
       analysisType = 'chat'
     }: PerplexityRequest = await req.json()
 
-    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+    // Use service role for database writes from this function
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
     // Build context-aware system prompt
     const systemPrompt = buildSystemPrompt(tripContext, analysisType, config.systemPrompt)
