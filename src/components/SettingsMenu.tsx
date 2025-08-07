@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { X, User, Bell, Crown, LogOut } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
-import { AdvertiserSettings } from './AdvertiserSettings';
+
 import { ProUpgradeModal } from './ProUpgradeModal';
 import { EnterpriseSettings } from './EnterpriseSettings';
 import { ConsumerSettings } from './ConsumerSettings';
@@ -21,7 +21,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
   const { user, signOut } = useAuth();
   const [showProModal, setShowProModal] = useState(false);
   const [activeSection, setActiveSection] = useState('profile');
-  const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise' | 'events' | 'advertiser'>('consumer');
+  const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise' | 'events'>('consumer');
   const { accentColors } = useTripVariant();
 
   // Create mock user for demo mode when no real user is authenticated
@@ -104,9 +104,9 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
             </button>
           </div>
 
-          {/* Settings Type Toggle - Updated to include Advertiser */}
+          {/* Settings Type Toggle */}
           <div className="flex-shrink-0 p-6 border-b border-white/20">
-            <div className="bg-white/10 rounded-xl p-1 grid grid-cols-4">
+            <div className="bg-white/10 rounded-xl p-1 grid grid-cols-3">
               <button
                 onClick={() => setSettingsType('consumer')}
                 className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
@@ -137,16 +137,6 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
               >
                 Events
               </button>
-              <button
-                onClick={() => setSettingsType('advertiser')}
-                className={`py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
-                  settingsType === 'advertiser'
-                    ? `bg-${accentColors.primary} text-white`
-                    : 'text-gray-400 hover:text-white'
-                }`}
-              >
-                Advertiser
-              </button>
             </div>
           </div>
 
@@ -167,11 +157,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
               <div className="flex-1 min-h-0">
                 <EventsSettings currentUserId={currentUser.id} />
               </div>
-            ) : (
-              <div className="flex-1 min-h-0">
-                <AdvertiserSettings currentUserId={currentUser.id} />
-              </div>
-            )}
+            ) : null}
 
             {/* Sign Out Button - Only show for consumer settings */}
             {settingsType === 'consumer' && (

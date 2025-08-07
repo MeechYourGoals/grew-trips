@@ -22,7 +22,7 @@ import SettingsPage from "./pages/SettingsPage";
 import MorePage from "./pages/MorePage";
 import ArchivePage from "./pages/ArchivePage";
 import { AdminDashboard } from "./pages/AdminDashboard";
-import AdvertiserHub from "./pages/AdvertiserHub";
+
 
 const queryClient = new QueryClient();
 
@@ -51,8 +51,6 @@ const App = () => (
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/more" element={<MorePage />} />
                 <Route path="/archive" element={<ArchivePage />} />
-                {/* Advertiser Hub routes */}
-                <Route path="/advertiser" element={<AdvertiserHub />} />
                 {/* AI Feature routes */}
                 <Route path="/ai/review-analysis" element={<ReviewAnalysis />} />
                 <Route path="/admin/scheduled-messages" element={<AdminDashboard />} />

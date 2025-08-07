@@ -6,8 +6,5 @@ verify_jwt = false
 [functions.ai-features]
 verify_jwt = false
 
-[functions.advertiser-management]
-verify_jwt = false
-
 [functions.image-upload]
 verify_jwt = false
