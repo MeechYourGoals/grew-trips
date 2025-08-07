@@ -2,6 +2,7 @@ import { Trip, getTripById, generateTripMockData } from '../data/tripsData';
 import { proTripMockData } from '../data/proTripMockData';
 import { ProTripData } from '../types/pro';
 import { TripContext, TripFile, TripPhoto, TripLink, TripPoll, ChatMessage, TripReceipt } from '../types/tripContext';
+import { supabase } from '@/integrations/supabase/client';
 
 export class EnhancedTripContextService {
   static async getEnhancedTripContext(tripId: string, isProTrip = false): Promise<TripContext> {
@@ -140,28 +141,42 @@ export class EnhancedTripContextService {
   }
 
   private static async getTripFiles(tripId: string): Promise<TripFile[]> {
-    // Mock files data with AI extracted content
-    return [
-      {
-        id: '1',
-        name: 'Dodgers Game Tickets.pdf',
-        type: 'application/pdf',
-        content: 'LA Dodgers vs SF Giants, February 15, 2025, 7:10 PM, Dodger Stadium',
-        extractedEvents: 1,
-        aiSummary: 'Baseball game tickets for February 15th at Dodger Stadium',
-        uploadedBy: 'John Smith',
-        uploadedAt: '2025-01-15T10:30:00Z'
-      },
-      {
-        id: '2', 
-        name: 'Restaurant Menu.jpg',
-        type: 'image/jpeg',
-        content: 'Le Comptoir French Restaurant - Prix fixe menu $85, Wine pairing available',
-        aiSummary: 'Upscale French restaurant menu with prix fixe dining option',
-        uploadedBy: 'Sarah Wilson',
-        uploadedAt: '2025-01-14T16:45:00Z'
+    try {
+      const { data, error } = await supabase
+        .from('trip_files')
+        .select(`
+          id,
+          name,
+          file_type,
+          content_text,
+          ai_summary,
+          extracted_events,
+          uploaded_by,
+          created_at,
+          profiles:uploaded_by(display_name)
+        `)
+        .eq('trip_id', tripId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.warn('Failed to fetch trip files:', error);
+        return [];
       }
-    ];
+
+      return (data || []).map(file => ({
+        id: file.id,
+        name: file.name,
+        type: file.file_type,
+        content: file.content_text,
+        extractedEvents: file.extracted_events || 0,
+        aiSummary: file.ai_summary,
+        uploadedBy: file.profiles?.display_name || 'Unknown',
+        uploadedAt: file.created_at
+      }));
+    } catch (error) {
+      console.warn('Error fetching trip files:', error);
+      return [];
+    }
   }
 
   private static async getTripPhotos(tripId: string): Promise<TripPhoto[]> {
@@ -188,87 +203,112 @@ export class EnhancedTripContextService {
   }
 
   private static async getTripLinks(tripId: string): Promise<TripLink[]> {
-    return [
-      {
-        id: 'link-1',
-        url: 'https://www.yelp.com/biz/republique-los-angeles',
-        title: 'Republique Restaurant',
-        description: 'French bistro in Mid-City with great brunch and dinner',
-        category: 'restaurant',
-        votes: 8,
-        addedBy: 'Emma',
-        addedAt: '2025-01-14T14:20:00Z'
-      },
-      {
-        id: 'link-2',
-        url: 'https://www.timeout.com/los-angeles/art/best-museums-in-los-angeles',
-        title: 'Best Museums in LA',
-        description: 'Guide to top art museums and cultural attractions',
-        category: 'activities',
-        votes: 5,
-        addedBy: 'Alex',
-        addedAt: '2025-01-15T09:15:00Z'
+    try {
+      const { data, error } = await supabase
+        .from('trip_links')
+        .select(`
+          id,
+          url,
+          title,
+          description,
+          category,
+          votes,
+          added_by,
+          created_at,
+          profiles:added_by(display_name)
+        `)
+        .eq('trip_id', tripId)
+        .order('votes', { ascending: false });
+
+      if (error) {
+        console.warn('Failed to fetch trip links:', error);
+        return [];
       }
-    ];
+
+      return (data || []).map(link => ({
+        id: link.id,
+        url: link.url,
+        title: link.title,
+        description: link.description,
+        category: link.category,
+        votes: link.votes || 0,
+        addedBy: link.profiles?.display_name || 'Unknown',
+        addedAt: link.created_at
+      }));
+    } catch (error) {
+      console.warn('Error fetching trip links:', error);
+      return [];
+    }
   }
 
   private static async getTripPolls(tripId: string): Promise<TripPoll[]> {
-    return [
-      {
-        id: 'poll-1',
-        question: 'What should we do Sunday afternoon?',
-        options: [
-          { id: 'opt-1', text: 'Beach time at Santa Monica', votes: 6 },
-          { id: 'opt-2', text: 'Museum hopping', votes: 3 },
-          { id: 'opt-3', text: 'Shopping on Melrose', votes: 2 }
-        ],
-        totalVotes: 11,
-        createdBy: 'Sarah',
-        createdAt: '2025-01-15T11:30:00Z',
-        status: 'active'
+    try {
+      const { data, error } = await supabase
+        .from('trip_polls')
+        .select(`
+          id,
+          question,
+          options,
+          total_votes,
+          status,
+          created_by,
+          created_at,
+          profiles:created_by(display_name)
+        `)
+        .eq('trip_id', tripId)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.warn('Failed to fetch trip polls:', error);
+        return [];
       }
-    ];
+
+      return (data || []).map(poll => ({
+        id: poll.id,
+        question: poll.question,
+        options: Array.isArray(poll.options) ? poll.options : [],
+        totalVotes: poll.total_votes || 0,
+        createdBy: poll.profiles?.display_name || 'Unknown',
+        createdAt: poll.created_at,
+        status: poll.status as 'active' | 'closed'
+      }));
+    } catch (error) {
+      console.warn('Error fetching trip polls:', error);
+      return [];
+    }
   }
 
   private static async getChatHistory(tripId: string): Promise<ChatMessage[]> {
-    // Include both regular messages and broadcasts for contextual awareness
-    return [
-      {
-        id: 'msg-1',
-        content: 'Super excited for this trip! Has everyone seen the weather forecast?',
-        author: 'Sarah Chen',
-        timestamp: '2025-01-15T05:42:00Z',
-        sentiment: 'positive'
-      },
-      {
-        id: 'broadcast-1',
-        content: '📢 BROADCAST: Just booked my flight! Landing at 3:30 PM on Friday ✈️',
-        author: 'Marcus Johnson',
-        timestamp: '2025-01-15T05:42:00Z',
-        sentiment: 'positive'
-      },
-      {
-        id: 'msg-2',
-        content: 'Found an amazing restaurant for dinner - sending the link now!',
-        author: 'Priya Patel',
-        timestamp: '2025-01-15T05:42:00Z',
-        sentiment: 'positive'
-      },
-      {
-        id: 'msg-3',
-        content: 'Should we make dinner reservations somewhere nice for Saturday?',
-        author: 'Alex',
-        timestamp: '2025-01-15T10:15:00Z',
-        sentiment: 'neutral'
-      },
-      {
-        id: 'msg-4',
-        content: 'I found this amazing rooftop bar with great views!',
-        author: 'Marcus',
-        timestamp: '2025-01-15T11:45:00Z',
-        sentiment: 'positive'
+    try {
+      const { data, error } = await supabase
+        .from('trip_chat_messages')
+        .select(`
+          id,
+          content,
+          author_name,
+          sentiment,
+          created_at
+        `)
+        .eq('trip_id', tripId)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (error) {
+        console.warn('Failed to fetch chat history:', error);
+        return [];
       }
-    ];
+
+      return (data || []).map(message => ({
+        id: message.id,
+        content: message.content,
+        author: message.author_name,
+        timestamp: message.created_at,
+        sentiment: message.sentiment as 'positive' | 'neutral' | 'negative' | undefined
+      }));
+    } catch (error) {
+      console.warn('Error fetching chat history:', error);
+      return [];
+    }
   }
 
   private static async getTripReceipts(tripId: string): Promise<TripReceipt[]> {
@@ -297,17 +337,53 @@ export class EnhancedTripContextService {
   }
 
   private static async getTripPreferences(tripId: string): Promise<any> {
-    return {
-      dietary: ['Vegetarian', 'Gluten-free'],
-      vibe: ['Adventure', 'Cultural', 'Nightlife'],
-      accessibility: ['Pet Friendly'],
-      business: [],
-      entertainment: ['Live Music', 'Art'],
-      lifestyle: ['Locally Owned', 'Outdoor'],
-      budgetMin: 50,
-      budgetMax: 150,
-      timePreference: 'flexible'
-    };
+    try {
+      const { data, error } = await supabase
+        .from('trip_preferences')
+        .select('*')
+        .eq('trip_id', tripId)
+        .single();
+
+      if (error || !data) {
+        console.warn('Failed to fetch trip preferences:', error);
+        return {
+          dietary: [],
+          vibe: [],
+          accessibility: [],
+          business: [],
+          entertainment: [],
+          lifestyle: [],
+          budgetMin: 0,
+          budgetMax: 1000,
+          timePreference: 'flexible'
+        };
+      }
+
+      return {
+        dietary: data.dietary || [],
+        vibe: data.vibe || [],
+        accessibility: data.accessibility || [],
+        business: data.business || [],
+        entertainment: data.entertainment || [],
+        lifestyle: data.lifestyle || [],
+        budgetMin: data.budget_min || 0,
+        budgetMax: data.budget_max || 1000,
+        timePreference: data.time_preference || 'flexible'
+      };
+    } catch (error) {
+      console.warn('Error fetching trip preferences:', error);
+      return {
+        dietary: [],
+        vibe: [],
+        accessibility: [],
+        business: [],
+        entertainment: [],
+        lifestyle: [],
+        budgetMin: 0,
+        budgetMax: 1000,
+        timePreference: 'flexible'
+      };
+    }
   }
 
   private static analyzeSpendingPatterns(receipts: TripReceipt[]) {
