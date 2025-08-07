@@ -4,6 +4,7 @@ import { Sparkles, WifiOff, Wifi, AlertCircle, CheckCircle, Activity, Search } f
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
 import { TripContextService } from '../services/tripContextService';
+import { EnhancedTripContextService } from '../services/enhancedTripContextService';
 import { PerplexityConciergeService, PerplexityResponse } from '../services/perplexityConciergeService';
 import { useBasecamp } from '../contexts/BasecampContext';
 import { ChatMessages } from './chat/ChatMessages';
@@ -83,24 +84,31 @@ export const PerplexityChat = ({ tripId, basecamp, preferences }: PerplexityChat
     setAiStatus('thinking');
 
     try {
-      // Get full trip context
+      // Get full trip context with enhanced contextual data
       let tripContext;
       try {
-        tripContext = await TripContextService.getTripContext(tripId, false);
+        // Try enhanced context service first for better contextual awareness
+        tripContext = await EnhancedTripContextService.getEnhancedTripContext(tripId, false);
       } catch (error) {
-        tripContext = {
-          tripId,
-          title: 'Current Trip',
-          location: globalBasecamp?.address || basecamp?.address || 'Unknown location',
-          dateRange: new Date().toISOString().split('T')[0],
-          participants: [],
-          itinerary: [],
-          accommodation: globalBasecamp?.name || basecamp?.name,
-          currentDate: new Date().toISOString().split('T')[0],
-          upcomingEvents: [],
-          recentUpdates: [],
-          confirmationNumbers: {}
-        };
+        console.warn('Enhanced context failed, falling back to basic context:', error);
+        try {
+          tripContext = await TripContextService.getTripContext(tripId, false);
+        } catch (fallbackError) {
+          console.warn('Basic context also failed, using minimal context:', fallbackError);
+          tripContext = {
+            tripId,
+            title: 'Current Trip',
+            location: globalBasecamp?.address || basecamp?.address || 'Unknown location',
+            dateRange: new Date().toISOString().split('T')[0],
+            participants: [],
+            itinerary: [],
+            accommodation: globalBasecamp?.name || basecamp?.name,
+            currentDate: new Date().toISOString().split('T')[0],
+            upcomingEvents: [],
+            recentUpdates: [],
+            confirmationNumbers: {}
+          };
+        }
       }
 
       // Build chat history for context
