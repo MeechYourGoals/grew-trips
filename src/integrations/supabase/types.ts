@@ -143,6 +143,51 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_recommendations: {
+        Row: {
+          city: string | null
+          created_at: string
+          data: Json
+          external_link: string | null
+          id: string
+          image_url: string | null
+          location: string | null
+          rec_id: number
+          rec_type: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          city?: string | null
+          created_at?: string
+          data?: Json
+          external_link?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          rec_id: number
+          rec_type: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          city?: string | null
+          created_at?: string
+          data?: Json
+          external_link?: string | null
+          id?: string
+          image_url?: string | null
+          location?: string | null
+          rec_id?: number
+          rec_type?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       secure_storage: {
         Row: {
           created_at: string
