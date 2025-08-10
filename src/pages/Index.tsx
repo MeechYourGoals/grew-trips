@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MobileHeader } from '../components/MobileHeader';
 import { CreateTripModal } from '../components/CreateTripModal';
 import { UpgradeModal } from '../components/UpgradeModal';
@@ -24,6 +24,7 @@ import { proTripMockData } from '../data/proTripMockData';
 import { eventsMockData } from '../data/eventsMockData';
 import { tripsData } from '../data/tripsData';
 import { calculateTripStats, calculateProTripStats, calculateEventStats, filterItemsByStatus } from '../utils/tripStatsCalculator';
+import { useLocation } from 'react-router-dom';
 
 const Index = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -39,6 +40,7 @@ const Index = () => {
   const [settingsInitialConsumerSection, setSettingsInitialConsumerSection] = useState<string | undefined>(undefined);
   const { user } = useAuth();
   const isMobile = useIsMobile();
+  const location = useLocation();
 
   // Use centralized trip data
   const trips = tripsData;
@@ -136,6 +138,16 @@ const Index = () => {
 
   const filteredData = getFilteredData();
 
+  // Open settings to saved recs if requested via query params
+  useEffect(() => {
+    const sp = new URLSearchParams(location.search);
+    const open = sp.get('openSettings');
+    if (open === 'saved-recs') {
+      setSettingsInitialConsumerSection('saved-recs');
+      setIsSettingsOpen(true);
+    }
+  }, [location.search]);
+
   return (
     <div className="min-h-screen bg-background font-outfit">
       {/* Animated background elements */}
@@ -152,7 +164,6 @@ const Index = () => {
           onUpgradeToProo={() => setIsUpgradeModalOpen(true)}
           onSettings={() => setIsSettingsOpen(true)}
           onProDashboard={() => {}} // Empty function since Pro Dashboard was removed
-          onSavedRecs={() => { setSettingsInitialConsumerSection('saved-recs'); setIsSettingsOpen(true); }}
           viewMode={viewMode}
         />
 
@@ -163,7 +174,6 @@ const Index = () => {
             onCreateTrip={handleCreateTrip}
             onUpgrade={() => setIsUpgradeModalOpen(true)}
             onSettings={() => setIsSettingsOpen(true)}
-            onSavedRecs={() => { setSettingsInitialConsumerSection('saved-recs'); setIsSettingsOpen(true); }}
           />
         )}
 

@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Badge } from '../components/ui/badge';
 import { ProfileHeaderSkeleton, StatsSkeletonGrid } from '../components/ui/loading-skeleton';
 import { useAuth } from '../hooks/useAuth';
+import { SavedPlacesInline } from '../components/profile/SavedPlacesInline';
 
 const ProfilePage = () => {
   const { user } = useAuth();
@@ -80,6 +81,8 @@ const ProfilePage = () => {
           </div>
         ))}
       </div>
+
+      <SavedPlacesInline />
 
       {/* Quick Actions with enhanced interactions */}
       <div className="space-y-3 mb-8">

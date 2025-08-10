@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Crown, Plus, Settings, User, LogIn, Bookmark } from 'lucide-react';
+import { Crown, Plus, Settings, User, LogIn } from 'lucide-react';
 import { NotificationBell } from '../NotificationBell';
 import { SearchBar } from '../SearchBar';
 import { AuthModal } from '../AuthModal';
@@ -18,10 +18,9 @@ interface DesktopHeaderProps {
   onCreateTrip: () => void;
   onUpgrade: () => void;
   onSettings: () => void;
-  onSavedRecs: () => void;
 }
 
-export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings, onSavedRecs }: DesktopHeaderProps) => {
+export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }: DesktopHeaderProps) => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { user, signOut } = useAuth();
 
@@ -131,13 +130,6 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings, o
                   >
                     <User size={16} />
                     Account Settings
-                  </DropdownMenuItem>
-                  <DropdownMenuItem 
-                    onClick={onSavedRecs}
-                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
-                  >
-                    <Bookmark size={16} />
-                    Saved Recommendations
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={onUpgrade}
