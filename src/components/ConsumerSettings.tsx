@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { User, Bell, CreditCard, Shield, Settings, Wallet, Calendar, Link, ChevronDown, Archive } from 'lucide-react';
+import { User, Bell, CreditCard, Shield, Settings, Wallet, Calendar, Link, ChevronDown, Archive, Bookmark } from 'lucide-react';
 import { getFeatureTierEmoji, getTierLegend } from '../utils/featureTiers';
 import { TravelWallet } from './TravelWallet';
 import { ConsumerProfileSection } from './consumer/ConsumerProfileSection';
@@ -12,6 +12,7 @@ import { ConsumerCalendarSync } from './consumer/ConsumerCalendarSync';
 import { ConsumerConnectedAccounts } from './consumer/ConsumerConnectedAccounts';
 import { ArchivedTripsSection } from './ArchivedTripsSection';
 import { useIsMobile } from '../hooks/use-mobile';
+import { SavedRecommendations } from './SavedRecommendations';
 
 interface ConsumerSettingsProps {
   currentUserId: string;
@@ -28,6 +29,7 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
     { id: 'travel-wallet', label: `Travel Wallet ${getFeatureTierEmoji('travel-wallet', 'consumer')}`, icon: Wallet },
     { id: 'calendar-sync', label: `Calendar Sync ${getFeatureTierEmoji('calendar-sync', 'consumer')}`, icon: Calendar },
     { id: 'connected-accounts', label: `Connected Accounts ${getFeatureTierEmoji('connected-accounts', 'consumer')}`, icon: Link },
+    { id: 'saved-recs', label: 'Saved Recommendations', icon: Bookmark },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'privacy', label: 'Privacy & Security', icon: Shield },
     { id: 'settings', label: 'General Settings', icon: Settings },
@@ -47,6 +49,7 @@ export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
       case 'travel-wallet': return renderTravelWalletSection();
       case 'calendar-sync': return <ConsumerCalendarSync />;
       case 'connected-accounts': return <ConsumerConnectedAccounts />;
+      case 'saved-recs': return <SavedRecommendations />;
       case 'notifications': return <ConsumerNotificationsSection />;
       case 'privacy': return <ConsumerPrivacySection />;
       case 'settings': return <ConsumerGeneralSettings />;

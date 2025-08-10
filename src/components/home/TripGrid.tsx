@@ -16,6 +16,7 @@ import { filterActiveTrips } from '../../services/archiveService';
 import { useLocationFilteredRecommendations } from '../../hooks/useLocationFilteredRecommendations';
 import { MapPin, Calendar, Briefcase, Compass, Info } from 'lucide-react';
 import { Alert, AlertDescription } from '../ui/alert';
+import { useSavedRecommendations } from '@/hooks/useSavedRecommendations';
 
 interface Trip {
   id: number;
@@ -50,6 +51,7 @@ export const TripGrid = ({
 }: TripGridProps) => {
   const isMobile = useIsMobile();
   const [manualLocation, setManualLocation] = useState<string>('');
+  const { toggleSave } = useSavedRecommendations();
 
   // Filter out archived trips - use synchronous version since we don't have async user context
   const activeTrips = useMemo(() => trips, [trips]);
@@ -214,7 +216,12 @@ export const TripGrid = ({
             <RecommendationCard
               key={recommendation.id}
               recommendation={recommendation}
-              onSaveToTrip={(id) => console.log('Save to trip:', id)}
+              onSaveToTrip={async (id) => {
+                const rec = filteredRecommendations.find(r => r.id === id);
+                if (rec) {
+                  await toggleSave(rec);
+                }
+              }}
             />
           ))
         ) : null}
