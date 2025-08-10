@@ -15,9 +15,10 @@ import { SubscriptionSection } from './settings/SubscriptionSection';
 interface SettingsMenuProps {
   isOpen: boolean;
   onClose: () => void;
+  initialConsumerSection?: string;
 }
 
-export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
+export const SettingsMenu = ({ isOpen, onClose, initialConsumerSection }: SettingsMenuProps) => {
   const { user, signOut } = useAuth();
   const [showProModal, setShowProModal] = useState(false);
   const [activeSection, setActiveSection] = useState('profile');
@@ -144,7 +145,7 @@ export const SettingsMenu = ({ isOpen, onClose }: SettingsMenuProps) => {
           <div className="flex-1 flex flex-col min-h-0">
             {settingsType === 'consumer' ? (
               <div className="flex-1 min-h-0">
-                <ConsumerSettings currentUserId={currentUser.id} />
+                <ConsumerSettings currentUserId={currentUser.id} initialSection={initialConsumerSection} />
               </div>
             ) : settingsType === 'enterprise' ? (
               <div className="flex-1 min-h-0">

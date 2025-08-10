@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus, Crown, Settings, Menu, X } from 'lucide-react';
+import { Plus, Crown, Settings, Menu, X, Bookmark } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 
 interface MobileHeaderProps {
@@ -8,6 +8,7 @@ interface MobileHeaderProps {
   onUpgradeToProo: () => void;
   onSettings: () => void;
   onProDashboard: () => void;
+  onSavedRecs: () => void;
   viewMode: string;
 }
 

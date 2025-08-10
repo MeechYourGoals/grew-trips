@@ -68,7 +68,7 @@ export const SavedRecommendations = () => {
                     <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select a trip" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="bg-background border border-border z-50">
                       <SelectGroup>
                         {trips.map(t => (
                           <SelectItem key={t.id} value={t.id}>{t.label}</SelectItem>

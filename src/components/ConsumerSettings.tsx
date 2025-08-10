@@ -16,10 +16,11 @@ import { SavedRecommendations } from './SavedRecommendations';
 
 interface ConsumerSettingsProps {
   currentUserId: string;
+  initialSection?: string;
 }
 
-export const ConsumerSettings = ({ currentUserId }: ConsumerSettingsProps) => {
-  const [activeSection, setActiveSection] = useState('profile');
+export const ConsumerSettings = ({ currentUserId, initialSection }: ConsumerSettingsProps) => {
+  const [activeSection, setActiveSection] = useState(initialSection || 'profile');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const isMobile = useIsMobile();
 

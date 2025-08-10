@@ -36,6 +36,7 @@ const Index = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeFilter, setActiveFilter] = useState<string>('');
   const [recsFilter, setRecsFilter] = useState('all');
+  const [settingsInitialConsumerSection, setSettingsInitialConsumerSection] = useState<string | undefined>(undefined);
   const { user } = useAuth();
   const isMobile = useIsMobile();
 
@@ -151,6 +152,7 @@ const Index = () => {
           onUpgradeToProo={() => setIsUpgradeModalOpen(true)}
           onSettings={() => setIsSettingsOpen(true)}
           onProDashboard={() => {}} // Empty function since Pro Dashboard was removed
+          onSavedRecs={() => { setSettingsInitialConsumerSection('saved-recs'); setIsSettingsOpen(true); }}
           viewMode={viewMode}
         />
 
@@ -161,6 +163,7 @@ const Index = () => {
             onCreateTrip={handleCreateTrip}
             onUpgrade={() => setIsUpgradeModalOpen(true)}
             onSettings={() => setIsSettingsOpen(true)}
+            onSavedRecs={() => { setSettingsInitialConsumerSection('saved-recs'); setIsSettingsOpen(true); }}
           />
         )}
 
@@ -252,6 +255,7 @@ const Index = () => {
       <SettingsMenu 
         isOpen={isSettingsOpen} 
         onClose={() => setIsSettingsOpen(false)} 
+        initialConsumerSection={settingsInitialConsumerSection}
       />
 
       <DemoModal
