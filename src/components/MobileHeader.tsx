@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Plus, Crown, Settings, Menu, X } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import { NotificationBell } from './NotificationBell';
 
 interface MobileHeaderProps {
   onCreateTrip: () => void;
@@ -66,6 +67,7 @@ export const MobileHeader = ({
             </button>
           )}
           
+          <NotificationBell />
           <button
             onClick={() => setIsMenuOpen(true)}
             className="bg-gray-800/80 backdrop-blur-md border border-gray-700 hover:bg-gray-700/80 text-white p-3 rounded-xl transition-all duration-300"

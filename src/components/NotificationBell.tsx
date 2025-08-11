@@ -1,11 +1,11 @@
 
 import React, { useState } from 'react';
-import { Bell, MessageCircle, Calendar, Radio, X } from 'lucide-react';
+import { Bell, MessageCircle, Calendar, Radio, X, FilePlus, Image, BarChart2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface Notification {
   id: string;
-  type: 'message' | 'broadcast' | 'calendar';
+  type: 'message' | 'broadcast' | 'calendar' | 'poll' | 'files' | 'photos';
   title: string;
   description: string;
   tripId: string;
@@ -56,12 +56,100 @@ export const NotificationBell = () => {
     },
     {
       id: '4',
-      type: 'message',
-      title: 'Jake added new photos',
-      description: '5 new photos from yesterday\'s museum visit',
+      type: 'photos',
+      title: 'Jake uploaded new photos',
+      description: "5 photos added from yesterday's museum visit",
       tripId: '2',
       tripName: 'Tokyo Adventure',
       timestamp: '1 day ago',
+      isRead: true,
+      isHighPriority: false
+    },
+    {
+      id: '5',
+      type: 'message',
+      title: 'You were mentioned by Alex',
+      description: 'Alex: @You could you share your passport details? ',
+      tripId: '1',
+      tripName: 'Summer in Paris',
+      timestamp: 'just now',
+      isRead: false,
+      isHighPriority: false
+    },
+    {
+      id: '6',
+      type: 'poll',
+      title: 'New poll proposed: Tuesday dinner time',
+      description: 'Options: 6:30 PM, 7:30 PM, 8:30 PM',
+      tripId: '2',
+      tripName: 'Tokyo Adventure',
+      timestamp: '8 minutes ago',
+      isRead: false,
+      isHighPriority: false
+    },
+    {
+      id: '7',
+      type: 'files',
+      title: '3 new files added to trip',
+      description: 'Rooming list.pdf, Itinerary.pdf, Packing checklist.docx',
+      tripId: '2',
+      tripName: 'Tokyo Adventure',
+      timestamp: '25 minutes ago',
+      isRead: false,
+      isHighPriority: false
+    },
+    {
+      id: '8',
+      type: 'broadcast',
+      title: 'Safety update: Transit strike tomorrow',
+      description: 'Expect delays on Metro Line 2 — plan extra time',
+      tripId: '1',
+      tripName: 'Summer in Paris',
+      timestamp: '2 hours ago',
+      isRead: false,
+      isHighPriority: true
+    },
+    {
+      id: '9',
+      type: 'calendar',
+      title: 'Reminder: Airport transfer pickup',
+      description: 'CDG Terminal 2E — Driver: Pierre, Plate: AB-123-CD',
+      tripId: '1',
+      tripName: 'Summer in Paris',
+      timestamp: 'in 1 hour',
+      isRead: true,
+      isHighPriority: false
+    },
+    {
+      id: '10',
+      type: 'message',
+      title: 'New reply in “Hotel Options” thread',
+      description: 'Liam: Park Hyatt looks great — within budget too',
+      tripId: '2',
+      tripName: 'Tokyo Adventure',
+      timestamp: 'yesterday',
+      isRead: true,
+      isHighPriority: false
+    },
+    {
+      id: '11',
+      type: 'files',
+      title: 'Invoice uploaded: Hotel deposit',
+      description: 'Payment receipt for 2 rooms — Park Hyatt Paris',
+      tripId: '1',
+      tripName: 'Summer in Paris',
+      timestamp: '3 days ago',
+      isRead: true,
+      isHighPriority: false
+    },
+    {
+      id: '12',
+      type: 'photos',
+      title: 'Sofia added 8 new photos',
+      description: 'Night market highlights — check the album!',
+      tripId: '2',
+      tripName: 'Tokyo Adventure',
+      timestamp: '4 days ago',
       isRead: true,
       isHighPriority: false
     }
@@ -97,6 +185,12 @@ export const NotificationBell = () => {
         return <Radio size={16} className={iconClass} />;
       case 'calendar':
         return <Calendar size={16} className={iconClass} />;
+      case 'poll':
+        return <BarChart2 size={16} className={iconClass} />;
+      case 'files':
+        return <FilePlus size={16} className={iconClass} />;
+      case 'photos':
+        return <Image size={16} className={iconClass} />;
       default:
         return <Bell size={16} className={iconClass} />;
     }
