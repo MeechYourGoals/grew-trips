@@ -24,6 +24,14 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { user, signOut } = useAuth();
 
+  const blurbs: Record<string, string> = {
+    myTrips: 'Plan your perfect trip.',
+    tripsPro: 'Enterprise software for professional trip management.',
+    events: 'Professional event management and coordination.',
+    travelRecs: 'Discover curated hotels, dining, and experiences.',
+  };
+  const subtitle = blurbs[viewMode] ?? 'Plan your perfect trip.';
+
   const handleSearchClick = () => {
     alert('Please navigate to any trip and use the Concierge for search and assistance.');
   };
@@ -42,14 +50,9 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
         {/* Aligned row with subtitle, search, and action buttons */}
         <div className="flex items-center justify-between gap-6">
           <p className="text-muted-foreground flex-shrink-0">
-            {viewMode === 'myTrips' 
-              ? 'Plan, organize, and share your perfect trips' 
-              : viewMode === 'tripsPro'
-              ? 'Professional trip management with advanced features'
-              : 'Professional event management and coordination'
-            }
+            {subtitle}
           </p>
-          
+
           <div className="flex items-center gap-3">
             {/* Global Search Bar */}
             <div className="w-80">
