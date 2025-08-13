@@ -9,6 +9,8 @@ import { useTripCoverPhoto } from '../hooks/useTripCoverPhoto';
 import { CategorySelector } from './pro/CategorySelector';
 import { CategoryTags } from './pro/CategoryTags';
 import { ProTripCategory } from '../types/proCategories';
+import { CollaboratorsGrid } from './trip/CollaboratorsGrid';
+import { CollaboratorsModal } from './trip/CollaboratorsModal';
 
 interface TripHeaderProps {
   trip: {
@@ -21,6 +23,7 @@ interface TripHeaderProps {
       id: number;
       name: string;
       avatar: string;
+      role?: string;
     }>;
     coverPhoto?: string;
   };
@@ -34,6 +37,7 @@ interface TripHeaderProps {
 export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategoryChange }: TripHeaderProps) => {
   const { user } = useAuth();
   const [showInvite, setShowInvite] = useState(false);
+  const [showAllCollaborators, setShowAllCollaborators] = useState(false);
   const { variant, accentColors } = useTripVariant();
   const { coverPhoto, updateCoverPhoto } = useTripCoverPhoto(trip);
   const isPro = variant === 'pro';
@@ -119,7 +123,7 @@ export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategor
           </div>
 
           {/* Collaborators */}
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 min-w-[280px]">
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 min-w-[280px] lg:flex-1">
             <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2">
                 <Users size={20} className={`text-${accentColors.primary}`} />
@@ -149,24 +153,17 @@ export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategor
                 />
               </div>
             )}
-            
-            <div className="space-y-3 mb-4">
-              {trip.participants.map((participant) => (
-                <div key={participant.id} className="flex items-center gap-3">
-                  <img
-                    src={participant.avatar}
-                    alt={participant.name}
-                    className="w-10 h-10 rounded-full border-2 border-white/20"
-                  />
-                  <span className="text-white font-medium">{participant.name}</span>
-                </div>
-              ))}
-            </div>
+
+            <CollaboratorsGrid
+              participants={trip.participants}
+              countLabel={`${trip.participants.length} collaborators`}
+              onShowAll={() => setShowAllCollaborators(true)}
+            />
 
             {user && (
             <button
               onClick={() => setShowInvite(true)}
-              className={`w-full flex items-center justify-center gap-2 bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 text-white font-medium py-3 rounded-xl transition-all duration-200 hover:scale-105`}
+              className={`mt-4 w-full flex items-center justify-center gap-2 bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 text-white font-medium py-3 rounded-xl transition-all duration-200 hover:scale-105`}
               title="Invite people to this trip"
             >
                 <Plus size={16} />
@@ -182,6 +179,12 @@ export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategor
         onClose={() => setShowInvite(false)}
         tripName={trip.title}
         tripId={trip.id.toString()}
+      />
+
+      <CollaboratorsModal
+        open={showAllCollaborators}
+        onOpenChange={setShowAllCollaborators}
+        participants={trip.participants}
       />
     </>
   );

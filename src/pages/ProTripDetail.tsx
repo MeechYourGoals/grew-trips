@@ -64,7 +64,8 @@ const ProTripDetail = () => {
     participants: tripData.participants.map(p => ({
       id: p.id,
       name: p.name,
-      avatar: p.avatar
+      avatar: p.avatar,
+      role: (p as any).role
     }))
   };
 
