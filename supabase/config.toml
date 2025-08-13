@@ -8,3 +8,12 @@ verify_jwt = true
 
 [functions.image-upload]
 verify_jwt = true
+
+[functions.ai-search]
+verify_jwt = true
+
+[functions.ai-answer]
+verify_jwt = true
+
+[functions.ai-ingest]
+verify_jwt = true

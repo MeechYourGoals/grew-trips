@@ -45,10 +45,9 @@ export class UniversalConciergeService {
 
   private static async performUniversalSearch(query: string, tripId: string): Promise<SearchResult[]> {
     try {
-      const { data, error } = await supabase.functions.invoke('search', {
+      const { data, error } = await supabase.functions.invoke('ai-search', {
         body: {
           query,
-          scope: 'trip',
           tripId,
           limit: 10
         }
@@ -150,15 +149,20 @@ export class UniversalConciergeService {
         };
       }
 
-      // For non-search queries, use the OpenAI service
-      const aiResponse = await OpenAIService.queryOpenAI(
-        message,
-        {},
-        tripContext
-      );
+      // For non-search queries, use the new AI answer service with RAG
+      const { data, error } = await supabase.functions.invoke('ai-answer', {
+        body: {
+          query: message,
+          tripId: tripContext.tripId,
+          chatHistory: [] // TODO: Pass actual chat history if available
+        }
+      });
+
+      if (error) throw error;
 
       return {
-        content: aiResponse,
+        content: data.answer || "I'm having trouble processing your request right now.",
+        searchResults: data.citations || [],
         isFromFallback: false
       };
     } catch (error) {

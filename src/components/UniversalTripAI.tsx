@@ -1,10 +1,12 @@
 
-import React, { useState } from 'react';
-import { Send, Sparkles, MessageCircle, ExternalLink, AlertCircle, Wifi, WifiOff } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Send, Sparkles, MessageCircle, ExternalLink, AlertCircle, Wifi, WifiOff, Database, Zap } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
-import { OpenAIService } from '../services/OpenAIService';
+import { UniversalConciergeService } from '../services/universalConciergeService';
+import { KnowledgeGraphService } from '../services/knowledgeGraphService';
 import { TripContext } from '../types/tripContext';
+import { toast } from './ui/use-toast';
 import {
   Sheet,
   SheetContent,
@@ -35,9 +37,50 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [aiStatus, setAiStatus] = useState<'connected' | 'fallback' | 'error'>('connected');
+  const [knowledgeStats, setKnowledgeStats] = useState<any>(null);
+  const [isIngesting, setIsIngesting] = useState(false);
 
   const canUseAI = isPlus || tripContext.isPro || false;
   const contextLimit = tripContext.isPro ? 'Advanced (5x larger)' : 'Standard';
+
+  useEffect(() => {
+    if (canUseAI && isOpen) {
+      loadKnowledgeStats();
+    }
+  }, [tripContext.tripId, canUseAI, isOpen]);
+
+  const loadKnowledgeStats = async () => {
+    const stats = await KnowledgeGraphService.getTripKnowledgeStats(tripContext.tripId);
+    setKnowledgeStats(stats);
+  };
+
+  const handleIngestTripData = async () => {
+    if (isIngesting) return;
+    
+    setIsIngesting(true);
+    toast({
+      title: "Building Knowledge Graph",
+      description: "Ingesting trip data to enhance AI responses...",
+    });
+
+    const success = await KnowledgeGraphService.batchIngestTripData(tripContext.tripId);
+    
+    if (success) {
+      toast({
+        title: "Knowledge Graph Updated",
+        description: "AI can now provide more contextual responses about your trip!",
+      });
+      await loadKnowledgeStats();
+    } else {
+      toast({
+        title: "Ingestion Failed",
+        description: "There was an issue building the knowledge graph. Please try again.",
+        variant: "destructive"
+      });
+    }
+    
+    setIsIngesting(false);
+  };
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim()) return;
@@ -54,19 +97,22 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
     setIsTyping(true);
 
     try {
-      const context = OpenAIService.buildTripContext(tripContext);
-      const response = await OpenAIService.queryWithContext(inputMessage, context);
+      const response = await UniversalConciergeService.processMessage(inputMessage, tripContext);
       
       // Update AI status based on response
-      setAiStatus('connected');
+      setAiStatus(response.isFromFallback ? 'fallback' : 'connected');
       
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
         content: response.content,
         timestamp: new Date().toISOString(),
-        sources: response.sources,
-        isFromFallback: false
+        sources: response.searchResults?.map(result => ({
+          title: result.snippet,
+          url: result.deepLink,
+          snippet: result.content.slice(0, 100) + '...'
+        })) || [],
+        isFromFallback: response.isFromFallback
       };
       
       setMessages(prev => [...prev, assistantMessage]);
@@ -174,8 +220,26 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
               <span className="text-gray-400">{getStatusText()}</span>
             </div>
           </SheetTitle>
-          <SheetDescription className="text-gray-400">
-            Context: {contextLimit}
+          <SheetDescription className="text-gray-400 flex items-center justify-between">
+            <span>Context: {contextLimit}</span>
+            <div className="flex items-center gap-2">
+              {knowledgeStats && (
+                <span className="text-xs bg-blue-500/20 px-2 py-1 rounded flex items-center gap-1">
+                  <Database size={12} />
+                  {knowledgeStats.totalDocuments} sources
+                </span>
+              )}
+              {(!knowledgeStats || knowledgeStats.totalDocuments === 0) && (
+                <button 
+                  onClick={handleIngestTripData}
+                  disabled={isIngesting}
+                  className="text-xs bg-green-500/20 hover:bg-green-500/30 px-2 py-1 rounded flex items-center gap-1 transition-colors"
+                >
+                  <Zap size={12} />
+                  {isIngesting ? 'Building...' : 'Build Knowledge'}
+                </button>
+              )}
+            </div>
           </SheetDescription>
         </SheetHeader>
 
