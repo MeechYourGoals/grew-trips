@@ -17,3 +17,6 @@ verify_jwt = true
 
 [functions.ai-ingest]
 verify_jwt = true
+
+[functions.seed-demo-data]
+verify_jwt = false

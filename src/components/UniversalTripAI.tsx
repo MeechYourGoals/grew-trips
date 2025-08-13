@@ -5,6 +5,7 @@ import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
 import { UniversalConciergeService } from '../services/universalConciergeService';
 import { KnowledgeGraphService } from '../services/knowledgeGraphService';
+import { DemoDataSeeder } from './DemoDataSeeder';
 import { TripContext } from '../types/tripContext';
 import { toast } from './ui/use-toast';
 import {
@@ -230,14 +231,23 @@ export const UniversalTripAI = ({ tripContext }: UniversalTripAIProps) => {
                 </span>
               )}
               {(!knowledgeStats || knowledgeStats.totalDocuments === 0) && (
-                <button 
-                  onClick={handleIngestTripData}
-                  disabled={isIngesting}
-                  className="text-xs bg-green-500/20 hover:bg-green-500/30 px-2 py-1 rounded flex items-center gap-1 transition-colors"
-                >
-                  <Zap size={12} />
-                  {isIngesting ? 'Building...' : 'Build Knowledge'}
-                </button>
+                <div className="flex items-center gap-2">
+                  <DemoDataSeeder 
+                    tripId={tripContext.tripId} 
+                    onSeeded={() => {
+                      loadKnowledgeStats();
+                      setMessages([]);
+                    }}
+                  />
+                  <button 
+                    onClick={handleIngestTripData}
+                    disabled={isIngesting}
+                    className="text-xs bg-green-500/20 hover:bg-green-500/30 px-2 py-1 rounded flex items-center gap-1 transition-colors"
+                  >
+                    <Zap size={12} />
+                    {isIngesting ? 'Building...' : 'Build Knowledge'}
+                  </button>
+                </div>
               )}
             </div>
           </SheetDescription>
