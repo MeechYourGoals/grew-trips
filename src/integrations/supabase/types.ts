@@ -362,6 +362,33 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_members: {
+        Row: {
+          created_at: string
+          id: string
+          role: string
+          trip_id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role?: string
+          trip_id: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: string
+          trip_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       trip_polls: {
         Row: {
           created_at: string
