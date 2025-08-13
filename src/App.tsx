@@ -12,7 +12,7 @@ import TripDetail from "./pages/TripDetail";
 import ItineraryAssignmentPage from "./pages/ItineraryAssignmentPage";
 import ProTripDetail from "./pages/ProTripDetail";
 import EventDetail from "./pages/EventDetail";
-import ReviewAnalysis from "./pages/ReviewAnalysis";
+
 
 import NotFound from "./pages/NotFound";
 import JoinTrip from "./pages/JoinTrip";
@@ -52,7 +52,7 @@ const App = () => (
                 <Route path="/more" element={<MorePage />} />
                 <Route path="/archive" element={<ArchivePage />} />
                 {/* AI Feature routes */}
-                <Route path="/ai/review-analysis" element={<ReviewAnalysis />} />
+                
                 <Route path="/admin/scheduled-messages" element={<AdminDashboard />} />
                 {/* Catch-all route for 404 */}
                 <Route path="*" element={<NotFound />} />

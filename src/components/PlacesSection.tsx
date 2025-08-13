@@ -10,9 +10,9 @@ import { useTripVariant } from '../contexts/TripVariantContext';
 import { AddToCalendarData } from '../types/calendar';
 import { useFeatureToggle, DEFAULT_FEATURES } from '../hooks/useFeatureToggle';
 import { usePlacesLinkSync } from '../hooks/usePlacesLinkSync';
-import { Badge } from './ui/badge';
+
 import { useBasecamp } from '@/contexts/BasecampContext';
-import { TripReviewSummaries } from './TripReviewSummaries';
+
 
 interface PlacesSectionProps {
   tripId?: string;
@@ -175,10 +175,6 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
         />
       </div>
 
-      {/* Review & Audio Summaries Section */}
-      <div className="mt-8">
-        <TripReviewSummaries tripId={tripId} />
-      </div>
 
       {/* Modals */}
       <AddPlaceModal 

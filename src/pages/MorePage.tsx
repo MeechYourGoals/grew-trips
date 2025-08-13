@@ -2,10 +2,8 @@
 import React from 'react';
 import { 
   Sparkles, 
-  Calendar, 
   Camera, 
-  Archive,
-  Brain
+  Archive
 } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
@@ -16,14 +14,6 @@ const MorePage = () => {
   const navigate = useNavigate();
 
   const features = [
-    {
-      icon: Brain,
-      title: 'AI Review & Audio Summaries',
-      description: 'AI-powered review analysis with text summaries and audio overviews',
-      badge: 'AI',
-      color: 'text-blue-400',
-      action: () => navigate('/ai/review-analysis')
-    },
     {
       icon: Sparkles,
       title: 'AI Concierge',
