@@ -9,8 +9,8 @@ import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
 import { FilesTab } from './FilesTab';
 import { TripTasksTab } from './todo/TripTasksTab';
-import { MediaAggregatedPhotos } from './MediaAggregatedPhotos';
-import { MediaAggregatedLinks } from './MediaAggregatedLinks';
+import { UnifiedMediaHub } from './UnifiedMediaHub';
+import { EnhancedMediaAggregatedLinks } from './EnhancedMediaAggregatedLinks';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useFeatureToggle } from '../hooks/useFeatureToggle';
 
@@ -34,7 +34,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
     { id: 'calendar', label: 'Calendar', icon: Calendar, enabled: features.showCalendar },
     { id: 'todo', label: 'To-Do List', icon: ClipboardList, enabled: features.showTodo },
     { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
-    { id: 'photos', label: 'Photos', icon: Camera, enabled: features.showPhotos },
+    { id: 'media', label: 'Media', icon: Camera, enabled: features.showPhotos },
     { id: 'links', label: 'Links', icon: Link, enabled: features.showLinks },
     { id: 'files', label: 'Files', icon: FileText, enabled: features.showFiles }
   ];
@@ -51,15 +51,15 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
         return <TripChat />;
       // Broadcasts case removed
       case 'links':
-        return <MediaAggregatedLinks tripId={tripId} />;
+        return <EnhancedMediaAggregatedLinks tripId={tripId} />;
       case 'polls':
         return <CommentsWall />;
       case 'todo':
         return <TripTasksTab tripId={tripId} />;
       case 'calendar':
         return <GroupCalendar />;
-      case 'photos':
-        return <MediaAggregatedPhotos tripId={tripId} />;
+      case 'media':
+        return <UnifiedMediaHub tripId={tripId} />;
       case 'files':
         return <FilesTab tripId={tripId} />;
       default:
