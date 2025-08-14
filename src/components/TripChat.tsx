@@ -4,6 +4,7 @@ import { addMinutes } from 'date-fns';
 import { useParams } from 'react-router-dom';
 import { demoModeService, MockMessage as DemoMockMessage } from '../services/demoModeService';
 import { useDemoMode } from '../hooks/useDemoMode';
+import { useChatMessageParser } from '../hooks/useChatMessageParser';
 import { MessageCircle, Megaphone } from 'lucide-react';
 import { ChatInput } from './chat/ChatInput';
 import { MessageReactionBar } from './chat/MessageReactionBar';
@@ -47,17 +48,19 @@ export const TripChat = ({
 
   const { tripId } = useParams();
   const demoMode = useDemoMode();
+  const { parseMessage } = useChatMessageParser();
 
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const handleSendMessage = (isBroadcast = false, isEmergency = false) => {
+  const handleSendMessage = async (isBroadcast = false, isEmergency = false) => {
     if (inputMessage.trim() === '') return;
 
+    const messageId = `msg_${Date.now()}`;
     const newMessage: MockMessage = {
-      id: `msg_${Date.now()}`,
+      id: messageId,
       text: inputMessage,
       sender: { 
         id: 'user1', 
@@ -76,6 +79,12 @@ export const TripChat = ({
     };
 
     setMessages(prev => [...prev, newMessage]);
+    
+    // Parse message for media and links (only if not in demo mode)
+    if (!demoMode.isDemoMode && tripId) {
+      await parseMessage(messageId, inputMessage, tripId);
+    }
+    
     setInputMessage('');
     setReplyingTo(null);
   };

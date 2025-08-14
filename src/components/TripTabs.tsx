@@ -9,6 +9,8 @@ import { VenueIdeas } from './VenueIdeas';
 import { CommentsWall } from './CommentsWall';
 import { FilesTab } from './FilesTab';
 import { TripTasksTab } from './todo/TripTasksTab';
+import { MediaAggregatedPhotos } from './MediaAggregatedPhotos';
+import { MediaAggregatedLinks } from './MediaAggregatedLinks';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useFeatureToggle } from '../hooks/useFeatureToggle';
 
@@ -29,12 +31,11 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
 
   const tabs = [
     { id: 'chat', label: 'Chat', icon: MessageCircle, enabled: features.showChat },
-    // Broadcasts removed and merged into Chat
-    { id: 'links', label: 'Links', icon: Link, enabled: features.showLinks },
-    { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
-    { id: 'todo', label: 'To-Do List', icon: ClipboardList, enabled: features.showTodo },
     { id: 'calendar', label: 'Calendar', icon: Calendar, enabled: features.showCalendar },
+    { id: 'todo', label: 'To-Do List', icon: ClipboardList, enabled: features.showTodo },
+    { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
     { id: 'photos', label: 'Photos', icon: Camera, enabled: features.showPhotos },
+    { id: 'links', label: 'Links', icon: Link, enabled: features.showLinks },
     { id: 'files', label: 'Files', icon: FileText, enabled: features.showFiles }
   ];
 
@@ -50,7 +51,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
         return <TripChat />;
       // Broadcasts case removed
       case 'links':
-        return <VenueIdeas />;
+        return <MediaAggregatedLinks tripId={tripId} />;
       case 'polls':
         return <CommentsWall />;
       case 'todo':
@@ -58,7 +59,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
       case 'calendar':
         return <GroupCalendar />;
       case 'photos':
-        return <PhotoAlbum />;
+        return <MediaAggregatedPhotos tripId={tripId} />;
       case 'files':
         return <FilesTab tripId={tripId} />;
       default:

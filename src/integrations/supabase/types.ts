@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.12 (cd3cf9e)"
@@ -328,6 +328,9 @@ export type Database = {
           content: string
           created_at: string
           id: string
+          link_preview: Json | null
+          media_type: string | null
+          media_url: string | null
           sentiment: string | null
           trip_id: string
           updated_at: string
@@ -337,6 +340,9 @@ export type Database = {
           content: string
           created_at?: string
           id?: string
+          link_preview?: Json | null
+          media_type?: string | null
+          media_url?: string | null
           sentiment?: string | null
           trip_id: string
           updated_at?: string
@@ -346,6 +352,9 @@ export type Database = {
           content?: string
           created_at?: string
           id?: string
+          link_preview?: Json | null
+          media_type?: string | null
+          media_url?: string | null
           sentiment?: string | null
           trip_id?: string
           updated_at?: string
@@ -430,6 +439,53 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_link_index: {
+        Row: {
+          created_at: string | null
+          domain: string | null
+          favicon_url: string | null
+          id: string
+          message_id: string | null
+          og_description: string | null
+          og_image_url: string | null
+          og_title: string | null
+          trip_id: string
+          url: string
+        }
+        Insert: {
+          created_at?: string | null
+          domain?: string | null
+          favicon_url?: string | null
+          id?: string
+          message_id?: string | null
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
+          trip_id: string
+          url: string
+        }
+        Update: {
+          created_at?: string | null
+          domain?: string | null
+          favicon_url?: string | null
+          id?: string
+          message_id?: string | null
+          og_description?: string | null
+          og_image_url?: string | null
+          og_title?: string | null
+          trip_id?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_link_index_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "trip_chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trip_links: {
         Row: {
           added_by: string
@@ -468,6 +524,53 @@ export type Database = {
           votes?: number
         }
         Relationships: []
+      }
+      trip_media_index: {
+        Row: {
+          created_at: string | null
+          file_size: number | null
+          filename: string | null
+          id: string
+          media_type: string
+          media_url: string
+          message_id: string | null
+          metadata: Json | null
+          mime_type: string | null
+          trip_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          file_size?: number | null
+          filename?: string | null
+          id?: string
+          media_type: string
+          media_url: string
+          message_id?: string | null
+          metadata?: Json | null
+          mime_type?: string | null
+          trip_id: string
+        }
+        Update: {
+          created_at?: string | null
+          file_size?: number | null
+          filename?: string | null
+          id?: string
+          media_type?: string
+          media_url?: string
+          message_id?: string | null
+          metadata?: Json | null
+          mime_type?: string | null
+          trip_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_media_index_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "trip_chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trip_members: {
         Row: {
@@ -703,18 +806,18 @@ export type Database = {
       }
       match_kb_chunks: {
         Args: {
-          query_embedding: string
-          match_count?: number
           filter_trip?: string
+          match_count?: number
+          query_embedding: string
         }
         Returns: {
-          id: string
-          doc_id: string
           content: string
-          similarity: number
-          trip_id: string
-          source: string
+          doc_id: string
+          id: string
           metadata: Json
+          similarity: number
+          source: string
+          trip_id: string
         }[]
       }
       sparsevec_out: {
