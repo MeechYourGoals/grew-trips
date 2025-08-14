@@ -27,13 +27,13 @@ class MockDataService {
 
   private static getMockMediaData(): MockMediaItem[] {
     return [
-      // Photos - Existing plus new realistic photos with people, sports, music festivals, weddings
+      // Photos - AI-generated realistic photos  
       {
         id: 'mock-media-1',
-        media_url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&h=400&fit=crop',
-        filename: 'Group Beach Photo.jpg',
+        media_url: '/mock/images/group-mountain-photo.jpg',
+        filename: 'Group Mountain Photo.jpg',
         media_type: 'image',
-        metadata: { width: 1920, height: 1080 },
+        metadata: { width: 1024, height: 768 },
         created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
         source: 'chat',
         file_size: 345678,
@@ -86,10 +86,10 @@ class MockDataService {
       },
       {
         id: 'mock-media-12',
-        media_url: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=400&fit=crop',
+        media_url: '/mock/images/basketball-action.jpg',
         filename: 'Basketball Game Action.jpg',
         media_type: 'image',
-        metadata: { width: 800, height: 600 },
+        metadata: { width: 1024, height: 768 },
         created_at: new Date(Date.now() - 86400000 * 12).toISOString(),
         source: 'chat',
         file_size: 523901,
@@ -139,13 +139,13 @@ class MockDataService {
         file_size: 389456,
         mime_type: 'image/jpeg'
       },
-      // Videos - Using AI-generated or working video sources
+      // Videos - Local working video sources
       {
         id: 'mock-media-5',
-        media_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
-        filename: 'Poolside Fun.mp4',
+        media_url: '/mock/videos/team-celebration.mp4',
+        filename: 'Team Celebration.mp4',
         media_type: 'video',
-        metadata: { duration: 30, width: 1280, height: 720 },
+        metadata: { duration: 8.5, width: 1280, height: 720, poster: '/mock/images/basketball-action.jpg' },
         created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
         source: 'chat',
         file_size: 1024000,
@@ -153,22 +153,22 @@ class MockDataService {
       },
       {
         id: 'mock-media-6',
-        media_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
-        filename: 'City Tour Highlights.mp4',
+        media_url: '/mock/videos/venue-tour.mp4',
+        filename: 'Venue Tour.mp4',
         media_type: 'video',
-        metadata: { duration: 45, width: 1280, height: 720 },
+        metadata: { duration: 12.3, width: 640, height: 360, poster: '/mock/images/concert-stage.jpg' },
         created_at: new Date(Date.now() - 86400000 * 6).toISOString(),
         source: 'upload',
         file_size: 2048000,
         mime_type: 'video/mp4'
       },
-      // Audio - Working voice note samples
+      // Audio - Local working voice note samples
       {
         id: 'mock-media-7',
-        media_url: 'https://www.soundjay.com/misc/sounds-1/beep-07a.mp3',
-        filename: 'Voice Note - Meeting Point.m4a',
+        media_url: '/mock/audio/voice-note-1.mp3',
+        filename: 'Voice Note - Meeting Point.mp3',
         media_type: 'audio',
-        metadata: { duration: 5 },
+        metadata: { duration: 4.2 },
         created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
         source: 'chat',
         file_size: 89012,
@@ -176,14 +176,14 @@ class MockDataService {
       },
       {
         id: 'mock-media-15',
-        media_url: 'https://www2.cs.uic.edu/~i101/SoundFiles/StarWars3.wav',
-        filename: 'Voice Note - Departure Time.wav',
+        media_url: '/mock/audio/voice-note-2.mp3',
+        filename: 'Voice Note - Departure Time.mp3',
         media_type: 'audio',
-        metadata: { duration: 8 },
+        metadata: { duration: 6.8 },
         created_at: new Date(Date.now() - 86400000 * 8).toISOString(),
         source: 'upload',
         file_size: 156000,
-        mime_type: 'audio/wav'
+        mime_type: 'audio/mp3'
       },
       // Files - Rich document items
       {
@@ -204,7 +204,7 @@ class MockDataService {
       },
       {
         id: 'mock-media-9',
-        media_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop',
+        media_url: '/mock/images/conference-schedule-preview.jpg',
         filename: 'Conference Schedule.jpg',
         media_type: 'image',
         metadata: { 
@@ -219,7 +219,7 @@ class MockDataService {
       },
       {
         id: 'mock-media-10',
-        media_url: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=300&h=200&fit=crop',
+        media_url: '/mock/images/dinner-receipt-preview.jpg',
         filename: 'Dinner at Le Comptoir.jpg',
         media_type: 'image',
         metadata: { 
