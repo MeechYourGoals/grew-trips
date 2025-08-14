@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { Send, MessageCircle, Megaphone, Plus, Image, Video, FileText, Mic, Link } from 'lucide-react';
+import { Send, MessageCircle, Megaphone, Share2, Image, Video, FileText, Mic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
@@ -78,50 +78,46 @@ export const ChatInput = ({
 
   return (
     <div className="space-y-3">
-      {/* Message Type Toggle */}
-      <div className="flex bg-gray-800 rounded-lg p-1 w-fit">
-        <button
-          onClick={() => setIsBroadcastMode(false)}
-          className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
-            !isBroadcastMode 
-              ? 'bg-gray-700 text-white' 
-              : 'text-gray-400 hover:text-white'
-          }`}
-        >
-          <MessageCircle size={14} />
-          Group Chat
-        </button>
-        <button
-          onClick={() => setIsBroadcastMode(true)}
-          className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
-            isBroadcastMode 
-              ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white' 
-              : 'text-gray-400 hover:text-white'
-          }`}
-        >
-          <Megaphone size={14} />
-          Broadcast
-        </button>
-      </div>
+      {/* Header Row - Chat Mode Toggle + Share Button */}
+      <div className="flex items-center gap-2 justify-between">
+        {/* Chat Mode Toggle */}
+        <div className="flex bg-gray-800 rounded-lg p-1">
+          <button
+            onClick={() => setIsBroadcastMode(false)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+              !isBroadcastMode 
+                ? 'bg-gray-700 text-white' 
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <MessageCircle size={16} />
+            Group Chat
+          </button>
+          <button
+            onClick={() => setIsBroadcastMode(true)}
+            className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+              isBroadcastMode 
+                ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white' 
+                : 'text-gray-400 hover:text-white'
+            }`}
+          >
+            <Megaphone size={16} />
+            Broadcast
+          </button>
+        </div>
 
-      {/* Message Input */}
-      <div 
-        className="flex gap-3 items-end"
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-      >
-        {/* Attachment Button */}
+        {/* Share Button */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button 
-              variant="outline" 
-              size="icon"
-              className="bg-gray-800 border-gray-700 hover:bg-gray-700 text-gray-400 hover:text-white"
+            <button 
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+              aria-label="Share media, files, or links"
             >
-              <Plus className="w-4 h-4" />
-            </Button>
+              <Share2 size={16} />
+              Share
+            </button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-48">
+          <DropdownMenuContent align="end" className="w-48 z-50 bg-gray-800 border-gray-700">
             <DropdownMenuItem onClick={() => handleFileUpload('image')}>
               <Image className="w-4 h-4 mr-2" />
               Photo/Image
@@ -140,7 +136,14 @@ export const ChatInput = ({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+      </div>
 
+      {/* Composer Row - Input and Send Button Only */}
+      <div 
+        className="flex gap-3 items-end"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+      >
         <textarea
           value={inputMessage}
           onChange={(e) => onInputChange(e.target.value)}
