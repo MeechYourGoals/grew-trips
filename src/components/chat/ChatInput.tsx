@@ -78,39 +78,36 @@ export const ChatInput = ({
 
   return (
     <div className="space-y-3">
-      {/* Header Row - Chat Mode Toggle + Share Button */}
-      <div className="flex items-center gap-2 justify-between">
-        {/* Chat Mode Toggle */}
-        <div className="flex bg-gray-800 rounded-lg p-1">
-          <button
-            onClick={() => setIsBroadcastMode(false)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
-              !isBroadcastMode 
-                ? 'bg-gray-700 text-white' 
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <MessageCircle size={16} />
-            Group Chat
-          </button>
-          <button
-            onClick={() => setIsBroadcastMode(true)}
-            className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
-              isBroadcastMode 
-                ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white' 
-                : 'text-gray-400 hover:text-white'
-            }`}
-          >
-            <Megaphone size={16} />
-            Broadcast
-          </button>
-        </div>
-
+      {/* Header Row - Segmented Control with Share */}
+      <div className="flex bg-gray-800 rounded-lg p-1 w-fit">
+        <button
+          onClick={() => setIsBroadcastMode(false)}
+          className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+            !isBroadcastMode 
+              ? 'bg-gray-700 text-white' 
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <MessageCircle size={16} />
+          Group Chat
+        </button>
+        <button
+          onClick={() => setIsBroadcastMode(true)}
+          className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+            isBroadcastMode 
+              ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white' 
+              : 'text-gray-400 hover:text-white'
+          }`}
+        >
+          <Megaphone size={16} />
+          Broadcast
+        </button>
+        
         {/* Share Button */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button 
-              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent"
+              className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white transition-all"
               aria-label="Share media, files, or links"
             >
               <Share2 size={16} />

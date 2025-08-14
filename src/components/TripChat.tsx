@@ -191,8 +191,9 @@ export const TripChat = ({
           </p>
         </div>
       ) : (
-        <div className="flex-1 overflow-y-auto space-y-4 p-4">
-          {filteredMessages.map((message) => (
+        <div className="flex-1 overflow-y-auto bg-gray-800/30 rounded-lg mx-4 mb-4">
+          <div className="space-y-4 p-4">
+            {filteredMessages.map((message) => (
             <div key={message.id} className="flex items-start gap-3">
               {/* Avatar */}
               <img
@@ -259,7 +260,8 @@ export const TripChat = ({
                 </div>
               </div>
             </div>
-          ))}
+            ))}
+          </div>
         </div>
       )}
 
