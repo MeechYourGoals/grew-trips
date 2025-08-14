@@ -8,17 +8,17 @@ interface ProductStatusBadgeProps {
 
 export const ProductStatusBadge = ({ className = '' }: ProductStatusBadgeProps) => {
   return (
-    <div className={`flex items-center gap-3 ${className}`}>
+    <div className={`flex flex-col gap-2 ${className}`}>
       {/* Status Badge */}
-      <Badge variant="secondary" className="bg-green-500/20 text-green-400 border-green-500/30 flex items-center gap-2">
+      <Badge variant="secondary" className="bg-green-500/20 text-green-400 border-green-500/30 flex items-center gap-2 w-fit">
         <CheckCircle size={14} />
         Demo mode live – full launch coming soon
       </Badge>
 
-      {/* Launch Timeline Badge */}
-      <Badge variant="secondary" className="bg-gray-500/20 text-gray-400 border-gray-500/30 flex items-center gap-2">
+      {/* Launch Timeline Badges - Stacked */}
+      <Badge variant="secondary" className="bg-gray-500/20 text-gray-400 border-gray-500/30 flex items-center gap-2 w-fit text-sm">
         <Clock size={12} />
-        Chravel Pro features launching Q4 2025 • Chravel Events platform launching Q1 2026
+        Pro features Q4 2025 • Events platform Q1 2026
       </Badge>
     </div>
   );
