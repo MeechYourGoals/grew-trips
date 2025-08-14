@@ -218,14 +218,28 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
     );
   }
 
-  // Special handling for Files tab
+  // Special handling for Files tab - show documents and file-type images
   if (type === 'files') {
+    const fileItems = mediaItems.filter(item => 
+      item.media_type === 'document' || 
+      (item.media_type === 'image' && (item.metadata?.isSchedule || item.metadata?.isReceipt))
+    );
+
+    if (fileItems.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+          <h3 className="text-lg font-medium text-foreground mb-2">No Files Yet</h3>
+          <p className="text-muted-foreground">
+            Documents, receipts, and schedules shared in chat will appear here
+          </p>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-3">
-        {items.filter(item => 
-          ('media_type' in item && (item.media_type === 'document' || 
-          (item.media_type === 'image' && (item.metadata?.isSchedule || item.metadata?.isReceipt))))
-        ).map((item: MediaItem) => (
+        {fileItems.map((item: MediaItem) => (
           <div key={item.id} className="bg-card border rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1 min-w-0">

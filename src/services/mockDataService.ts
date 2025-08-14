@@ -72,13 +72,13 @@ class MockDataService {
         file_size: 567890,
         mime_type: 'image/jpeg'
       },
-      // New photos - People at events
+      // AI-Generated Photos - People at events
       {
         id: 'mock-media-11',
-        media_url: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&h=400&fit=crop',
-        filename: 'Friends Celebrating.jpg',
+        media_url: 'https://images.unsplash.com/photo-1529271338528-96a6ac830a56?w=600&h=400&fit=crop',
+        filename: 'Friends Party Night.jpg',
         media_type: 'image',
-        metadata: { width: 1920, height: 1080 },
+        metadata: { width: 800, height: 600 },
         created_at: new Date(Date.now() - 86400000 * 11).toISOString(),
         source: 'chat',
         file_size: 412678,
@@ -86,10 +86,10 @@ class MockDataService {
       },
       {
         id: 'mock-media-12',
-        media_url: 'https://images.unsplash.com/photo-1574391584216-804a27beb062?w=600&h=400&fit=crop',
+        media_url: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=600&h=400&fit=crop',
         filename: 'Basketball Game Action.jpg',
         media_type: 'image',
-        metadata: { width: 1920, height: 1080 },
+        metadata: { width: 800, height: 600 },
         created_at: new Date(Date.now() - 86400000 * 12).toISOString(),
         source: 'chat',
         file_size: 523901,
@@ -97,10 +97,10 @@ class MockDataService {
       },
       {
         id: 'mock-media-13',
-        media_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop',
-        filename: 'Concert Crowd Energy.jpg',
+        media_url: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&h=400&fit=crop',
+        filename: 'Music Festival Crowd.jpg',
         media_type: 'image',
-        metadata: { width: 1920, height: 1080 },
+        metadata: { width: 800, height: 600 },
         created_at: new Date(Date.now() - 86400000 * 13).toISOString(),
         source: 'upload',
         file_size: 623456,
@@ -109,48 +109,81 @@ class MockDataService {
       {
         id: 'mock-media-14',
         media_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop',
-        filename: 'Wedding Celebration.jpg',
+        filename: 'Wedding Ceremony.jpg',
         media_type: 'image',
-        metadata: { width: 1920, height: 1080 },
+        metadata: { width: 800, height: 600 },
         created_at: new Date(Date.now() - 86400000 * 14).toISOString(),
         source: 'upload',
         file_size: 467890,
         mime_type: 'image/jpeg'
       },
-      // Videos - Working URLs with proper controls
+      {
+        id: 'mock-media-16',
+        media_url: 'https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=600&h=400&fit=crop',
+        filename: 'Travel Group Selfie.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
+        source: 'chat',
+        file_size: 345123,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'mock-media-17',
+        media_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop',
+        filename: 'Beach Volleyball Fun.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 16).toISOString(),
+        source: 'upload',
+        file_size: 389456,
+        mime_type: 'image/jpeg'
+      },
+      // Videos - Using AI-generated or working video sources
       {
         id: 'mock-media-5',
-        media_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+        media_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
         filename: 'Poolside Fun.mp4',
         media_type: 'video',
-        metadata: { duration: 8, width: 1280, height: 720 },
+        metadata: { duration: 30, width: 1280, height: 720 },
         created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
         source: 'chat',
-        file_size: 8234567,
+        file_size: 1024000,
         mime_type: 'video/mp4'
       },
       {
         id: 'mock-media-6',
-        media_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+        media_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/Sintel.mp4',
         filename: 'City Tour Highlights.mp4',
         media_type: 'video',
-        metadata: { duration: 12, width: 720, height: 480 },
+        metadata: { duration: 45, width: 1280, height: 720 },
         created_at: new Date(Date.now() - 86400000 * 6).toISOString(),
         source: 'upload',
-        file_size: 12345678,
+        file_size: 2048000,
         mime_type: 'video/mp4'
       },
-      // Audio - Working voice note with data URL
+      // Audio - Working voice note samples
       {
         id: 'mock-media-7',
-        media_url: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAIA+AAABAAgAZGF0YQAAAAA=',
+        media_url: 'https://www.soundjay.com/misc/sounds-1/beep-07a.mp3',
         filename: 'Voice Note - Meeting Point.m4a',
         media_type: 'audio',
         metadata: { duration: 5 },
         created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
         source: 'chat',
         file_size: 89012,
-        mime_type: 'audio/m4a'
+        mime_type: 'audio/mp3'
+      },
+      {
+        id: 'mock-media-15',
+        media_url: 'https://www2.cs.uic.edu/~i101/SoundFiles/StarWars3.wav',
+        filename: 'Voice Note - Departure Time.wav',
+        media_type: 'audio',
+        metadata: { duration: 8 },
+        created_at: new Date(Date.now() - 86400000 * 8).toISOString(),
+        source: 'upload',
+        file_size: 156000,
+        mime_type: 'audio/wav'
       },
       // Files - Rich document items
       {
@@ -302,17 +335,8 @@ class MockDataService {
     if (!this.USE_MOCK_DATA) return [];
     
     const storageKey = this.getStorageKey(tripId, 'media');
-    const stored = localStorage.getItem(storageKey);
     
-    if (stored) {
-      try {
-        return JSON.parse(stored);
-      } catch (error) {
-        console.warn('Failed to parse stored mock media data:', error);
-      }
-    }
-    
-    // First time - initialize with mock data
+    // Always return fresh data to ensure updates are shown
     const mockData = this.getMockMediaData();
     localStorage.setItem(storageKey, JSON.stringify(mockData));
     return mockData;
