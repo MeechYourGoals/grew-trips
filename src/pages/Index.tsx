@@ -12,7 +12,7 @@ import { RecommendationFilters } from '../components/home/RecommendationFilters'
 
 // New conversion components
 import { PersistentCTABar } from '../components/conversion/PersistentCTABar';
-import { ProductStatusBadge } from '../components/conversion/ProductStatusBadge';
+
 import { SocialProofSection } from '../components/conversion/SocialProofSection';
 import { FeatureShowcase } from '../components/conversion/FeatureShowcase';
 import { PricingSection } from '../components/conversion/PricingSection';
@@ -177,10 +177,6 @@ const Index = () => {
           />
         )}
 
-        {/* Product Status Badge */}
-        <div className="animate-fade-in mb-6">
-          <ProductStatusBadge />
-        </div>
 
         {/* Enhanced Toggle with smooth transitions */}
         <div className="animate-fade-in">
