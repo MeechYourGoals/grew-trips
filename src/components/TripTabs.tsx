@@ -34,9 +34,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
     { id: 'calendar', label: 'Calendar', icon: Calendar, enabled: features.showCalendar },
     { id: 'todo', label: 'To-Do List', icon: ClipboardList, enabled: features.showTodo },
     { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
-    { id: 'media', label: 'Media', icon: Camera, enabled: features.showPhotos },
-    { id: 'links', label: 'Links', icon: Link, enabled: features.showLinks },
-    { id: 'files', label: 'Files', icon: FileText, enabled: features.showFiles }
+    { id: 'media', label: 'Media', icon: Camera, enabled: features.showMedia }
   ];
 
   const handleTabChange = (tab: string, enabled: boolean) => {
@@ -49,9 +47,6 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
     switch (activeTab) {
       case 'chat':
         return <TripChat />;
-      // Broadcasts case removed
-      case 'links':
-        return <EnhancedMediaAggregatedLinks tripId={tripId} />;
       case 'polls':
         return <CommentsWall />;
       case 'todo':
@@ -60,8 +55,6 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
         return <GroupCalendar />;
       case 'media':
         return <UnifiedMediaHub tripId={tripId} />;
-      case 'files':
-        return <FilesTab tripId={tripId} />;
       default:
         return <TripChat />;
     }

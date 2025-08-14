@@ -3,12 +3,10 @@ import { useMemo } from 'react';
 export const DEFAULT_FEATURES = [
   'chat',
   'broadcasts', 
-  'links',
   'polls',
   'todo',
   'calendar',
-  'photos',
-  'files',
+  'media',
   'concierge',
   'search'
 ] as const;
@@ -24,19 +22,17 @@ export const useFeatureToggle = (config: FeatureConfig) => {
   return useMemo(() => {
     // Consumer trips always have all features enabled
     if (config.trip_type === 'consumer') {
-      return {
-        showChat: true,
-        showBroadcasts: true,
-        showLinks: true,
-        showPolls: true,
-        showTodo: true,
-        showCalendar: true,
-        showPhotos: true,
-        showFiles: true,
-        showConcierge: true,
-        showSearch: true,
-        isFeatureEnabled: () => true
-      };
+    return {
+      showChat: true,
+      showBroadcasts: true,
+      showPolls: true,
+      showTodo: true,
+      showCalendar: true,
+      showMedia: true,
+      showConcierge: true,
+      showSearch: true,
+      isFeatureEnabled: () => true
+    };
     }
 
     // For Pro/Event trips, check enabled_features array
@@ -45,12 +41,10 @@ export const useFeatureToggle = (config: FeatureConfig) => {
     return {
       showChat: enabledFeatures.includes('chat'),
       showBroadcasts: enabledFeatures.includes('broadcasts'),
-      showLinks: enabledFeatures.includes('links'),
       showPolls: enabledFeatures.includes('polls'),
       showTodo: enabledFeatures.includes('todo'),
       showCalendar: enabledFeatures.includes('calendar'),
-      showPhotos: enabledFeatures.includes('photos'),
-      showFiles: enabledFeatures.includes('files'),
+      showMedia: enabledFeatures.includes('media'),
       showConcierge: enabledFeatures.includes('concierge'),
       showSearch: enabledFeatures.includes('search'),
       isFeatureEnabled: (feature: FeatureType) => enabledFeatures.includes(feature)
