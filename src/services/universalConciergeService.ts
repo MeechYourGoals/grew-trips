@@ -1,6 +1,8 @@
 import { supabase } from '../integrations/supabase/client';
 import { OpenAIService } from './OpenAIService';
 import { TripContext } from '../types/tripContext';
+import { MockKnowledgeService } from './mockKnowledgeService';
+import { demoModeService } from './demoModeService';
 
 export interface SearchResult {
   id: string;
@@ -45,6 +47,13 @@ export class UniversalConciergeService {
 
   private static async performUniversalSearch(query: string, tripId: string): Promise<SearchResult[]> {
     try {
+      // Check if demo mode is enabled
+      const isDemoMode = await demoModeService.isDemoModeEnabled();
+      
+      if (isDemoMode) {
+        return await MockKnowledgeService.searchMockData(query, tripId);
+      }
+
       const { data, error } = await supabase.functions.invoke('ai-search', {
         body: {
           query,
@@ -145,6 +154,21 @@ export class UniversalConciergeService {
         return {
           content: searchResponse,
           searchResults,
+          isFromFallback: false
+        };
+      }
+
+      // Check if demo mode is enabled for AI answers
+      const isDemoMode = await demoModeService.isDemoModeEnabled();
+      
+      if (isDemoMode) {
+        // Use mock knowledge service for demo mode
+        const mockAnswer = await MockKnowledgeService.generateMockAnswer(message, tripContext.tripId);
+        const mockResults = await MockKnowledgeService.searchMockData(message, tripContext.tripId);
+        
+        return {
+          content: mockAnswer,
+          searchResults: mockResults,
           isFromFallback: false
         };
       }
