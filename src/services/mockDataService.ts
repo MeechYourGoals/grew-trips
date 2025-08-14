@@ -27,7 +27,7 @@ class MockDataService {
 
   private static getMockMediaData(): MockMediaItem[] {
     return [
-      // Photos - AI-generated travel/event images
+      // Photos - Existing plus new realistic photos with people, sports, music festivals, weddings
       {
         id: 'mock-media-1',
         media_url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=600&h=400&fit=crop',
@@ -72,10 +72,55 @@ class MockDataService {
         file_size: 567890,
         mime_type: 'image/jpeg'
       },
-      // Videos - Agent-shot style clips
+      // New photos - People at events
+      {
+        id: 'mock-media-11',
+        media_url: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&h=400&fit=crop',
+        filename: 'Friends Celebrating.jpg',
+        media_type: 'image',
+        metadata: { width: 1920, height: 1080 },
+        created_at: new Date(Date.now() - 86400000 * 11).toISOString(),
+        source: 'chat',
+        file_size: 412678,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'mock-media-12',
+        media_url: 'https://images.unsplash.com/photo-1574391584216-804a27beb062?w=600&h=400&fit=crop',
+        filename: 'Basketball Game Action.jpg',
+        media_type: 'image',
+        metadata: { width: 1920, height: 1080 },
+        created_at: new Date(Date.now() - 86400000 * 12).toISOString(),
+        source: 'chat',
+        file_size: 523901,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'mock-media-13',
+        media_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop',
+        filename: 'Concert Crowd Energy.jpg',
+        media_type: 'image',
+        metadata: { width: 1920, height: 1080 },
+        created_at: new Date(Date.now() - 86400000 * 13).toISOString(),
+        source: 'upload',
+        file_size: 623456,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'mock-media-14',
+        media_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop',
+        filename: 'Wedding Celebration.jpg',
+        media_type: 'image',
+        metadata: { width: 1920, height: 1080 },
+        created_at: new Date(Date.now() - 86400000 * 14).toISOString(),
+        source: 'upload',
+        file_size: 467890,
+        mime_type: 'image/jpeg'
+      },
+      // Videos - Working URLs with proper controls
       {
         id: 'mock-media-5',
-        media_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_1280x720_1mb.mp4',
+        media_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
         filename: 'Poolside Fun.mp4',
         media_type: 'video',
         metadata: { duration: 8, width: 1280, height: 720 },
@@ -86,7 +131,7 @@ class MockDataService {
       },
       {
         id: 'mock-media-6',
-        media_url: 'https://sample-videos.com/zip/10/mp4/SampleVideo_720x480_1mb.mp4',
+        media_url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
         filename: 'City Tour Highlights.mp4',
         media_type: 'video',
         metadata: { duration: 12, width: 720, height: 480 },
@@ -95,10 +140,10 @@ class MockDataService {
         file_size: 12345678,
         mime_type: 'video/mp4'
       },
-      // Audio - Voice note style
+      // Audio - Working voice note with data URL
       {
         id: 'mock-media-7',
-        media_url: 'https://www.soundjay.com/misc/sounds/beep-07a.wav',
+        media_url: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAgD4AAIA+AAABAAgAZGF0YQAAAAA=',
         filename: 'Voice Note - Meeting Point.m4a',
         media_type: 'audio',
         metadata: { duration: 5 },
@@ -107,10 +152,10 @@ class MockDataService {
         file_size: 89012,
         mime_type: 'audio/m4a'
       },
-      // Files - Rich document items from FilesTab
+      // Files - Rich document items
       {
         id: 'mock-media-8',
-        media_url: '/files/dodgers-tickets.pdf',
+        media_url: 'data:application/pdf;base64,JVBERi0xLjQKJfbk/N8KMSAwIG9iago8PAovVHlwZSAvQ2F0YWxvZwovUGFnZXMgMiAwIFIKPj4KZW5kb2JqCjIgMCBvYmoKPDwKL1R5cGUgL1BhZ2VzCi9LaWRzIFsgMyAwIFIgXQovQ291bnQgMQo+PgplbmRvYmoKMyAwIG9iago8PAovVHlwZSAvUGFnZQovUGFyZW50IDIgMCBSCi9NZWRpYUJveCBbIDAgMCA2MTIgNzkyIF0KL0NvbnRlbnRzIDQgMCBSCj4+CmVuZG9iago0IDAgb2JqCjw8Ci9MZW5ndGggMzMKPj4Kc3RyZWFtCkJUCi9GMSAxMiBUZgoyIDQgVGQKKERvZGdlcnMgVGlja2V0cykgVGoKRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNQowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAyMDIgMDAwMDAgbiAKdHJhaWxlcgo8PAovU2l6ZSA1Ci9Sb290IDEgMCBSCj4+CnN0YXJ0eHJlZgoyODUKJSVFT0Y=',
         filename: 'Dodgers Game Tickets.pdf',
         media_type: 'document',
         metadata: { 
@@ -126,7 +171,7 @@ class MockDataService {
       },
       {
         id: 'mock-media-9',
-        media_url: '/files/conference-schedule.jpg',
+        media_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=800&fit=crop',
         filename: 'Conference Schedule.jpg',
         media_type: 'image',
         metadata: { 

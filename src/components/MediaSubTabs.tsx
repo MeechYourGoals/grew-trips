@@ -13,6 +13,8 @@ interface MediaItem {
   metadata: any;
   created_at: string;
   source: 'chat' | 'upload';
+  file_size?: number;
+  mime_type?: string;
 }
 
 interface LinkItem {
@@ -81,7 +83,7 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
     return (
       <div className="space-y-4">
         {linkItems.map((item) => (
-          <div key={item.id} className="bg-white/5 border border-white/10 rounded-lg p-4 hover:bg-white/10 transition-colors">
+          <div key={item.id} className="bg-card border rounded-lg p-4 hover:bg-card/80 transition-colors">
             <div className="flex gap-4">
               {item.image_url && (
                 <img
@@ -91,10 +93,10 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
                 />
               )}
               <div className="flex-1 min-w-0">
-                <h4 className="text-white font-medium text-sm mb-1 truncate">{item.title}</h4>
-                <p className="text-gray-300 text-xs mb-2 line-clamp-2">{item.description}</p>
+                <h4 className="text-foreground font-medium text-sm mb-1 truncate">{item.title}</h4>
+                <p className="text-muted-foreground text-xs mb-2 line-clamp-2">{item.description}</p>
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3 text-xs text-gray-400">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
                     <span>{item.domain}</span>
                     <span>{formatDate(item.created_at)}</span>
                     <Badge variant="outline" className="text-xs">
@@ -141,12 +143,32 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
     );
   }
 
-  // Grid layout for photos and videos
+  // Grid layout for photos and videos with click-to-play videos
   if (type === 'photos' || type === 'videos') {
     return (
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {mediaItems.map((item) => (
-          <div key={item.id} className="group relative aspect-square rounded-lg overflow-hidden bg-muted">
+          <div 
+            key={item.id} 
+            className="group relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
+            onClick={() => {
+              if (item.media_type === 'video') {
+                // Create a modal or overlay for video playback
+                const video = document.createElement('video');
+                video.src = item.media_url;
+                video.controls = true;
+                video.autoplay = true;
+                video.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;max-width:90vw;max-height:90vh;background:black;';
+                
+                const overlay = document.createElement('div');
+                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);z-index:9998;display:flex;align-items:center;justify-content:center;';
+                overlay.onclick = () => document.body.removeChild(overlay);
+                
+                overlay.appendChild(video);
+                document.body.appendChild(overlay);
+              }
+            }}
+          >
             {item.media_type === 'image' ? (
               <img
                 src={item.media_url}
@@ -196,123 +218,161 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
     );
   }
 
-  // List layout for audio and files
-  return (
-    <div className="space-y-3">
-      {mediaItems.map((item) => (
-        <div key={item.id} className="bg-white/5 border border-white/10 rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              {item.metadata?.isReceipt ? (
-                <div className="flex-shrink-0">
-                  {item.media_type === 'image' ? (
+  // Special handling for Files tab
+  if (type === 'files') {
+    return (
+      <div className="space-y-3">
+        {items.filter(item => 
+          ('media_type' in item && (item.media_type === 'document' || 
+          (item.media_type === 'image' && (item.metadata?.isSchedule || item.metadata?.isReceipt))))
+        ).map((item: MediaItem) => (
+          <div key={item.id} className="bg-card border rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                {item.metadata?.isReceipt ? (
+                  <div className="flex-shrink-0">
                     <img
                       src={item.media_url}
                       alt={item.filename}
                       className="w-12 h-12 rounded-lg object-cover"
                     />
-                  ) : (
-                    <div className="w-12 h-12 bg-green-500/20 border border-green-500/30 rounded-lg flex items-center justify-center">
-                      <Receipt size={20} className="text-green-400" />
+                  </div>
+                ) : item.metadata?.isSchedule ? (
+                  <div className="flex-shrink-0">
+                    <img
+                      src={item.media_url}
+                      alt={item.filename}
+                      className="w-12 h-12 rounded-lg object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex-shrink-0">
+                    <FileText className="text-blue-400" size={20} />
+                  </div>
+                )}
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-foreground font-medium truncate">{item.filename}</p>
+                    {item.metadata?.isReceipt && (
+                      <Badge variant="outline" className="text-green-400 border-green-400/50">
+                        Receipt
+                      </Badge>
+                    )}
+                    {item.metadata?.isTicket && (
+                      <Badge variant="outline" className="text-blue-400 border-blue-400/50">
+                        Ticket
+                      </Badge>
+                    )}
+                    {item.metadata?.isSchedule && (
+                      <Badge variant="outline" className="text-orange-400 border-orange-400/50">
+                        Schedule
+                      </Badge>
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-1">
+                    <span>{formatFileSize(item.file_size)}</span>
+                    <span>{item.source === 'chat' ? 'From chat' : 'Uploaded'}</span>
+                    <span>{formatDate(item.created_at)}</span>
+                    {item.metadata?.extractedEvents && (
+                      <Badge variant="outline" className="text-orange-400 border-orange-400/50">
+                        {item.metadata.extractedEvents} events
+                      </Badge>
+                    )}
+                  </div>
+
+                  {/* Receipt-specific info */}
+                  {item.metadata?.isReceipt && item.metadata?.totalAmount && (
+                    <div className="flex items-center gap-4 mt-2">
+                      <div className="flex items-center gap-1">
+                        <DollarSign size={14} className="text-green-400" />
+                        <span className="text-foreground text-sm font-medium">
+                          ${item.metadata.totalAmount.toFixed(2)}
+                        </span>
+                      </div>
+                      
+                      {item.metadata.splitCount && item.metadata.perPersonAmount && (
+                        <div className="flex items-center gap-1">
+                          <Users size={14} className="text-blue-400" />
+                          <span className="text-muted-foreground text-sm">
+                            ${item.metadata.perPersonAmount.toFixed(2)} each ({item.metadata.splitCount} people)
+                          </span>
+                        </div>
+                      )}
+                      
+                      {item.metadata.preferredMethod && (
+                        <div className="flex items-center gap-2">
+                          <PaymentMethodIcon method={item.metadata.preferredMethod} size={14} />
+                          <span className="text-muted-foreground text-sm capitalize">
+                            {item.metadata.preferredMethod}
+                          </span>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
-              ) : (
-                <div className="flex-shrink-0">
-                  {type === 'audio' ? (
-                    <Music className="text-purple-400" size={20} />
-                  ) : (
-                    <FileText className="text-blue-400" size={20} />
-                  )}
-                </div>
-              )}
+              </div>
+              
+              <div className="flex items-center gap-2">
+                {/* Receipt payment button */}
+                {item.metadata?.isReceipt && item.metadata?.perPersonAmount && (
+                  <Button
+                    onClick={() => handlePaymentClick(item)}
+                    size="sm"
+                    className="bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600"
+                  >
+                    Pay ${item.metadata.perPersonAmount.toFixed(2)}
+                  </Button>
+                )}
+                
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => window.open(item.media_url, '_blank')}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <Download size={16} />
+                </Button>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  // List layout for audio
+  return (
+    <div className="space-y-3">
+      {mediaItems.map((item) => (
+        <div key={item.id} className="bg-card border rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <div className="flex-shrink-0">
+                <Music className="text-purple-400" size={20} />
+              </div>
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <p className="text-white font-medium truncate">{item.filename}</p>
-                  {item.metadata?.isReceipt && (
-                    <Badge variant="outline" className="text-green-400 border-green-400/50">
-                      Receipt
-                    </Badge>
-                  )}
-                  {item.metadata?.isTicket && (
-                    <Badge variant="outline" className="text-blue-400 border-blue-400/50">
-                      Ticket
-                    </Badge>
-                  )}
-                  {item.metadata?.isSchedule && (
-                    <Badge variant="outline" className="text-orange-400 border-orange-400/50">
-                      Schedule
-                    </Badge>
-                  )}
+                  <p className="text-foreground font-medium truncate">{item.filename}</p>
                 </div>
                 
-                <div className="flex items-center gap-4 text-xs text-gray-400 mb-1">
-                  <span>{formatFileSize(item.metadata?.file_size)}</span>
+                <div className="flex items-center gap-4 text-xs text-muted-foreground mb-1">
+                  <span>{formatFileSize(item.file_size)}</span>
                   <span>{item.source === 'chat' ? 'From chat' : 'Uploaded'}</span>
                   <span>{formatDate(item.created_at)}</span>
-                  {item.metadata?.extractedEvents && (
-                    <Badge variant="outline" className="text-orange-400 border-orange-400/50">
-                      {item.metadata.extractedEvents} events
-                    </Badge>
-                  )}
-                  {type === 'audio' && item.metadata?.duration && (
+                  {item.metadata?.duration && (
                     <span>{item.metadata.duration}s</span>
                   )}
                 </div>
-
-                {/* Receipt-specific info */}
-                {item.metadata?.isReceipt && item.metadata?.totalAmount && (
-                  <div className="flex items-center gap-4 mt-2">
-                    <div className="flex items-center gap-1">
-                      <DollarSign size={14} className="text-green-400" />
-                      <span className="text-white text-sm font-medium">
-                        ${item.metadata.totalAmount.toFixed(2)}
-                      </span>
-                    </div>
-                    
-                    {item.metadata.splitCount && item.metadata.perPersonAmount && (
-                      <div className="flex items-center gap-1">
-                        <Users size={14} className="text-blue-400" />
-                        <span className="text-gray-300 text-sm">
-                          ${item.metadata.perPersonAmount.toFixed(2)} each ({item.metadata.splitCount} people)
-                        </span>
-                      </div>
-                    )}
-                    
-                    {item.metadata.preferredMethod && (
-                      <div className="flex items-center gap-2">
-                        <PaymentMethodIcon method={item.metadata.preferredMethod} size={14} />
-                        <span className="text-gray-300 text-sm capitalize">
-                          {item.metadata.preferredMethod}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
             </div>
             
             <div className="flex items-center gap-2">
-              {/* Receipt payment button */}
-              {item.metadata?.isReceipt && item.metadata?.perPersonAmount && (
-                <Button
-                  onClick={() => handlePaymentClick(item)}
-                  size="sm"
-                  className="bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600"
-                >
-                  Pay ${item.metadata.perPersonAmount.toFixed(2)}
-                </Button>
-              )}
-              
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => window.open(item.media_url, '_blank')}
-                className="text-gray-400 hover:text-white"
-              >
-                <Download size={16} />
-              </Button>
+              <audio controls className="h-8">
+                <source src={item.media_url} type={item.mime_type} />
+              </audio>
             </div>
           </div>
         </div>

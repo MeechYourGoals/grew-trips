@@ -298,7 +298,10 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
         </TabsContent>
         
         <TabsContent value="files" className="mt-6">
-          <MediaSubTabs items={mediaItems.filter(item => item.media_type === 'document')} type="files" />
+          <MediaSubTabs items={mediaItems.filter(item => 
+            item.media_type === 'document' || 
+            (item.media_type === 'image' && (item.metadata?.isSchedule || item.metadata?.isReceipt))
+          )} type="files" />
         </TabsContent>
         
         <TabsContent value="links" className="mt-6">
@@ -306,24 +309,6 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
         </TabsContent>
       </Tabs>
 
-      {/* Dev/Demo Controls */}
-      {(isDemoMode || MockDataService.isUsingMockData()) && (
-        <div className="mt-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-          <p className="text-sm text-yellow-200 mb-2">
-            🚧 Development Mode: Using mock data
-          </p>
-          <button
-            onClick={() => {
-              MockDataService.reseedMockData(tripId);
-              fetchMediaItems();
-              fetchLinkItems();
-            }}
-            className="text-xs px-3 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-md transition-colors"
-          >
-            Reseed Mock Data
-          </button>
-        </div>
-      )}
     </div>
   );
 };
