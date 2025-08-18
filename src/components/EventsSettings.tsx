@@ -1,21 +1,11 @@
 
 import React, { useState } from 'react';
-import { Calendar, CreditCard, Users, Clock, Building, Network, Megaphone, Activity, BarChart, Settings, Send, ChevronDown } from 'lucide-react';
-import { EventSetupSection } from './events/EventSetupSection';
-import { EventProfileSection } from './events/EventProfileSection';
-import { TicketingBillingSection } from './events/TicketingBillingSection';
-import { AttendeeTypesSection } from './events/AttendeeTypesSection';
-import { AgendaBuilderSection } from './events/AgendaBuilderSection';
-import { ExhibitorsSponsorSection } from './events/ExhibitorsSponsorSection';
-import { NetworkingRulesSection } from './events/NetworkingRulesSection';
-import { SegmentedBroadcastsSection } from './events/SegmentedBroadcastsSection';
-import { LiveEngagementSection } from './events/LiveEngagementSection';
-import { EventAnalyticsSection } from './events/EventAnalyticsSection';
-import { ChatControlsSection } from './events/ChatControlsSection';
-import { HeatMapDashboard } from './events/HeatMapDashboard';
-import { EmergencyBroadcast } from './events/EmergencyBroadcast';
+import { Calendar, Users, FileText, MessageSquare, ChevronDown } from 'lucide-react';
+import { SimpleEventSetupSection } from './events/SimpleEventSetupSection';
+import { SimpleAttendeeSection } from './events/SimpleAttendeeSection';
+import { SimpleAgendaSection } from './events/SimpleAgendaSection';
+import { SimpleChatSection } from './events/SimpleChatSection';
 import { useIsMobile } from '../hooks/use-mobile';
-import { getFeatureTierEmoji, getTierLegend } from '../utils/featureTiers';
 
 interface EventsSettingsProps {
   currentUserId: string;
@@ -29,18 +19,9 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
 
   const sections = [
     { id: 'setup', label: 'Event Setup', icon: Calendar },
-    { id: 'profile', label: 'Event Profile', icon: Calendar },
-    { id: 'chat', label: 'Chat Controls', icon: Users },
-    { id: 'ticketing', label: `Ticketing & Billing ${getFeatureTierEmoji('ticketing', 'events')}`, icon: CreditCard },
-    { id: 'attendees', label: 'Attendee Types', icon: Users },
-    { id: 'agenda', label: 'Agenda Builder', icon: Clock },
-    { id: 'exhibitors', label: `Exhibitors & Sponsors ${getFeatureTierEmoji('exhibitors', 'events')}`, icon: Building },
-    { id: 'networking', label: `Communication Rules ${getFeatureTierEmoji('networking', 'events')}`, icon: Network },
-    { id: 'broadcasts', label: 'Segmented Broadcasts', icon: Megaphone },
-    { id: 'emergency', label: 'Emergency Broadcast', icon: Activity },
-    { id: 'engagement', label: `Live Engagement ${getFeatureTierEmoji('live-engagement', 'events')}`, icon: Activity },
-    { id: 'heatmap', label: 'Heat Map Dashboard', icon: BarChart },
-    { id: 'analytics', label: `Event Analytics ${getFeatureTierEmoji('analytics', 'events')}`, icon: BarChart }
+    { id: 'attendees', label: 'Attendees', icon: Users },
+    { id: 'agenda', label: 'Agenda', icon: FileText },
+    { id: 'chat', label: 'Chat', icon: MessageSquare }
   ];
 
   const handleEventDataChange = (data: any) => {
@@ -49,20 +30,11 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
 
   const renderSection = () => {
     switch (activeSection) {
-      case 'setup': return <EventSetupSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
-      case 'profile': return <EventProfileSection />;
-      case 'chat': return <ChatControlsSection />;
-      case 'ticketing': return <TicketingBillingSection />;
-      case 'attendees': return <AttendeeTypesSection />;
-      case 'agenda': return <AgendaBuilderSection />;
-      case 'exhibitors': return <ExhibitorsSponsorSection />;
-      case 'networking': return <NetworkingRulesSection />;
-      case 'broadcasts': return <SegmentedBroadcastsSection />;
-      case 'emergency': return <EmergencyBroadcast />;
-      case 'engagement': return <LiveEngagementSection />;
-      case 'heatmap': return <HeatMapDashboard />;
-      case 'analytics': return <EventAnalyticsSection />;
-      default: return <EventSetupSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
+      case 'setup': return <SimpleEventSetupSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
+      case 'attendees': return <SimpleAttendeeSection />;
+      case 'agenda': return <SimpleAgendaSection />;
+      case 'chat': return <SimpleChatSection />;
+      default: return <SimpleEventSetupSection eventData={eventData} onEventDataChange={handleEventDataChange} />;
     }
   };
 
@@ -127,7 +99,7 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
     <div className="flex h-full w-full min-w-0">
       {/* Desktop Sidebar */}
       <div className="w-80 flex-shrink-0 bg-white/5 backdrop-blur-md border-r border-white/10 p-6 overflow-y-auto">
-        <h2 className="text-xl font-bold text-white mb-6">Events Settings</h2>
+        <h2 className="text-xl font-bold text-white mb-6">Event Settings</h2>
         <div className="space-y-2">
           {sections.map((section) => {
             const Icon = section.icon;
@@ -146,19 +118,6 @@ export const EventsSettings = ({ currentUserId }: EventsSettingsProps) => {
               </button>
             );
           })}
-        </div>
-        
-        {/* Legend */}
-        <div className="mt-8 pt-4 border-t border-white/10">
-          <h3 className="text-sm font-medium text-gray-400 mb-2">Feature Tiers</h3>
-          <div className="space-y-1">
-            {getTierLegend().map((tier) => (
-              <div key={tier.label} className="flex items-center gap-2 text-xs text-gray-500">
-                <span>{tier.emoji}</span>
-                <span>{tier.label}</span>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
