@@ -290,14 +290,14 @@ export interface ProTripData {
   location: string;
   dateRange: string;
   category: string;
-  // Updated category options - removed "Education & Academic" in favor of "School"
+  // Updated category options - consolidated and simplified
   proTripCategory?:
-    | 'Sports & Athletics'
-    | 'Music & Entertainment Tours'
-    | 'Corporate & Business'
-    | 'School'
+    | 'Sports – Pro, Collegiate, Youth'
+    | 'Tour – Music, Comedy, etc.'
+    | 'Business Travel'
+    | 'School Trip'
     | 'Content'
-    | 'Events';
+    | 'Other';
   tags: string[];
   participants: ProTripParticipant[];
   // Feature toggles for Pro/Event trips

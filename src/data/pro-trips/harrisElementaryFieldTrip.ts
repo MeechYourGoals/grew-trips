@@ -7,7 +7,7 @@ export const harrisElementaryFieldTrip: ProTripData = {
   location: 'Washington DC',
   dateRange: 'Apr 10 - Apr 14, 2025',
   category: 'Education',
-  proTripCategory: 'School',
+  proTripCategory: 'School Trip',
   tags: ['Education', 'Field Trip', 'Middle School'],
   participants: [
     { id: 16, name: 'Ms. Jennifer Wilson', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Teachers' },

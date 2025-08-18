@@ -7,7 +7,7 @@ export const eliLillyCsuiteRetreat: ProTripData = {
   location: 'Terranea Resort, Rancho Palos Verdes CA',
   dateRange: 'Jan 15 - Jan 18, 2026',
   category: 'Business Travel',
-  proTripCategory: 'Corporate & Business',
+  proTripCategory: 'Business Travel',
   tags: ['Business Travel', 'Executive', 'Strategy'],
   participants: [
     { id: 9, name: 'David Ricks', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Executives' },

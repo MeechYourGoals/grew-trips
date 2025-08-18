@@ -9,25 +9,25 @@ const getRoleIcon = (role: string, category: ProTripCategory) => {
   const lowerRole = role.toLowerCase();
   
   switch (category) {
-    case 'Sports & Athletics':
+    case 'Sports – Pro, Collegiate, Youth':
       if (lowerRole.includes('player')) return Play;
       if (lowerRole.includes('coach')) return Users;
       if (lowerRole.includes('medical') || lowerRole.includes('trainer')) return Heart;
       return Shield;
     
-    case 'Music & Entertainment Tours':
+    case 'Tour – Music, Comedy, etc.':
       if (lowerRole.includes('artist')) return Star;
       if (lowerRole.includes('manager')) return Users;
       if (lowerRole.includes('security')) return Lock;
       if (lowerRole.includes('sound') || lowerRole.includes('production')) return Wrench;
       return Camera;
     
-    case 'Corporate & Business':
+    case 'Business Travel':
       if (lowerRole.includes('executive')) return Crown;
       if (lowerRole.includes('manager')) return Users;
       return Building;
     
-    case 'School':
+    case 'School Trip':
       if (lowerRole.includes('teacher') || lowerRole.includes('supervisor')) return GraduationCap;
       if (lowerRole.includes('student')) return Users;
       return Shield;
@@ -37,7 +37,7 @@ const getRoleIcon = (role: string, category: ProTripCategory) => {
       if (lowerRole.includes('producer') || lowerRole.includes('director')) return Camera;
       return Wrench;
     
-    case 'Events':
+    case 'Other':
       if (lowerRole.includes('founder')) return Lightbulb;
       if (lowerRole.includes('mentor')) return GraduationCap;
       return Users;
@@ -51,23 +51,23 @@ const getRoleColor = (role: string, category: ProTripCategory) => {
   const lowerRole = role.toLowerCase();
   
   switch (category) {
-    case 'Sports & Athletics':
+    case 'Sports – Pro, Collegiate, Youth':
       if (lowerRole.includes('player')) return 'bg-green-500';
       if (lowerRole.includes('coach')) return 'bg-blue-500';
       if (lowerRole.includes('medical')) return 'bg-pink-500';
       return 'bg-gray-500';
     
-    case 'Music & Entertainment Tours':
+    case 'Tour – Music, Comedy, etc.':
       if (lowerRole.includes('artist')) return 'bg-yellow-500';
       if (lowerRole.includes('manager')) return 'bg-blue-500';
       if (lowerRole.includes('security')) return 'bg-purple-500';
       return 'bg-gray-500';
     
-    case 'Corporate & Business':
+    case 'Business Travel':
       if (lowerRole.includes('executive')) return 'bg-red-500';
       return 'bg-blue-500';
     
-    case 'School':
+    case 'School Trip':
       if (lowerRole.includes('teacher')) return 'bg-blue-500';
       if (lowerRole.includes('student')) return 'bg-green-500';
       return 'bg-gray-500';
@@ -77,7 +77,7 @@ const getRoleColor = (role: string, category: ProTripCategory) => {
       if (lowerRole.includes('producer')) return 'bg-red-500';
       return 'bg-gray-500';
     
-    case 'Events':
+    case 'Other':
       if (lowerRole.includes('founder')) return 'bg-yellow-500';
       if (lowerRole.includes('mentor')) return 'bg-blue-500';
       return 'bg-gray-500';

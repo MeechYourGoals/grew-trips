@@ -7,7 +7,7 @@ export const lakersRoadTrip: ProTripData = {
   location: 'Phoenix AZ, Denver CO, Portland OR',
   dateRange: 'Jan 20 - Feb 3, 2025',
   category: 'Sports',
-  proTripCategory: 'Sports & Athletics',
+  proTripCategory: 'Sports – Pro, Collegiate, Youth',
   tags: ['Sports', 'Basketball', 'Road Trip'],
   participants: [
     { id: 1, name: 'LeBron James', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Players' },

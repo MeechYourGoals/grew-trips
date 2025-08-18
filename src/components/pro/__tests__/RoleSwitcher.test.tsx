@@ -21,7 +21,7 @@ describe('RoleSwitcher', () => {
       switchRole,
     } as any);
 
-    render(<RoleSwitcher category="Sports & Athletics" />);
+    render(<RoleSwitcher category="Sports – Pro, Collegiate, Youth" />);
 
     await waitFor(() => {
       expect(switchRole).toHaveBeenCalledWith('players');
@@ -35,7 +35,7 @@ describe('RoleSwitcher', () => {
       switchRole,
     } as any);
 
-    render(<RoleSwitcher category="Sports & Athletics" />);
+    render(<RoleSwitcher category="Sports – Pro, Collegiate, Youth" />);
 
     await waitFor(() => {
       expect(switchRole).not.toHaveBeenCalled();

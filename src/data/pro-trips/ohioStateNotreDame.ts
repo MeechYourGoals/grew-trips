@@ -7,7 +7,7 @@ export const ohioStateNotreDame: ProTripData = {
   location: 'South Bend, IN',
   dateRange: 'Sep 13 - Sep 14, 2025',
   category: 'Sports',
-  proTripCategory: 'Sports & Athletics',
+  proTripCategory: 'Sports – Pro, Collegiate, Youth',
   tags: ['Sports', 'NCAA Division I', 'Football'],
   participants: Array.from({ length: 150 }, (_, i) => {
     const id = 301 + i;

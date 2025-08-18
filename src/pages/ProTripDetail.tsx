@@ -51,7 +51,7 @@ const ProTripDetail = () => {
   
   // State for selected category - defaults to trip's original category
   const [selectedCategory, setSelectedCategory] = useState<ProTripCategory>(
-    tripData.proTripCategory || 'Corporate & Business'
+    tripData.proTripCategory || 'Business Travel'
   );
 
   // Convert Pro trip data to standard trip format

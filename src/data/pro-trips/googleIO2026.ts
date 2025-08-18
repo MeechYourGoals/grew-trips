@@ -7,7 +7,7 @@ export const googleIO2026: ProTripData = {
   location: 'Mountain View, CA',
   dateRange: 'May 12 - May 15, 2026',
   category: 'Enterprise',
-  proTripCategory: 'Events',
+  proTripCategory: 'Other',
   tags: ['Tech Conference', 'Enterprise', 'Developer'],
   participants: [
     { id: 1, name: 'Sundar Pichai', avatar: '/images/avatars/blank-13.png', role: 'Keynote Speakers' },

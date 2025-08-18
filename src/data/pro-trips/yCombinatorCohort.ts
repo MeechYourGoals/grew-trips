@@ -7,7 +7,7 @@ export const yCombinatorCohort: ProTripData = {
   location: 'Menlo Park, CA',
   dateRange: 'Jan 15 - Mar 30, 2026',
   category: 'Startup',
-  proTripCategory: 'Events',
+  proTripCategory: 'Other',
   tags: ['Startup', 'Accelerator', 'Andreessen Horowitz'],
   participants: Array.from({ length: 35 }, (_, i) => {
     const id = 24 + i;

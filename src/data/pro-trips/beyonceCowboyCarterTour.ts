@@ -7,7 +7,7 @@ export const beyonceCowboyCarterTour: ProTripData = {
   location: 'London, Paris, Tokyo, Sydney',
   dateRange: 'Mar 1 - Apr 30, 2025',
   category: 'Entertainment',
-  proTripCategory: 'Music & Entertainment Tours',
+  proTripCategory: 'Tour – Music, Comedy, etc.',
   tags: ['Music Tour', 'Concert', 'International'],
   participants: [
     { id: 4, name: 'Beyoncé', avatar: '/images/avatars/blank-05.png', role: 'Artists' },

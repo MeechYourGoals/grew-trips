@@ -2,12 +2,12 @@
 import { LucideIcon } from 'lucide-react';
 
 export type ProTripCategory =
-  | 'Sports & Athletics'
-  | 'Music & Entertainment Tours'
-  | 'Corporate & Business'
-  | 'School'
+  | 'Sports – Pro, Collegiate, Youth'
+  | 'Tour – Music, Comedy, etc.'
+  | 'Business Travel'
+  | 'School Trip'
   | 'Content'
-  | 'Events';
+  | 'Other';
 
 export interface ProCategoryConfig {
   id: ProTripCategory;
@@ -24,10 +24,10 @@ export interface ProCategoryConfig {
 }
 
 export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = {
-  'Sports & Athletics': {
-    id: 'Sports & Athletics',
-    name: 'Sports & Athletics',
-    description: 'Professional sports teams, tournaments, and athletic events',
+  'Sports – Pro, Collegiate, Youth': {
+    id: 'Sports – Pro, Collegiate, Youth',
+    name: 'Sports – Pro, Collegiate, Youth',
+    description: 'Professional, collegiate, and youth sports teams, tournaments, and athletic events',
     roles: ['Player', 'Coach', 'Crew', 'VIP', 'Security', 'Medical', 'Tech'],
     availableTabs: ['team', 'calendar', 'medical', 'finance', 'compliance'],
     requiredTabs: ['team', 'medical'],
@@ -37,10 +37,10 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
       leaderLabel: 'Team Captain'
     }
   },
-  'Music & Entertainment Tours': {
-    id: 'Music & Entertainment Tours',
-    name: 'Music & Entertainment Tours',
-    description: 'Concert tours, residencies, and entertainment productions',
+  'Tour – Music, Comedy, etc.': {
+    id: 'Tour – Music, Comedy, etc.',
+    name: 'Tour – Music, Comedy, etc.',
+    description: 'Music tours, comedy shows, podcast tours, creator events, and entertainment productions',
     roles: ['Artist Team', 'Tour Manager', 'Crew', 'VIP', 'Security'],
     availableTabs: ['team', 'calendar', 'finance', 'media', 'sponsors'],
     requiredTabs: ['team'],
@@ -50,10 +50,10 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
       leaderLabel: 'Tour Manager'
     }
   },
-  'Corporate & Business': {
-    id: 'Corporate & Business',
-    name: 'Corporate & Business',
-    description: 'Executive retreats, corporate events, and business travel',
+  'Business Travel': {
+    id: 'Business Travel',
+    name: 'Business Travel',
+    description: 'Corporate retreats, executive meetings, sales trips, recruiting events, and business travel',
     roles: [],
     availableTabs: ['team', 'calendar', 'finance', 'compliance'],
     requiredTabs: ['team'],
@@ -63,10 +63,10 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
       leaderLabel: 'Event Lead'
     }
   },
-  School: {
-    id: 'School',
-    name: 'School',
-    description: 'School trips, academic competitions, and educational events',
+  'School Trip': {
+    id: 'School Trip',
+    name: 'School Trip',
+    description: 'Educational trips, academic competitions, and school-related events',
     roles: ['Student', 'Chaperone', 'Teacher'],
     availableTabs: ['team', 'calendar', 'compliance', 'medical'],
     requiredTabs: ['team', 'compliance'],
@@ -79,7 +79,7 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
   Content: {
     id: 'Content',
     name: 'Content',
-    description: 'Television shows, film productions, and media shoots',
+    description: 'Television shows, film productions, creator content, and media shoots',
     roles: ['Talent', 'Crew', 'Security'],
     availableTabs: ['team', 'calendar', 'media', 'sponsors', 'compliance'],
     requiredTabs: ['team'],
@@ -89,17 +89,17 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
       leaderLabel: 'Producer'
     }
   },
-  Events: {
-    id: 'Events',
-    name: 'Events',
-    description: 'Professional conferences, trade shows, and other industry events',
-    roles: ['Organizer', 'Speaker', 'Exhibitor', 'Attendee', 'VIP'],
+  Other: {
+    id: 'Other',
+    name: 'Other',
+    description: 'All other types of professional trips and events not covered by the above categories',
+    roles: [],
     availableTabs: ['team', 'calendar', 'finance'],
     requiredTabs: ['team'],
     terminology: {
       teamLabel: 'Team',
       memberLabel: 'Team Member',
-      leaderLabel: 'Founder'
+      leaderLabel: 'Team Lead'
     }
   }
 };

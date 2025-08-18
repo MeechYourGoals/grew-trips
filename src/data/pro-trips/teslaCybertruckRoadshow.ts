@@ -7,7 +7,7 @@ export const teslaCybertruckRoadshow: ProTripData = {
   location: 'Austin, TX',
   dateRange: 'Apr 1 - Jun 30, 2025',
   category: 'Enterprise',
-  proTripCategory: 'Corporate & Business',
+  proTripCategory: 'Business Travel',
   tags: ['Automotive', 'Product Launch', 'Enterprise'],
   participants: [
     { id: 1, name: 'Elon Musk', avatar: '/images/avatars/blank-17.png', role: 'Executive Team' },

@@ -7,7 +7,7 @@ export const uncMensLacrosse: ProTripData = {
   location: 'Chapel Hill NC',
   dateRange: 'Feb 1 - May 31, 2025',
   category: 'Sports',
-  proTripCategory: 'Sports & Athletics',
+  proTripCategory: 'Sports – Pro, Collegiate, Youth',
   tags: ['Sports', 'Lacrosse', 'NCAA Division I', 'UNC'],
   participants: Array.from({ length: 45 }, (_, i) => {
     const id = 201 + i;
