@@ -65,6 +65,16 @@ export interface Exhibitor {
 
 export type EventUserRole = 'organizer' | 'speaker' | 'exhibitor' | 'attendee';
 
+export type RSVPStatus = 'going' | 'maybe' | 'not-going' | 'not-answered';
+
+export interface EventAttendee {
+  id: string;
+  name: string;
+  email: string;
+  status: RSVPStatus;
+  rsvpedAt?: string;
+}
+
 export interface EventData {
   id: string;
   title: string;
