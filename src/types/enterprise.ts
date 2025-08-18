@@ -1,8 +1,11 @@
 
 export type TripCategory =
-  | "sports-pro" | "sports-college" | "sports-hs-aau"
-  | "tour-music" | "tour-comedy" | "tour-other"
-  | "retreat" | "recruit" | "biz" | "field" | "film" | "nonprofit" | "other";
+  | 'Sports – Pro, Collegiate, Youth'
+  | 'Tour – Music, Comedy, etc.'
+  | 'Business Travel'
+  | 'School Trip'
+  | 'Content'
+  | 'Other';
 
 export interface EnterpriseSettingsState {
   tripCategory: TripCategory;

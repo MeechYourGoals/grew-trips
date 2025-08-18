@@ -17,7 +17,7 @@ interface SeatManagementSectionProps {
   tripCategory?: TripCategory;
 }
 
-export const SeatManagementSection = ({ organization, tripCategory = 'biz' }: SeatManagementSectionProps) => {
+export const SeatManagementSection = ({ organization, tripCategory = 'Business Travel' }: SeatManagementSectionProps) => {
   // Modal states
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);

@@ -20,13 +20,11 @@ interface TripSettingsProps {
 }
 
 const TRIP_CATEGORIES = [
+  'Sports – Pro, Collegiate, Youth',
+  'Tour – Music, Comedy, etc.',
   'Business Travel',
-  'Sports – Team Trip',
-  'Conference',
-  'Touring',
-  'School Trips',
-  'Public Relations',
-  'Client Pursuits',
+  'School Trip',
+  'Content',
   'Other'
 ];
 

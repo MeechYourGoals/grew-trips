@@ -16,19 +16,12 @@ interface AddMemberModalProps {
 
 const getRolesByCategory = (category: TripCategory): string[] => {
   const roleMap: Record<TripCategory, string[]> = {
-    'sports-pro': ['Player', 'Coach', 'Assistant Coach', 'Trainer', 'Equipment Manager', 'Team Manager'],
-    'sports-college': ['Student-Athlete', 'Head Coach', 'Assistant Coach', 'Athletic Trainer', 'Team Manager', 'Academic Advisor'],
-    'sports-hs-aau': ['Player', 'Head Coach', 'Assistant Coach', 'Athletic Director', 'Parent Chaperone', 'Team Manager', 'Tournament Director'],
-    'tour-music': ['Artist', 'Tour Manager', 'Sound Engineer', 'Lighting Tech', 'Crew', 'Security', 'Photographer'],
-    'tour-comedy': ['Comedian', 'Tour Manager', 'Sound Tech', 'Venue Coordinator', 'Publicist'],
-    'tour-other': ['Performer', 'Tour Manager', 'Crew', 'Security', 'Assistant'],
-    'retreat': ['Participant', 'Organizer', 'Facilitator', 'Coordinator', 'Guest Speaker'],
-    'recruit': ['Recruit', 'Coach', 'Recruiter', 'Academic Advisor', 'Parent/Guardian'],
-    'biz': ['Executive', 'Manager', 'Employee', 'Consultant', 'Client', 'Admin'],
-    'field': ['Student', 'Teacher', 'Chaperone', 'Guide', 'Bus Driver', 'Admin'],
-    'film': ['Director', 'Producer', 'Actor', 'Crew', 'Camera Operator', 'Sound Engineer'],
-    'nonprofit': ['Volunteer', 'Coordinator', 'Donor', 'Board Member', 'Beneficiary'],
-    'other': ['Participant', 'Staff', 'Admin', 'Coordinator', 'Assistant']
+    'Sports – Pro, Collegiate, Youth': ['Player', 'Coach', 'Assistant Coach', 'Trainer', 'Equipment Manager', 'Team Manager', 'Student-Athlete', 'Athletic Director'],
+    'Tour – Music, Comedy, etc.': ['Artist', 'Tour Manager', 'Sound Engineer', 'Lighting Tech', 'Crew', 'Security', 'Photographer', 'Comedian', 'Performer'],
+    'Business Travel': ['Executive', 'Manager', 'Employee', 'Consultant', 'Client', 'Admin', 'Participant', 'Organizer'],
+    'School Trip': ['Student', 'Teacher', 'Chaperone', 'Guide', 'Bus Driver', 'Admin'],
+    'Content': ['Director', 'Producer', 'Actor', 'Crew', 'Camera Operator', 'Sound Engineer'],
+    'Other': ['Participant', 'Staff', 'Admin', 'Coordinator', 'Assistant']
   };
   return roleMap[category] || ['Team Member', 'Staff', 'Admin'];
 };

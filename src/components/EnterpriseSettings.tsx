@@ -24,7 +24,7 @@ interface EnterpriseSettingsProps {
 
 export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSection = 'organization' }: EnterpriseSettingsProps) => {
   const [activeSection, setActiveSection] = useState(defaultSection);
-  const [tripCategory, setTripCategory] = useState<TripCategory>('sports-pro');
+  const [tripCategory, setTripCategory] = useState<TripCategory>('Sports – Pro, Collegiate, Youth');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const isMobile = useIsMobile();
 
@@ -51,85 +51,38 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
     ];
 
     const categorySpecificSections: Record<TripCategory, any[]> = {
-      'sports-pro': [
+      'Sports – Pro, Collegiate, Youth': [
         { id: 'seats', label: `Team & Roles ${getFeatureTierEmoji('seats', 'enterprise')}`, icon: Users },
         { id: 'game-schedule', label: `Game Schedule ${getFeatureTierEmoji('game-schedule', 'enterprise')}`, icon: Calendar },
         { id: 'travel-wallet', label: `Travel Wallet (Org) ${getFeatureTierEmoji('travel-wallet', 'enterprise')}`, icon: Wallet },
+        { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
         { id: 'notifications', label: `Notifications & Broadcast ${getFeatureTierEmoji('notifications', 'enterprise')}`, icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
-      'sports-college': [
-        { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'game-schedule', label: 'Game Schedule', icon: Calendar },
-        { id: 'travel-wallet', label: 'Travel Wallet (Org)', icon: Wallet },
-        { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
-        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'privacy', label: 'General & Privacy', icon: Settings }
-      ],
-      'sports-hs-aau': [
-        { id: 'seats', label: 'Team & Roles (Staff)', icon: Users },
-        { id: 'game-schedule', label: 'Game Schedule', icon: Calendar },
-        { id: 'travel-wallet', label: 'Travel Wallet (Org)', icon: Wallet },
-        { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
-        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'privacy', label: 'General & Privacy', icon: Settings }
-      ],
-      'tour-music': [
+      'Tour – Music, Comedy, etc.': [
         { id: 'seats', label: 'Team & Roles', icon: Users },
         { id: 'show-schedule', label: 'Show Schedule', icon: Calendar },
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
-      'tour-comedy': [
-        { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'show-schedule', label: 'Show Schedule', icon: Calendar },
+      'Business Travel': [
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
-      'tour-other': [
-        { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'show-schedule', label: 'Show Schedule', icon: Calendar },
-        { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'privacy', label: 'General & Privacy', icon: Settings }
-      ],
-      'retreat': [
-        { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'privacy', label: 'General & Privacy', icon: Settings }
-      ],
-      'recruit': [
-        { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'scouting', label: 'Scouting & CRM Export', icon: UsersIcon },
-        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'privacy', label: 'General & Privacy', icon: Settings }
-      ],
-      'biz': [
-        { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'privacy', label: 'General & Privacy', icon: Settings }
-      ],
-      'field': [
+      'School Trip': [
         { id: 'seats', label: 'Team & Roles (Staff)', icon: Users },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
-      'film': [
+      'Content': [
         { id: 'seats', label: 'Team & Roles', icon: Users },
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
       ],
-      'nonprofit': [
-        { id: 'seats', label: 'Team & Roles', icon: Users },
-        { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
-        { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
-        { id: 'privacy', label: 'General & Privacy', icon: Settings }
-      ],
-      'other': [
+      'Other': [
         { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
         { id: 'notifications', label: 'Notifications & Broadcast', icon: Bell },
         { id: 'privacy', label: 'General & Privacy', icon: Settings }
@@ -158,19 +111,12 @@ export const EnterpriseSettings = ({ organizationId, currentUserId, defaultSecti
   };
 
   const categoryOptions = [
-    { value: 'sports-pro', label: 'Sports – Pro Team' },
-    { value: 'sports-college', label: 'Sports – Collegiate' },
-    { value: 'sports-hs-aau', label: 'Sports – High School & AAU' },
-    { value: 'tour-music', label: 'Tour – Music' },
-    { value: 'tour-comedy', label: 'Tour – Comedy' },
-    { value: 'tour-other', label: 'Tour – Podcasts, Creators, etc.' },
-    { value: 'retreat', label: 'Company Retreat' },
-    { value: 'recruit', label: 'Recruiting Trip' },
-    { value: 'biz', label: 'Business Travel (Sales / Exec)' },
-    { value: 'field', label: 'School Trip' },
-    { value: 'film', label: 'Content' },
-    { value: 'nonprofit', label: 'Non-Profit Mission (Humanitarian)' },
-    { value: 'other', label: 'Other' }
+    { value: 'Sports – Pro, Collegiate, Youth', label: 'Sports – Pro, Collegiate, Youth' },
+    { value: 'Tour – Music, Comedy, etc.', label: 'Tour – Music, Comedy, etc.' },
+    { value: 'Business Travel', label: 'Business Travel' },
+    { value: 'School Trip', label: 'School Trip' },
+    { value: 'Content', label: 'Content' },
+    { value: 'Other', label: 'Other' }
   ];
 
   const sections = getSidebarSections(tripCategory);
