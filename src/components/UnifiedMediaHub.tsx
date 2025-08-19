@@ -3,7 +3,9 @@ import { Camera, Video, FileText, Music, Link, ExternalLink } from 'lucide-react
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/integrations/supabase/client';
 import { useDemoMode } from '@/hooks/useDemoMode';
-import MockDataService, { MockMediaItem, MockLinkItem } from '@/services/mockDataService';
+import { demoModeService } from '../services/demoModeService';
+import MockDataService from '../services/mockDataService';
+import TripSpecificMockDataService from '../services/tripSpecificMockDataService';
 import { MediaSubTabs } from './MediaSubTabs';
 
 interface MediaItem {
@@ -24,7 +26,9 @@ interface LinkItem {
   domain: string;
   image_url?: string;
   created_at: string;
-  source: 'chat' | 'manual';
+  source: 'chat' | 'manual' | 'pinned';
+  category?: 'Housing' | 'Eats' | 'Activities';
+  tags?: string[];
 }
 
 interface UnifiedMediaHubProps {
@@ -45,121 +49,109 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
 
   const fetchMediaItems = async () => {
     try {
-      if (isDemoMode || MockDataService.isUsingMockData()) {
-        // Use mock data
-        const mockMedia = MockDataService.getMockMediaItems(tripId);
+      if (isDemoMode) {
+        // Use trip-specific mock data in demo mode
+        const mockMedia = TripSpecificMockDataService.getMockMediaItems(tripId);
         setMediaItems(mockMedia);
-        return;
+      } else {
+        // Fetch from Supabase in production
+        const [mediaResponse, filesResponse] = await Promise.all([
+          supabase
+            .from('trip_media_index')
+            .select('*')
+            .eq('trip_id', tripId)
+            .order('created_at', { ascending: false }),
+          
+          supabase
+            .from('trip_files')
+            .select('*')
+            .eq('trip_id', tripId)
+            .order('created_at', { ascending: false })
+        ]);
+
+        const combinedMedia = [
+          ...(mediaResponse.data || []).map(item => ({
+            id: item.id,
+            media_url: item.media_url,
+            filename: item.filename || 'Untitled',
+            media_type: item.media_type as 'image' | 'video' | 'audio' | 'document',
+            metadata: item.metadata || {},
+            created_at: item.created_at,
+            source: 'chat' as const
+          })),
+          ...(filesResponse.data || []).map(item => ({
+            id: item.id,
+            media_url: `/storage/trip-files/${item.name}`,
+            filename: item.name,
+            media_type: item.file_type as 'image' | 'video' | 'audio' | 'document',
+            metadata: { extracted_events: item.extracted_events },
+            created_at: item.created_at,
+            source: 'upload' as const
+          }))
+        ];
+
+        setMediaItems(combinedMedia);
       }
-
-      // Fetch from media index (chat aggregated media)
-      const { data: chatMedia, error: chatError } = await supabase
-        .from('trip_media_index')
-        .select('*')
-        .eq('trip_id', tripId)
-        .order('created_at', { ascending: false });
-
-      if (chatError) throw chatError;
-
-      // Fetch uploaded files from trip_files (existing upload system)
-      const { data: uploadedFiles, error: fileError } = await supabase
-        .from('trip_files')
-        .select('*')
-        .eq('trip_id', tripId)
-        .in('file_type', ['image', 'video', 'audio', 'document'])
-        .order('created_at', { ascending: false });
-
-      if (fileError) throw fileError;
-
-      // Combine both sources
-      const allMedia: MediaItem[] = [
-        ...(chatMedia || []).map(item => ({
-          id: item.id,
-          media_url: item.media_url,
-          filename: item.filename || 'Unknown',
-          media_type: item.media_type as 'image' | 'video' | 'audio' | 'document',
-          metadata: item.metadata || {},
-          created_at: item.created_at,
-          source: 'chat' as const
-        })),
-        ...(uploadedFiles || []).map(item => ({
-          id: item.id,
-          media_url: `/storage/trip-files/${item.name}`,
-          filename: item.name,
-          media_type: item.file_type as 'image' | 'video' | 'audio' | 'document',
-          metadata: { source: 'upload' },
-          created_at: item.created_at,
-          source: 'upload' as const
-        }))
-      ];
-
-      // Sort by date descending
-      allMedia.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-      
-      setMediaItems(allMedia);
     } catch (error) {
-      console.error('Error fetching media:', error);
+      console.error('Error fetching media items:', error);
+      setMediaItems([]);
     }
   };
 
   const fetchLinkItems = async () => {
     try {
-      if (isDemoMode || MockDataService.isUsingMockData()) {
-        // Use mock data
-        const mockLinks = MockDataService.getMockLinkItems(tripId);
+      if (isDemoMode) {
+        // Use trip-specific mock data in demo mode
+        const mockLinks = TripSpecificMockDataService.getMockLinkItems(tripId);
         setLinkItems(mockLinks);
-        setLoading(false);
-        return;
+      } else {
+        // Fetch from Supabase in production
+        const [linksResponse, manualLinksResponse] = await Promise.all([
+          supabase
+            .from('trip_link_index')
+            .select('*')
+            .eq('trip_id', tripId)
+            .order('created_at', { ascending: false }),
+          
+          supabase
+            .from('trip_links')
+            .select('*')
+            .eq('trip_id', tripId)
+            .order('created_at', { ascending: false })
+        ]);
+
+        const combinedLinks = [
+          ...(linksResponse.data || []).map(item => ({
+            id: item.id,
+            url: item.url,
+            title: item.og_title || 'Untitled Link',
+            description: item.og_description || '',
+            domain: item.domain || new URL(item.url).hostname,
+            image_url: item.og_image_url,
+            created_at: item.created_at,
+            source: 'chat' as const,
+            category: 'Activities' as const,
+            tags: []
+          })),
+          ...(manualLinksResponse.data || []).map(item => ({
+            id: item.id,
+            url: item.url,
+            title: item.title || 'Untitled Link',
+            description: item.description || '',
+            domain: new URL(item.url).hostname,
+            image_url: undefined,
+            created_at: item.created_at,
+            source: 'manual' as const,
+            category: item.category as 'Housing' | 'Eats' | 'Activities' || 'Activities' as const,
+            tags: []
+          }))
+        ];
+
+        setLinkItems(combinedLinks);
       }
-
-      // Fetch from link index (chat aggregated links)
-      const { data: chatLinks, error: chatError } = await supabase
-        .from('trip_link_index')
-        .select('*')
-        .eq('trip_id', tripId)
-        .order('created_at', { ascending: false });
-
-      if (chatError) throw chatError;
-
-      // Fetch manual links
-      const { data: manualLinks, error: linkError } = await supabase
-        .from('trip_links')
-        .select('*')
-        .eq('trip_id', tripId)
-        .order('created_at', { ascending: false });
-
-      if (linkError) throw linkError;
-
-      // Combine both sources
-      const allLinks: LinkItem[] = [
-        ...(chatLinks || []).map(item => ({
-          id: item.id,
-          url: item.url,
-          title: item.og_title || item.url,
-          description: item.og_description || '',
-          domain: item.domain || new URL(item.url).hostname,
-          image_url: item.og_image_url,
-          created_at: item.created_at,
-          source: 'chat' as const
-        })),
-        ...(manualLinks || []).map(item => ({
-          id: item.id,
-          url: item.url,
-          title: item.title,
-          description: item.description || '',
-          domain: new URL(item.url).hostname,
-          image_url: undefined,
-          created_at: item.created_at,
-          source: 'manual' as const
-        }))
-      ];
-
-      // Sort by date descending
-      allLinks.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
-      
-      setLinkItems(allLinks);
     } catch (error) {
-      console.error('Error fetching links:', error);
+      console.error('Error fetching link items:', error);
+      setLinkItems([]);
     } finally {
       setLoading(false);
     }

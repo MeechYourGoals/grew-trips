@@ -158,7 +158,7 @@ export const TripChat = ({
     <div className="flex flex-col h-full">
       {/* Message Filters - Only All Messages and Broadcasts */}
       {messages.length > 0 && (
-        <div className="flex gap-2 p-4 border-b border-gray-700">
+        <div className="flex justify-center gap-2 p-4 border-b border-gray-700">
           <button
             onClick={() => setMessageFilter('all')}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${

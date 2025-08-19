@@ -25,7 +25,9 @@ interface LinkItem {
   domain: string;
   image_url?: string;
   created_at: string;
-  source: 'chat' | 'manual';
+  source: 'chat' | 'manual' | 'pinned';
+  category?: 'Housing' | 'Eats' | 'Activities';
+  tags?: string[];
 }
 
 interface MediaSubTabsProps {
@@ -34,6 +36,7 @@ interface MediaSubTabsProps {
 }
 
 export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
+  const [selectedCategory, setSelectedCategory] = React.useState<'Housing' | 'Eats' | 'Activities' | null>(null);
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -80,9 +83,64 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
       );
     }
 
+    // Filter links by selected category
+    const filteredLinks = selectedCategory 
+      ? linkItems.filter(item => item.category === selectedCategory)
+      : linkItems;
+
     return (
       <div className="space-y-4">
-        {linkItems.map((item) => (
+        {/* Category Filter Buttons */}
+        <div className="flex flex-wrap gap-2 p-4 bg-muted/30 rounded-lg">
+          <Button
+            variant={selectedCategory === null ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedCategory(null)}
+            className="text-xs"
+          >
+            All Links ({linkItems.length})
+          </Button>
+          <Button
+            variant={selectedCategory === 'Housing' ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedCategory('Housing')}
+            className="text-xs"
+          >
+            🏠 Housing ({linkItems.filter(l => l.category === 'Housing').length})
+          </Button>
+          <Button
+            variant={selectedCategory === 'Eats' ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedCategory('Eats')}
+            className="text-xs"
+          >
+            🍽️ Eats ({linkItems.filter(l => l.category === 'Eats').length})
+          </Button>
+          <Button
+            variant={selectedCategory === 'Activities' ? "default" : "outline"}
+            size="sm"
+            onClick={() => setSelectedCategory('Activities')}
+            className="text-xs"
+          >
+            🎯 Activities ({linkItems.filter(l => l.category === 'Activities').length})
+          </Button>
+          
+          {/* Add Link Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              // Mock functionality - in real app this would open a modal
+              alert('Add Link functionality - would open modal to manually add links');
+            }}
+            className="text-xs ml-auto"
+          >
+            + Add Link
+          </Button>
+        </div>
+
+        {/* Links Display */}
+        {filteredLinks.map((item) => (
           <div key={item.id} className="bg-card border rounded-lg p-4 hover:bg-card/80 transition-colors">
             <div className="flex gap-4">
               {item.image_url && (
@@ -100,8 +158,13 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
                     <span>{item.domain}</span>
                     <span>{formatDate(item.created_at)}</span>
                     <Badge variant="outline" className="text-xs">
-                      {item.source === 'chat' ? 'From chat' : 'Manual'}
+                      {item.source === 'chat' ? 'From chat' : item.source === 'pinned' ? 'From pins' : 'Manual'}
                     </Badge>
+                    {item.category && (
+                      <Badge variant="secondary" className="text-xs">
+                        {item.category}
+                      </Badge>
+                    )}
                   </div>
                   <Button
                     size="sm"

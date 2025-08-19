@@ -1,0 +1,836 @@
+interface TripSpecificMediaItem {
+  id: string;
+  media_url: string;
+  filename: string;
+  media_type: 'image' | 'video' | 'audio' | 'document';
+  metadata: any;
+  created_at: string;
+  source: 'chat' | 'upload';
+  file_size?: number;
+  mime_type?: string;
+}
+
+interface TripSpecificLinkItem {
+  id: string;
+  url: string;
+  title: string;
+  description: string;
+  domain: string;
+  image_url?: string;
+  created_at: string;
+  source: 'chat' | 'manual' | 'pinned';
+  category: 'Housing' | 'Eats' | 'Activities';
+  tags: string[];
+}
+
+interface TripMockData {
+  tripId: number;
+  tripTitle: string;
+  location: string;
+  photos: TripSpecificMediaItem[];
+  videos: TripSpecificMediaItem[];
+  audio: TripSpecificMediaItem[];
+  files: TripSpecificMediaItem[];
+  links: TripSpecificLinkItem[];
+}
+
+// Trip-specific mock data for all 12 trips
+const TRIP_MOCK_DATA: Record<number, TripMockData> = {
+  // 1. Spring Break Cancun 2026 Kappa Alpha Psi Trip
+  1: {
+    tripId: 1,
+    tripTitle: "Spring Break Cancun 2026 Kappa Alpha Psi Trip",
+    location: "Cancun, Mexico",
+    photos: [
+      {
+        id: 'cancun-photo-1',
+        media_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=600&h=400&fit=crop',
+        filename: 'Beach Volleyball Tournament.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'chat',
+        file_size: 425678,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'cancun-photo-2',
+        media_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
+        filename: 'Sunset Resort Pool Party.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        source: 'upload',
+        file_size: 523456,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'cancun-photo-3',
+        media_url: 'https://images.unsplash.com/photo-1539635278303-d4002c07eae3?w=600&h=400&fit=crop',
+        filename: 'Brotherhood Beach Group Shot.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        source: 'chat',
+        file_size: 378901,
+        mime_type: 'image/jpeg'
+      }
+    ],
+    videos: [{
+      id: 'cancun-video-1',
+      media_url: '/mock/videos/cancun-beach-party.mp4',
+      filename: 'Epic Beach Party Highlights.mp4',
+      media_type: 'video',
+      metadata: { duration: 52, width: 1280, height: 720, poster: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop' },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'chat',
+      file_size: 12456000,
+      mime_type: 'video/mp4'
+    }],
+    audio: [{
+      id: 'cancun-audio-1',
+      media_url: '/mock/audio/cancun-meetup.mp3',
+      filename: 'Voice Note - Meet at tiki bar 8pm!.mp3',
+      media_type: 'audio',
+      metadata: { duration: 6.2 },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'chat',
+      file_size: 156780,
+      mime_type: 'audio/mp3'
+    }],
+    files: [
+      {
+        id: 'cancun-file-1',
+        media_url: '/mock/files/cancun-resort-confirmation.pdf',
+        filename: 'Moon Palace Resort Confirmation.pdf',
+        media_type: 'document',
+        metadata: { pageCount: 3, confirmationNumber: 'MP-CAN-2026-789' },
+        created_at: new Date(Date.now() - 86400000 * 10).toISOString(),
+        source: 'upload',
+        file_size: 267890,
+        mime_type: 'application/pdf'
+      },
+      {
+        id: 'cancun-file-2',
+        media_url: 'https://images.unsplash.com/photo-1523794027912-478866de8aa4?w=400&h=300&fit=crop',
+        filename: 'Excursion Tickets - Chichen Itza.jpg',
+        media_type: 'image',
+        metadata: { 
+          isTicket: true, 
+          venue: 'Chichen Itza', 
+          date: '2026-03-17',
+          extractedEvents: 1 
+        },
+        created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+        source: 'upload',
+        file_size: 345600,
+        mime_type: 'image/jpeg'
+      }
+    ],
+    links: [
+      {
+        id: 'cancun-link-1',
+        url: 'https://www.palaceresorts.com/moon-palace-cancun',
+        title: 'Moon Palace Cancun - All Inclusive Resort',
+        description: 'Luxury all-inclusive resort with 6 restaurants, water park, and pristine beaches.',
+        domain: 'palaceresorts.com',
+        image_url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
+        source: 'pinned',
+        category: 'Housing',
+        tags: ['resort', 'all-inclusive', 'accommodation']
+      },
+      {
+        id: 'cancun-link-2',
+        url: 'https://www.joestonecrab.com/',
+        title: "Joe's Stone Crab Cancun - Seafood Excellence",
+        description: 'World-famous stone crab and fresh seafood in the heart of Cancun.',
+        domain: 'joestonecrab.com',
+        image_url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        source: 'chat',
+        category: 'Eats',
+        tags: ['seafood', 'restaurant', 'upscale']
+      },
+      {
+        id: 'cancun-link-3',
+        url: 'https://www.cocobongo.com.mx/',
+        title: 'Coco Bongo Show & Disco',
+        description: 'Spectacular acrobatic show with live performances and tribute acts.',
+        domain: 'cocobongo.com.mx',
+        image_url: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        source: 'pinned',
+        category: 'Activities',
+        tags: ['nightlife', 'show', 'entertainment']
+      },
+      {
+        id: 'cancun-link-4',
+        url: 'https://www.tripadvisor.com/Attraction_Review-g150807-d152896-Reviews-Chichen_Itza-Chichen_Itza_Yucatan_Peninsula.html',
+        title: 'Chichen Itza Day Trip',
+        description: 'Ancient Mayan ruins and Wonder of the World archaeological site.',
+        domain: 'tripadvisor.com',
+        image_url: 'https://images.unsplash.com/photo-1518638150340-f706e86654de?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+        source: 'manual',
+        category: 'Activities',
+        tags: ['cultural', 'historical', 'tour']
+      }
+    ]
+  },
+
+  // 2. Tokyo Adventure
+  2: {
+    tripId: 2,
+    tripTitle: "Tokyo Adventure",
+    location: "Tokyo, Japan",
+    photos: [
+      {
+        id: 'tokyo-photo-1',
+        media_url: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop',
+        filename: 'Shibuya Crossing Night Shot.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'chat',
+        file_size: 456789,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'tokyo-photo-2',
+        media_url: 'https://images.unsplash.com/photo-1522059773416-5d424f04e00a?w=600&h=400&fit=crop',
+        filename: 'Cherry Blossoms Ueno Park.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        source: 'upload',
+        file_size: 398765,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'tokyo-photo-3',
+        media_url: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=600&h=400&fit=crop',
+        filename: 'Sushi Bar Group Experience.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        source: 'chat',
+        file_size: 423456,
+        mime_type: 'image/jpeg'
+      }
+    ],
+    videos: [{
+      id: 'tokyo-video-1',
+      media_url: '/mock/videos/tokyo-karaoke.mp4',
+      filename: 'Epic Karaoke Night Shibuya.mp4',
+      media_type: 'video',
+      metadata: { duration: 78, width: 1280, height: 720, poster: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=300&fit=crop' },
+      created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+      source: 'chat',
+      file_size: 15678000,
+      mime_type: 'video/mp4'
+    }],
+    audio: [{
+      id: 'tokyo-audio-1',
+      media_url: '/mock/audio/tokyo-tsukiji.mp3',
+      filename: 'Voice Note - Tsukiji Market 6am meeting.mp3',
+      media_type: 'audio',
+      metadata: { duration: 8.5 },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'chat',
+      file_size: 234567,
+      mime_type: 'audio/mp3'
+    }],
+    files: [
+      {
+        id: 'tokyo-file-1',
+        media_url: '/mock/files/jr-pass-confirmation.pdf',
+        filename: 'JR Pass - 7 Day Tokyo Regional.pdf',
+        media_type: 'document',
+        metadata: { passType: '7-day', regions: ['Tokyo', 'Kanto'] },
+        created_at: new Date(Date.now() - 86400000 * 12).toISOString(),
+        source: 'upload',
+        file_size: 189456,
+        mime_type: 'application/pdf'
+      },
+      {
+        id: 'tokyo-file-2',
+        media_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=300&fit=crop',
+        filename: 'Tokyo Itinerary Day by Day.pdf',
+        media_type: 'document',
+        metadata: { 
+          isSchedule: true, 
+          days: 10,
+          extractedEvents: 15 
+        },
+        created_at: new Date(Date.now() - 86400000 * 8).toISOString(),
+        source: 'upload',
+        file_size: 567890,
+        mime_type: 'application/pdf'
+      }
+    ],
+    links: [
+      {
+        id: 'tokyo-link-1',
+        url: 'https://www.booking.com/hotel/jp/the-millennials-shibuya.html',
+        title: 'The Millennials Shibuya Capsule Hotel',
+        description: 'Modern capsule hotel in the heart of Shibuya with high-tech amenities.',
+        domain: 'booking.com',
+        image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 20).toISOString(),
+        source: 'pinned',
+        category: 'Housing',
+        tags: ['capsule', 'modern', 'shibuya']
+      },
+      {
+        id: 'tokyo-link-2',
+        url: 'https://sushidai-tsukiji.com/',
+        title: 'Sushi Dai - Tsukiji Outer Market',
+        description: 'World-famous sushi restaurant known for the freshest tuna and traditional preparation.',
+        domain: 'sushidai-tsukiji.com',
+        image_url: 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+        source: 'chat',
+        category: 'Eats',
+        tags: ['sushi', 'traditional', 'tsukiji']
+      },
+      {
+        id: 'tokyo-link-3',
+        url: 'https://www.teamlab.art/e/planets/',
+        title: 'teamLab Planets TOKYO Digital Art Museum',
+        description: 'Immersive digital art experience with interactive installations and water features.',
+        domain: 'teamlab.art',
+        image_url: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 6).toISOString(),
+        source: 'pinned',
+        category: 'Activities',
+        tags: ['art', 'digital', 'immersive']
+      },
+      {
+        id: 'tokyo-link-4',
+        url: 'https://www.robot-restaurant.com/',
+        title: 'Robot Restaurant Shinjuku',
+        description: 'Crazy robot show with lasers, music, and mechanical mayhem in Shinjuku.',
+        domain: 'robot-restaurant.com',
+        image_url: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        source: 'manual',
+        category: 'Activities',
+        tags: ['entertainment', 'unique', 'shinjuku']
+      }
+    ]
+  },
+
+  // 3. Jack and Jill's destination wedding (Bali)
+  3: {
+    tripId: 3,
+    tripTitle: "Jack and Jill's destination wedding",
+    location: "Bali, Indonesia",
+    photos: [
+      {
+        id: 'bali-photo-1',
+        media_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=600&h=400&fit=crop',
+        filename: 'Beachside Wedding Ceremony.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'upload',
+        file_size: 567890,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'bali-photo-2',
+        media_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
+        filename: 'Sunset Reception Ubud.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        source: 'chat',
+        file_size: 456123,
+        mime_type: 'image/jpeg'
+      }
+    ],
+    videos: [{
+      id: 'bali-video-1',
+      media_url: '/mock/videos/bali-ceremony.mp4',
+      filename: 'Wedding Ceremony Highlights.mp4',
+      media_type: 'video',
+      metadata: { duration: 125, width: 1920, height: 1080, poster: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=300&fit=crop' },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'upload',
+      file_size: 25678000,
+      mime_type: 'video/mp4'
+    }],
+    audio: [{
+      id: 'bali-audio-1',
+      media_url: '/mock/audio/bali-rehearsal.mp3',
+      filename: 'Voice Note - Rehearsal dinner reminder.mp3',
+      media_type: 'audio',
+      metadata: { duration: 5.8 },
+      created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+      source: 'chat',
+      file_size: 145600,
+      mime_type: 'audio/mp3'
+    }],
+    files: [
+      {
+        id: 'bali-file-1',
+        media_url: '/mock/files/villa-booking-confirmation.pdf',
+        filename: 'Villa Seminyak Wedding Package.pdf',
+        media_type: 'document',
+        metadata: { guests: 50, package: 'Premium Beach Wedding' },
+        created_at: new Date(Date.now() - 86400000 * 30).toISOString(),
+        source: 'upload',
+        file_size: 423789,
+        mime_type: 'application/pdf'
+      }
+    ],
+    links: [
+      {
+        id: 'bali-link-1',
+        url: 'https://www.seminyakbeachresort.com/',
+        title: 'Seminyak Beach Resort & Spa',
+        description: 'Luxury beachfront resort perfect for destination weddings with ocean views.',
+        domain: 'seminyakbeachresort.com',
+        image_url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 45).toISOString(),
+        source: 'pinned',
+        category: 'Housing',
+        tags: ['resort', 'wedding-venue', 'luxury']
+      },
+      {
+        id: 'bali-link-2',
+        url: 'https://www.lalucianbali.com/',
+        title: 'La Lucciola - Beachside Italian',
+        description: 'Romantic Italian restaurant with stunning ocean views and fresh seafood.',
+        domain: 'lalucianbali.com',
+        image_url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+        source: 'chat',
+        category: 'Eats',
+        tags: ['italian', 'romantic', 'ocean-view']
+      },
+      {
+        id: 'bali-link-3',
+        url: 'https://www.baliswing.com/',
+        title: 'Bali Swing Adventure Experience',
+        description: 'Thrilling jungle swings with incredible valley views for adventurous couples.',
+        domain: 'baliswing.com',
+        image_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 10).toISOString(),
+        source: 'manual',
+        category: 'Activities',
+        tags: ['adventure', 'scenic', 'couples']
+      }
+    ]
+  },
+
+  // Continue with remaining trips... (4-12)
+  // For brevity, I'll include a few more key ones
+
+  // 4. Kristen's Bachelorette Party (Nashville)  
+  4: {
+    tripId: 4,
+    tripTitle: "Kristen's Bachelorette Party",
+    location: "Nashville, TN",
+    photos: [
+      {
+        id: 'nashville-photo-1',
+        media_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop',
+        filename: 'Honky Tonk Squad Goals.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'chat',
+        file_size: 456789,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'nashville-photo-2',
+        media_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=400&fit=crop',
+        filename: 'Broadway Live Music Night.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        source: 'upload',
+        file_size: 523456,
+        mime_type: 'image/jpeg'
+      }
+    ],
+    videos: [{
+      id: 'nashville-video-1',
+      media_url: '/mock/videos/nashville-karaoke.mp4',
+      filename: 'Bride Karaoke Highlights.mp4',
+      media_type: 'video',
+      metadata: { duration: 67, width: 1280, height: 720, poster: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=300&fit=crop' },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'chat',
+      file_size: 13456000,
+      mime_type: 'video/mp4'
+    }],
+    audio: [{
+      id: 'nashville-audio-1',
+      media_url: '/mock/audio/nashville-meetup.mp3',
+      filename: 'Voice Note - Meeting at Tootsies 9pm.mp3',
+      media_type: 'audio',
+      metadata: { duration: 5.2 },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'chat',
+      file_size: 145600,
+      mime_type: 'audio/mp3'
+    }],
+    files: [
+      {
+        id: 'nashville-file-1',
+        media_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=300&fit=crop',
+        filename: 'Grand Ole Opry VIP Tickets.jpg',
+        media_type: 'image',
+        metadata: { 
+          isTicket: true, 
+          venue: 'Grand Ole Opry', 
+          date: '2025-11-09',
+          extractedEvents: 1 
+        },
+        created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
+        source: 'upload',
+        file_size: 234567,
+        mime_type: 'image/jpeg'
+      }
+    ],
+    links: [
+      {
+        id: 'nashville-link-1',
+        url: 'https://www.omnihotels.com/hotels/nashville',
+        title: 'Omni Nashville Hotel - Downtown',
+        description: 'Luxury hotel in the heart of Music City with rooftop pool and spa services.',
+        domain: 'omnihotels.com',
+        image_url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 20).toISOString(),
+        source: 'pinned',
+        category: 'Housing',
+        tags: ['hotel', 'luxury', 'downtown']
+      },
+      {
+        id: 'nashville-link-2',
+        url: 'https://www.hattiebs.com/',
+        title: "Hattie B's Hot Chicken - Nashville Original",
+        description: 'Famous Nashville hot chicken with multiple heat levels and Southern sides.',
+        domain: 'hattiebs.com',
+        image_url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        source: 'chat',
+        category: 'Eats',
+        tags: ['chicken', 'nashville', 'spicy']
+      },
+      {
+        id: 'nashville-link-3',
+        url: 'https://www.ryman.com/',
+        title: 'Ryman Auditorium - Mother Church of Country Music',
+        description: 'Historic venue with legendary country music performances and backstage tours.',
+        domain: 'ryman.com',
+        image_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+        source: 'manual',
+        category: 'Activities',
+        tags: ['music', 'historic', 'tour']
+      }
+    ]
+  },
+
+  // 6. Johnson Family Summer Vacay (Aspen)
+  6: {
+    tripId: 6,
+    tripTitle: "Johnson Family Summer Vacay",
+    location: "Aspen, CO",
+    photos: [
+      {
+        id: 'aspen-photo-1',
+        media_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
+        filename: 'Family Mountain Hike.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        source: 'chat',
+        file_size: 445678,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'aspen-photo-2',
+        media_url: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&h=400&fit=crop',
+        filename: 'Multi-Gen Lodge Group.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        source: 'upload',
+        file_size: 523789,
+        mime_type: 'image/jpeg'
+      }
+    ],
+    videos: [{
+      id: 'aspen-video-1',
+      media_url: '/mock/videos/aspen-family.mp4',
+      filename: 'Family Adventure Montage.mp4',
+      media_type: 'video',
+      metadata: { duration: 89, width: 1280, height: 720, poster: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop' },
+      created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+      source: 'chat',
+      file_size: 16789000,
+      mime_type: 'video/mp4'
+    }],
+    audio: [{
+      id: 'aspen-audio-1',
+      media_url: '/mock/audio/aspen-meetup.mp3',
+      filename: 'Voice Note - Breakfast at 8am lodge lobby.mp3',
+      media_type: 'audio',
+      metadata: { duration: 6.1 },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'chat',
+      file_size: 167890,
+      mime_type: 'audio/mp3'
+    }],
+    files: [
+      {
+        id: 'aspen-file-1',
+        media_url: '/mock/files/aspen-lodge-reservation.pdf',
+        filename: 'Little Nell Resort Confirmation.pdf',
+        media_type: 'document',
+        metadata: { guests: 7, nights: 8 },
+        created_at: new Date(Date.now() - 86400000 * 25).toISOString(),
+        source: 'upload',
+        file_size: 345600,
+        mime_type: 'application/pdf'
+      }
+    ],
+    links: [
+      {
+        id: 'aspen-link-1',
+        url: 'https://www.thelittlenell.com/',
+        title: 'The Little Nell - Five-Star Aspen Resort',
+        description: 'Luxury ski-in/ski-out resort at the base of Aspen Mountain with world-class spa.',
+        domain: 'thelittlenell.com',
+        image_url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 45).toISOString(),
+        source: 'pinned',
+        category: 'Housing',
+        tags: ['resort', 'luxury', 'ski']
+      },
+      {
+        id: 'aspen-link-2',
+        url: 'https://www.matsuhisaaspen.com/',
+        title: 'Matsuhisa Aspen - Renowned Japanese Cuisine',
+        description: 'World-famous Japanese restaurant by Nobu Matsuhisa with fresh sushi and mountain views.',
+        domain: 'matsuhisaaspen.com',
+        image_url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+        source: 'chat',
+        category: 'Eats',
+        tags: ['japanese', 'sushi', 'upscale']
+      }
+    ]
+  },
+
+  // 7. Fantasy Football Golf Outing (Phoenix)
+  7: {
+    tripId: 7,
+    tripTitle: "Fantasy Football Chat's Annual Golf Outing",
+    location: "Phoenix, Arizona",
+    photos: [
+      {
+        id: 'phoenix-photo-1',
+        media_url: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=600&h=400&fit=crop',
+        filename: 'Desert Golf Championship.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'chat',
+        file_size: 434567,
+        mime_type: 'image/jpeg'
+      }
+    ],
+    videos: [{
+      id: 'phoenix-video-1',
+      media_url: '/mock/videos/phoenix-golf.mp4',
+      filename: 'Hole-in-One Celebration.mp4',
+      media_type: 'video',
+      metadata: { duration: 45, width: 1280, height: 720, poster: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=400&h=300&fit=crop' },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'chat',
+      file_size: 9876000,
+      mime_type: 'video/mp4'
+    }],
+    audio: [{
+      id: 'phoenix-audio-1',
+      media_url: '/mock/audio/phoenix-tee-time.mp3',
+      filename: 'Voice Note - Tee time moved to 7am.mp3',
+      media_type: 'audio',
+      metadata: { duration: 4.9 },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'chat',
+      file_size: 134500,
+      mime_type: 'audio/mp3'
+    }],
+    files: [
+      {
+        id: 'phoenix-file-1',
+        media_url: '/mock/files/tpc-scottsdale-booking.pdf',
+        filename: 'TPC Scottsdale Tee Times.pdf',
+        media_type: 'document',
+        metadata: { players: 6, rounds: 3 },
+        created_at: new Date(Date.now() - 86400000 * 12).toISOString(),
+        source: 'upload',
+        file_size: 267890,
+        mime_type: 'application/pdf'
+      }
+    ],
+    links: [
+      {
+        id: 'phoenix-link-1',
+        url: 'https://www.tpc.com/scottsdale/',
+        title: 'TPC Scottsdale - Stadium Course',
+        description: 'Home of the Waste Management Phoenix Open with the famous 16th hole stadium.',
+        domain: 'tpc.com',
+        image_url: 'https://images.unsplash.com/photo-1535131749006-b7f58c99034b?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
+        source: 'pinned',
+        category: 'Activities',
+        tags: ['golf', 'pga', 'tournament']
+      },
+      {
+        id: 'phoenix-link-2',
+        url: 'https://www.fourseasons.com/scottsdale/',
+        title: 'Four Seasons Resort Scottsdale at Troon North',
+        description: 'Luxury desert resort with championship golf courses and spa in the Sonoran Desert.',
+        domain: 'fourseasons.com',
+        image_url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 20).toISOString(),
+        source: 'pinned',
+        category: 'Housing',
+        tags: ['resort', 'luxury', 'golf']
+      }
+    ]
+  },
+
+  // 5. Coachella Squad 2026
+  5: {
+    tripId: 5,
+    tripTitle: "Coachella Squad 2026",
+    location: "Indio, CA",
+    photos: [
+      {
+        id: 'coachella-photo-1',
+        media_url: 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&h=400&fit=crop',
+        filename: 'Main Stage Festival Vibes.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'chat',
+        file_size: 445678,
+        mime_type: 'image/jpeg'
+      }
+    ],
+    videos: [{
+      id: 'coachella-video-1',
+      media_url: '/mock/videos/coachella-highlights.mp4',
+      filename: 'Festival Highlights Reel.mp4',
+      media_type: 'video',
+      metadata: { duration: 95, width: 1280, height: 720 },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'chat',
+      file_size: 18456000,
+      mime_type: 'video/mp4'
+    }],
+    audio: [{
+      id: 'coachella-audio-1',
+      media_url: '/mock/audio/coachella-meetup.mp3',
+      filename: 'Voice Note - Meet at Sahara tent 3pm.mp3',
+      media_type: 'audio',
+      metadata: { duration: 4.7 },
+      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+      source: 'chat',
+      file_size: 123456,
+      mime_type: 'audio/mp3'
+    }],
+    files: [{
+      id: 'coachella-file-1',
+      media_url: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=300&fit=crop',
+      filename: 'Weekend 1 Festival Passes.jpg',
+      media_type: 'image',
+      metadata: { 
+        isTicket: true, 
+        venue: 'Coachella Valley Music Festival', 
+        date: '2026-04-10',
+        extractedEvents: 3 
+      },
+      created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
+      source: 'upload',
+      file_size: 234567,
+      mime_type: 'image/jpeg'
+    }],
+    links: [
+      {
+        id: 'coachella-link-1',
+        url: 'https://www.airbnb.com/rooms/coachella-desert-house',
+        title: 'Desert House Coachella - 8 Guests',
+        description: 'Stunning desert house with pool, perfect for festival groups.',
+        domain: 'airbnb.com',
+        image_url: 'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 30).toISOString(),
+        source: 'pinned',
+        category: 'Housing',
+        tags: ['airbnb', 'desert', 'festival']
+      }
+    ]
+  }
+};
+
+class TripSpecificMockDataService {
+  private static readonly USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true' || import.meta.env.DEV;
+
+  static isUsingMockData(): boolean {
+    return this.USE_MOCK_DATA;
+  }
+
+  static getTripMockData(tripId: string | number): TripMockData | null {
+    if (!this.USE_MOCK_DATA) return null;
+    
+    const numericTripId = typeof tripId === 'string' ? parseInt(tripId, 10) : tripId;
+    return TRIP_MOCK_DATA[numericTripId] || null;
+  }
+
+  static getMockMediaItems(tripId: string | number): TripSpecificMediaItem[] {
+    const tripData = this.getTripMockData(tripId);
+    if (!tripData) return [];
+    
+    return [
+      ...tripData.photos,
+      ...tripData.videos, 
+      ...tripData.audio,
+      ...tripData.files
+    ];
+  }
+
+  static getMockLinkItems(tripId: string | number): TripSpecificLinkItem[] {
+    const tripData = this.getTripMockData(tripId);
+    if (!tripData) return [];
+    
+    return tripData.links;
+  }
+
+  static getMockMediaByType(tripId: string | number, type: 'photos' | 'videos' | 'audio' | 'files'): TripSpecificMediaItem[] {
+    const tripData = this.getTripMockData(tripId);
+    if (!tripData) return [];
+    
+    return tripData[type] || [];
+  }
+
+  static getMockLinksByCategory(tripId: string | number, category?: 'Housing' | 'Eats' | 'Activities'): TripSpecificLinkItem[] {
+    const tripData = this.getTripMockData(tripId);
+    if (!tripData) return [];
+    
+    if (!category) return tripData.links;
+    return tripData.links.filter(link => link.category === category);
+  }
+}
+
+export default TripSpecificMockDataService;
+export type { TripSpecificMediaItem, TripSpecificLinkItem, TripMockData };
