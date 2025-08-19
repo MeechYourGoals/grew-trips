@@ -79,7 +79,7 @@ export const ChatInput = ({
   return (
     <div className="space-y-3">
       {/* Header Row - Segmented Control with Share */}
-      <div className="flex bg-gray-800 rounded-lg p-1 w-fit">
+      <div className="flex justify-center bg-gray-800 rounded-lg p-1">
         <button
           onClick={() => setIsBroadcastMode(false)}
           className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
