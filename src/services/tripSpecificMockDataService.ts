@@ -830,6 +830,22 @@ class TripSpecificMockDataService {
     if (!category) return tripData.links;
     return tripData.links.filter(link => link.category === category);
   }
+
+  // Helper methods for compatibility
+  static isEnabled(): boolean {
+    // Check both environment variable and demo mode
+    const envEnabled = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+    const demoModeEnabled = localStorage.getItem('TRIPS_DEMO_MODE') === 'true';
+    return envEnabled || demoModeEnabled;
+  }
+
+  static getTripMediaItems(tripId: number): TripSpecificMediaItem[] {
+    return this.getMockMediaItems(tripId);
+  }
+
+  static getTripLinkItems(tripId: number): TripSpecificLinkItem[] {
+    return this.getMockLinkItems(tripId);
+  }
 }
 
 export default TripSpecificMockDataService;

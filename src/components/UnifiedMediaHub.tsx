@@ -48,11 +48,15 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
   }, [tripId, isDemoMode]);
 
   const fetchMediaItems = async () => {
+    setLoading(true);
     try {
-      if (isDemoMode) {
-        // Use trip-specific mock data in demo mode
-        const mockMedia = TripSpecificMockDataService.getMockMediaItems(tripId);
-        setMediaItems(mockMedia);
+      let items: MediaItem[] = [];
+
+      if (isDemoMode || TripSpecificMockDataService.isEnabled()) {
+        // Use trip-specific mock data
+        const tripSpecificItems = TripSpecificMockDataService.getTripMediaItems(parseInt(tripId));
+        items = tripSpecificItems;
+        console.log('Using trip-specific mock data for trip:', tripId, 'items:', items);
       } else {
         // Fetch from Supabase in production
         const [mediaResponse, filesResponse] = await Promise.all([
@@ -90,20 +94,27 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
           }))
         ];
 
-        setMediaItems(combinedMedia);
+        items = combinedMedia;
       }
+
+      setMediaItems(items);
     } catch (error) {
       console.error('Error fetching media items:', error);
       setMediaItems([]);
+    } finally {
+      setLoading(false);
     }
   };
 
   const fetchLinkItems = async () => {
     try {
-      if (isDemoMode) {
-        // Use trip-specific mock data in demo mode
-        const mockLinks = TripSpecificMockDataService.getMockLinkItems(tripId);
-        setLinkItems(mockLinks);
+      let items: LinkItem[] = [];
+
+      if (isDemoMode || TripSpecificMockDataService.isEnabled()) {
+        // Use trip-specific mock data
+        const tripSpecificLinks = TripSpecificMockDataService.getTripLinkItems(parseInt(tripId));
+        items = tripSpecificLinks;
+        console.log('Using trip-specific mock links for trip:', tripId, 'items:', items);
       } else {
         // Fetch from Supabase in production
         const [linksResponse, manualLinksResponse] = await Promise.all([
@@ -147,8 +158,10 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
           }))
         ];
 
-        setLinkItems(combinedLinks);
+        items = combinedLinks;
       }
+
+      setLinkItems(items);
     } catch (error) {
       console.error('Error fetching link items:', error);
       setLinkItems([]);
