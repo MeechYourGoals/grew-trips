@@ -51,10 +51,10 @@ const testimonials: Testimonial[] = [
 ];
 
 const metrics: Metric[] = [
-  { value: "2,847", label: "trips managed", icon: <MapPin size={16} />, trend: "+42% this month" },
-  { value: "78%", label: "less coordination time", icon: <Clock size={16} /> },
-  { value: "94%", label: "user satisfaction", icon: <Star size={16} /> },
-  { value: "$2.3M", label: "budget savings tracked", icon: <TrendingUp size={16} />, trend: "across all users" }
+  { value: "Built to help", label: "thousands of trips run smoother", icon: <MapPin size={16} />, trend: "join our early adopters" },
+  { value: "Predicted 70%", label: "less coordination time", icon: <Clock size={16} /> },
+  { value: "Goal: 94%", label: "user satisfaction", icon: <Star size={16} /> },
+  { value: "Potential", label: "budget savings for every group", icon: <TrendingUp size={16} />, trend: "track your savings soon" }
 ];
 
 const logos = ["SXSW", "Live Nation", "Goldman Sachs", "Tesla", "Y Combinator", "UCLA"];

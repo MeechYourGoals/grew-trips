@@ -99,7 +99,8 @@ const pricingTiers: PricingTier[] = [
       'Attendee coordination',
       'Venue management',
       'Ticketing integration',
-      'White-label options',
+      'Custom event page branding',
+      'Custom backgrounds, fonts & colors',
       'Event analytics',
       'Dedicated support'
     ],
@@ -109,26 +110,6 @@ const pricingTiers: PricingTier[] = [
   }
 ];
 
-const addOnFeatures = [
-  {
-    name: 'White Label',
-    description: 'Custom branding and domain',
-    price: '+$500/month',
-    icon: <Star size={16} />
-  },
-  {
-    name: 'Advanced Analytics',
-    description: 'Detailed reporting and insights',
-    price: '+$200/month',
-    icon: <BarChart3 size={16} />
-  },
-  {
-    name: 'Dedicated Support',
-    description: '24/7 priority phone support',
-    price: '+$300/month',
-    icon: <Phone size={16} />
-  }
-];
 
 export const PricingSection = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
@@ -260,36 +241,6 @@ export const PricingSection = () => {
         ))}
       </div>
 
-      {/* Add-ons Section */}
-      <div className="space-y-6">
-        <div className="text-center">
-          <h3 className="text-2xl font-bold text-foreground mb-2">
-            Enterprise Add-ons
-          </h3>
-          <p className="text-muted-foreground">
-            Enhance your Pro or Events plan with additional capabilities
-          </p>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-4">
-          {addOnFeatures.map((addon, index) => (
-            <Card key={index} className="bg-card/50 backdrop-blur-sm border border-border/50">
-              <CardContent className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center text-accent">
-                    {addon.icon}
-                  </div>
-                  <div className="flex-1">
-                    <h4 className="font-semibold text-foreground">{addon.name}</h4>
-                    <p className="text-sm text-muted-foreground mb-2">{addon.description}</p>
-                    <div className="text-sm font-medium text-accent">{addon.price}</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
 
       {/* Enterprise Contact */}
       <div className="text-center space-y-4 bg-card/30 backdrop-blur-sm rounded-2xl p-8 border border-border/50">
@@ -298,7 +249,7 @@ export const PricingSection = () => {
           Need something custom?
         </h3>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Enterprise organizations get custom pricing, dedicated support, and tailored integrations
+          Looking for custom integrations or specialized features? Let's discuss how we can help.
         </p>
         <Button size="lg" variant="outline" className="border-accent/30 text-accent hover:bg-accent/10">
           Contact Enterprise Sales
