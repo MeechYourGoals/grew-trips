@@ -1027,6 +1027,140 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
         tags: ['grocery', 'supplies', 'healthy']
       }
     ]
+  },
+
+  // 9. Trip 9 (Current route trip)
+  9: {
+    tripId: 9,
+    tripTitle: "Spring Break Cancun 2026", 
+    location: "Cancun, Mexico",
+    photos: [
+      {
+        id: 'cancun-photo-1',
+        media_url: 'https://images.unsplash.com/photo-1544552866-d3ed42536cfd?w=600&h=400&fit=crop',
+        filename: 'Beach Day Paradise.jpg',
+        media_type: 'image' as const,
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'chat' as const,
+        file_size: 445678,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'cancun-photo-2', 
+        media_url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&h=400&fit=crop',
+        filename: 'Resort Pool Vibes.jpg',
+        media_type: 'image' as const,
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        source: 'upload' as const,
+        file_size: 523456,
+        mime_type: 'image/jpeg'
+      }
+    ],
+    videos: [
+      {
+        id: 'cancun-video-1',
+        media_url: '/mock/videos/beach-volleyball.mp4',
+        filename: 'Epic Beach Volleyball Game.mp4',
+        media_type: 'video' as const,
+        metadata: { duration: 45, width: 1280, height: 720 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'chat' as const,
+        file_size: 8456000,
+        mime_type: 'video/mp4'
+      }
+    ],
+    audio: [
+      {
+        id: 'cancun-audio-1',
+        media_url: '/mock/audio/dinner-plans.mp3',
+        filename: 'Voice Note - Dinner reservations confirmed.mp3',
+        media_type: 'audio' as const,
+        metadata: { duration: 7.2 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'chat' as const,
+        file_size: 189432,
+        mime_type: 'audio/mp3'
+      }
+    ],
+    files: [
+      {
+        id: 'cancun-file-1',
+        media_url: 'https://images.unsplash.com/photo-1544966503-7adce1a35804?w=400&h=300&fit=crop',
+        filename: 'Flight Confirmation - Mexico City.jpg',
+        media_type: 'image' as const,
+        metadata: { 
+          isTicket: true,
+          venue: 'AeroMexico Flight AM445',
+          date: '2026-03-15' 
+        },
+        created_at: new Date(Date.now() - 86400000 * 10).toISOString(),
+        source: 'upload' as const,
+        file_size: 234567,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'cancun-file-2',
+        media_url: '/mock/files/hotel-confirmation.pdf',
+        filename: 'Hotel Riu Cancun Confirmation.pdf',
+        media_type: 'document' as const,
+        metadata: { 
+          extractedEvents: 2,
+          pageCount: 3
+        },
+        created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
+        source: 'upload' as const,
+        file_size: 1456789,
+        mime_type: 'application/pdf'
+      },
+      {
+        id: 'cancun-file-3',
+        media_url: 'https://images.unsplash.com/photo-1586227740560-8cf2732c1531?w=400&h=300&fit=crop',
+        filename: 'Dinner Receipt - La Isla.jpg',
+        media_type: 'image' as const,
+        metadata: { 
+          isReceipt: true,
+          totalAmount: 240,
+          splitCount: 6,
+          perPersonAmount: 40,
+          preferredMethod: 'venmo'
+        },
+        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        source: 'chat' as const,
+        file_size: 198765,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'cancun-file-4',
+        media_url: '/mock/files/cancun-itinerary.pdf',
+        filename: 'Cancun Week Itinerary.pdf',
+        media_type: 'document' as const,
+        metadata: { 
+          isSchedule: true,
+          extractedEvents: 12,
+          pageCount: 4
+        },
+        created_at: new Date(Date.now() - 86400000 * 20).toISOString(),
+        source: 'upload' as const,
+        file_size: 987654,
+        mime_type: 'application/pdf'
+      }
+    ],
+    links: [
+      {
+        id: 'cancun-link-1',
+        url: 'https://www.airbnb.com/rooms/beachfront-villa-cancun',
+        title: 'Beachfront Villa with Private Pool',
+        description: 'Luxury 4BR villa steps from the beach, perfect for groups',
+        domain: 'airbnb.com',
+        image_url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 25).toISOString(),
+        source: 'pinned' as const,
+        category: 'Housing' as const,
+        tags: ['beachfront', 'villa', 'pool']
+      }
+    ]
   }
 };
 

@@ -318,6 +318,15 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
           <p className="text-muted-foreground">
             Documents, receipts, and schedules shared in chat will appear here
           </p>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="mt-4"
+            onClick={() => alert('File upload functionality coming soon! You\'ll be able to upload PDFs, receipts, tickets, and other documents directly here.')}
+          >
+            <FileText className="h-4 w-4 mr-2" />
+            + Add File
+          </Button>
         </div>
       );
     }
