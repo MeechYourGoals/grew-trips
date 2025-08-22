@@ -135,6 +135,7 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
             }}
             className="text-xs ml-auto"
           >
+            <Link className="w-4 h-4 mr-1" />
             + Add Link
           </Button>
         </div>
@@ -209,74 +210,95 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
   // Grid layout for photos and videos with click-to-play videos
   if (type === 'photos' || type === 'videos') {
     return (
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {mediaItems.map((item) => (
-          <div 
-            key={item.id} 
-            className="group relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
+      <div className="space-y-4">
+        {/* Header with Add Button */}
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold text-foreground">
+            {type === 'photos' ? 'Photos' : 'Videos'} ({mediaItems.length})
+          </h3>
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => {
-              if (item.media_type === 'video') {
-                // Create a modal or overlay for video playback
-                const video = document.createElement('video');
-                video.src = item.media_url;
-                video.controls = true;
-                video.autoplay = true;
-                video.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;max-width:90vw;max-height:90vh;background:black;';
-                
-                const overlay = document.createElement('div');
-                overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);z-index:9998;display:flex;align-items:center;justify-content:center;';
-                overlay.onclick = () => document.body.removeChild(overlay);
-                
-                overlay.appendChild(video);
-                document.body.appendChild(overlay);
-              }
+              const mediaType = type === 'photos' ? 'Photo' : 'Video';
+              alert(`Add ${mediaType} functionality - would open file picker for ${type}`);
             }}
+            className="text-xs"
           >
-            {item.media_type === 'image' ? (
-              <img
-                src={item.media_url}
-                alt={item.filename}
-                className="w-full h-full object-cover transition-transform group-hover:scale-105"
-              />
-            ) : (
-              <div className="relative w-full h-full bg-black flex items-center justify-center">
-                <video
+            {type === 'photos' ? <Camera className="w-4 h-4 mr-1" /> : <Video className="w-4 h-4 mr-1" />}
+            + Add {type === 'photos' ? 'Photo' : 'Video'}
+          </Button>
+        </div>
+        
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          {mediaItems.map((item) => (
+            <div 
+              key={item.id} 
+              className="group relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
+              onClick={() => {
+                if (item.media_type === 'video') {
+                  // Create a modal or overlay for video playback
+                  const video = document.createElement('video');
+                  video.src = item.media_url;
+                  video.controls = true;
+                  video.autoplay = true;
+                  video.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:9999;max-width:90vw;max-height:90vh;background:black;';
+                  
+                  const overlay = document.createElement('div');
+                  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.8);z-index:9998;display:flex;align-items:center;justify-content:center;';
+                  overlay.onclick = () => document.body.removeChild(overlay);
+                  
+                  overlay.appendChild(video);
+                  document.body.appendChild(overlay);
+                }
+              }}
+            >
+              {item.media_type === 'image' ? (
+                <img
                   src={item.media_url}
-                  className="w-full h-full object-cover"
-                  muted
-                  preload="metadata"
+                  alt={item.filename}
+                  className="w-full h-full object-cover transition-transform group-hover:scale-105"
                 />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                  <Play className="w-12 h-12 text-white" />
-                </div>
-                {item.metadata?.duration && (
-                  <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                    {Math.floor(item.metadata.duration / 60)}:{(item.metadata.duration % 60).toString().padStart(2, '0')}
+              ) : (
+                <div className="relative w-full h-full bg-black flex items-center justify-center">
+                  <video
+                    src={item.media_url}
+                    className="w-full h-full object-cover"
+                    muted
+                    preload="metadata"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                    <Play className="w-12 h-12 text-white" />
                   </div>
-                )}
-              </div>
-            )}
-            
-            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors">
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="flex items-center gap-1">
-                  {item.source === 'chat' ? (
-                    <MessageCircle className="w-4 h-4 text-white bg-black/50 rounded p-0.5" />
-                  ) : (
-                    <ExternalLink className="w-4 h-4 text-white bg-black/50 rounded p-0.5" />
+                  {item.metadata?.duration && (
+                    <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                      {Math.floor(item.metadata.duration / 60)}:{(item.metadata.duration % 60).toString().padStart(2, '0')}
+                    </div>
                   )}
                 </div>
-              </div>
+              )}
               
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                <p className="text-white text-sm font-medium truncate">{item.filename}</p>
-                <p className="text-white/80 text-xs">
-                  {item.source === 'chat' ? 'From chat' : 'Uploaded'} • {formatDate(item.created_at)}
-                </p>
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors">
+                <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="flex items-center gap-1">
+                    {item.source === 'chat' ? (
+                      <MessageCircle className="w-4 h-4 text-white bg-black/50 rounded p-0.5" />
+                    ) : (
+                      <ExternalLink className="w-4 h-4 text-white bg-black/50 rounded p-0.5" />
+                    )}
+                  </div>
+                </div>
+                
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <p className="text-white text-sm font-medium truncate">{item.filename}</p>
+                  <p className="text-white/80 text-xs">
+                    {item.source === 'chat' ? 'From chat' : 'Uploaded'} • {formatDate(item.created_at)}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     );
   }
@@ -285,7 +307,7 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
   if (type === 'files') {
     const fileItems = mediaItems.filter(item => 
       item.media_type === 'document' || 
-      (item.media_type === 'image' && (item.metadata?.isSchedule || item.metadata?.isReceipt))
+      (item.media_type === 'image' && (item.metadata?.isSchedule || item.metadata?.isReceipt || item.metadata?.isTicket))
     );
 
     if (fileItems.length === 0) {
@@ -301,159 +323,199 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
     }
 
     return (
-      <div className="space-y-3">
-        {fileItems.map((item: MediaItem) => (
-          <div key={item.id} className="bg-card border rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                {item.metadata?.isReceipt ? (
-                  <div className="flex-shrink-0">
-                    <img
-                      src={item.media_url}
-                      alt={item.filename}
-                      className="w-12 h-12 rounded-lg object-cover"
-                    />
-                  </div>
-                ) : item.metadata?.isSchedule ? (
-                  <div className="flex-shrink-0">
-                    <img
-                      src={item.media_url}
-                      alt={item.filename}
-                      className="w-12 h-12 rounded-lg object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex-shrink-0">
-                    <FileText className="text-blue-400" size={20} />
-                  </div>
-                )}
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-foreground font-medium truncate">{item.filename}</p>
-                    {item.metadata?.isReceipt && (
-                      <Badge variant="outline" className="text-green-400 border-green-400/50">
-                        Receipt
-                      </Badge>
-                    )}
-                    {item.metadata?.isTicket && (
-                      <Badge variant="outline" className="text-blue-400 border-blue-400/50">
-                        Ticket
-                      </Badge>
-                    )}
-                    {item.metadata?.isSchedule && (
-                      <Badge variant="outline" className="text-orange-400 border-orange-400/50">
-                        Schedule
-                      </Badge>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-1">
-                    <span>{formatFileSize(item.file_size)}</span>
-                    <span>{item.source === 'chat' ? 'From chat' : 'Uploaded'}</span>
-                    <span>{formatDate(item.created_at)}</span>
-                    {item.metadata?.extractedEvents && (
-                      <Badge variant="outline" className="text-orange-400 border-orange-400/50">
-                        {item.metadata.extractedEvents} events
-                      </Badge>
-                    )}
-                  </div>
-
-                  {/* Receipt-specific info */}
-                  {item.metadata?.isReceipt && item.metadata?.totalAmount && (
-                    <div className="flex items-center gap-4 mt-2">
-                      <div className="flex items-center gap-1">
-                        <DollarSign size={14} className="text-green-400" />
-                        <span className="text-foreground text-sm font-medium">
-                          ${item.metadata.totalAmount.toFixed(2)}
-                        </span>
-                      </div>
-                      
-                      {item.metadata.splitCount && item.metadata.perPersonAmount && (
-                        <div className="flex items-center gap-1">
-                          <Users size={14} className="text-blue-400" />
-                          <span className="text-muted-foreground text-sm">
-                            ${item.metadata.perPersonAmount.toFixed(2)} each ({item.metadata.splitCount} people)
-                          </span>
-                        </div>
-                      )}
-                      
-                      {item.metadata.preferredMethod && (
-                        <div className="flex items-center gap-2">
-                          <PaymentMethodIcon method={item.metadata.preferredMethod} size={14} />
-                          <span className="text-muted-foreground text-sm capitalize">
-                            {item.metadata.preferredMethod}
-                          </span>
-                        </div>
-                      )}
+      <div className="space-y-4">
+        {/* Header with Add Button */}
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-semibold text-foreground">
+            Files ({fileItems.length})
+          </h3>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              alert('Add File functionality - would open file picker for documents, receipts, schedules');
+            }}
+            className="text-xs"
+          >
+            <FileText className="w-4 h-4 mr-1" />
+            + Add File
+          </Button>
+        </div>
+        
+        <div className="space-y-3">
+          {fileItems.map((item: MediaItem) => (
+            <div key={item.id} className="bg-card border rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 flex-1 min-w-0">
+                  {item.metadata?.isReceipt ? (
+                    <div className="flex-shrink-0">
+                      <img
+                        src={item.media_url}
+                        alt={item.filename}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                    </div>
+                  ) : item.metadata?.isSchedule ? (
+                    <div className="flex-shrink-0">
+                      <img
+                        src={item.media_url}
+                        alt={item.filename}
+                        className="w-12 h-12 rounded-lg object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex-shrink-0">
+                      <FileText className="text-blue-400" size={20} />
                     </div>
                   )}
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-foreground font-medium truncate">{item.filename}</p>
+                      {item.metadata?.isReceipt && (
+                        <Badge variant="outline" className="text-green-400 border-green-400/50">
+                          Receipt
+                        </Badge>
+                      )}
+                      {item.metadata?.isTicket && (
+                        <Badge variant="outline" className="text-blue-400 border-blue-400/50">
+                          Ticket
+                        </Badge>
+                      )}
+                      {item.metadata?.isSchedule && (
+                        <Badge variant="outline" className="text-orange-400 border-orange-400/50">
+                          Schedule
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-4 text-xs text-muted-foreground mb-1">
+                      <span>{formatFileSize(item.file_size)}</span>
+                      <span>{item.source === 'chat' ? 'From chat' : 'Uploaded'}</span>
+                      <span>{formatDate(item.created_at)}</span>
+                      {item.metadata?.extractedEvents && (
+                        <Badge variant="outline" className="text-orange-400 border-orange-400/50">
+                          {item.metadata.extractedEvents} events
+                        </Badge>
+                      )}
+                    </div>
+
+                    {/* Receipt-specific info */}
+                    {item.metadata?.isReceipt && item.metadata?.totalAmount && (
+                      <div className="flex items-center gap-4 mt-2">
+                        <div className="flex items-center gap-1">
+                          <DollarSign size={14} className="text-green-400" />
+                          <span className="text-foreground text-sm font-medium">
+                            ${item.metadata.totalAmount.toFixed(2)}
+                          </span>
+                        </div>
+                        
+                        {item.metadata.splitCount && item.metadata.perPersonAmount && (
+                          <div className="flex items-center gap-1">
+                            <Users size={14} className="text-blue-400" />
+                            <span className="text-muted-foreground text-sm">
+                              ${item.metadata.perPersonAmount.toFixed(2)} each ({item.metadata.splitCount} people)
+                            </span>
+                          </div>
+                        )}
+                        
+                        {item.metadata.preferredMethod && (
+                          <div className="flex items-center gap-2">
+                            <PaymentMethodIcon method={item.metadata.preferredMethod} size={14} />
+                            <span className="text-muted-foreground text-sm capitalize">
+                              {item.metadata.preferredMethod}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                  {/* Receipt payment button */}
+                  {item.metadata?.isReceipt && item.metadata?.perPersonAmount && (
+                    <Button
+                      onClick={() => handlePaymentClick(item)}
+                      size="sm"
+                      className="bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600"
+                    >
+                      Pay ${item.metadata.perPersonAmount.toFixed(2)}
+                    </Button>
+                  )}
+                  
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => window.open(item.media_url, '_blank')}
+                    className="text-muted-foreground hover:text-foreground"
+                  >
+                    <Download size={16} />
+                  </Button>
                 </div>
               </div>
-              
-              <div className="flex items-center gap-2">
-                {/* Receipt payment button */}
-                {item.metadata?.isReceipt && item.metadata?.perPersonAmount && (
-                  <Button
-                    onClick={() => handlePaymentClick(item)}
-                    size="sm"
-                    className="bg-gradient-to-r from-green-500 to-emerald-500 text-white hover:from-green-600 hover:to-emerald-600"
-                  >
-                    Pay ${item.metadata.perPersonAmount.toFixed(2)}
-                  </Button>
-                )}
-                
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => window.open(item.media_url, '_blank')}
-                  className="text-muted-foreground hover:text-foreground"
-                >
-                  <Download size={16} />
-                </Button>
-              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     );
   }
 
   // List layout for audio
   return (
-    <div className="space-y-3">
-      {mediaItems.map((item) => (
-        <div key={item.id} className="bg-card border rounded-lg p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 flex-1 min-w-0">
-              <div className="flex-shrink-0">
-                <Music className="text-purple-400" size={20} />
-              </div>
-              
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <p className="text-foreground font-medium truncate">{item.filename}</p>
+    <div className="space-y-4">
+      {/* Header with Add Button */}
+      <div className="flex justify-between items-center">
+        <h3 className="text-lg font-semibold text-foreground">
+          Audio ({mediaItems.length})
+        </h3>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            alert('Add Audio functionality - would open file picker for audio files, voice notes');
+          }}
+          className="text-xs"
+        >
+          <Music className="w-4 h-4 mr-1" />
+          + Add Audio
+        </Button>
+      </div>
+      
+      <div className="space-y-3">
+        {mediaItems.map((item) => (
+          <div key={item.id} className="bg-card border rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3 flex-1 min-w-0">
+                <div className="flex-shrink-0">
+                  <Music className="text-purple-400" size={20} />
                 </div>
                 
-                <div className="flex items-center gap-4 text-xs text-muted-foreground mb-1">
-                  <span>{formatFileSize(item.file_size)}</span>
-                  <span>{item.source === 'chat' ? 'From chat' : 'Uploaded'}</span>
-                  <span>{formatDate(item.created_at)}</span>
-                  {item.metadata?.duration && (
-                    <span>{item.metadata.duration}s</span>
-                  )}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <p className="text-foreground font-medium truncate">{item.filename}</p>
+                  </div>
+                  
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-1">
+                    <span>{formatFileSize(item.file_size)}</span>
+                    <span>{item.source === 'chat' ? 'From chat' : 'Uploaded'}</span>
+                    <span>{formatDate(item.created_at)}</span>
+                    {item.metadata?.duration && (
+                      <span>{item.metadata.duration}s</span>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-            
-            <div className="flex items-center gap-2">
-              <audio controls className="h-8">
-                <source src={item.media_url} type={item.mime_type} />
-              </audio>
+              
+              <div className="flex items-center gap-2">
+                <audio controls className="h-8">
+                  <source src={item.media_url} type={item.mime_type} />
+                </audio>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

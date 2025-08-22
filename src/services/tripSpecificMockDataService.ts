@@ -726,46 +726,245 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
         source: 'chat',
         file_size: 445678,
         mime_type: 'image/jpeg'
+      },
+      {
+        id: 'coachella-photo-2',
+        media_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=600&h=400&fit=crop',
+        filename: 'Ferris Wheel Desert Sunset.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        source: 'upload',
+        file_size: 523456,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'coachella-photo-3',
+        media_url: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=400&fit=crop',
+        filename: 'Squad Goals at Sahara Tent.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        source: 'chat',
+        file_size: 378901,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'coachella-photo-4',
+        media_url: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=400&fit=crop',
+        filename: 'Desert House Pool Party.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        source: 'upload',
+        file_size: 456789,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'coachella-photo-5',
+        media_url: 'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=600&h=400&fit=crop',
+        filename: 'Food Truck Adventures.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+        source: 'chat',
+        file_size: 387654,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'coachella-photo-6',
+        media_url: 'https://images.unsplash.com/photo-1483032469466-b937c425697b?w=600&h=400&fit=crop',
+        filename: 'Late Night Art Installation.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+        source: 'upload',
+        file_size: 423567,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'coachella-photo-7',
+        media_url: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=600&h=400&fit=crop',
+        filename: 'Morning Coffee Desert Views.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 6).toISOString(),
+        source: 'chat',
+        file_size: 398745,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'coachella-photo-8',
+        media_url: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop',
+        filename: 'Full Group Festival Outfits.jpg',
+        media_type: 'image',
+        metadata: { width: 800, height: 600 },
+        created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
+        source: 'upload',
+        file_size: 467832,
+        mime_type: 'image/jpeg'
       }
     ],
-    videos: [{
-      id: 'coachella-video-1',
-      media_url: '/mock/videos/coachella-highlights.mp4',
-      filename: 'Festival Highlights Reel.mp4',
-      media_type: 'video',
-      metadata: { duration: 95, width: 1280, height: 720 },
-      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-      source: 'chat',
-      file_size: 18456000,
-      mime_type: 'video/mp4'
-    }],
-    audio: [{
-      id: 'coachella-audio-1',
-      media_url: '/mock/audio/coachella-meetup.mp3',
-      filename: 'Voice Note - Meet at Sahara tent 3pm.mp3',
-      media_type: 'audio',
-      metadata: { duration: 4.7 },
-      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-      source: 'chat',
-      file_size: 123456,
-      mime_type: 'audio/mp3'
-    }],
-    files: [{
-      id: 'coachella-file-1',
-      media_url: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=300&fit=crop',
-      filename: 'Weekend 1 Festival Passes.jpg',
-      media_type: 'image',
-      metadata: { 
-        isTicket: true, 
-        venue: 'Coachella Valley Music Festival', 
-        date: '2026-04-10',
-        extractedEvents: 3 
+    videos: [
+      {
+        id: 'coachella-video-1',
+        media_url: '/mock/videos/coachella-highlights.mp4',
+        filename: 'Festival Highlights Reel.mp4',
+        media_type: 'video',
+        metadata: { duration: 95, width: 1280, height: 720 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'chat',
+        file_size: 18456000,
+        mime_type: 'video/mp4'
       },
-      created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
-      source: 'upload',
-      file_size: 234567,
-      mime_type: 'image/jpeg'
-    }],
+      {
+        id: 'coachella-video-2',
+        media_url: '/mock/videos/desert-house-tour.mp4',
+        filename: 'Epic Desert House Tour.mp4',
+        media_type: 'video',
+        metadata: { duration: 42, width: 1280, height: 720 },
+        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        source: 'upload',
+        file_size: 8734000,
+        mime_type: 'video/mp4'
+      },
+      {
+        id: 'coachella-video-3',
+        media_url: '/mock/videos/sunset-timelapse.mp4',
+        filename: 'Desert Sunset Timelapse.mp4',
+        media_type: 'video',
+        metadata: { duration: 28, width: 1280, height: 720 },
+        created_at: new Date(Date.now() - 86400000 * 5).toISOString(),
+        source: 'chat',
+        file_size: 5632000,
+        mime_type: 'video/mp4'
+      }
+    ],
+    audio: [
+      {
+        id: 'coachella-audio-1',
+        media_url: '/mock/audio/coachella-meetup.mp3',
+        filename: 'Voice Note - Meet at Sahara tent 3pm.mp3',
+        media_type: 'audio',
+        metadata: { duration: 4.7 },
+        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
+        source: 'chat',
+        file_size: 123456,
+        mime_type: 'audio/mp3'
+      },
+      {
+        id: 'coachella-audio-2',
+        media_url: '/mock/audio/pool-party-plans.mp3',
+        filename: 'Pool party at house after headliner.mp3',
+        media_type: 'audio',
+        metadata: { duration: 8.2 },
+        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+        source: 'chat',
+        file_size: 215432,
+        mime_type: 'audio/mp3'
+      },
+      {
+        id: 'coachella-audio-3',
+        media_url: '/mock/audio/food-recommendations.mp3',
+        filename: 'Best food trucks to hit tomorrow.mp3',
+        media_type: 'audio',
+        metadata: { duration: 12.4 },
+        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
+        source: 'chat',
+        file_size: 324567,
+        mime_type: 'audio/mp3'
+      },
+      {
+        id: 'coachella-audio-4',
+        media_url: '/mock/audio/morning-meetup.mp3',
+        filename: 'Coffee meetup before gates open.mp3',
+        media_type: 'audio',
+        metadata: { duration: 6.8 },
+        created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
+        source: 'chat',
+        file_size: 178234,
+        mime_type: 'audio/mp3'
+      }
+    ],
+    files: [
+      {
+        id: 'coachella-file-1',
+        media_url: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=400&h=300&fit=crop',
+        filename: 'Weekend 1 Festival Passes.jpg',
+        media_type: 'image',
+        metadata: { 
+          isTicket: true, 
+          venue: 'Coachella Valley Music Festival', 
+          date: '2026-04-10',
+          extractedEvents: 3 
+        },
+        created_at: new Date(Date.now() - 86400000 * 15).toISOString(),
+        source: 'upload',
+        file_size: 234567,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'coachella-file-2',
+        media_url: '/mock/files/coachella-lineup-schedule.pdf',
+        filename: 'Coachella 2026 Lineup & Schedule.pdf',
+        media_type: 'document',
+        metadata: { 
+          isSchedule: true,
+          extractedEvents: 47,
+          pageCount: 8
+        },
+        created_at: new Date(Date.now() - 86400000 * 20).toISOString(),
+        source: 'upload',
+        file_size: 2456789,
+        mime_type: 'application/pdf'
+      },
+      {
+        id: 'coachella-file-3',
+        media_url: 'https://images.unsplash.com/photo-1543892555-d79449d33e8b?w=400&h=300&fit=crop',
+        filename: 'Desert House Rental Receipt.jpg',
+        media_type: 'image',
+        metadata: { 
+          isReceipt: true,
+          totalAmount: 2400,
+          splitCount: 8,
+          perPersonAmount: 300,
+          preferredMethod: 'venmo'
+        },
+        created_at: new Date(Date.now() - 86400000 * 25).toISOString(),
+        source: 'chat',
+        file_size: 345678,
+        mime_type: 'image/jpeg'
+      },
+      {
+        id: 'coachella-file-4',
+        media_url: '/mock/files/festival-map.pdf',
+        filename: 'Coachella Festival Grounds Map.pdf',
+        media_type: 'document',
+        metadata: { 
+          pageCount: 2,
+          extractedEvents: 0
+        },
+        created_at: new Date(Date.now() - 86400000 * 30).toISOString(),
+        source: 'upload',
+        file_size: 1234567,
+        mime_type: 'application/pdf'
+      },
+      {
+        id: 'coachella-file-5',
+        media_url: 'https://images.unsplash.com/photo-1556742044-3c52d6e88c62?w=400&h=300&fit=crop',
+        filename: 'VIP Camping Pass Confirmation.jpg',
+        media_type: 'image',
+        metadata: { 
+          isTicket: true,
+          venue: 'Coachella VIP Camping',
+          date: '2026-04-10'
+        },
+        created_at: new Date(Date.now() - 86400000 * 35).toISOString(),
+        source: 'upload',
+        file_size: 198765,
+        mime_type: 'image/jpeg'
+      }
+    ],
     links: [
       {
         id: 'coachella-link-1',
@@ -778,6 +977,54 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
         source: 'pinned',
         category: 'Housing',
         tags: ['airbnb', 'desert', 'festival']
+      },
+      {
+        id: 'coachella-link-2',
+        url: 'https://www.yelp.com/biz/pappy-and-harriets-pioneertown',
+        title: 'Pappy & Harriet\'s Pioneertown Palace',
+        description: 'Legendary desert venue and restaurant, perfect for pre-festival dinner.',
+        domain: 'yelp.com',
+        image_url: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 28).toISOString(),
+        source: 'manual',
+        category: 'Eats',
+        tags: ['restaurant', 'desert', 'iconic']
+      },
+      {
+        id: 'coachella-link-3',
+        url: 'https://www.uber.com/us/en/ride/uber-shuttle/',
+        title: 'Uber Festival Shuttle Service',
+        description: 'Pre-book shuttle rides to avoid festival traffic and parking.',
+        domain: 'uber.com',
+        image_url: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 25).toISOString(),
+        source: 'pinned',
+        category: 'Activities',
+        tags: ['transportation', 'shuttle', 'festival']
+      },
+      {
+        id: 'coachella-link-4',
+        url: 'https://www.coachella.com/lineup',
+        title: 'Coachella 2026 Official Lineup',
+        description: 'Full artist lineup and set times for both weekends.',
+        domain: 'coachella.com',
+        image_url: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 40).toISOString(),
+        source: 'pinned',
+        category: 'Activities',
+        tags: ['lineup', 'official', 'schedule']
+      },
+      {
+        id: 'coachella-link-5',
+        url: 'https://www.wholefoodsmarket.com/stores/palmdesert',
+        title: 'Whole Foods Market Palm Desert',
+        description: 'Stock up on snacks and supplies before heading to the festival.',
+        domain: 'wholefoodsmarket.com',
+        image_url: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&h=200&fit=crop',
+        created_at: new Date(Date.now() - 86400000 * 22).toISOString(),
+        source: 'manual',
+        category: 'Eats',
+        tags: ['grocery', 'supplies', 'healthy']
       }
     ]
   }
