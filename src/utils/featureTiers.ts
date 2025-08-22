@@ -36,7 +36,6 @@ export const ENTERPRISE_FEATURE_TIERS: Record<string, string> = {
   'travel-wallet': 'enterprise',
   'game-schedule': 'enterprise',
   'show-schedule': 'enterprise',
-  'scouting': 'enterprise',
   'notifications': 'enterprise'
 };
 
@@ -49,21 +48,7 @@ export const EVENTS_FEATURE_TIERS: Record<string, string> = {
 };
 
 export const getFeatureTierEmoji = (featureId: string, settingsType: 'consumer' | 'enterprise' | 'events'): string => {
-  let tierKey: string | undefined;
-  
-  switch (settingsType) {
-    case 'consumer':
-      tierKey = CONSUMER_FEATURE_TIERS[featureId];
-      break;
-    case 'enterprise':
-      tierKey = ENTERPRISE_FEATURE_TIERS[featureId];
-      break;
-    case 'events':
-      tierKey = EVENTS_FEATURE_TIERS[featureId];
-      break;
-  }
-  
-  return tierKey ? FEATURE_TIERS[tierKey].emoji : '';
+  return '';
 };
 
 export const getTierLegend = (): FeatureTier[] => {
