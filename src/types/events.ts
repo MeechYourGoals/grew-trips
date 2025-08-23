@@ -89,6 +89,51 @@ export interface EventData {
   groupChatEnabled: boolean;
   archived?: boolean;
   
+  // Media content for events
+  photos?: Array<{
+    id: string;
+    media_url: string;
+    filename: string;
+    metadata: any;
+    created_at: string;
+    source: 'chat' | 'upload';
+  }>;
+  videos?: Array<{
+    id: string;
+    media_url: string;
+    filename: string;
+    metadata: any;
+    created_at: string;
+    source: 'chat' | 'upload';
+  }>;
+  audio?: Array<{
+    id: string;
+    media_url: string;
+    filename: string;
+    metadata: any;
+    created_at: string;
+    source: 'chat' | 'upload';
+  }>;
+  files?: Array<{
+    id: string;
+    media_url: string;
+    filename: string;
+    metadata: any;
+    created_at: string;
+    source: 'chat' | 'upload';
+  }>;
+  links?: Array<{
+    id: string;
+    url: string;
+    title: string;
+    description: string;
+    domain: string;
+    image_url?: string;
+    created_at: string;
+    source: 'chat' | 'manual' | 'pinned';
+    category?: 'Housing' | 'Eats' | 'Activities';
+  }>;
+  
   // Event-specific features
   tracks: Track[];
   speakers: Speaker[];

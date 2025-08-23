@@ -70,18 +70,6 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
 
   if (type === 'links') {
     const linkItems = items as LinkItem[];
-    
-    if (linkItems.length === 0) {
-      return (
-        <div className="text-center py-12">
-          <Link className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-medium text-foreground mb-2">No Links Yet</h3>
-          <p className="text-muted-foreground">
-            Links shared in chat will appear here automatically
-          </p>
-        </div>
-      );
-    }
 
     // Filter links by selected category
     const filteredLinks = selectedCategory 
@@ -106,7 +94,7 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
             onClick={() => setSelectedCategory('Housing')}
             className="text-xs"
           >
-            🏠 Housing ({linkItems.filter(l => l.category === 'Housing').length})
+            Housing ({linkItems.filter(l => l.category === 'Housing').length})
           </Button>
           <Button
             variant={selectedCategory === 'Eats' ? "default" : "outline"}
@@ -114,7 +102,7 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
             onClick={() => setSelectedCategory('Eats')}
             className="text-xs"
           >
-            🍽️ Eats ({linkItems.filter(l => l.category === 'Eats').length})
+            Eats ({linkItems.filter(l => l.category === 'Eats').length})
           </Button>
           <Button
             variant={selectedCategory === 'Activities' ? "default" : "outline"}
@@ -122,7 +110,7 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
             onClick={() => setSelectedCategory('Activities')}
             className="text-xs"
           >
-            🎯 Activities ({linkItems.filter(l => l.category === 'Activities').length})
+            Activities ({linkItems.filter(l => l.category === 'Activities').length})
           </Button>
           
           {/* Add Link Button */}
@@ -141,7 +129,17 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
         </div>
 
         {/* Links Display */}
-        {filteredLinks.map((item) => (
+        {linkItems.length === 0 ? (
+          <div className="text-center py-8">
+            <Link className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+            <p className="text-muted-foreground text-sm">
+              Links shared in chat will appear here automatically
+            </p>
+          </div>
+        ) : null}
+
+        {/* Links Display */}
+        {filteredLinks.length > 0 && filteredLinks.map((item) => (
           <div key={item.id} className="bg-card border rounded-lg p-4 hover:bg-card/80 transition-colors">
             <div className="flex gap-4">
               {item.image_url && (
@@ -186,26 +184,6 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
   }
 
   const mediaItems = items as MediaItem[];
-  
-  if (mediaItems.length === 0) {
-    const icons = {
-      photos: Camera,
-      videos: Video,
-      audio: Music,
-      files: FileText
-    };
-    const Icon = icons[type];
-    
-    return (
-      <div className="text-center py-12">
-        <Icon className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-        <h3 className="text-lg font-medium text-foreground mb-2">No {type} Yet</h3>
-        <p className="text-muted-foreground">
-          {type.charAt(0).toUpperCase() + type.slice(1)} shared in chat or uploaded will appear here
-        </p>
-      </div>
-    );
-  }
 
   // Grid layout for photos and videos with click-to-play videos
   if (type === 'photos' || type === 'videos') {
@@ -230,8 +208,16 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
           </Button>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {mediaItems.map((item) => (
+        {mediaItems.length === 0 ? (
+          <div className="text-center py-8">
+            {type === 'photos' ? <Camera className="mx-auto h-8 w-8 text-muted-foreground mb-2" /> : <Video className="mx-auto h-8 w-8 text-muted-foreground mb-2" />}
+            <p className="text-muted-foreground text-sm">
+              {type.charAt(0).toUpperCase() + type.slice(1)} shared in chat will appear here
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {mediaItems.map((item) => (
             <div 
               key={item.id} 
               className="group relative aspect-square rounded-lg overflow-hidden bg-muted cursor-pointer"
@@ -297,8 +283,9 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
@@ -310,26 +297,6 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
       (item.media_type === 'image' && (item.metadata?.isSchedule || item.metadata?.isReceipt || item.metadata?.isTicket))
     );
 
-    if (fileItems.length === 0) {
-      return (
-        <div className="text-center py-12">
-          <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-medium text-foreground mb-2">No Files Yet</h3>
-          <p className="text-muted-foreground">
-            Documents, receipts, and schedules shared in chat will appear here
-          </p>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            className="mt-4"
-            onClick={() => alert('File upload functionality coming soon! You\'ll be able to upload PDFs, receipts, tickets, and other documents directly here.')}
-          >
-            <FileText className="h-4 w-4 mr-2" />
-            + Add File
-          </Button>
-        </div>
-      );
-    }
 
     return (
       <div className="space-y-4">
@@ -351,8 +318,16 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
           </Button>
         </div>
         
-        <div className="space-y-3">
-          {fileItems.map((item: MediaItem) => (
+        {fileItems.length === 0 ? (
+          <div className="text-center py-8">
+            <FileText className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+            <p className="text-muted-foreground text-sm">
+              Documents, receipts, and schedules shared in chat will appear here
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {fileItems.map((item: MediaItem) => (
             <div key={item.id} className="bg-card border rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -464,8 +439,9 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     );
   }
@@ -491,8 +467,16 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
         </Button>
       </div>
       
-      <div className="space-y-3">
-        {mediaItems.map((item) => (
+      {mediaItems.length === 0 ? (
+        <div className="text-center py-8">
+          <Music className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
+          <p className="text-muted-foreground text-sm">
+            Audio files and voice notes shared in chat will appear here
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {mediaItems.map((item) => (
           <div key={item.id} className="bg-card border rounded-lg p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -523,8 +507,9 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
               </div>
             </div>
           </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

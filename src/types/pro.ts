@@ -303,6 +303,52 @@ export interface ProTripData {
   // Feature toggles for Pro/Event trips
   enabled_features?: string[];
   archived?: boolean;
+  
+  // Media content for pro trips
+  photos?: Array<{
+    id: string;
+    media_url: string;
+    filename: string;
+    metadata: any;
+    created_at: string;
+    source: 'chat' | 'upload';
+  }>;
+  videos?: Array<{
+    id: string;
+    media_url: string;
+    filename: string;
+    metadata: any;
+    created_at: string;
+    source: 'chat' | 'upload';
+  }>;
+  audio?: Array<{
+    id: string;
+    media_url: string;
+    filename: string;
+    metadata: any;
+    created_at: string;
+    source: 'chat' | 'upload';
+  }>;
+  files?: Array<{
+    id: string;
+    media_url: string;
+    filename: string;
+    metadata: any;
+    created_at: string;
+    source: 'chat' | 'upload';
+  }>;
+  links?: Array<{
+    id: string;
+    url: string;
+    title: string;
+    description: string;
+    domain: string;
+    image_url?: string;
+    created_at: string;
+    source: 'chat' | 'manual' | 'pinned';
+    category?: 'Housing' | 'Eats' | 'Activities';
+  }>;
+  
   budget: {
     total: number;
     spent: number;

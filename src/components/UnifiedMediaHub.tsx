@@ -6,6 +6,10 @@ import { useDemoMode } from '@/hooks/useDemoMode';
 import { demoModeService } from '../services/demoModeService';
 import MockDataService from '../services/mockDataService';
 import TripSpecificMockDataService from '../services/tripSpecificMockDataService';
+import UniversalMockDataService from '../services/UniversalMockDataService';
+import { detectTripTier } from '../utils/tripTierDetector';
+import { proTripMockData } from '../data/proTripMockData';
+import { eventsMockData } from '../data/eventsMockData';
 import { MediaSubTabs } from './MediaSubTabs';
 
 interface MediaItem {
@@ -51,12 +55,38 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
     setLoading(true);
     try {
       let items: MediaItem[] = [];
+      const tripTier = detectTripTier(tripId);
 
       if (isDemoMode || TripSpecificMockDataService.isEnabled()) {
-        // Use trip-specific mock data
-        const tripSpecificItems = TripSpecificMockDataService.getTripMediaItems(parseInt(tripId));
-        items = tripSpecificItems;
-        console.log('Using trip-specific mock data for trip:', tripId, 'items:', items);
+        // Check for trip-specific mock data first
+        if (tripTier === 'consumer' && TripSpecificMockDataService.getTripMediaItems(parseInt(tripId)).length > 0) {
+          items = TripSpecificMockDataService.getTripMediaItems(parseInt(tripId));
+          console.log('Using trip-specific mock data for consumer trip:', tripId);
+        } else if (tripTier === 'pro' && proTripMockData[tripId]) {
+          // Use Pro trip media if available
+          const proData = proTripMockData[tripId];
+          items = [
+            ...(proData.photos || []).map(item => ({ ...item, media_type: 'image' as const })),
+            ...(proData.videos || []).map(item => ({ ...item, media_type: 'video' as const })),
+            ...(proData.audio || []).map(item => ({ ...item, media_type: 'audio' as const })),
+            ...(proData.files || []).map(item => ({ ...item, media_type: 'document' as const }))
+          ];
+          console.log('Using pro trip mock data for trip:', tripId);
+        } else if (tripTier === 'event' && eventsMockData[tripId]) {
+          // Use Event media if available
+          const eventData = eventsMockData[tripId];
+          items = [
+            ...(eventData.photos || []).map(item => ({ ...item, media_type: 'image' as const })),
+            ...(eventData.videos || []).map(item => ({ ...item, media_type: 'video' as const })),
+            ...(eventData.audio || []).map(item => ({ ...item, media_type: 'audio' as const })),
+            ...(eventData.files || []).map(item => ({ ...item, media_type: 'document' as const }))
+          ];
+          console.log('Using event mock data for trip:', tripId);
+        } else {
+          // Fall back to universal mock data for trips without specific data
+          items = UniversalMockDataService.getCombinedMediaItems(tripId);
+          console.log('Using universal fallback mock data for trip:', tripId, 'tier:', tripTier);
+        }
       } else {
         // Fetch from Supabase in production
         const [mediaResponse, filesResponse] = await Promise.all([
@@ -100,7 +130,12 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
       setMediaItems(items);
     } catch (error) {
       console.error('Error fetching media items:', error);
-      setMediaItems([]);
+      // Even on error, provide fallback mock data for demo
+      if (isDemoMode) {
+        setMediaItems(UniversalMockDataService.getCombinedMediaItems(tripId));
+      } else {
+        setMediaItems([]);
+      }
     } finally {
       setLoading(false);
     }
@@ -109,12 +144,28 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
   const fetchLinkItems = async () => {
     try {
       let items: LinkItem[] = [];
+      const tripTier = detectTripTier(tripId);
 
       if (isDemoMode || TripSpecificMockDataService.isEnabled()) {
-        // Use trip-specific mock data
-        const tripSpecificLinks = TripSpecificMockDataService.getTripLinkItems(parseInt(tripId));
-        items = tripSpecificLinks;
-        console.log('Using trip-specific mock links for trip:', tripId, 'items:', items);
+        // Check for trip-specific mock data first
+        if (tripTier === 'consumer' && TripSpecificMockDataService.getTripLinkItems(parseInt(tripId)).length > 0) {
+          items = TripSpecificMockDataService.getTripLinkItems(parseInt(tripId));
+          console.log('Using trip-specific mock links for consumer trip:', tripId);
+        } else if (tripTier === 'pro' && proTripMockData[tripId]) {
+          // Use Pro trip links if available
+          const proData = proTripMockData[tripId];
+          items = proData.links || [];
+          console.log('Using pro trip mock links for trip:', tripId);
+        } else if (tripTier === 'event' && eventsMockData[tripId]) {
+          // Use Event links if available
+          const eventData = eventsMockData[tripId];
+          items = eventData.links || [];
+          console.log('Using event mock links for trip:', tripId);
+        } else {
+          // Fall back to universal mock data for trips without specific data
+          items = UniversalMockDataService.getLinkItems(tripId);
+          console.log('Using universal fallback mock links for trip:', tripId, 'tier:', tripTier);
+        }
       } else {
         // Fetch from Supabase in production
         const [linksResponse, manualLinksResponse] = await Promise.all([
@@ -164,7 +215,12 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
       setLinkItems(items);
     } catch (error) {
       console.error('Error fetching link items:', error);
-      setLinkItems([]);
+      // Even on error, provide fallback mock data for demo
+      if (isDemoMode) {
+        setLinkItems(UniversalMockDataService.getLinkItems(tripId));
+      } else {
+        setLinkItems([]);
+      }
     } finally {
       setLoading(false);
     }
