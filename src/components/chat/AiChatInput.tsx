@@ -42,7 +42,7 @@ export const AiChatInput = ({
       <button
         onClick={onSendMessage}
         disabled={!inputMessage.trim() || isTyping || disabled}
-        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white p-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white p-3 rounded-full transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Send size={16} />
       </button>

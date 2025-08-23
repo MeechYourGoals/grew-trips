@@ -1,6 +1,7 @@
 
-import React, { useState } from 'react';
-import { Send, Radio, Users, MessageCircle } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Send, Radio, Users, MessageCircle, Megaphone, Share2, Image, Video, FileText, Mic } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useMessages } from '../hooks/useMessages';
 
@@ -19,6 +20,8 @@ export const TourChat = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
   const [reactions, setReactions] = useState<Record<string, Record<string, { count: number; userReacted: boolean }>>>({});
+  const [isBroadcastMode, setIsBroadcastMode] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { accentColors } = useTripVariant();
 
   // Get tour data for context
@@ -27,17 +30,43 @@ export const TourChat = () => {
 
   const tourMessages = getMessagesForTour(finalTourId);
 
-  const handleSendMessage = () => {
+  const handleSendMessage = (isBroadcast?: boolean) => {
     if (!message.trim()) return;
     addMessage(message, undefined, finalTourId);
     setMessage('');
+    setIsBroadcastMode(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      handleSendMessage(isBroadcastMode);
     }
+  };
+
+  const handleFileUpload = (files: FileList, type: 'image' | 'video' | 'document' | 'audio') => {
+    // Implementation for file upload would go here
+    console.log('File upload:', files, type);
+  };
+
+  const handleFileUploadByType = (type: 'image' | 'video' | 'document' | 'audio') => {
+    if (!fileInputRef.current) return;
+    
+    const accept = {
+      image: 'image/*',
+      video: 'video/*',
+      document: '.pdf,.doc,.docx,.txt,.xlsx,.pptx',
+      audio: 'audio/*'
+    };
+    
+    fileInputRef.current.accept = accept[type];
+    fileInputRef.current.onchange = (e) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (files && files.length > 0) {
+        handleFileUpload(files, type);
+      }
+    };
+    fileInputRef.current.click();
   };
 
   const formatTime = (timestamp: string) => {
@@ -116,30 +145,99 @@ export const TourChat = () => {
         <div className="text-gray-400 text-xs mb-3">Someone is typing...</div>
       )}
 
+      {/* Chat Controls */}
+      <div className="flex justify-center gap-4 mb-4">
+        <button
+          onClick={() => setIsBroadcastMode(false)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            !isBroadcastMode 
+              ? 'bg-blue-600 text-white' 
+              : 'border border-gray-600 text-gray-400 hover:text-white hover:border-gray-500'
+          }`}
+        >
+          <MessageCircle size={16} />
+          Group Chat
+        </button>
+        <button
+          onClick={() => setIsBroadcastMode(true)}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            isBroadcastMode 
+              ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white' 
+              : 'border border-orange-600 text-orange-400 hover:text-white hover:bg-orange-600/10'
+          }`}
+        >
+          <Megaphone size={16} />
+          Broadcast
+        </button>
+        
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button 
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border border-gray-600 text-gray-400 hover:text-white hover:border-gray-500 transition-all"
+              aria-label="Share media, files, or links"
+            >
+              <Share2 size={16} />
+              Share
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-48 z-50 bg-gray-800 border-gray-700">
+            <DropdownMenuItem onClick={() => handleFileUploadByType('image')}>
+              <Image className="w-4 h-4 mr-2" />
+              Photo/Image
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleFileUploadByType('video')}>
+              <Video className="w-4 h-4 mr-2" />
+              Video
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleFileUploadByType('document')}>
+              <FileText className="w-4 h-4 mr-2" />
+              Document
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleFileUploadByType('audio')}>
+              <Mic className="w-4 h-4 mr-2" />
+              Audio/Voice
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
       {/* Message Input */}
       <div className="flex gap-3 items-end">
-        <div className="w-10 h-10 bg-gradient-to-r from-glass-green/30 to-glass-yellow/30 backdrop-blur-sm rounded-full flex items-center justify-center">
-          <Users size={16} className="text-glass-green" />
-        </div>
-        <div className="flex-1 relative">
-          <textarea
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder=""
-            rows={2}
-            className={`w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl px-4 py-3 pr-20 text-white placeholder-gray-400 focus:outline-none focus:border-${accentColors.primary} resize-none`}
-          />
-          <div className="absolute right-2 bottom-2 flex items-center gap-2">
-            <button
-              onClick={handleSendMessage}
-              disabled={!message.trim()}
-              className={`bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 disabled:opacity-50 disabled:cursor-not-allowed text-white p-2 rounded-lg transition-all duration-200`}
-            >
-              <Send size={16} />
-            </button>
-          </div>
-        </div>
+        <textarea
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
+          placeholder={
+            isBroadcastMode 
+              ? "Send an announcement to all event members..." 
+              : "Type a message..."
+          }
+          rows={2}
+          className={`flex-1 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none resize-none transition-all ${
+            isBroadcastMode
+              ? 'bg-gradient-to-r from-orange-900/20 to-red-900/20 border border-orange-500/50 focus:border-orange-400'
+              : 'bg-white/10 backdrop-blur-sm border border-white/20 focus:border-blue-500'
+          }`}
+        />
+        <button
+          onClick={() => handleSendMessage(isBroadcastMode)}
+          disabled={!message.trim()}
+          className={`text-white p-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+            isBroadcastMode
+              ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
+              : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+          }`}
+        >
+          <Send size={16} />
+        </button>
+
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          className="hidden"
+          multiple
+        />
       </div>
 
       {/* AI Message Assistant for Pro */}

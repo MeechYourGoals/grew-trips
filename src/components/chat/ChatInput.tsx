@@ -77,15 +77,15 @@ export const ChatInput = ({
   };
 
   return (
-    <div className="space-y-3">
-      {/* Header Row - Segmented Control with Share */}
-      <div className="flex justify-center bg-gray-800 rounded-lg p-1">
+    <div className="space-y-4">
+      {/* Header Row - Individual Pill-Shaped Buttons */}
+      <div className="flex justify-center gap-4">
         <button
           onClick={() => setIsBroadcastMode(false)}
-          className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
             !isBroadcastMode 
-              ? 'bg-gray-700 text-white' 
-              : 'text-gray-400 hover:text-white'
+              ? 'bg-blue-600 text-white' 
+              : 'border border-gray-600 text-gray-400 hover:text-white hover:border-gray-500'
           }`}
         >
           <MessageCircle size={16} />
@@ -93,10 +93,10 @@ export const ChatInput = ({
         </button>
         <button
           onClick={() => setIsBroadcastMode(true)}
-          className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
             isBroadcastMode 
               ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white' 
-              : 'text-gray-400 hover:text-white'
+              : 'border border-orange-600 text-orange-400 hover:text-white hover:bg-orange-600/10'
           }`}
         >
           <Megaphone size={16} />
@@ -107,7 +107,7 @@ export const ChatInput = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button 
-              className="flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium text-gray-400 hover:text-white transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium border border-gray-600 text-gray-400 hover:text-white hover:border-gray-500 transition-all"
               aria-label="Share media, files, or links"
             >
               <Share2 size={16} />
