@@ -176,7 +176,7 @@ export const TripChat = ({
   const filteredMessages = messages.filter(message => {
     if (messageFilter === 'all') return true;
     if (messageFilter === 'broadcast') return message.isBroadcast;
-    if (messageFilter === 'payments') return message.text.includes('💳 Payment');
+    if (messageFilter === 'payments') return message.text.includes('💳 Payment') || message.tags?.includes('payment');
     return true;
   });
 
@@ -260,6 +260,8 @@ export const TripChat = ({
                   max-w-md p-3 rounded-lg relative
                   ${message.isBroadcast
                     ? 'bg-orange-100 border border-orange-300 text-orange-900'
+                    : message.text.includes('💳 Payment') || message.tags?.includes('payment')
+                    ? 'bg-payment-background-light border border-payment-border text-payment-primary-foreground dark:bg-payment-background dark:border-payment-border'
                     : 'bg-gray-700 text-gray-200'
                   }
                 `} role={message.isBroadcast ? 'alert' : undefined}
@@ -270,6 +272,14 @@ export const TripChat = ({
                     <div className="flex items-center gap-2 text-xs font-bold mb-2">
                       <Megaphone size={14} className="text-orange-600" />
                       <span className="text-orange-600">📢 BROADCAST</span>
+                    </div>
+                  )}
+                  
+                  {/* Payment Header */}
+                  {(message.text.includes('💳 Payment') || message.tags?.includes('payment')) && (
+                    <div className="flex items-center gap-2 text-xs font-bold mb-2">
+                      <DollarSign size={14} className="text-payment-primary" />
+                      <span className="text-payment-primary">💳 PAYMENT</span>
                     </div>
                   )}
                   

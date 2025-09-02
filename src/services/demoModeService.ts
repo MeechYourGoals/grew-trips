@@ -134,6 +134,32 @@ class DemoModeService {
         message_content: 'Just checked in! Room 502 if anyone needs anything 👍',
         timestamp_offset_days: 0,
         tags: ['conversation', 'checkin']
+      },
+      
+      // Payment Messages
+      {
+        id: 'payment_1',
+        trip_type: tripType,
+        sender_name: 'Sarah Chen',
+        message_content: '💳 Payment: Dinner at Sakura Restaurant - USD 240.00 (split 4 ways)',
+        timestamp_offset_days: 1,
+        tags: ['payment', 'expense']
+      },
+      {
+        id: 'payment_2',
+        trip_type: tripType,
+        sender_name: 'Marcus Johnson',
+        message_content: '💳 Payment: Taxi to airport - USD 65.00 (split 6 ways)',
+        timestamp_offset_days: 0,
+        tags: ['payment', 'transportation']
+      },
+      {
+        id: 'payment_3',
+        trip_type: tripType,
+        sender_name: 'Alex Kim',
+        message_content: '💳 Payment: Concert tickets - USD 180.00 (split 3 ways)',
+        timestamp_offset_days: 0,
+        tags: ['payment', 'entertainment']
       }
     ];
 

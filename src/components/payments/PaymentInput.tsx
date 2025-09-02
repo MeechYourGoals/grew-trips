@@ -92,21 +92,21 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-2">
               <Label htmlFor="amount">Amount</Label>
-                <Input
+              <Input
                 id="amount"
                 type="number"
                 step="0.01"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="bg-white dark:bg-white text-payment-text"
+                className="bg-white dark:bg-white !text-black placeholder:!text-gray-500"
                 required
               />
             </div>
             <div>
               <Label htmlFor="currency">Currency</Label>
                 <Select value={currency} onValueChange={setCurrency}>
-                <SelectTrigger className="bg-white dark:bg-white text-payment-text">
+                <SelectTrigger className="bg-white dark:bg-white !text-black">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -127,7 +127,7 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Dinner, taxi, tickets, etc."
-              className="bg-white dark:bg-white text-payment-text"
+              className="bg-white dark:bg-white !text-black placeholder:!text-gray-500"
               required
             />
           </div>
@@ -148,7 +148,7 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                   />
                   <label 
                     htmlFor={`participant-${member.id}`}
-                    className="text-sm flex items-center gap-2 cursor-pointer text-payment-text"
+                    className="text-sm flex items-center gap-2 cursor-pointer !text-black"
                   >
                     {member.avatar && (
                       <img 
@@ -180,7 +180,7 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                   />
                   <label 
                     htmlFor={`payment-${method.id}`}
-                    className="text-sm cursor-pointer flex items-center gap-1 text-payment-text"
+                    className="text-sm cursor-pointer flex items-center gap-1 !text-black"
                   >
                     {method.label}
                   </label>
