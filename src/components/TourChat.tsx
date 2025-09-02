@@ -1,9 +1,10 @@
 
 import React, { useState, useRef } from 'react';
-import { Send, Radio, Users, MessageCircle, Megaphone, Share2, Image, Video, FileText, Mic } from 'lucide-react';
+import { Send, Radio, Users, MessageCircle, Megaphone, Share2, Image, Video, FileText, Mic, CreditCard } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useMessages } from '../hooks/useMessages';
+import { PaymentInput } from './payments/PaymentInput';
 
 import { useParams } from 'react-router-dom';
 import { proTripMockData } from '../data/proTripMockData';
@@ -21,6 +22,7 @@ export const TourChat = () => {
   const [showAiModal, setShowAiModal] = useState(false);
   const [reactions, setReactions] = useState<Record<string, Record<string, { count: number; userReacted: boolean }>>>({});
   const [isBroadcastMode, setIsBroadcastMode] = useState(false);
+  const [isPaymentMode, setIsPaymentMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { accentColors } = useTripVariant();
 
@@ -30,17 +32,35 @@ export const TourChat = () => {
 
   const tourMessages = getMessagesForTour(finalTourId);
 
-  const handleSendMessage = (isBroadcast?: boolean) => {
-    if (!message.trim()) return;
-    addMessage(message, undefined, finalTourId);
-    setMessage('');
-    setIsBroadcastMode(false);
+  const handleSendMessage = (isBroadcast?: boolean, isPayment?: boolean, paymentData?: any) => {
+    if (!isPayment && !message.trim()) return;
+    
+    if (isPayment && paymentData) {
+      // Create payment message
+      const paymentMessage = `💳 Payment: ${paymentData.description} - ${paymentData.currency} ${paymentData.amount.toFixed(2)} (split ${paymentData.splitCount} ways)`;
+      addMessage(paymentMessage, undefined, finalTourId);
+      
+      // TODO: Save payment data to database
+      console.log('Payment data:', paymentData);
+      
+      setIsPaymentMode(false);
+    } else {
+      addMessage(message, undefined, finalTourId);
+      setMessage('');
+      setIsBroadcastMode(false);
+    }
+  };
+
+  const handlePaymentSubmit = (paymentData: any) => {
+    handleSendMessage(false, true, paymentData);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage(isBroadcastMode);
+      if (!isPaymentMode) {
+        handleSendMessage(isBroadcastMode);
+      }
     }
   };
 
@@ -148,9 +168,12 @@ export const TourChat = () => {
       {/* Chat Controls */}
       <div className="flex justify-center gap-4 mb-4">
         <button
-          onClick={() => setIsBroadcastMode(false)}
+          onClick={() => {
+            setIsBroadcastMode(false);
+            setIsPaymentMode(false);
+          }}
           className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-            !isBroadcastMode 
+            !isBroadcastMode && !isPaymentMode
               ? 'bg-blue-600 text-white' 
               : 'border border-gray-600 text-gray-400 hover:text-white hover:border-gray-500'
           }`}
@@ -159,7 +182,10 @@ export const TourChat = () => {
           Group Chat
         </button>
         <button
-          onClick={() => setIsBroadcastMode(true)}
+          onClick={() => {
+            setIsBroadcastMode(true);
+            setIsPaymentMode(false);
+          }}
           className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
             isBroadcastMode 
               ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white' 
@@ -168,6 +194,20 @@ export const TourChat = () => {
         >
           <Megaphone size={16} />
           Broadcast
+        </button>
+        <button
+          onClick={() => {
+            setIsPaymentMode(true);
+            setIsBroadcastMode(false);
+          }}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            isPaymentMode 
+              ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
+              : 'border border-green-600 text-green-400 hover:text-white hover:bg-green-600/10'
+          }`}
+        >
+          <CreditCard size={16} />
+          Payments
         </button>
         
         <DropdownMenu>
@@ -201,44 +241,62 @@ export const TourChat = () => {
         </DropdownMenu>
       </div>
 
-      {/* Message Input */}
-      <div className="flex gap-3 items-end">
-        <textarea
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder={
-            isBroadcastMode 
-              ? "Send an announcement to all event members..." 
-              : "Type a message..."
-          }
-          rows={2}
-          className={`flex-1 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none resize-none transition-all ${
-            isBroadcastMode
-              ? 'bg-gradient-to-r from-orange-900/20 to-red-900/20 border border-orange-500/50 focus:border-orange-400'
-              : 'bg-white/10 backdrop-blur-sm border border-white/20 focus:border-blue-500'
-          }`}
-        />
-        <button
-          onClick={() => handleSendMessage(isBroadcastMode)}
-          disabled={!message.trim()}
-          className={`text-white p-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-            isBroadcastMode
-              ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
-              : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-          }`}
-        >
-          <Send size={16} />
-        </button>
+      {/* Payment Input Form */}
+      {isPaymentMode && (
+        <div className="mb-4">
+          <PaymentInput
+            onSubmit={handlePaymentSubmit}
+            tripMembers={[
+              { id: 'user1', name: 'You' },
+              { id: 'user2', name: 'Team Lead' },
+              { id: 'user3', name: 'Producer' },
+              { id: 'user4', name: 'Assistant' }
+            ]}
+            isVisible={isPaymentMode}
+          />
+        </div>
+      )}
 
-        {/* Hidden file input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          className="hidden"
-          multiple
-        />
-      </div>
+      {/* Message Input */}
+      {!isPaymentMode && (
+        <div className="flex gap-3 items-end">
+          <textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder={
+              isBroadcastMode 
+                ? "Send an announcement to all event members..." 
+                : "Type a message..."
+            }
+            rows={2}
+            className={`flex-1 rounded-xl px-4 py-3 text-white placeholder-gray-400 focus:outline-none resize-none transition-all ${
+              isBroadcastMode
+                ? 'bg-gradient-to-r from-orange-900/20 to-red-900/20 border border-orange-500/50 focus:border-orange-400'
+                : 'bg-white/10 backdrop-blur-sm border border-white/20 focus:border-blue-500'
+            }`}
+          />
+          <button
+            onClick={() => handleSendMessage(isBroadcastMode)}
+            disabled={!message.trim()}
+            className={`text-white p-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+              isBroadcastMode
+                ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
+                : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+            }`}
+          >
+            <Send size={16} />
+          </button>
+
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            multiple
+          />
+        </div>
+      )}
 
       {/* AI Message Assistant for Pro */}
       <AiMessageButton onClick={() => setShowAiModal(true)} />

@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2, Star, Plane, Car, Building, CreditCard, Settings, Link, Wallet } from 'lucide-react';
 import { AirlineProgram, HotelProgram, RentalCarProgram } from '../types/pro';
+import { PaymentMethodsSettings } from './payments/PaymentMethodsSettings';
 
 interface TravelWalletProps {
   userId: string;
@@ -400,11 +401,14 @@ export const TravelWallet = ({ userId }: TravelWalletProps) => {
       )}
       </div>
 
-      {/* Payment Methods */}
+      {/* Payment Methods for Trip Expenses */}
+      <PaymentMethodsSettings userId={userId} />
+
+      {/* Credit Cards */}
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
         <h4 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
           <CreditCard size={20} className="text-glass-orange" />
-          Payment Methods
+          Credit Cards
         </h4>
         
         <div className="space-y-3 mb-6">
@@ -439,7 +443,7 @@ export const TravelWallet = ({ userId }: TravelWalletProps) => {
         </div>
         
         <button className="w-full bg-glass-orange hover:bg-glass-orange/80 text-white py-3 rounded-lg font-medium transition-colors">
-          Add Payment Method
+          Add Credit Card
         </button>
       </div>
     </div>

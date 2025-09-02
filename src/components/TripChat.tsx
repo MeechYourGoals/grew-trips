@@ -55,37 +55,66 @@ export const TripChat = ({
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
 
-  const handleSendMessage = async (isBroadcast = false, isEmergency = false) => {
-    if (inputMessage.trim() === '') return;
+  const handleSendMessage = async (isBroadcast = false, isPayment = false, paymentData?: any) => {
+    if (!isPayment && inputMessage.trim() === '') return;
 
     const messageId = `msg_${Date.now()}`;
-    const newMessage: MockMessage = {
-      id: messageId,
-      text: inputMessage,
-      sender: { 
-        id: 'user1', 
-        name: 'You', 
-        avatar: getMockAvatar('You')
-      },
-      createdAt: new Date().toISOString(),
-      isBroadcast,
-      
-      reactions: {},
-      replyTo: replyingTo ? {
-        id: replyingTo.id,
-        text: replyingTo.text,
-        sender: replyingTo.senderName
-      } : undefined
-    };
-
-    setMessages(prev => [...prev, newMessage]);
     
-    // Parse message for media and links (only if not in demo mode)
-    if (!demoMode.isDemoMode && tripId) {
-      await parseMessage(messageId, inputMessage, tripId);
+    if (isPayment && paymentData) {
+      // Create payment message
+      const paymentMessage: MockMessage = {
+        id: messageId,
+        text: `💳 Payment: ${paymentData.description} - ${paymentData.currency} ${paymentData.amount.toFixed(2)} (split ${paymentData.splitCount} ways)`,
+        sender: { 
+          id: 'user1', 
+          name: 'You', 
+          avatar: getMockAvatar('You')
+        },
+        createdAt: new Date().toISOString(),
+        isBroadcast: false,
+        reactions: {},
+        replyTo: replyingTo ? {
+          id: replyingTo.id,
+          text: replyingTo.text,
+          sender: replyingTo.senderName
+        } : undefined
+      };
+
+      setMessages(prev => [...prev, paymentMessage]);
+      
+      // TODO: Save payment data to database
+      console.log('Payment data:', paymentData);
+      
+    } else {
+      // Regular message
+      const newMessage: MockMessage = {
+        id: messageId,
+        text: inputMessage,
+        sender: { 
+          id: 'user1', 
+          name: 'You', 
+          avatar: getMockAvatar('You')
+        },
+        createdAt: new Date().toISOString(),
+        isBroadcast,
+        reactions: {},
+        replyTo: replyingTo ? {
+          id: replyingTo.id,
+          text: replyingTo.text,
+          sender: replyingTo.senderName
+        } : undefined
+      };
+
+      setMessages(prev => [...prev, newMessage]);
+      
+      // Parse message for media and links (only if not in demo mode)
+      if (!demoMode.isDemoMode && tripId) {
+        await parseMessage(messageId, inputMessage, tripId);
+      }
+      
+      setInputMessage('');
     }
     
-    setInputMessage('');
     setReplyingTo(null);
   };
 
@@ -286,6 +315,12 @@ export const TripChat = ({
           onKeyPress={handleKeyPress}
           apiKey=""
           isTyping={false}
+          tripMembers={[
+            { id: 'user1', name: 'You', avatar: getMockAvatar('You') },
+            { id: 'user2', name: 'Jamie Chen', avatar: getMockAvatar('Jamie Chen') },
+            { id: 'user3', name: 'Alex Rivera', avatar: getMockAvatar('Alex Rivera') },
+            { id: 'user4', name: 'Sam Johnson', avatar: getMockAvatar('Sam Johnson') }
+          ]}
         />
       </div>
     </div>

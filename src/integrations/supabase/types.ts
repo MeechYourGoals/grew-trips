@@ -160,6 +160,50 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_splits: {
+        Row: {
+          amount_owed: number
+          created_at: string
+          debtor_user_id: string
+          id: string
+          is_settled: boolean | null
+          payment_message_id: string
+          settled_at: string | null
+          settlement_method: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount_owed: number
+          created_at?: string
+          debtor_user_id: string
+          id?: string
+          is_settled?: boolean | null
+          payment_message_id: string
+          settled_at?: string | null
+          settlement_method?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount_owed?: number
+          created_at?: string
+          debtor_user_id?: string
+          id?: string
+          is_settled?: boolean | null
+          payment_message_id?: string
+          settled_at?: string | null
+          settlement_method?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_splits_payment_message_id_fkey"
+            columns: ["payment_message_id"]
+            isOneToOne: false
+            referencedRelation: "trip_payment_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -599,6 +643,54 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_payment_messages: {
+        Row: {
+          amount: number
+          created_at: string
+          created_by: string
+          currency: string
+          description: string
+          id: string
+          is_settled: boolean | null
+          message_id: string | null
+          payment_methods: Json
+          split_count: number
+          split_participants: Json
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          created_by: string
+          currency?: string
+          description: string
+          id?: string
+          is_settled?: boolean | null
+          message_id?: string | null
+          payment_methods?: Json
+          split_count: number
+          split_participants?: Json
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          created_by?: string
+          currency?: string
+          description?: string
+          id?: string
+          is_settled?: boolean | null
+          message_id?: string | null
+          payment_methods?: Json
+          split_count?: number
+          split_participants?: Json
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       trip_polls: {
         Row: {
           created_at: string
@@ -714,6 +806,42 @@ export type Database = {
           id?: string
           receipt_url?: string | null
           trip_id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_payment_methods: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          identifier: string
+          is_preferred: boolean | null
+          is_visible: boolean | null
+          method_type: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          identifier: string
+          is_preferred?: boolean | null
+          is_visible?: boolean | null
+          method_type: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          identifier?: string
+          is_preferred?: boolean | null
+          is_visible?: boolean | null
+          method_type?: string
           updated_at?: string
           user_id?: string
         }
