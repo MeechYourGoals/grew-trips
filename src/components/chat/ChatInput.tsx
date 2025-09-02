@@ -189,12 +189,16 @@ export const ChatInput = ({
             placeholder={
               isBroadcastMode 
                 ? "Send an announcement to all trip members..." 
+                : isPaymentMode
+                ? "Payment mode active - use the form above to create a payment..."
                 : "Type a message or drag & drop files..."
             }
             rows={2}
             className={`flex-1 border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none resize-none transition-all ${
               isBroadcastMode
                 ? 'bg-gradient-to-r from-orange-900/20 to-red-900/20 border-orange-500/50 focus:border-orange-400'
+                : isPaymentMode
+                ? 'bg-gradient-to-r from-green-900/20 to-emerald-900/20 border-green-500/50 focus:border-green-400'
                 : 'bg-gray-800 border-gray-700 focus:border-blue-500'
             }`}
           />
@@ -204,6 +208,8 @@ export const ChatInput = ({
             className={`text-white p-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
               isBroadcastMode
                 ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
+                : isPaymentMode
+                ? 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
                 : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
             }`}
           >

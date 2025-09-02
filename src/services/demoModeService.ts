@@ -141,7 +141,7 @@ class DemoModeService {
         id: 'payment_1',
         trip_type: tripType,
         sender_name: 'Sarah Chen',
-        message_content: '💳 Payment: Dinner at Sakura Restaurant - USD 240.00 (split 4 ways)',
+        message_content: 'Dinner at Sakura Restaurant - USD 240.00 (split 4 ways) • Pay me via Venmo: @sarahc94',
         timestamp_offset_days: 1,
         tags: ['payment', 'expense']
       },
@@ -149,7 +149,7 @@ class DemoModeService {
         id: 'payment_2',
         trip_type: tripType,
         sender_name: 'Marcus Johnson',
-        message_content: '💳 Payment: Taxi to airport - USD 65.00 (split 6 ways)',
+        message_content: 'Taxi to airport - USD 65.00 (split 6 ways) • Pay me via Zelle: (555) 123-4567',
         timestamp_offset_days: 0,
         tags: ['payment', 'transportation']
       },
@@ -157,7 +157,7 @@ class DemoModeService {
         id: 'payment_3',
         trip_type: tripType,
         sender_name: 'Alex Kim',
-        message_content: '💳 Payment: Concert tickets - USD 180.00 (split 3 ways)',
+        message_content: 'Concert tickets - USD 180.00 (split 3 ways) • Pay me via PayPal: @alex.kim.music',
         timestamp_offset_days: 0,
         tags: ['payment', 'entertainment']
       }

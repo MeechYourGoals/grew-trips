@@ -61,10 +61,12 @@ export const TripChat = ({
     const messageId = `msg_${Date.now()}`;
     
     if (isPayment && paymentData) {
-      // Create payment message
+      // Create payment message with preferred payment method
+      const preferredPaymentMethod = "Venmo: @yourvenmo"; // In real app, fetch from user's payment methods
+      
       const paymentMessage: MockMessage = {
         id: messageId,
-        text: `💳 Payment: ${paymentData.description} - ${paymentData.currency} ${paymentData.amount.toFixed(2)} (split ${paymentData.splitCount} ways)`,
+        text: `${paymentData.description} - ${paymentData.currency} ${paymentData.amount.toFixed(2)} (split ${paymentData.splitCount} ways) • Pay me via ${preferredPaymentMethod}`,
         sender: { 
           id: 'user1', 
           name: 'You', 
@@ -73,6 +75,7 @@ export const TripChat = ({
         createdAt: new Date().toISOString(),
         isBroadcast: false,
         reactions: {},
+        tags: ['payment'],
         replyTo: replyingTo ? {
           id: replyingTo.id,
           text: replyingTo.text,
@@ -259,9 +262,9 @@ export const TripChat = ({
                 <div className={`
                   max-w-md p-3 rounded-lg relative
                   ${message.isBroadcast
-                    ? 'bg-orange-100 border border-orange-300 text-orange-900'
+                    ? 'bg-gradient-to-r from-orange-100 to-red-50 border border-orange-300 text-orange-900'
                     : message.text.includes('💳 Payment') || message.tags?.includes('payment')
-                    ? 'bg-payment-background-light border border-payment-border text-payment-primary-foreground dark:bg-payment-background dark:border-payment-border'
+                    ? 'bg-gradient-to-r from-green-100 to-emerald-50 border border-green-300 text-green-900 dark:from-green-900/30 dark:to-emerald-900/30 dark:border-green-700 dark:text-green-100'
                     : 'bg-gray-700 text-gray-200'
                   }
                 `} role={message.isBroadcast ? 'alert' : undefined}
@@ -278,8 +281,8 @@ export const TripChat = ({
                   {/* Payment Header */}
                   {(message.text.includes('💳 Payment') || message.tags?.includes('payment')) && (
                     <div className="flex items-center gap-2 text-xs font-bold mb-2">
-                      <DollarSign size={14} className="text-payment-primary" />
-                      <span className="text-payment-primary">💳 PAYMENT</span>
+                      <DollarSign size={14} className="text-green-600 dark:text-green-400" />
+                      <span className="text-green-600 dark:text-green-400">💳 PAYMENT</span>
                     </div>
                   )}
                   
