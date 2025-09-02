@@ -1,17 +1,19 @@
 
 import React, { useState, useRef } from 'react';
-import { Send, MessageCircle, Megaphone, Share2, Image, Video, FileText, Mic } from 'lucide-react';
+import { Send, MessageCircle, Megaphone, Share2, Image, Video, FileText, Mic, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { PaymentInput } from '../payments/PaymentInput';
 
 interface ChatInputProps {
   inputMessage: string;
   onInputChange: (message: string) => void;
-  onSendMessage: (isBroadcast?: boolean) => void;
+  onSendMessage: (isBroadcast?: boolean, isPayment?: boolean, paymentData?: any) => void;
   onKeyPress: (e: React.KeyboardEvent) => void;
   onFileUpload?: (files: FileList, type: 'image' | 'video' | 'document' | 'audio') => void;
   apiKey: string; // Keep for backward compatibility but won't be used
   isTyping: boolean;
+  tripMembers?: Array<{ id: string; name: string; avatar?: string }>;
 }
 
 export const ChatInput = ({ 
@@ -20,13 +22,22 @@ export const ChatInput = ({
   onSendMessage, 
   onKeyPress, 
   onFileUpload,
-  isTyping 
+  isTyping,
+  tripMembers = []
 }: ChatInputProps) => {
   const [isBroadcastMode, setIsBroadcastMode] = useState(false);
+  const [isPaymentMode, setIsPaymentMode] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleSend = () => {
-    onSendMessage(isBroadcastMode);
+    if (!isPaymentMode) {
+      onSendMessage(isBroadcastMode, false);
+    }
+  };
+
+  const handlePaymentSubmit = (paymentData: any) => {
+    onSendMessage(false, true, paymentData);
+    setIsPaymentMode(false);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -81,9 +92,12 @@ export const ChatInput = ({
       {/* Header Row - Individual Pill-Shaped Buttons */}
       <div className="flex justify-center gap-4">
         <button
-          onClick={() => setIsBroadcastMode(false)}
+          onClick={() => {
+            setIsBroadcastMode(false);
+            setIsPaymentMode(false);
+          }}
           className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-            !isBroadcastMode 
+            !isBroadcastMode && !isPaymentMode
               ? 'bg-blue-600 text-white' 
               : 'border border-gray-600 text-gray-400 hover:text-white hover:border-gray-500'
           }`}
@@ -92,7 +106,10 @@ export const ChatInput = ({
           Group Chat
         </button>
         <button
-          onClick={() => setIsBroadcastMode(true)}
+          onClick={() => {
+            setIsBroadcastMode(true);
+            setIsPaymentMode(false);
+          }}
           className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
             isBroadcastMode 
               ? 'bg-gradient-to-r from-orange-600 to-red-600 text-white' 
@@ -101,6 +118,20 @@ export const ChatInput = ({
         >
           <Megaphone size={16} />
           Broadcast
+        </button>
+        <button
+          onClick={() => {
+            setIsPaymentMode(true);
+            setIsBroadcastMode(false);
+          }}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            isPaymentMode 
+              ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
+              : 'border border-green-600 text-green-400 hover:text-white hover:bg-green-600/10'
+          }`}
+        >
+          <CreditCard size={16} />
+          Payments
         </button>
         
         {/* Share Button */}
@@ -135,48 +166,59 @@ export const ChatInput = ({
         </DropdownMenu>
       </div>
 
-      {/* Composer Row - Input and Send Button Only */}
-      <div 
-        className="flex gap-3 items-end"
-        onDrop={handleDrop}
-        onDragOver={handleDragOver}
-      >
-        <textarea
-          value={inputMessage}
-          onChange={(e) => onInputChange(e.target.value)}
-          onKeyPress={handleKeyPress}
-          placeholder={
-            isBroadcastMode 
-              ? "Send an announcement to all trip members..." 
-              : "Type a message or drag & drop files..."
-          }
-          rows={2}
-          className={`flex-1 border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none resize-none transition-all ${
-            isBroadcastMode
-              ? 'bg-gradient-to-r from-orange-900/20 to-red-900/20 border-orange-500/50 focus:border-orange-400'
-              : 'bg-gray-800 border-gray-700 focus:border-blue-500'
-          }`}
+      {/* Payment Input Form */}
+      {isPaymentMode && (
+        <PaymentInput
+          onSubmit={handlePaymentSubmit}
+          tripMembers={tripMembers}
+          isVisible={isPaymentMode}
         />
-        <button
-          onClick={handleSend}
-          disabled={!inputMessage.trim() || isTyping}
-          className={`text-white p-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-            isBroadcastMode
-              ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
-              : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
-          }`}
-        >
-          <Send size={16} />
-        </button>
+      )}
 
-        {/* Hidden file input */}
-        <input
-          ref={fileInputRef}
-          type="file"
-          className="hidden"
-          multiple
-        />
-      </div>
+      {/* Composer Row - Input and Send Button Only */}
+      {!isPaymentMode && (
+        <div 
+          className="flex gap-3 items-end"
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+        >
+          <textarea
+            value={inputMessage}
+            onChange={(e) => onInputChange(e.target.value)}
+            onKeyPress={handleKeyPress}
+            placeholder={
+              isBroadcastMode 
+                ? "Send an announcement to all trip members..." 
+                : "Type a message or drag & drop files..."
+            }
+            rows={2}
+            className={`flex-1 border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none resize-none transition-all ${
+              isBroadcastMode
+                ? 'bg-gradient-to-r from-orange-900/20 to-red-900/20 border-orange-500/50 focus:border-orange-400'
+                : 'bg-gray-800 border-gray-700 focus:border-blue-500'
+            }`}
+          />
+          <button
+            onClick={handleSend}
+            disabled={!inputMessage.trim() || isTyping}
+            className={`text-white p-3 rounded-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed ${
+              isBroadcastMode
+                ? 'bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700'
+                : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+            }`}
+          >
+            <Send size={16} />
+          </button>
+
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            multiple
+          />
+        </div>
+      )}
     </div>
   );
 };
