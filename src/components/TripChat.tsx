@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 import { demoModeService, MockMessage as DemoMockMessage } from '../services/demoModeService';
 import { useDemoMode } from '../hooks/useDemoMode';
 import { useChatMessageParser } from '../hooks/useChatMessageParser';
-import { MessageCircle, Megaphone } from 'lucide-react';
+import { MessageCircle, Megaphone, DollarSign } from 'lucide-react';
 import { ChatInput } from './chat/ChatInput';
 import { MessageReactionBar } from './chat/MessageReactionBar';
 import { InlineReplyComponent } from './chat/InlineReplyComponent';
@@ -42,7 +42,7 @@ export const TripChat = ({
   const [messages, setMessages] = useState<MockMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [inputMessage, setInputMessage] = useState('');
-  const [messageFilter, setMessageFilter] = useState<'all' | 'broadcast'>('all');
+  const [messageFilter, setMessageFilter] = useState<'all' | 'broadcast' | 'payments'>('all');
   const [reactions, setReactions] = useState<{ [messageId: string]: { [reaction: string]: { count: number; userReacted: boolean } } }>({});
   const [replyingTo, setReplyingTo] = useState<{ id: string; text: string; senderName: string } | null>(null);
 
@@ -176,6 +176,7 @@ export const TripChat = ({
   const filteredMessages = messages.filter(message => {
     if (messageFilter === 'all') return true;
     if (messageFilter === 'broadcast') return message.isBroadcast;
+    if (messageFilter === 'payments') return message.text.includes('💳 Payment');
     return true;
   });
 
@@ -205,6 +206,15 @@ export const TripChat = ({
             <Megaphone size={14} />
             Broadcasts
           </button>
+          <button
+            onClick={() => setMessageFilter('payments')}
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+              messageFilter === 'payments' ? 'bg-payment-primary text-payment-primary-foreground' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+            }`}
+          >
+            <DollarSign size={14} />
+            Payments
+          </button>
         </div>
       )}
 
@@ -212,11 +222,13 @@ export const TripChat = ({
         <div className="text-center py-8">
           <MessageCircle size={48} className="text-gray-600 mx-auto mb-4" />
           <h4 className="text-lg font-medium text-gray-400 mb-2">
-            {messageFilter === 'all' ? 'Start your trip chat' : 'No broadcasts yet'}
+            {messageFilter === 'all' ? 'Start your trip chat' : 
+             messageFilter === 'broadcast' ? 'No broadcasts yet' : 'No payments yet'}
           </h4>
           <p className="text-gray-500 text-sm">
             {messageFilter === 'all' ? 'Send a message to get the conversation started!' :
-             'Send an announcement to all trip members'}
+             messageFilter === 'broadcast' ? 'Send an announcement to all trip members' :
+             'Add a payment to track trip expenses'}
           </p>
         </div>
       ) : (

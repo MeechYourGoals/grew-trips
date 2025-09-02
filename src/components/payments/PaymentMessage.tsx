@@ -26,18 +26,7 @@ export const PaymentMessage = ({
   const amountPerPerson = payment.amount / payment.splitCount;
   const payer = tripMembers.find(member => member.id === payment.createdBy);
   
-  const getPaymentMethodIcon = (method: string) => {
-    const icons: Record<string, string> = {
-      venmo: '💰',
-      zelle: '🏦', 
-      cashapp: '💸',
-      applepay: '📱',
-      paypal: '💙',
-      cash: '💵',
-      other: '💳'
-    };
-    return icons[method] || '💳';
-  };
+  // Remove icon function - we'll just use text labels
 
   const getPaymentMethodName = (method: string) => {
     const names: Record<string, string> = {
@@ -67,12 +56,12 @@ export const PaymentMessage = ({
   };
 
   return (
-    <Card className="bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800/30">
+    <Card className="bg-payment-background-light border-payment-border dark:bg-payment-background dark:border-payment-border">
       <CardContent className="p-4">
         {/* Payment Header */}
         <div className="flex items-center gap-2 mb-3">
-          <DollarSign size={18} className="text-green-600" />
-          <Badge variant="secondary" className="bg-green-100 text-green-800 dark:bg-green-900/50 dark:text-green-200">
+          <DollarSign size={18} className="text-payment-primary" />
+          <Badge variant="secondary" className="bg-payment-primary text-payment-primary-foreground">
             💳 PAYMENT
           </Badge>
           <span className="text-xs text-muted-foreground ml-auto">
@@ -91,7 +80,7 @@ export const PaymentMessage = ({
             </div>
             <div className="text-right">
               <div className="text-sm text-muted-foreground">Split {payment.splitCount} ways</div>
-              <div className="font-medium text-green-600">
+              <div className="font-medium text-payment-primary">
                 {formatCurrency(amountPerPerson, payment.currency)} per person
               </div>
             </div>
@@ -109,7 +98,7 @@ export const PaymentMessage = ({
           <div className="flex flex-wrap gap-1">
             {payment.paymentMethods.map(method => (
               <Badge key={method} variant="outline" className="text-xs">
-                {getPaymentMethodIcon(method)} {getPaymentMethodName(method)}
+                {getPaymentMethodName(method)}
               </Badge>
             ))}
           </div>
@@ -129,7 +118,7 @@ export const PaymentMessage = ({
           {!isPaidByCurrentUser && (
             <Button
               size="sm"
-              className="bg-green-600 hover:bg-green-700 text-white"
+              className="bg-payment-primary hover:bg-payment-primary/90 text-payment-primary-foreground"
               onClick={() => {
                 const preferredMethod = userPaymentMethods.find(m => m.isPreferred)?.type || 'venmo';
                 onSettlePayment?.(payment.id, preferredMethod);
@@ -143,7 +132,7 @@ export const PaymentMessage = ({
 
         {/* Detailed View */}
         {showDetails && (
-          <div className="mt-4 pt-4 border-t border-green-200 dark:border-green-800/30">
+          <div className="mt-4 pt-4 border-t border-payment-border">
             <div className="space-y-3">
               {/* Who Owes What */}
               <div>
@@ -169,7 +158,7 @@ export const PaymentMessage = ({
                             {isPayer && ' (paid)'}
                           </span>
                         </div>
-                        <span className={isPayer ? 'text-green-600' : 'text-orange-600'}>
+                        <span className={isPayer ? 'text-payment-primary' : 'text-orange-600'}>
                           {isPayer ? '+' : '-'}{formatCurrency(amountPerPerson, payment.currency)}
                         </span>
                       </div>
@@ -194,7 +183,6 @@ export const PaymentMessage = ({
                           console.log(`Pay via ${method}`);
                         }}
                       >
-                        <span className="mr-2">{getPaymentMethodIcon(method)}</span>
                         Pay via {getPaymentMethodName(method)}
                       </Button>
                     ))}

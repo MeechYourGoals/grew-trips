@@ -37,6 +37,14 @@
     --input: 223 25% 20%;
     --ring: 223 56% 53%;
 
+    /* Payment system colors */
+    --payment-primary: 155 80% 25%; /* Forest green */
+    --payment-primary-foreground: 0 0% 100%;
+    --payment-background: 155 40% 15%; /* Dark forest green background */
+    --payment-background-light: 155 60% 97%; /* Light green background for light mode */
+    --payment-border: 155 60% 30%; /* Green border */
+    --payment-text: 0 0% 0%; /* Black text for inputs */
+
     --radius: 0.5rem;
 
     --sidebar-background: 223 25% 15%;
@@ -78,6 +86,14 @@
     --border: 223 15% 90%;
     --input: 223 15% 90%;
     --ring: 223 56% 53%;
+
+    /* Payment system colors for light mode */
+    --payment-primary: 155 80% 25%; /* Same forest green */
+    --payment-primary-foreground: 0 0% 100%;
+    --payment-background: 155 60% 97%; /* Light green background */
+    --payment-background-light: 155 60% 97%;
+    --payment-border: 155 60% 40%; /* Lighter green border for light mode */
+    --payment-text: 0 0% 0%; /* Black text for inputs */
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 223 35% 20%;

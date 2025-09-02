@@ -71,6 +71,13 @@ export default {
 					'light-border': 'hsl(223, 15%, 90%)', // #E3E7ED
 					'text-primary': 'hsl(223, 35%, 20%)', // #252F4A
 					green: '#62D621',
+					// Payment system colors
+					'payment-primary': 'hsl(var(--payment-primary))',
+					'payment-primary-foreground': 'hsl(var(--payment-primary-foreground))',
+					'payment-background': 'hsl(var(--payment-background))',
+					'payment-background-light': 'hsl(var(--payment-background-light))',
+					'payment-border': 'hsl(var(--payment-border))',
+					'payment-text': 'hsl(var(--payment-text))',
 					dark: '#000000',
 					light: '#FFFFFF',
 					// Events theme colors

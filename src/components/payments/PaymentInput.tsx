@@ -31,13 +31,13 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
   const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<string[]>(['venmo']);
 
   const paymentMethodOptions = [
-    { id: 'venmo', label: 'Venmo', icon: '💰' },
-    { id: 'zelle', label: 'Zelle', icon: '🏦' },
-    { id: 'cashapp', label: 'Cash App', icon: '💸' },
-    { id: 'applepay', label: 'Apple Pay', icon: '📱' },
-    { id: 'paypal', label: 'PayPal', icon: '💙' },
-    { id: 'cash', label: 'Cash', icon: '💵' },
-    { id: 'other', label: 'Other', icon: '💳' }
+    { id: 'venmo', label: 'Venmo' },
+    { id: 'zelle', label: 'Zelle' },
+    { id: 'cashapp', label: 'Cash App' },
+    { id: 'applepay', label: 'Apple Pay' },
+    { id: 'paypal', label: 'PayPal' },
+    { id: 'cash', label: 'Cash' },
+    { id: 'other', label: 'Other' }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -80,11 +80,11 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
   if (!isVisible) return null;
 
   return (
-    <Card className="bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800/30">
+    <Card className="bg-payment-background-light border-payment-border dark:bg-payment-background dark:border-payment-border">
       <CardContent className="p-4">
         <div className="flex items-center gap-2 mb-4">
-          <DollarSign size={18} className="text-green-600" />
-          <span className="font-medium text-green-800 dark:text-green-200">Payment Details</span>
+          <DollarSign size={18} className="text-payment-primary" />
+          <span className="font-medium text-payment-primary-foreground dark:text-payment-primary-foreground">Payment Details</span>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -92,21 +92,21 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
           <div className="grid grid-cols-3 gap-3">
             <div className="col-span-2">
               <Label htmlFor="amount">Amount</Label>
-              <Input
+                <Input
                 id="amount"
                 type="number"
                 step="0.01"
                 value={amount}
                 onChange={(e) => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="bg-white dark:bg-gray-800"
+                className="bg-white dark:bg-white text-payment-text"
                 required
               />
             </div>
             <div>
               <Label htmlFor="currency">Currency</Label>
-              <Select value={currency} onValueChange={setCurrency}>
-                <SelectTrigger className="bg-white dark:bg-gray-800">
+                <Select value={currency} onValueChange={setCurrency}>
+                <SelectTrigger className="bg-white dark:bg-white text-payment-text">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -127,7 +127,7 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Dinner, taxi, tickets, etc."
-              className="bg-white dark:bg-gray-800"
+              className="bg-white dark:bg-white text-payment-text"
               required
             />
           </div>
@@ -138,7 +138,7 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
               <Users size={16} />
               Split between {selectedParticipants.length} people
             </Label>
-            <div className="mt-2 max-h-32 overflow-y-auto space-y-2 p-2 bg-white dark:bg-gray-800 rounded border">
+            <div className="mt-2 max-h-32 overflow-y-auto space-y-2 p-2 bg-white dark:bg-white rounded border">
               {tripMembers.map(member => (
                 <div key={member.id} className="flex items-center gap-2">
                   <Checkbox
@@ -148,7 +148,7 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                   />
                   <label 
                     htmlFor={`participant-${member.id}`}
-                    className="text-sm flex items-center gap-2 cursor-pointer"
+                    className="text-sm flex items-center gap-2 cursor-pointer text-payment-text"
                   >
                     {member.avatar && (
                       <img 
@@ -180,9 +180,8 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                   />
                   <label 
                     htmlFor={`payment-${method.id}`}
-                    className="text-sm cursor-pointer flex items-center gap-1"
+                    className="text-sm cursor-pointer flex items-center gap-1 text-payment-text"
                   >
-                    <span>{method.icon}</span>
                     {method.label}
                   </label>
                 </div>
@@ -192,7 +191,7 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
 
           <Button 
             type="submit" 
-            className="w-full bg-green-600 hover:bg-green-700 text-white"
+            className="w-full bg-payment-primary hover:bg-payment-primary/90 text-payment-primary-foreground"
             disabled={!amount || !description || selectedParticipants.length === 0}
           >
             Add Payment Request
