@@ -44,6 +44,77 @@ export type Database = {
         }
         Relationships: []
       }
+      broadcast_reactions: {
+        Row: {
+          broadcast_id: string
+          created_at: string
+          id: string
+          reaction_type: string
+          user_id: string
+        }
+        Insert: {
+          broadcast_id: string
+          created_at?: string
+          id?: string
+          reaction_type: string
+          user_id: string
+        }
+        Update: {
+          broadcast_id?: string
+          created_at?: string
+          id?: string
+          reaction_type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "broadcast_reactions_broadcast_id_fkey"
+            columns: ["broadcast_id"]
+            isOneToOne: false
+            referencedRelation: "broadcasts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      broadcasts: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          is_sent: boolean | null
+          message: string
+          metadata: Json | null
+          priority: string | null
+          scheduled_for: string | null
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          is_sent?: boolean | null
+          message: string
+          metadata?: Json | null
+          priority?: string | null
+          scheduled_for?: string | null
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_sent?: boolean | null
+          message?: string
+          metadata?: Json | null
+          priority?: string | null
+          scheduled_for?: string | null
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       invite_links: {
         Row: {
           code: string
@@ -400,6 +471,57 @@ export type Database = {
           media_type?: string | null
           media_url?: string | null
           sentiment?: string | null
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trip_events: {
+        Row: {
+          created_at: string
+          created_by: string
+          description: string | null
+          end_time: string | null
+          event_category: string | null
+          id: string
+          include_in_itinerary: boolean | null
+          location: string | null
+          source_data: Json | null
+          source_type: string | null
+          start_time: string
+          title: string
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          description?: string | null
+          end_time?: string | null
+          event_category?: string | null
+          id?: string
+          include_in_itinerary?: boolean | null
+          location?: string | null
+          source_data?: Json | null
+          source_type?: string | null
+          start_time: string
+          title: string
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          end_time?: string | null
+          event_category?: string | null
+          id?: string
+          include_in_itinerary?: boolean | null
+          location?: string | null
+          source_data?: Json | null
+          source_type?: string | null
+          start_time?: string
+          title?: string
           trip_id?: string
           updated_at?: string
         }
@@ -808,6 +930,57 @@ export type Database = {
           trip_id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      trips: {
+        Row: {
+          basecamp_address: string | null
+          basecamp_name: string | null
+          cover_image_url: string | null
+          created_at: string
+          created_by: string
+          description: string | null
+          destination: string | null
+          end_date: string | null
+          id: string
+          is_archived: boolean | null
+          name: string
+          start_date: string | null
+          trip_type: string | null
+          updated_at: string
+        }
+        Insert: {
+          basecamp_address?: string | null
+          basecamp_name?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          created_by: string
+          description?: string | null
+          destination?: string | null
+          end_date?: string | null
+          id: string
+          is_archived?: boolean | null
+          name: string
+          start_date?: string | null
+          trip_type?: string | null
+          updated_at?: string
+        }
+        Update: {
+          basecamp_address?: string | null
+          basecamp_name?: string | null
+          cover_image_url?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          destination?: string | null
+          end_date?: string | null
+          id?: string
+          is_archived?: boolean | null
+          name?: string
+          start_date?: string | null
+          trip_type?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
