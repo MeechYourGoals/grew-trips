@@ -6,6 +6,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collap
 import { Switch } from './ui/switch';
 import { Checkbox } from './ui/checkbox';
 import { DEFAULT_FEATURES } from '../hooks/useFeatureToggle';
+import { useTrips } from '../hooks/useTrips';
+import { toast } from 'sonner';
 
 interface CreateTripModalProps {
   isOpen: boolean;
@@ -21,8 +23,9 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
     endDate: '',
     description: ''
   });
+  const [isLoading, setIsLoading] = useState(false);
   
-  // Feature toggle state for Pro/Event trips
+  const { createTrip } = useTrips();
   const [enableAllFeatures, setEnableAllFeatures] = useState(true);
   const [selectedFeatures, setSelectedFeatures] = useState<Record<string, boolean>>(
     DEFAULT_FEATURES.reduce((acc, feature) => ({ ...acc, [feature]: true }), {})
@@ -30,28 +33,47 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
     
-    // Determine enabled features based on trip type
-    let enabledFeatures: string[] = [...DEFAULT_FEATURES];
-    if (tripType !== 'consumer') {
-      enabledFeatures = enableAllFeatures 
-        ? [...DEFAULT_FEATURES]
-        : Object.entries(selectedFeatures)
-            .filter(([, enabled]) => enabled)
-            .map(([feature]) => feature);
+    try {
+      // Generate a unique trip ID
+      const tripId = `trip-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+      
+      const tripData = {
+        id: tripId,
+        name: formData.title,
+        description: formData.description || undefined,
+        start_date: formData.startDate || undefined,
+        end_date: formData.endDate || undefined,
+        destination: formData.location || undefined,
+        trip_type: tripType
+      };
+      
+      const newTrip = await createTrip(tripData);
+      
+      if (newTrip) {
+        toast.success('Trip created successfully!');
+        onClose();
+        // Reset form
+        setFormData({
+          title: '',
+          location: '',
+          startDate: '',
+          endDate: '',
+          description: ''
+        });
+        setTripType('consumer');
+      } else {
+        toast.error('Failed to create trip. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error creating trip:', error);
+      toast.error('Failed to create trip. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-    
-    const tripData = {
-      ...formData,
-      trip_type: tripType,
-      enabled_features: enabledFeatures
-    };
-    
-    console.log('Creating trip:', tripData);
-    // Here you would typically send the data to your backend
-    onClose();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -271,9 +293,10 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
             </button>
             <button
               type="submit"
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-xl font-medium transition-colors"
+              disabled={isLoading}
+              className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white py-3 rounded-xl font-medium transition-colors"
             >
-              Create Trip
+              {isLoading ? 'Creating...' : 'Create Trip'}
             </button>
           </div>
         </form>

@@ -95,6 +95,7 @@ const ItineraryAssignmentPage = () => {
           <CollaborativeItineraryCalendar 
             tripMembers={tripMembers}
             assignments={assignments}
+            tripId={tripId || ''}
           />
         )}
       </div>

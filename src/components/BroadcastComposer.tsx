@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Send, MapPin, Languages } from 'lucide-react';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { broadcastService } from '../services/broadcastService';
+import { toast } from 'sonner';
 
 interface Participant {
   id: string | number;
@@ -13,7 +15,8 @@ interface Participant {
 interface BroadcastComposerProps {
   participants: Participant[];
   tripTier?: 'consumer' | 'pro' | 'event';
-  onSend: (broadcast: {
+  tripId: string;
+  onSend?: (broadcast: {
     message: string;
     location?: string;
     category: 'chill' | 'logistics' | 'urgent';
@@ -21,13 +24,14 @@ interface BroadcastComposerProps {
   }) => void;
 }
 
-export const BroadcastComposer = ({ participants, tripTier = 'consumer', onSend }: BroadcastComposerProps) => {
+export const BroadcastComposer = ({ participants, tripTier = 'consumer', tripId, onSend }: BroadcastComposerProps) => {
   const [message, setMessage] = useState('');
   const [location, setLocation] = useState('');
   const [category, setCategory] = useState<'chill' | 'logistics' | 'urgent'>('chill');
   const [showDetails, setShowDetails] = useState(false);
   const [recipient, setRecipient] = useState('everyone');
   const [translateTo, setTranslateTo] = useState<string>('none');
+  const [isLoading, setIsLoading] = useState(false);
 
   const languages = [
     { code: 'none', name: 'No Translation' },
@@ -45,22 +49,53 @@ export const BroadcastComposer = ({ participants, tripTier = 'consumer', onSend 
   const roleOptions = Array.from(new Set(participants.map(p => p.role)));
   const isConsumerTrip = tripTier === 'consumer';
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) return;
 
-    onSend({
-      message: message.trim(),
-      location: location.trim() || undefined,
-      category,
-      recipients: recipient
-    });
+    setIsLoading(true);
+    try {
+      const broadcastData = {
+        trip_id: tripId,
+        message: message.trim(),
+        priority: category === 'chill' ? 'fyi' as const : 
+                 category === 'logistics' ? 'reminder' as const : 
+                 'urgent' as const,
+        metadata: {
+          location: location.trim() || undefined,
+          recipients: recipient,
+          translateTo: translateTo !== 'none' ? translateTo : undefined
+        }
+      };
 
-    // Reset form
-    setMessage('');
-    setLocation('');
-    setCategory('chill');
-    setRecipient('everyone');
-    setShowDetails(false);
+      const newBroadcast = await broadcastService.createBroadcast(broadcastData);
+      
+      if (newBroadcast) {
+        toast.success('Broadcast sent successfully!');
+        
+        // Call the optional onSend callback for any additional handling
+        onSend?.({
+          message: message.trim(),
+          location: location.trim() || undefined,
+          category,
+          recipients: recipient
+        });
+
+        // Reset form
+        setMessage('');
+        setLocation('');
+        setCategory('chill');
+        setRecipient('everyone');
+        setShowDetails(false);
+        setTranslateTo('none');
+      } else {
+        toast.error('Failed to send broadcast. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error sending broadcast:', error);
+      toast.error('Failed to send broadcast. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const getCategoryColor = (cat: string) => {
@@ -162,10 +197,10 @@ export const BroadcastComposer = ({ participants, tripTier = 'consumer', onSend 
               
               <Button
                 onClick={handleSend}
-                disabled={!message.trim()}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2"
+                disabled={!message.trim() || isLoading}
+                className="bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-4 py-2"
               >
-                Broadcast
+                {isLoading ? 'Sending...' : 'Broadcast'}
               </Button>
             </div>
           </div>

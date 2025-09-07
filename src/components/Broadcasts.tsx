@@ -174,7 +174,7 @@ export const Broadcasts = () => {
       </div>
 
       {/* Broadcast Composer */}
-      <BroadcastComposer participants={participants} tripTier={tripTier} onSend={handleNewBroadcast} />
+      <BroadcastComposer participants={participants} tripTier={tripTier} tripId={currentTripId} onSend={handleNewBroadcast} />
 
       {/* Active Broadcasts */}
       <div className="space-y-4">
