@@ -25,13 +25,27 @@ const TripDetail = () => {
   const [showTripSettings, setShowTripSettings] = useState(false);
   const [showTripsPlusModal, setShowTripsPlusModal] = useState(false);
   const [tripPreferences, setTripPreferences] = useState<TripPreferencesType | undefined>();
+  const [tripDescription, setTripDescription] = useState<string>('');
 
   // Get trip data dynamically based on tripId
   const tripIdNum = tripId ? parseInt(tripId, 10) : null;
   const trip = tripIdNum ? getTripById(tripIdNum) : null;
   
+  // Initialize description state when trip is loaded
+  React.useEffect(() => {
+    if (trip && !tripDescription) {
+      setTripDescription(trip.description);
+    }
+  }, [trip, tripDescription]);
+  
+  // Create trip object with updated description
+  const tripWithUpdatedDescription = trip ? {
+    ...trip,
+    description: tripDescription || trip.description
+  } : null;
+  
   // Handle missing trip
-  if (!trip) {
+  if (!tripWithUpdatedDescription) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
@@ -98,7 +112,10 @@ const TripDetail = () => {
         )}
 
         {/* Trip Header with Cover Photo Upload */}
-        <TripHeader trip={trip} />
+        <TripHeader 
+          trip={tripWithUpdatedDescription} 
+          onDescriptionUpdate={setTripDescription}
+        />
 
         {/* Main Content */}
         <TripDetailContent
@@ -106,7 +123,7 @@ const TripDetail = () => {
           onTabChange={setActiveTab}
           onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
           tripId={tripId || '1'}
-          tripName={trip.title}
+          tripName={tripWithUpdatedDescription.title}
           basecamp={basecamp}
           tripPreferences={tripPreferences}
           onPreferencesChange={setTripPreferences}
@@ -125,7 +142,7 @@ const TripDetail = () => {
         onCloseTripSettings={() => setShowTripSettings(false)}
         showTripsPlusModal={showTripsPlusModal}
         onCloseTripsPlusModal={() => setShowTripsPlusModal(false)}
-        tripName={trip.title}
+        tripName={tripWithUpdatedDescription.title}
         tripId={tripId || '1'}
         userId={user?.id}
       />

@@ -49,10 +49,10 @@ const ProTripDetail = () => {
   const tripData = proTripMockData[proTripId];
   console.log('ProTripDetail - found trip data:', tripData);
   
-  // State for selected category - defaults to trip's original category
   const [selectedCategory, setSelectedCategory] = useState<ProTripCategory>(
     tripData.proTripCategory || 'Business Travel'
   );
+  const [tripDescription, setTripDescription] = useState<string>('');
 
   // Convert Pro trip data to standard trip format
   const trip = {
@@ -60,7 +60,7 @@ const ProTripDetail = () => {
     title: tripData.title,
     location: tripData.location,
     dateRange: tripData.dateRange,
-    description: tripData.description || `Professional ${tripData.category.toLowerCase()} in ${tripData.location}`,
+    description: tripDescription || tripData.description || `Professional ${tripData.category.toLowerCase()} in ${tripData.location}`,
     participants: tripData.participants.map(p => ({
       id: p.id,
       name: p.name,
@@ -68,6 +68,13 @@ const ProTripDetail = () => {
       role: (p as any).role
     }))
   };
+
+  // Initialize description state when trip data is loaded
+  React.useEffect(() => {
+    if (tripData.description && !tripDescription) {
+      setTripDescription(tripData.description);
+    }
+  }, [tripData.description, tripDescription]);
 
   // Mock basecamp data for Pro trips
   const basecamp = {
@@ -147,6 +154,7 @@ const ProTripDetail = () => {
             category={selectedCategory}
             tags={tripData.tags}
             onCategoryChange={setSelectedCategory}
+            onDescriptionUpdate={setTripDescription}
           />
 
           {/* Enhanced Pro Content with Dynamic Category */}

@@ -24,6 +24,7 @@ const EventDetail = () => {
   const [showTripSettings, setShowTripSettings] = useState(false);
   const [showTripsPlusModal, setShowTripsPlusModal] = useState(false);
   const [tripPreferences, setTripPreferences] = useState<TripPreferencesType | undefined>();
+  const [tripDescription, setTripDescription] = useState<string>('');
 
   console.log('EventDetail - eventId from params:', eventId);
   console.log('EventDetail - available mock data keys:', Object.keys(eventsMockData));
@@ -52,13 +53,20 @@ const EventDetail = () => {
     title: eventData.title,
     location: eventData.location,
     dateRange: eventData.dateRange,
-    description: eventData.description || `Professional ${eventData.category.toLowerCase()} event in ${eventData.location}`,
+    description: tripDescription || eventData.description || `Professional ${eventData.category.toLowerCase()} event in ${eventData.location}`,
     participants: eventData.participants.map(p => ({
       id: p.id,
       name: p.name,
       avatar: p.avatar
     }))
   };
+
+  // Initialize description state when event data is loaded
+  React.useEffect(() => {
+    if (eventData.description && !tripDescription) {
+      setTripDescription(eventData.description);
+    }
+  }, [eventData.description, tripDescription]);
 
   // Mock basecamp data for Events
   const basecamp = {
@@ -131,7 +139,10 @@ const EventDetail = () => {
           )}
 
           {/* Trip Header */}
-          <TripHeader trip={trip} />
+          <TripHeader 
+            trip={trip} 
+            onDescriptionUpdate={setTripDescription}
+          />
 
           {/* Enhanced Event Content */}
           <EventDetailContent

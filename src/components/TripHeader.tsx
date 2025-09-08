@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Calendar, MapPin, Users, Plus, Settings } from 'lucide-react';
 import { InviteModal } from './InviteModal';
 import { TripCoverPhotoUpload } from './TripCoverPhotoUpload';
+import { EditableDescription } from './EditableDescription';
 import { useAuth } from '../hooks/useAuth';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useTripCoverPhoto } from '../hooks/useTripCoverPhoto';
@@ -28,13 +29,14 @@ interface TripHeaderProps {
     coverPhoto?: string;
   };
   onManageUsers?: () => void;
+  onDescriptionUpdate?: (description: string) => void;
   // Pro-specific props
   category?: ProTripCategory;
   tags?: string[];
   onCategoryChange?: (category: ProTripCategory) => void;
 }
 
-export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategoryChange }: TripHeaderProps) => {
+export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, category, tags = [], onCategoryChange }: TripHeaderProps) => {
   const { user } = useAuth();
   const [showInvite, setShowInvite] = useState(false);
   const [showAllCollaborators, setShowAllCollaborators] = useState(false);
@@ -117,9 +119,18 @@ export const TripHeader = ({ trip, onManageUsers, category, tags = [], onCategor
               </div>
             )}
             
-            <p className="text-gray-300 text-lg leading-relaxed">
-              {trip.description}
-            </p>
+            {user ? (
+              <EditableDescription
+                tripId={trip.id.toString()}
+                description={trip.description}
+                onUpdate={onDescriptionUpdate || (() => {})}
+                className="text-gray-300 text-lg leading-relaxed"
+              />
+            ) : (
+              <p className="text-gray-300 text-lg leading-relaxed">
+                {trip.description}
+              </p>
+            )}
           </div>
 
           {/* Collaborators */}
