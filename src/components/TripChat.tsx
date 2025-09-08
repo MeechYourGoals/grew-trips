@@ -264,7 +264,7 @@ export const TripChat = ({
                 <div className={`
                   max-w-md p-3 rounded-lg relative
                   ${message.isBroadcast
-                    ? 'bg-gradient-to-r from-orange-100 to-red-50 border border-orange-300 text-black'
+                    ? 'bg-gradient-to-r from-orange-100 to-red-50 border border-orange-300 text-black [&_*]:!text-black'
                     : message.text.includes('💳 Payment') || message.tags?.includes('payment')
                     ? 'bg-gradient-to-r from-green-100 to-emerald-50 border border-green-300 text-green-900 dark:from-green-900/30 dark:to-emerald-900/30 dark:border-green-700 dark:text-green-100'
                     : 'bg-gray-700 text-gray-200'
@@ -274,7 +274,7 @@ export const TripChat = ({
                   
                   {/* Broadcast Header */}
                   {message.isBroadcast && (
-                    <div className="flex items-center gap-2 text-xs font-bold mb-2">
+                    <div className="flex items-center gap-2 text-xs font-bold mb-2 text-black">
                       <Megaphone size={14} className="text-orange-600" />
                       <span className="text-black">📢 BROADCAST</span>
                     </div>
@@ -290,13 +290,13 @@ export const TripChat = ({
                   
                   {/* Reply Context */}
                   {message.replyTo && (
-                    <div className="text-xs opacity-70 mb-2 p-2 bg-black/10 rounded border-l-2 border-gray-500">
+                    <div className={`text-xs opacity-70 mb-2 p-2 bg-black/10 rounded border-l-2 border-gray-500 ${message.isBroadcast ? 'text-black' : ''}`}>
                       Replying to {message.replyTo.sender}: "{message.replyTo.text}"
                     </div>
                   )}
                   
                   {/* Message Text */}
-                  <div className="leading-relaxed">{message.text}</div>
+                  <div className={`leading-relaxed ${message.isBroadcast ? 'text-black font-medium' : ''}`}>{message.text}</div>
                 </div>
                 
                 {/* Message Actions */}
