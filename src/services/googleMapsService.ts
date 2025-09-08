@@ -59,12 +59,24 @@ export class GoogleMapsService {
     }
   }
 
-  static async getPlaceAutocomplete(input: string): Promise<any> {
+  static async getPlaceAutocomplete(input: string, types: string[] = ['establishment', 'geocode']): Promise<any> {
     try {
-      return await this.callProxy('autocomplete', { input });
+      return await this.callProxy('autocomplete', { 
+        input,
+        types: types.join('|')
+      });
     } catch (error) {
       console.error('Autocomplete error:', error);
       return { predictions: [] };
+    }
+  }
+
+  static async getPlaceDetailsById(placeId: string): Promise<any> {
+    try {
+      return await this.callProxy('place-details', { placeId });
+    } catch (error) {
+      console.error('Place details error:', error);
+      return null;
     }
   }
 

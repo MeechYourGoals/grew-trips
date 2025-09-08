@@ -31,9 +31,10 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
     if (value.length > 2) {
       setIsLoadingSuggestions(true);
       try {
-        const result = await GoogleMapsService.getPlaceAutocomplete(value);
+        // Prioritize establishments (hotels, venues, landmarks) and then general geocoding
+        const result = await GoogleMapsService.getPlaceAutocomplete(value, ['establishment', 'lodging', 'tourist_attraction', 'geocode']);
         if (result.predictions && result.predictions.length > 0) {
-          setSuggestions(result.predictions);
+          setSuggestions(result.predictions.slice(0, 8));
           setShowSuggestions(true);
         } else {
           setSuggestions([]);
@@ -52,10 +53,33 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
     }
   };
 
-  const handleSuggestionClick = (suggestion: any) => {
+  const handleSuggestionClick = async (suggestion: any) => {
     setAddress(suggestion.description);
     setShowSuggestions(false);
     setSuggestions([]);
+    
+    // If it's a place with a place_id, try to get more details
+    if (suggestion.place_id) {
+      try {
+        const placeDetails = await GoogleMapsService.getPlaceDetailsById(suggestion.place_id);
+        if (placeDetails && placeDetails.result) {
+          const place = placeDetails.result;
+          // Auto-fill name if not already set
+          if (!name && place.name) {
+            setName(place.name);
+          }
+          // Auto-detect type based on place types
+          if (!type && place.types && place.types.length > 0) {
+            const placeType = place.types.includes('lodging') ? 'hotel' :
+                            place.types.includes('tourist_attraction') ? 'other' :
+                            place.types.includes('restaurant') ? 'other' : type;
+            setType(placeType);
+          }
+        }
+      } catch (error) {
+        console.error('Error getting place details:', error);
+      }
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -109,11 +133,11 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
         onBasecampSet(basecamp);
         onClose();
       } else {
-        alert('Could not find the address. Please check and try again.');
+        alert('Could not find that address. Please try selecting from the suggestions or enter a different location.');
       }
     } catch (error) {
       console.error('Error setting basecamp:', error);
-      alert('Error setting basecamp. Please try again.');
+      alert('There was an error setting your basecamp. Please check your internet connection and try again.');
     } finally {
       setIsLoading(false);
     }
@@ -190,28 +214,49 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
                       Loading suggestions...
                     </div>
                   ) : suggestions.length > 0 ? (
-                    suggestions.map((suggestion, index) => (
-                      <button
-                        key={suggestion.place_id || index}
-                        type="button"
-                        onClick={() => handleSuggestionClick(suggestion)}
-                        className={`w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors text-white text-sm flex items-center gap-2 ${
-                          index === selectedSuggestionIndex ? 'bg-gray-700' : ''
-                        }`}
-                      >
-                        <MapPin size={14} className="text-gray-400" />
-                        <div>
-                          <div className="font-medium">
-                            {suggestion.structured_formatting?.main_text || suggestion.description}
-                          </div>
-                          {suggestion.structured_formatting?.secondary_text && (
-                            <div className="text-xs text-gray-500">
-                              {suggestion.structured_formatting.secondary_text}
+                    suggestions.map((suggestion, index) => {
+                      // Determine place type for visual indication
+                      const types = suggestion.types || [];
+                      const getPlaceTypeIcon = () => {
+                        if (types.includes('lodging')) return { icon: '🏨', label: 'Hotel', color: 'bg-blue-100 text-blue-800' };
+                        if (types.includes('tourist_attraction')) return { icon: '🎯', label: 'Attraction', color: 'bg-green-100 text-green-800' };
+                        if (types.includes('stadium')) return { icon: '🏟️', label: 'Stadium', color: 'bg-purple-100 text-purple-800' };
+                        if (types.includes('establishment')) return { icon: '📍', label: 'Place', color: 'bg-gray-100 text-gray-800' };
+                        return null;
+                      };
+                      
+                      const placeType = getPlaceTypeIcon();
+                      
+                      return (
+                        <button
+                          key={suggestion.place_id || index}
+                          type="button"
+                          onClick={() => handleSuggestionClick(suggestion)}
+                          className={`w-full text-left px-4 py-3 hover:bg-gray-700 transition-colors text-white text-sm flex items-center gap-3 ${
+                            index === selectedSuggestionIndex ? 'bg-gray-700' : ''
+                          }`}
+                        >
+                          <MapPin size={14} className="text-gray-400 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-medium truncate">
+                                {suggestion.structured_formatting?.main_text || suggestion.description}
+                              </span>
+                              {placeType && (
+                                <span className={`text-xs px-2 py-0.5 rounded-full ${placeType.color} flex-shrink-0`}>
+                                  {placeType.icon} {placeType.label}
+                                </span>
+                              )}
                             </div>
-                          )}
-                        </div>
-                      </button>
-                    ))
+                            {suggestion.structured_formatting?.secondary_text && (
+                              <div className="text-xs text-gray-500 truncate">
+                                {suggestion.structured_formatting.secondary_text}
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })
                   ) : null}
                 </div>
               )}
