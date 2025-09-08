@@ -187,13 +187,13 @@ serve(async (req) => {
           throw new Error(validation.error || 'Invalid input');
         }
         
-        const { input } = validation.sanitized!;
+        const { input, types = 'establishment|geocode' } = validation.sanitized!;
         if (!input) {
           throw new Error('Input parameter is required');
         }
 
-        console.log('Autocomplete request for:', input);
-        const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&types=establishment|geocode&key=${apiKey}`;
+        console.log('Autocomplete request for:', input, 'with types:', types);
+        const apiUrl = `https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${encodeURIComponent(input)}&types=${encodeURIComponent(types)}&key=${apiKey}`;
         
         const apiResponse = await fetch(apiUrl);
         const apiData = await apiResponse.json();
