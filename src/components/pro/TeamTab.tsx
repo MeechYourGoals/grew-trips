@@ -2,26 +2,41 @@ import React, { useState } from 'react';
 import { Users, Shield, Settings, UserCheck, AlertTriangle } from 'lucide-react';
 import { ProParticipant } from '../../types/pro';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
+import { EditMemberRoleModal } from './EditMemberRoleModal';
+import { extractUniqueRoles, getRoleColorClass } from '../../utils/roleUtils';
 
 interface TeamTabProps {
   roster: ProParticipant[];
   userRole: string;
   isReadOnly?: boolean;
   category: ProTripCategory;
+  onUpdateMemberRole?: (memberId: string, newRole: string) => Promise<void>;
 }
 
-export const TeamTab = ({ roster, userRole, isReadOnly = false, category }: TeamTabProps) => {
+export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpdateMemberRole }: TeamTabProps) => {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [showCredentials, setShowCredentials] = useState(false);
+  const [editingMember, setEditingMember] = useState<ProParticipant | null>(null);
 
   const { terminology: { teamLabel }, roles: categoryRoles } = getCategoryConfig(category);
 
   // Use category-specific roles or allow all for manual input
   const roles = categoryRoles.length > 0 ? ['all', ...categoryRoles] : ['all'];
+  const existingRoles = extractUniqueRoles(roster);
   
   const filteredRoster = selectedRole === 'all' 
     ? roster 
     : roster.filter(member => member.role === selectedRole);
+
+  const handleEditMember = (member: ProParticipant) => {
+    if (isReadOnly || !onUpdateMemberRole) return;
+    setEditingMember(member);
+  };
+
+  const handleUpdateRole = async (memberId: string, newRole: string) => {
+    if (!onUpdateMemberRole) return;
+    await onUpdateMemberRole(memberId, newRole);
+  };
 
   const getCredentialColor = (level: string) => {
     switch (level) {
@@ -107,7 +122,7 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category }: Team
                 <h3 className="text-white font-medium truncate">{member.name}</h3>
                 <p className="text-gray-400 text-sm">{member.email}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <span className="bg-red-600/20 text-red-400 px-2 py-1 rounded text-xs font-medium">
+                  <span className={`${getRoleColorClass(member.role, category)} px-2 py-1 rounded text-xs font-medium`}>
                     {member.role}
                   </span>
                   {showCredentials && (
@@ -117,8 +132,12 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category }: Team
                   )}
                 </div>
               </div>
-              {userRole === 'admin' && !isReadOnly && (
-                <button className="text-gray-400 hover:text-white transition-colors">
+              {userRole === 'admin' && !isReadOnly && onUpdateMemberRole && (
+                <button 
+                  onClick={() => handleEditMember(member)}
+                  className="text-gray-400 hover:text-white transition-colors p-1 rounded hover:bg-white/10"
+                  title="Edit member role"
+                >
                   <Settings size={16} />
                 </button>
               )}
@@ -163,6 +182,16 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category }: Team
           <p className="text-gray-400">No team members found for the selected role.</p>
         </div>
       )}
+
+      {/* Role Edit Modal */}
+      <EditMemberRoleModal
+        isOpen={!!editingMember}
+        onClose={() => setEditingMember(null)}
+        member={editingMember}
+        category={category}
+        existingRoles={existingRoles}
+        onUpdateRole={handleUpdateRole}
+      />
     </div>
   );
 };

@@ -53,15 +53,16 @@ const ProTripDetail = () => {
     tripData.proTripCategory || 'Business Travel'
   );
   const [tripDescription, setTripDescription] = useState<string>('');
+  const [currentTripData, setCurrentTripData] = useState(tripData);
 
   // Convert Pro trip data to standard trip format
   const trip = {
     id: parseInt(proTripId),
-    title: tripData.title,
-    location: tripData.location,
-    dateRange: tripData.dateRange,
-    description: tripDescription || tripData.description || `Professional ${tripData.category.toLowerCase()} in ${tripData.location}`,
-    participants: tripData.participants.map(p => ({
+    title: currentTripData.title,
+    location: currentTripData.location,
+    dateRange: currentTripData.dateRange,
+    description: tripDescription || currentTripData.description || `Professional ${currentTripData.category.toLowerCase()} in ${currentTripData.location}`,
+    participants: currentTripData.participants.map(p => ({
       id: p.id,
       name: p.name,
       avatar: p.avatar,
@@ -75,6 +76,15 @@ const ProTripDetail = () => {
       setTripDescription(tripData.description);
     }
   }, [tripData.description, tripDescription]);
+
+  // Handle trip data updates (like roster changes)
+  const handleUpdateTripData = (updates: Partial<typeof tripData>) => {
+    setCurrentTripData(prevData => ({
+      ...prevData,
+      ...updates
+    }));
+    console.log('Trip data updated:', updates);
+  };
 
   // Mock basecamp data for Pro trips
   const basecamp = {
@@ -166,8 +176,9 @@ const ProTripDetail = () => {
             basecamp={basecamp}
             tripPreferences={tripPreferences}
             onPreferencesChange={setTripPreferences}
-            tripData={tripData}
+            tripData={currentTripData}
             selectedCategory={selectedCategory}
+            onUpdateTripData={handleUpdateTripData}
           />
         </div>
 

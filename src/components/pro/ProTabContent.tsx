@@ -22,6 +22,7 @@ interface ProTabContentProps {
   tripData: ProTripData;
   category: ProTripCategory;
   onUpdateRoomAssignments: (assignments: any[]) => void;
+  onUpdateMemberRole?: (memberId: string, newRole: string) => Promise<void>;
 }
 
 export const ProTabContent = ({
@@ -31,7 +32,8 @@ export const ProTabContent = ({
   tripPreferences,
   tripData,
   category,
-  onUpdateRoomAssignments
+  onUpdateRoomAssignments,
+  onUpdateMemberRole
 }: ProTabContentProps) => {
   const { user } = useAuth();
   
@@ -66,6 +68,7 @@ export const ProTabContent = ({
             userRole={userRole}
             isReadOnly={isReadOnly}
             category={category}
+            onUpdateMemberRole={onUpdateMemberRole}
           />
         );
       case 'finance':

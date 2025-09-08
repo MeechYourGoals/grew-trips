@@ -20,6 +20,7 @@ interface ProTripDetailContentProps {
   onPreferencesChange: (preferences: TripPreferencesType) => void;
   tripData: ProTripData;
   selectedCategory: ProTripCategory;
+  onUpdateTripData?: (updates: Partial<ProTripData>) => void;
 }
 
 export const ProTripDetailContent = ({
@@ -31,7 +32,8 @@ export const ProTripDetailContent = ({
   tripPreferences,
   onPreferencesChange,
   tripData,
-  selectedCategory
+  selectedCategory,
+  onUpdateTripData
 }: ProTripDetailContentProps) => {
   const [showRoomModal, setShowRoomModal] = useState(false);
   const { user } = useAuth();
@@ -44,6 +46,25 @@ export const ProTripDetailContent = ({
   const handleUpdateRoomAssignments = (assignments: any[]) => {
     // In a real app, this would update the trip data
     console.log('Updated room assignments:', assignments);
+  };
+
+  const handleUpdateMemberRole = async (memberId: string, newRole: string) => {
+    try {
+      // Update the roster with the new role
+      const updatedRoster = tripData.roster?.map(member =>
+        member.id === memberId ? { ...member, role: newRole } : member
+      ) || [];
+
+      // Update the trip data
+      if (onUpdateTripData) {
+        onUpdateTripData({ roster: updatedRoster });
+      }
+
+      console.log(`Updated member ${memberId} role to: ${newRole}`);
+    } catch (error) {
+      console.error('Failed to update member role:', error);
+      throw error;
+    }
   };
 
 
@@ -69,6 +90,7 @@ export const ProTripDetailContent = ({
         tripData={tripData}
         category={selectedCategory}
         onUpdateRoomAssignments={handleUpdateRoomAssignments}
+        onUpdateMemberRole={handleUpdateMemberRole}
       />
 
       {/* Room Assignments Modal */}
