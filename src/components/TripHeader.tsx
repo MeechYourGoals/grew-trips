@@ -171,7 +171,6 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, category,
               onShowAll={() => setShowAllCollaborators(true)}
             />
 
-            {user && (
             <button
               onClick={() => setShowInvite(true)}
               className={`mt-4 w-full flex items-center justify-center gap-2 bg-gradient-to-r ${accentColors.gradient} hover:from-${accentColors.primary}/80 hover:to-${accentColors.secondary}/80 text-white font-medium py-3 rounded-xl transition-all duration-200 hover:scale-105`}
@@ -180,7 +179,6 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, category,
                 <Plus size={16} />
                 Invite to Trip
               </button>
-            )}
           </div>
         </div>
       </div>
