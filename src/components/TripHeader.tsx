@@ -119,18 +119,12 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, category,
               </div>
             )}
             
-            {user ? (
-              <EditableDescription
-                tripId={trip.id.toString()}
-                description={trip.description}
-                onUpdate={onDescriptionUpdate || (() => {})}
-                className="text-gray-300 text-lg leading-relaxed"
-              />
-            ) : (
-              <p className="text-gray-300 text-lg leading-relaxed">
-                {trip.description}
-              </p>
-            )}
+            <EditableDescription
+              tripId={trip.id.toString()}
+              description={trip.description}
+              onUpdate={onDescriptionUpdate || (() => {})}
+              className="text-gray-300 text-lg leading-relaxed"
+            />
           </div>
 
           {/* Collaborators */}
