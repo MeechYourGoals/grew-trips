@@ -194,12 +194,12 @@ export const ChatInput = ({
                 : "Type a message or drag & drop files..."
             }
             rows={2}
-            className={`flex-1 border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none resize-none transition-all ${
+            className={`flex-1 border rounded-xl px-4 py-3 text-white focus:outline-none resize-none transition-all ${
               isBroadcastMode
-                ? 'bg-gradient-to-r from-orange-900/20 to-red-900/20 border-orange-500/50 focus:border-orange-400'
+                ? 'bg-gradient-to-r from-orange-900/20 to-red-900/20 border-orange-500/50 focus:border-orange-400 placeholder-gray-800'
                 : isPaymentMode
-                ? 'bg-gradient-to-r from-green-900/20 to-emerald-900/20 border-green-500/50 focus:border-green-400'
-                : 'bg-gray-800 border-gray-700 focus:border-blue-500'
+                ? 'bg-gradient-to-r from-green-900/20 to-emerald-900/20 border-green-500/50 focus:border-green-400 placeholder-gray-500'
+                : 'bg-gray-800 border-gray-700 focus:border-blue-500 placeholder-gray-500'
             }`}
           />
           <button
