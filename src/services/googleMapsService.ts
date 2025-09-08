@@ -83,4 +83,18 @@ export class GoogleMapsService {
   static async getPlaceDetails(placeId: string): Promise<any> {
     return await this.callProxy('place-details', { placeId });
   }
+
+  static generateDirectionsEmbedUrl(origin: string, destination: string): string {
+    const encodedOrigin = encodeURIComponent(origin);
+    const encodedDestination = encodeURIComponent(destination);
+    return `https://www.google.com/maps/embed/v1/directions?origin=${encodedOrigin}&destination=${encodedDestination}&mode=driving`;
+  }
+
+  static generateDirectionsEmbedUrlWithCoords(
+    originCoords: { lat: number; lng: number },
+    destination: string
+  ): string {
+    const encodedDestination = encodeURIComponent(destination);
+    return `https://www.google.com/maps/embed/v1/directions?origin=${originCoords.lat},${originCoords.lng}&destination=${encodedDestination}&mode=driving`;
+  }
 }

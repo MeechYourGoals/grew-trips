@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Search, MapPin, ExternalLink, AlertCircle, Loader2, Home } from 'lucide-react';
+import { Search, MapPin, ExternalLink, AlertCircle, Loader2, Home, Edit2 } from 'lucide-react';
 import { useBasecamp } from '@/contexts/BasecampContext';
+import { GoogleMapsService } from '@/services/googleMapsService';
+import { BasecampSelector } from './BasecampSelector';
 
 interface WorkingGoogleMapsProps {
   className?: string;
@@ -16,9 +18,16 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [embedUrl, setEmbedUrl] = useState('');
+  const [isBasecampSelectorOpen, setIsBasecampSelectorOpen] = useState(false);
+  const [isShowingDirections, setIsShowingDirections] = useState(false);
   
   // Generate Google Maps embed URL using search (no API key needed)
-  const generateEmbedUrl = (query: string, coordinates?: { lat: number; lng: number }) => {
+  const generateEmbedUrl = (query: string, coordinates?: { lat: number; lng: number }, isDirections: boolean = false) => {
+    if (isDirections && basecamp?.coordinates) {
+      // Generate directions from basecamp to the searched location
+      return GoogleMapsService.generateDirectionsEmbedUrlWithCoords(basecamp.coordinates, query);
+    }
+    
     if (coordinates) {
       // Use coordinates for more precise location
       return `https://www.google.com/maps?q=${coordinates.lat},${coordinates.lng}&output=embed&z=14`;
@@ -30,8 +39,10 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
 
   // Update current location when basecamp changes
   useEffect(() => {
-    if (isBasecampSet && basecamp?.address && currentLocation !== basecamp.address) {
+    if (isBasecampSet && basecamp?.address) {
+      // Auto-center on basecamp when it's first set
       setCurrentLocation(basecamp.address);
+      setIsShowingDirections(false);
     }
   }, [basecamp, isBasecampSet]);
 
@@ -42,19 +53,21 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
     const coordinates = basecamp?.coordinates && currentLocation === basecamp.address 
       ? basecamp.coordinates 
       : undefined;
-    const url = generateEmbedUrl(currentLocation, coordinates);
+    const url = generateEmbedUrl(currentLocation, coordinates, isShowingDirections);
     setEmbedUrl(url);
-  }, [currentLocation, basecamp]);
+  }, [currentLocation, basecamp, isShowingDirections]);
   
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      // If we have a basecamp, search near basecamp location
-      let searchLocation = searchQuery.trim();
-      if (isBasecampSet && basecamp?.address) {
-        searchLocation = `${searchQuery.trim()} near ${basecamp.address}`;
-      }
+      const searchLocation = searchQuery.trim();
       setCurrentLocation(searchLocation);
+      
+      // If basecamp is set, show directions from basecamp to searched location
+      if (isBasecampSet && basecamp?.address) {
+        setIsShowingDirections(true);
+      }
+      
       setSearchQuery('');
     }
   };
@@ -66,7 +79,17 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
   const handleGoToBasecamp = () => {
     if (basecamp?.address) {
       setCurrentLocation(basecamp.address);
+      setIsShowingDirections(false);
     }
+  };
+
+  const handleEditBasecamp = () => {
+    setIsBasecampSelectorOpen(true);
+  };
+
+  const handleBasecampSet = (newBasecamp: any) => {
+    setIsBasecampSelectorOpen(false);
+    // The basecamp context will handle the update
   };
 
   const handleIframeLoad = () => {
@@ -97,7 +120,7 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={isBasecampSet ? `Search near your basecamp...` : "Search locations on map..."}
+            placeholder={isBasecampSet ? `Search places from your basecamp...` : "Search locations on map..."}
             className="w-full bg-white/95 backdrop-blur-sm border border-gray-300 rounded-xl pl-10 pr-4 py-3 text-gray-800 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all shadow-lg text-sm"
           />
         </form>
@@ -141,49 +164,75 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
       {/* Current Location Display */}
       <div className="absolute bottom-4 left-4 right-4 z-20">
         <div className={`backdrop-blur-sm rounded-lg px-4 py-2 flex items-center justify-between transition-all ${
-          isBasecampSet && currentLocation === basecamp?.address
+          isBasecampSet && currentLocation === basecamp?.address && !isShowingDirections
             ? 'bg-green-600/95 border border-green-500/50 shadow-lg shadow-green-500/25'
+            : isShowingDirections && isBasecampSet
+            ? 'bg-blue-600/95 border border-blue-500/50 shadow-lg shadow-blue-500/25'
             : 'bg-white/95'
         }`}>
           <div className="flex items-center gap-2">
-            {isBasecampSet && currentLocation === basecamp?.address ? (
+            {isBasecampSet && currentLocation === basecamp?.address && !isShowingDirections ? (
               <Home size={16} className="text-white" />
+            ) : isShowingDirections && isBasecampSet ? (
+              <MapPin size={16} className="text-white" />
             ) : (
               <MapPin size={16} className="text-blue-600" />
             )}
             <span className={`text-sm font-medium ${
-              isBasecampSet && currentLocation === basecamp?.address
+              (isBasecampSet && currentLocation === basecamp?.address && !isShowingDirections) || (isShowingDirections && isBasecampSet)
                 ? 'text-white'
                 : 'text-gray-800'
             }`}>
-              {isBasecampSet && currentLocation === basecamp?.address ? (
-                <>🏠 {basecamp?.name || currentLocation}</>
+              {isShowingDirections && isBasecampSet ? (
+                <>📍 Directions to {currentLocation}</>
+              ) : isBasecampSet && currentLocation === basecamp?.address ? (
+                <>🏠 {basecamp?.name || basecamp?.address}</>
               ) : (
                 currentLocation
               )}
             </span>
           </div>
-          <a
-            href={
-              isBasecampSet && currentLocation === basecamp?.address
-                ? `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(currentLocation)}`
-                : `https://www.google.com/maps/search/${encodeURIComponent(currentLocation)}`
-            }
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`transition-colors ${
-              isBasecampSet && currentLocation === basecamp?.address
-                ? 'text-white hover:text-green-100'
-                : 'text-blue-600 hover:text-blue-800'
-            }`}
-            title={
-              isBasecampSet && currentLocation === basecamp?.address
-                ? "Get directions from your basecamp"
-                : "View on Google Maps"
-            }
-          >
-            <ExternalLink size={16} />
-          </a>
+          <div className="flex items-center gap-2">
+            {/* Edit Basecamp Button (only show when at basecamp or when basecamp is set) */}
+            {isBasecampSet && (
+              <button
+                onClick={handleEditBasecamp}
+                className={`transition-colors ${
+                  (isBasecampSet && currentLocation === basecamp?.address && !isShowingDirections) || (isShowingDirections && isBasecampSet)
+                    ? 'text-white hover:text-green-100'
+                    : 'text-blue-600 hover:text-blue-800'
+                }`}
+                title="Edit basecamp"
+              >
+                <Edit2 size={14} />
+              </button>
+            )}
+            <a
+              href={
+                isShowingDirections && isBasecampSet
+                  ? `https://www.google.com/maps/dir/${encodeURIComponent(basecamp?.address || '')},${encodeURIComponent(currentLocation)}`
+                  : isBasecampSet && currentLocation === basecamp?.address
+                  ? `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(currentLocation)}`
+                  : `https://www.google.com/maps/search/${encodeURIComponent(currentLocation)}`
+              }
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`transition-colors ${
+                (isBasecampSet && currentLocation === basecamp?.address && !isShowingDirections) || (isShowingDirections && isBasecampSet)
+                  ? 'text-white hover:text-green-100'
+                  : 'text-blue-600 hover:text-blue-800'
+              }`}
+              title={
+                isShowingDirections && isBasecampSet
+                  ? "Open directions in Google Maps"
+                  : isBasecampSet && currentLocation === basecamp?.address
+                  ? "Get directions from your basecamp"
+                  : "View on Google Maps"
+              }
+            >
+              <ExternalLink size={16} />
+            </a>
+          </div>
         </div>
       </div>
 
@@ -249,6 +298,14 @@ export const WorkingGoogleMaps = ({ className }: WorkingGoogleMapsProps) => {
           onError={handleIframeError}
         />
       )}
+
+      {/* Basecamp Selector Modal */}
+      <BasecampSelector
+        isOpen={isBasecampSelectorOpen}
+        onClose={() => setIsBasecampSelectorOpen(false)}
+        onBasecampSet={handleBasecampSet}
+        currentBasecamp={basecamp}
+      />
     </div>
   );
 };
