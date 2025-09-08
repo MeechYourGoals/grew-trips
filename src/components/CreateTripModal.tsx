@@ -8,6 +8,8 @@ import { Checkbox } from './ui/checkbox';
 import { DEFAULT_FEATURES } from '../hooks/useFeatureToggle';
 import { useTrips } from '../hooks/useTrips';
 import { toast } from 'sonner';
+import { PrivacyModeSelector } from './PrivacyModeSelector';
+import { PrivacyMode, getDefaultPrivacyMode } from '../types/privacy';
 
 interface CreateTripModalProps {
   isOpen: boolean;
@@ -16,6 +18,7 @@ interface CreateTripModalProps {
 
 export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
   const [tripType, setTripType] = useState<'consumer' | 'pro' | 'event'>('consumer');
+  const [privacyMode, setPrivacyMode] = useState<PrivacyMode>(() => getDefaultPrivacyMode('consumer'));
   const [formData, setFormData] = useState({
     title: '',
     location: '',
@@ -30,6 +33,12 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
   const [selectedFeatures, setSelectedFeatures] = useState<Record<string, boolean>>(
     DEFAULT_FEATURES.reduce((acc, feature) => ({ ...acc, [feature]: true }), {})
   );
+
+  // Update privacy mode when trip type changes
+  const handleTripTypeChange = (newTripType: 'consumer' | 'pro' | 'event') => {
+    setTripType(newTripType);
+    setPrivacyMode(getDefaultPrivacyMode(newTripType));
+  };
 
   if (!isOpen) return null;
 
@@ -48,7 +57,9 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
         start_date: formData.startDate || undefined,
         end_date: formData.endDate || undefined,
         destination: formData.location || undefined,
-        trip_type: tripType
+        trip_type: tripType,
+        privacy_mode: privacyMode,
+        ai_access_enabled: privacyMode === 'standard'
       };
       
       const newTrip = await createTrip(tripData);
@@ -65,6 +76,7 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
           description: ''
         });
         setTripType('consumer');
+        setPrivacyMode(getDefaultPrivacyMode('consumer'));
       } else {
         toast.error('Failed to create trip. Please try again.');
       }
@@ -122,7 +134,7 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
           <ToggleGroup
             type="single"
             value={tripType}
-            onValueChange={(value) => value && setTripType(value as 'consumer' | 'pro' | 'event')}
+            onValueChange={(value) => value && handleTripTypeChange(value as 'consumer' | 'pro' | 'event')}
             className="grid grid-cols-3 gap-2 bg-slate-700/30 p-1 rounded-xl"
           >
             <ToggleGroupItem
@@ -227,6 +239,16 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
               rows={3}
               className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder-slate-400 focus:border-blue-500 focus:outline-none transition-colors resize-none"
               placeholder="Tell us about your trip..."
+            />
+          </div>
+
+          {/* Privacy Settings */}
+          <div>
+            <PrivacyModeSelector
+              tripType={tripType}
+              selectedMode={privacyMode}
+              onModeChange={setPrivacyMode}
+              showOverrideOption={true}
             />
           </div>
 

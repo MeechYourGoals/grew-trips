@@ -30,6 +30,9 @@ export interface Trip {
   enabled_features?: string[];
   trip_type?: 'consumer' | 'pro' | 'event';
   archived?: boolean;
+  // Privacy settings
+  privacy_mode?: 'standard' | 'high';
+  ai_access_enabled?: boolean;
 }
 
 export const tripsData: Trip[] = [

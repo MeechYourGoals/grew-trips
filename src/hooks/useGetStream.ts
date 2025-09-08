@@ -3,6 +3,7 @@ import { StreamChat, Channel } from 'stream-chat';
 import { getStreamService } from '@/services/getStreamService';
 import { useAuth } from './useAuth';
 import { supabase } from '@/integrations/supabase/client';
+import { PrivacyMode } from '../types/privacy';
 
 export const useGetStream = () => {
   const [client, setClient] = useState<StreamChat | null>(null);
@@ -55,11 +56,11 @@ export const useGetStream = () => {
     };
   }, [user]);
 
-  const getTripChannel = async (tripId: string): Promise<Channel | null> => {
+  const getTripChannel = async (tripId: string, privacyMode?: PrivacyMode): Promise<Channel | null> => {
     if (!client) return null;
 
     try {
-      return await getStreamService.getOrCreateTripChannel(tripId);
+      return await getStreamService.getOrCreateTripChannel(tripId, privacyMode);
     } catch (err) {
       console.error('Failed to get trip channel:', err);
       setError(err instanceof Error ? err.message : 'Failed to access chat channel');

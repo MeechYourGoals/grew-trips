@@ -1,5 +1,7 @@
 import { StreamChat, Channel, User } from 'stream-chat';
 import { supabase } from '@/integrations/supabase/client';
+import { privacyService } from './privacyService';
+import { PrivacyMode } from '../types/privacy';
 
 export class GetStreamService {
   private static instance: GetStreamService;
@@ -56,7 +58,7 @@ export class GetStreamService {
     }
   }
 
-  async getOrCreateTripChannel(tripId: string): Promise<Channel> {
+  async getOrCreateTripChannel(tripId: string, privacyMode?: PrivacyMode): Promise<Channel> {
     if (!this.client) {
       throw new Error('GetStream client not initialized');
     }
@@ -64,10 +66,29 @@ export class GetStreamService {
     const channelId = `trip-${tripId}`;
     const channel = this.client.channel('messaging', channelId, {
       members: [], // Will be populated dynamically
+      privacy_mode: privacyMode || 'standard',
+      ai_access_enabled: privacyMode === 'standard',
     });
 
     await channel.create();
     return channel;
+  }
+
+  // Send message with privacy-aware encryption
+  async sendMessage(channel: Channel, content: string, privacyMode: PrivacyMode = 'standard'): Promise<void> {
+    const tripId = channel.id?.replace('trip-', '') || '';
+    
+    const { content: processedContent, encrypted } = await privacyService.prepareMessageForSending(
+      content,
+      tripId,
+      privacyMode
+    );
+
+    await channel.sendMessage({
+      text: processedContent,
+      privacy_encrypted: encrypted,
+      privacy_mode: privacyMode,
+    });
   }
 
   async disconnectUser(): Promise<void> {

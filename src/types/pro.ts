@@ -303,6 +303,9 @@ export interface ProTripData {
   // Feature toggles for Pro/Event trips
   enabled_features?: string[];
   archived?: boolean;
+  // Privacy settings
+  privacy_mode?: 'standard' | 'high';
+  ai_access_enabled?: boolean;
   
   // Media content for pro trips
   photos?: Array<{
