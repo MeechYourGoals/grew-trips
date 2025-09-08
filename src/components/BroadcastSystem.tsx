@@ -158,7 +158,7 @@ export const BroadcastSystem = ({ tourId }: BroadcastSystemProps) => {
               )}
             </div>
             
-            <p className="text-white mb-3 leading-relaxed">{broadcast.message}</p>
+            <p className="text-white mb-3 leading-relaxed font-bold">{broadcast.message}</p>
             
             <div className="flex items-center justify-between">
               <div className="text-gray-400 text-xs">

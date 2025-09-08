@@ -94,7 +94,7 @@ export const Broadcast = ({
       </div>
 
       {/* Message */}
-      <p className="text-white mb-3 leading-relaxed">{message}</p>
+      <p className="text-white mb-3 leading-relaxed font-bold">{message}</p>
 
       {/* Location */}
       {location && (

@@ -296,7 +296,7 @@ export const TripChat = ({
                   )}
                   
                   {/* Message Text */}
-                  <div className={`leading-relaxed ${message.isBroadcast ? 'text-black font-medium' : ''}`}>{message.text}</div>
+                  <div className={`leading-relaxed ${message.isBroadcast ? 'text-black font-bold' : ''}`}>{message.text}</div>
                 </div>
                 
                 {/* Message Actions */}
