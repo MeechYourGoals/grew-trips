@@ -11,6 +11,7 @@ import { MessageReactionBar } from './chat/MessageReactionBar';
 import { InlineReplyComponent } from './chat/InlineReplyComponent';
 import { ReplyData } from './chat/types';
 import { getMockAvatar } from '../utils/mockAvatars';
+import { useTripMembers } from '../hooks/useTripMembers';
 
 interface TripChatProps {
   groupChatEnabled?: boolean;
@@ -49,6 +50,7 @@ export const TripChat = ({
   const { tripId } = useParams();
   const demoMode = useDemoMode();
   const { parseMessage } = useChatMessageParser();
+  const { tripMembers } = useTripMembers(tripId);
 
   const formatTime = (timestamp: string) => {
     const date = new Date(timestamp);
@@ -340,12 +342,7 @@ export const TripChat = ({
           onKeyPress={handleKeyPress}
           apiKey=""
           isTyping={false}
-          tripMembers={[
-            { id: 'user1', name: 'You', avatar: getMockAvatar('You') },
-            { id: 'user2', name: 'Jamie Chen', avatar: getMockAvatar('Jamie Chen') },
-            { id: 'user3', name: 'Alex Rivera', avatar: getMockAvatar('Alex Rivera') },
-            { id: 'user4', name: 'Sam Johnson', avatar: getMockAvatar('Sam Johnson') }
-          ]}
+          tripMembers={tripMembers}
         />
       </div>
     </div>
