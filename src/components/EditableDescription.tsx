@@ -95,13 +95,13 @@ export const EditableDescription = ({
   }
 
   return (
-    <div className="relative">
+    <div className="relative pb-12">
       <p className={className}>
         {description || 'No description added yet. Click to add one.'}
       </p>
       <button
         onClick={() => setIsEditing(true)}
-        className="absolute bottom-0 left-0 p-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-all duration-200 text-gray-400 hover:text-white"
+        className="absolute bottom-2 left-0 p-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-all duration-200 text-gray-400 hover:text-white"
         title="Edit description"
       >
         <Edit size={16} />
