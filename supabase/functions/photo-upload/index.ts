@@ -2,11 +2,28 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+/**
+ * @description Supabase edge function for handling trip photo uploads.
+ * It validates that the file is an image, uploads it to the `trip-photos` storage bucket,
+ * and saves the photo's metadata (including a caption) to the `trip_photos` table.
+ *
+ * @param {Request} req - The incoming request object, expected to be multipart/form-data.
+ * @param {FormData} req.formData - The form data containing the photo and metadata.
+ * @param {File} req.formData.file - The photo file to upload.
+ * @param {string} req.formData.tripId - The ID of the trip the photo belongs to.
+ * @param {string} req.formData.userId - The ID of the user uploading the photo.
+ * @param {string} [req.formData.caption] - An optional caption for the photo.
+ *
+ * @returns {Response} A response object with the database record for the photo and its public URL.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });

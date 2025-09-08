@@ -2,11 +2,27 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+/**
+ * @description A Supabase edge function that uses OpenAI's `gpt-4o` vision model to parse
+ * an image of a receipt and extract structured data from it. The extracted data is then
+ * saved to the `trip_receipts` table.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.receiptImageUrl - The URL of the receipt image to parse.
+ * @param {string} req.body.tripId - The ID of the trip the receipt belongs to.
+ * @param {string} req.body.userId - The ID of the user who uploaded the receipt.
+ *
+ * @returns {Response} A response object with the created receipt record and the full parsed data.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });

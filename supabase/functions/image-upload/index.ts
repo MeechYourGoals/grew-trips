@@ -1,11 +1,26 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+/**
+ * @description Supabase edge function for handling image uploads, specifically for advertiser assets.
+ * It authenticates the user, validates the image file (type and size), and uploads it
+ * to a public 'advertiser-assets' bucket in Supabase Storage.
+ *
+ * @param {Request} req - The incoming request object, expected to be multipart/form-data.
+ * @param {FormData} req.formData - The form data containing the file.
+ * @param {File} req.formData.file - The image file to upload.
+ * @param {string} [req.formData.folder='ad-images'] - The subfolder within the bucket to upload to.
+ *
+ * @returns {Response} A response object containing the public URL of the uploaded image.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });

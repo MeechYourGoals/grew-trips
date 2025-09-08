@@ -2,6 +2,9 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.53.0';
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -10,6 +13,21 @@ const corsHeaders = {
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
+/**
+ * @description A background task to parse chat messages for URLs and media links.
+ * It extracts all URLs from a message, categorizes them as either media files or
+ * general links, and saves them to the `trip_media_index` or `trip_link_index`
+ * tables respectively. For general links, it attempts to fetch Open Graph metadata
+ * to create a rich preview.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.messageId - The ID of the message to parse.
+ * @param {string} req.body.content - The text content of the message.
+ * @param {string} req.body.tripId - The ID of the trip the message belongs to.
+ *
+ * @returns {Response} A response object indicating the number of URLs processed.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });

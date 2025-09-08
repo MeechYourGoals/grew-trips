@@ -6,11 +6,17 @@ const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!
 
+/**
+ * @description Interface for a single message in a chat conversation, following Perplexity's format.
+ */
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant'
   content: string | Array<{ type: 'text' | 'image_url'; text?: string; image_url?: { url: string } }>
 }
 
+/**
+ * @description Interface for the request body of the `perplexity-chat` function.
+ */
 interface PerplexityRequest {
   message: string
   tripContext?: any
@@ -25,6 +31,16 @@ interface PerplexityRequest {
   analysisType?: 'chat' | 'sentiment' | 'review' | 'audio' | 'image'
 }
 
+/**
+ * @description A Supabase edge function that acts as a proxy to the Perplexity AI Chat Completions API.
+ * This is the primary AI chat function in the application. It builds a highly detailed,
+ * context-aware system prompt to give the AI a specific persona and access to trip information.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {PerplexityRequest} req.body - The JSON body of the request, containing the message and configuration.
+ *
+ * @returns {Response} A response object with the AI's response, token usage, and other metadata.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -137,6 +153,16 @@ serve(async (req) => {
   }
 })
 
+/**
+ * @description Builds a highly detailed and persona-driven system prompt for the Perplexity AI.
+ * It includes instructions on communication style, formatting, and injects a wealth of
+ * contextual information about the trip.
+ *
+ * @param {any} tripContext - An object containing context about the current trip.
+ * @param {string} analysisType - The type of analysis being performed.
+ * @param {string} [customPrompt] - An optional custom prompt to override the default.
+ * @returns {string} The generated system prompt.
+ */
 function buildSystemPrompt(tripContext: any, analysisType: string, customPrompt?: string): string {
   if (customPrompt) return customPrompt
 
@@ -274,6 +300,15 @@ function buildSystemPrompt(tripContext: any, analysisType: string, customPrompt?
   return basePrompt
 }
 
+/**
+ * @description Stores a user message and the corresponding AI response in the `ai_conversations` table.
+ *
+ * @param {any} supabase - The Supabase client instance.
+ * @param {string} tripId - The ID of the trip the conversation belongs to.
+ * @param {string} userMessage - The user's message.
+ * @param {string} aiResponse - The AI's response.
+ * @param {string} type - The type of conversation or analysis.
+ */
 async function storeConversation(supabase: any, tripId: string, userMessage: string, aiResponse: string, type: string) {
   try {
     await supabase
@@ -290,6 +325,14 @@ async function storeConversation(supabase: any, tripId: string, userMessage: str
   }
 }
 
+/**
+ * @description Performs a simple keyword-based sentiment analysis on a text.
+ * This is a basic implementation and could be replaced with a more sophisticated NLP service.
+ *
+ * @param {string} userMessage - The user's message to analyze.
+ * @param {string} aiResponse - The AI's response (currently unused in this simple version).
+ * @returns {Promise<number>} A promise that resolves to a sentiment score between -1 (negative) and 1 (positive).
+ */
 async function analyzeSentiment(userMessage: string, aiResponse: string): Promise<number> {
   // Simple sentiment analysis - can be enhanced with more sophisticated methods
   const positiveWords = ['great', 'awesome', 'love', 'excellent', 'amazing', 'wonderful', 'fantastic', 'good', 'happy', 'excited']

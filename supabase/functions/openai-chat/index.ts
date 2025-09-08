@@ -2,15 +2,24 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from "../_shared/cors.ts"
 
+/**
+ * @description The OpenAI API key, retrieved from environment variables.
+ */
 const OPENAI_API_KEY = Deno.env.get('OPENAI_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!
 
+/**
+ * @description Interface for a single message in a chat conversation, following OpenAI's format.
+ */
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant'
   content: string | Array<{ type: 'text' | 'image_url'; text?: string; image_url?: { url: string } }>
 }
 
+/**
+ * @description Interface for the request body of the `openai-chat` function.
+ */
 interface OpenAIRequest {
   message: string
   tripContext?: any
@@ -25,6 +34,16 @@ interface OpenAIRequest {
   analysisType?: 'chat' | 'sentiment' | 'review' | 'audio' | 'image'
 }
 
+/**
+ * @description A versatile Supabase edge function that acts as a configurable proxy to the OpenAI Chat Completions API.
+ * It can handle text-based chat, image analysis (vision), and other specialized AI tasks. It builds a
+ * context-aware system prompt, logs conversations, and can perform post-processing like sentiment analysis.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {OpenAIRequest} req.body - The JSON body of the request, containing the message and configuration.
+ *
+ * @returns {Response} A response object with the AI's response, token usage, and other metadata.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
@@ -134,6 +153,14 @@ serve(async (req) => {
   }
 })
 
+/**
+ * @description Builds a dynamic system prompt for the AI based on the trip context and analysis type.
+ *
+ * @param {any} tripContext - An object containing context about the current trip.
+ * @param {string} analysisType - The type of analysis being performed, which influences the prompt.
+ * @param {string} [customPrompt] - An optional custom prompt that will override the dynamic generation.
+ * @returns {string} The generated system prompt.
+ */
 function buildSystemPrompt(tripContext: any, analysisType: string, customPrompt?: string): string {
   if (customPrompt) return customPrompt
 
@@ -171,6 +198,15 @@ function buildSystemPrompt(tripContext: any, analysisType: string, customPrompt?
   return basePrompt
 }
 
+/**
+ * @description Stores a user message and the corresponding AI response in the `ai_conversations` table.
+ *
+ * @param {any} supabase - The Supabase client instance.
+ * @param {string} tripId - The ID of the trip the conversation belongs to.
+ * @param {string} userMessage - The user's message.
+ * @param {string} aiResponse - The AI's response.
+ * @param {string} type - The type of conversation or analysis.
+ */
 async function storeConversation(supabase: any, tripId: string, userMessage: string, aiResponse: string, type: string) {
   try {
     await supabase
@@ -187,6 +223,14 @@ async function storeConversation(supabase: any, tripId: string, userMessage: str
   }
 }
 
+/**
+ * @description Performs a simple keyword-based sentiment analysis on a text.
+ * This is a basic implementation and could be replaced with a more sophisticated NLP service.
+ *
+ * @param {string} userMessage - The user's message to analyze.
+ * @param {string} aiResponse - The AI's response (currently unused in this simple version).
+ * @returns {Promise<number>} A promise that resolves to a sentiment score between -1 (negative) and 1 (positive).
+ */
 async function analyzeSentiment(userMessage: string, aiResponse: string): Promise<number> {
   // Simple sentiment analysis - can be enhanced with more sophisticated methods
   const positiveWords = ['great', 'awesome', 'love', 'excellent', 'amazing', 'wonderful', 'fantastic', 'good', 'happy', 'excited']

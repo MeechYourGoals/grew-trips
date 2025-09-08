@@ -1,11 +1,32 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+/**
+ * @description Supabase edge function for fetching broadcast messages for a trip.
+ * It authenticates the user, verifies their trip membership, and then retrieves
+ * broadcasts, optionally filtering by tag or sender. It also aggregates
+ * reaction counts for each broadcast.
+ *
+ * The `trip_id` should be provided as the last segment of the URL path.
+ * e.g., `.../broadcasts-fetch/trip-uuid-1234`
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {URLSearchParams} req.url.searchParams - The query parameters.
+ * @param {string} [req.url.searchParams.tag] - An optional tag to filter by (e.g., 'urgent').
+ * @param {string} [req.url.searchParams.sender_id] - An optional sender ID to filter by.
+ *
+ * @returns {Response} A response object containing the list of broadcasts.
+ * @returns {object} Response.body.broadcasts - An array of broadcast objects.
+ * @returns {object} Response.body.error - An error message if something went wrong.
+ */
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {

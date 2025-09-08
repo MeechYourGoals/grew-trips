@@ -1,12 +1,30 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
 };
 
+/**
+ * @description Supabase edge function for searching the AI knowledge base for a specific trip.
+ * It takes a user's query, generates an embedding for it, and then performs a vector
+ * similarity search against the trip's ingested data using the `match_kb_chunks` RPC.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.query - The user's search query.
+ * @param {string} req.body.tripId - The ID of the trip to search within.
+ * @param {number} [req.body.limit=16] - The maximum number of search results to return.
+ *
+ * @returns {Response} A response object containing the search results.
+ * @returns {object} Response.body.results - An array of search result objects.
+ * @returns {object} Response.body.error - An error message if something went wrong.
+ */
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {

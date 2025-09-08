@@ -3,6 +3,20 @@ import { StreamChat } from 'https://esm.sh/stream-chat@9.10.0';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from "../_shared/cors.ts";
 
+/**
+ * @description Supabase edge function to securely generate a client-side token for GetStream chat.
+ * It authenticates the user, creates or updates the user profile in GetStream, and then
+ * generates a time-limited token that the client application can use to connect to the
+ * chat service.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.user_id - The ID of the user to generate a token for.
+ * @param {string} req.body.user_name - The display name of the user.
+ * @param {string} [req.body.user_avatar] - An optional URL to the user's avatar.
+ *
+ * @returns {Response} A response object containing the GetStream token and API key.
+ */
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {

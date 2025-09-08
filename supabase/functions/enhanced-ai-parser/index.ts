@@ -7,6 +7,21 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_ANON_KEY') ?? ''
 );
 
+/**
+ * @description Supabase edge function that serves as a dispatcher for advanced AI parsing tasks.
+ * It uses OpenAI's `gpt-4o` model to extract structured data from various inputs like
+ * text messages, images, and documents.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.extractionType - The type of parsing to perform ('calendar', 'todo', 'photo_analysis', 'document_parse').
+ * @param {string} [req.body.messageText] - The text content to parse.
+ * @param {string} [req.body.fileUrl] - The URL of a file (e.g., image) to parse.
+ * @param {string} [req.body.fileType] - The MIME type of the file.
+ * @param {string} [req.body.tripId] - The ID of the associated trip.
+ *
+ * @returns {Response} A response object containing the extracted data.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -39,6 +54,14 @@ serve(async (req) => {
   }
 });
 
+/**
+ * @description Extracts structured calendar event data from text and/or images using OpenAI's `gpt-4o`.
+ *
+ * @param {string} messageText - The text content to analyze.
+ * @param {string} [fileUrl] - An optional URL to an image or document to analyze.
+ * @param {string} [fileType] - The MIME type of the file at `fileUrl`.
+ * @returns {Promise<Response>} A promise that resolves to a response object with the extracted event data.
+ */
 async function extractCalendarEvents(messageText: string, fileUrl?: string, fileType?: string) {
   const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
   
@@ -119,6 +142,13 @@ async function extractCalendarEvents(messageText: string, fileUrl?: string, file
   );
 }
 
+/**
+ * @description Extracts actionable to-do items from a text message using OpenAI's `gpt-4o`.
+ *
+ * @param {string} messageText - The text content to analyze.
+ * @param {string} tripId - The ID of the trip this to-do list is for.
+ * @returns {Promise<Response>} A promise that resolves to a response object with the extracted to-do items.
+ */
 async function extractTodoItems(messageText: string, tripId: string) {
   const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
   
@@ -182,6 +212,13 @@ async function extractTodoItems(messageText: string, tripId: string) {
   );
 }
 
+/**
+ * @description Analyzes the content of a travel photo using OpenAI's `gpt-4o` vision capabilities.
+ * It extracts information like location, activity, mood, and suggests tags.
+ *
+ * @param {string} fileUrl - The URL of the photo to analyze.
+ * @returns {Promise<Response>} A promise that resolves to a response object with the photo analysis.
+ */
 async function analyzePhoto(fileUrl: string) {
   const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
   
@@ -252,6 +289,14 @@ async function analyzePhoto(fileUrl: string) {
   );
 }
 
+/**
+ * @description Parses an image of a document (e.g., ticket, receipt) using OpenAI's `gpt-4o`.
+ * It extracts all readable text and attempts to structure key information.
+ *
+ * @param {string} fileUrl - The URL of the document image to parse.
+ * @param {string} fileType - The MIME type of the file.
+ * @returns {Promise<Response>} A promise that resolves to a response object with the parsed document data.
+ */
 async function parseDocument(fileUrl: string, fileType: string) {
   const openaiApiKey = Deno.env.get('OPENAI_API_KEY');
   
@@ -325,6 +370,15 @@ async function parseDocument(fileUrl: string, fileType: string) {
   );
 }
 
+/**
+ * @description A helper function to construct the user message payload for the OpenAI API.
+ * It combines text and image URLs into the format required by `gpt-4o`.
+ *
+ * @param {string} messageText - The text part of the message.
+ * @param {string} [fileUrl] - An optional URL to an image.
+ * @param {string} [fileType] - The MIME type of the file at `fileUrl`.
+ * @returns {Array<object>} An array of content blocks for the OpenAI API.
+ */
 function buildUserMessage(messageText: string, fileUrl?: string, fileType?: string): any {
   const content = [
     {

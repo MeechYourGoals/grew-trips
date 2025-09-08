@@ -2,11 +2,28 @@ import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+/**
+ * @description Supabase edge function for parsing uploaded files using AI.
+ * This function is triggered after a file upload. It takes a file URL and an extraction type,
+ * uses OpenAI's `gpt-4o` to parse the file, and then saves the extracted data back to the
+ * `file_ai_extractions` table in the database.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.fileId - The ID of the file in the `trip_files` table.
+ * @param {string} req.body.fileUrl - The public URL of the uploaded file to parse.
+ * @param {string} req.body.extractionType - The type of data to extract ('calendar', 'text', 'itinerary', 'general').
+ *
+ * @returns {Response} A response object containing the saved extraction record.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -82,6 +99,12 @@ serve(async (req) => {
   }
 });
 
+/**
+ * @description Extracts structured calendar event data from an image of a document.
+ *
+ * @param {string} fileUrl - The URL of the file to parse.
+ * @returns {Promise<object>} A promise that resolves to the extracted calendar event data.
+ */
 async function extractCalendarEvents(fileUrl: string) {
   const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -142,6 +165,12 @@ async function extractCalendarEvents(fileUrl: string) {
   return JSON.parse(result.choices[0].message.content);
 }
 
+/**
+ * @description Extracts all readable text from an image of a document (OCR).
+ *
+ * @param {string} fileUrl - The URL of the file to parse.
+ * @returns {Promise<object>} A promise that resolves to an object containing the extracted text.
+ */
 async function extractText(fileUrl: string) {
   const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -174,6 +203,12 @@ async function extractText(fileUrl: string) {
   return { text: result.choices[0].message.content };
 }
 
+/**
+ * @description Extracts a structured travel itinerary from an image of a document.
+ *
+ * @param {string} fileUrl - The URL of the file to parse.
+ * @returns {Promise<object>} A promise that resolves to the extracted itinerary data.
+ */
 async function extractItinerary(fileUrl: string) {
   const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',
@@ -240,6 +275,13 @@ async function extractItinerary(fileUrl: string) {
   return JSON.parse(result.choices[0].message.content);
 }
 
+/**
+ * @description A general-purpose extraction function that pulls any potentially useful
+ * information from an image of a document.
+ *
+ * @param {string} fileUrl - The URL of the file to parse.
+ * @returns {Promise<object>} A promise that resolves to an object containing the extracted content.
+ */
 async function extractGeneral(fileUrl: string) {
   const openAIResponse = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',

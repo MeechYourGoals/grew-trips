@@ -7,6 +7,19 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_ANON_KEY') ?? ''
 );
 
+/**
+ * @description Supabase edge function for integrating with Google Calendar.
+ * This function handles the OAuth 2.0 flow, token management, and two-way
+ * synchronization of calendar events. It acts as a dispatcher based on the
+ * `action` parameter.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.action - The specific Google Calendar action to perform.
+ * @param {*} [req.body.*] - Other parameters specific to the chosen action.
+ *
+ * @returns {Response} A response object containing the result of the Google Calendar operation.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -41,6 +54,13 @@ serve(async (req) => {
   }
 });
 
+/**
+ * @description Handles the Google OAuth 2.0 callback. It exchanges an authorization code
+ * for an access token and a refresh token, then stores them in the database.
+ *
+ * @param {string} code - The authorization code from the Google OAuth callback.
+ * @returns {Promise<Response>} A promise that resolves to a response object with the new calendar connection record.
+ */
 async function handleAuthCallback(code: string) {
   const clientId = Deno.env.get('GOOGLE_CALENDAR_CLIENT_ID');
   const clientSecret = Deno.env.get('GOOGLE_CALENDAR_CLIENT_SECRET');
@@ -92,6 +112,15 @@ async function handleAuthCallback(code: string) {
   );
 }
 
+/**
+ * @description Pushes an event from this application to the user's Google Calendar.
+ * It also creates a record to track the synchronization between the internal and external event.
+ *
+ * @param {object} eventData - The internal event object from the `trip_events` table.
+ * @param {string} accessToken - The user's Google API access token.
+ * @param {string} calendarId - The ID of the Google Calendar to add the event to (e.g., 'primary').
+ * @returns {Promise<Response>} A promise that resolves to a response object with the created Google Calendar event.
+ */
 async function syncEventToGoogle(eventData: any, accessToken: string, calendarId: string) {
   const googleEvent = {
     summary: eventData.title,
@@ -148,6 +177,14 @@ async function syncEventToGoogle(eventData: any, accessToken: string, calendarId
   );
 }
 
+/**
+ * @description Fetches events from a user's Google Calendar for the next year.
+ *
+ * @param {string} userId - The ID of the user performing the import.
+ * @param {string} accessToken - The user's Google API access token.
+ * @param {string} calendarId - The ID of the Google Calendar to fetch events from.
+ * @returns {Promise<Response>} A promise that resolves to a response object with the list of Google Calendar events.
+ */
 async function importFromGoogle(userId: string, accessToken: string, calendarId: string) {
   const timeMin = new Date().toISOString();
   const timeMax = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(); // 1 year ahead
@@ -184,6 +221,12 @@ async function importFromGoogle(userId: string, accessToken: string, calendarId:
   );
 }
 
+/**
+ * @description Retrieves a list of all calendars the user has access to in their Google account.
+ *
+ * @param {string} accessToken - The user's Google API access token.
+ * @returns {Promise<Response>} A promise that resolves to a response object with the list of calendars.
+ */
 async function getUserCalendars(accessToken: string) {
   const response = await fetch(
     'https://www.googleapis.com/calendar/v3/users/me/calendarList',
@@ -213,6 +256,12 @@ async function getUserCalendars(accessToken: string) {
   );
 }
 
+/**
+ * @description Refreshes an expired Google API access token using a stored refresh token.
+ *
+ * @param {string} userId - The ID of the user whose access token needs to be refreshed.
+ * @returns {Promise<Response>} A promise that resolves to a response object with the new access token.
+ */
 async function refreshAccessToken(userId: string) {
   const { data: connection, error } = await supabase
     .from('calendar_connections')

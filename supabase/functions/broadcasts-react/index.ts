@@ -1,11 +1,29 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+/**
+ * @description Supabase edge function for adding or updating a reaction to a broadcast message.
+ * It authenticates the user and then upserts their reaction into the `broadcast_reactions`
+ * table. It returns the updated reaction counts for the broadcast.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.broadcast_id - The ID of the broadcast to react to.
+ * @param {string} req.body.reaction_type - The type of reaction ('coming', 'wait', or 'cant').
+ *
+ * @returns {Response} A response object containing the saved reaction and updated counts.
+ * @returns {object} Response.body.reaction - The reaction object that was created or updated.
+ * @returns {object} Response.body.counts - An object with the total counts for each reaction type.
+ * @returns {object} Response.body.error - An error message if something went wrong.
+ */
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {

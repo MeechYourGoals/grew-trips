@@ -2,6 +2,20 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { corsHeaders } from "../_shared/cors.ts";
 import { validateAndSanitizeInput, checkRateLimit, addSecurityHeaders } from "../_shared/security.ts";
 
+/**
+ * @description A secure backend proxy for the Google Maps API.
+ * This function keeps the Google Maps API key on the server-side, preventing it from
+ * being exposed in the client application. It acts as a dispatcher, forwarding requests
+ * to various Google Maps endpoints after applying security measures like rate limiting
+ * and input sanitization.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.endpoint - The Google Maps API endpoint to call.
+ * @param {object} [req.body.*] - Other parameters specific to the chosen endpoint.
+ *
+ * @returns {Response} A response object containing the data from the Google Maps API.
+ */
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {

@@ -7,6 +7,19 @@ const supabase = createClient(
   Deno.env.get('SUPABASE_ANON_KEY') ?? ''
 );
 
+/**
+ * @description A comprehensive notification dispatcher function. It provides a single entry point
+ * for sending notifications across different channels (push, email, SMS) and for managing
+ * user push notification tokens. It integrates with third-party services like FCM,
+ * SendGrid, and Twilio.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.action - The notification action to perform.
+ * @param {object} [req.body.*] - Other parameters specific to the chosen action.
+ *
+ * @returns {Response} A response object indicating the result of the notification action.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -41,6 +54,19 @@ serve(async (req) => {
   }
 });
 
+/**
+ * @description Sends a push notification using Firebase Cloud Messaging (FCM).
+ *
+ * @param {object} params - The parameters for sending the push notification.
+ * @param {string} params.userId - The ID of the user receiving the notification (for logging).
+ * @param {string|string[]} params.tokens - The FCM device token(s) to send the notification to.
+ * @param {string} params.title - The title of the notification.
+ * @param {string} params.body - The body content of the notification.
+ * @param {object} [params.data] - Optional data payload to send with the notification.
+ * @param {string} [params.icon] - Optional URL to an icon for the notification.
+ * @param {string} [params.badge] - Optional URL to a badge for the notification.
+ * @returns {Promise<Response>} A promise that resolves to a response object with the FCM result.
+ */
 async function sendPushNotification({ userId, tokens, title, body, data, icon, badge }: any) {
   const fcmServerKey = Deno.env.get('FCM_SERVER_KEY');
   
@@ -101,6 +127,17 @@ async function sendPushNotification({ userId, tokens, title, body, data, icon, b
   );
 }
 
+/**
+ * @description Sends an email notification using the SendGrid API.
+ *
+ * @param {object} params - The parameters for sending the email.
+ * @param {string} params.userId - The ID of the user receiving the email (for logging).
+ * @param {string} params.email - The recipient's email address.
+ * @param {string} params.subject - The subject of the email.
+ * @param {string} [params.content] - The plain text or HTML content of the email.
+ * @param {string} [params.template] - An optional SendGrid template to use.
+ * @returns {Promise<Response>} A promise that resolves to a response object indicating success.
+ */
 async function sendEmailNotification({ userId, email, subject, content, template }: any) {
   const sendgridApiKey = Deno.env.get('SENDGRID_API_KEY');
   
@@ -155,6 +192,15 @@ async function sendEmailNotification({ userId, email, subject, content, template
   );
 }
 
+/**
+ * @description Sends an SMS notification using the Twilio API.
+ *
+ * @param {object} params - The parameters for sending the SMS.
+ * @param {string} params.userId - The ID of the user receiving the SMS (for logging).
+ * @param {string} params.phoneNumber - The recipient's phone number.
+ * @param {string} params.message - The content of the SMS message.
+ * @returns {Promise<Response>} A promise that resolves to a response object with the Twilio result.
+ */
 async function sendSMSNotification({ userId, phoneNumber, message }: any) {
   const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
   const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN');
@@ -208,6 +254,15 @@ async function sendSMSNotification({ userId, phoneNumber, message }: any) {
   );
 }
 
+/**
+ * @description Saves or updates a user's push notification token in the database.
+ *
+ * @param {object} params - The parameters for saving the token.
+ * @param {string} params.userId - The ID of the user the token belongs to.
+ * @param {string} params.token - The push notification token from the device.
+ * @param {string} [params.platform='web'] - The platform of the device (e.g., 'web', 'ios', 'android').
+ * @returns {Promise<Response>} A promise that resolves to a response object with the saved token record.
+ */
 async function savePushToken({ userId, token, platform }: any) {
   const { data, error } = await supabase
     .from('push_tokens')
@@ -230,6 +285,14 @@ async function savePushToken({ userId, token, platform }: any) {
   );
 }
 
+/**
+ * @description Removes a specific push notification token for a user from the database.
+ *
+ * @param {object} params - The parameters for removing the token.
+ * @param {string} params.userId - The ID of the user the token belongs to.
+ * @param {string} params.token - The push notification token to remove.
+ * @returns {Promise<Response>} A promise that resolves to a response object indicating success.
+ */
 async function removePushToken({ userId, token }: any) {
   const { error } = await supabase
     .from('push_tokens')

@@ -1,6 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
@@ -92,6 +95,16 @@ const eventsData = [
   }
 ];
 
+/**
+ * @description A utility function to populate the `search_index` table with mock data.
+ * This script clears the existing index, processes hardcoded mock data for trips, pro trips,
+ * and events, transforms it into a unified search schema, and bulk-inserts it into the
+ * database. This is intended for development and demo purposes.
+ *
+ * @param {Request} req - The incoming request object.
+ *
+ * @returns {Response} A response object indicating the number of items added to the search index.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })

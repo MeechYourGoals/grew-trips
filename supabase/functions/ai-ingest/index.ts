@@ -1,12 +1,18 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
 };
 
+/**
+ * @description Interface for the request body of the `ai-ingest` function.
+ */
 interface IngestRequest {
   source: 'message' | 'poll' | 'broadcast' | 'file' | 'calendar' | 'link' | 'trip_batch';
   sourceId: string;
@@ -14,6 +20,21 @@ interface IngestRequest {
   content?: string;
 }
 
+/**
+ * @description Supabase edge function for ingesting data into the AI knowledge base.
+ * It takes content from various sources (messages, files, polls, etc.), generates a
+ * text embedding using OpenAI, and stores it in the `kb_documents` and `kb_chunks` tables.
+ * This allows the `ai-answer` function to find relevant context for user queries.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {IngestRequest} req.body - The JSON body of the request.
+ * @param {string} req.body.source - The type of data being ingested. Can be 'trip_batch' for batch ingestion.
+ * @param {string} req.body.sourceId - The ID of the data item in its source table.
+ * @param {string} req.body.tripId - The ID of the trip this data belongs to.
+ * @param {string} [req.body.content] - The text content to ingest. If not provided, it's fetched from the database.
+ *
+ * @returns {Response} A response object indicating the result of the ingestion.
+ */
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -223,7 +244,13 @@ serve(async (req) => {
   }
 });
 
-// Batch ingestion helpers
+/**
+ * @description Ingests all chat messages for a given trip into the knowledge base.
+ *
+ * @param {any} supabase - The Supabase client instance.
+ * @param {string} tripId - The ID of the trip to ingest messages for.
+ * @returns {Promise<object>} A promise that resolves to an object with the type and count of ingested items.
+ */
 async function ingestTripMessages(supabase: any, tripId: string) {
   const { data: messages } = await supabase
     .from('trip_chat_messages')
@@ -239,6 +266,13 @@ async function ingestTripMessages(supabase: any, tripId: string) {
   return { type: 'messages', count: results.length };
 }
 
+/**
+ * @description Ingests all polls for a given trip into the knowledge base.
+ *
+ * @param {any} supabase - The Supabase client instance.
+ * @param {string} tripId - The ID of the trip to ingest polls for.
+ * @returns {Promise<object>} A promise that resolves to an object with the type and count of ingested items.
+ */
 async function ingestTripPolls(supabase: any, tripId: string) {
   const { data: polls } = await supabase
     .from('trip_polls')
@@ -257,6 +291,13 @@ async function ingestTripPolls(supabase: any, tripId: string) {
   return { type: 'polls', count: results.length };
 }
 
+/**
+ * @description Ingests all files for a given trip into the knowledge base.
+ *
+ * @param {any} supabase - The Supabase client instance.
+ * @param {string} tripId - The ID of the trip to ingest files for.
+ * @returns {Promise<object>} A promise that resolves to an object with the type and count of ingested items.
+ */
 async function ingestTripFiles(supabase: any, tripId: string) {
   const { data: files } = await supabase
     .from('trip_files')
@@ -275,6 +316,13 @@ async function ingestTripFiles(supabase: any, tripId: string) {
   return { type: 'files', count: results.length };
 }
 
+/**
+ * @description Ingests all links for a given trip into the knowledge base.
+ *
+ * @param {any} supabase - The Supabase client instance.
+ * @param {string} tripId - The ID of the trip to ingest links for.
+ * @returns {Promise<object>} A promise that resolves to an object with the type and count of ingested items.
+ */
 async function ingestTripLinks(supabase: any, tripId: string) {
   const { data: links } = await supabase
     .from('trip_links')
@@ -293,6 +341,17 @@ async function ingestTripLinks(supabase: any, tripId: string) {
   return { type: 'links', count: results.length };
 }
 
+/**
+ * @description Ingests a single item into the knowledge base. This is a generic helper
+ * function used by the batch ingestion functions.
+ *
+ * @param {any} supabase - The Supabase client instance.
+ * @param {string} source - The source table of the item (e.g., 'trip_chat_messages').
+ * @param {string} sourceId - The ID of the item in its source table.
+ * @param {string} tripId - The ID of the trip the item belongs to.
+ * @param {string} content - The text content of the item to ingest.
+ * @returns {Promise<object>} A promise that resolves to an object indicating success or failure.
+ */
 async function ingestSingleItem(supabase: any, source: string, sourceId: string, tripId: string, content: string) {
   try {
     const embedding = await generateEmbedding(content);
@@ -334,6 +393,12 @@ async function ingestSingleItem(supabase: any, source: string, sourceId: string,
   }
 }
 
+/**
+ * @description Generates a text embedding for a given string using OpenAI's API.
+ *
+ * @param {string} text - The text to generate an embedding for.
+ * @returns {Promise<Array<number>>} A promise that resolves to the embedding vector.
+ */
 async function generateEmbedding(text: string) {
   const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!;
   

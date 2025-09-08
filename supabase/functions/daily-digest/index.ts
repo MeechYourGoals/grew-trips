@@ -1,17 +1,33 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+/**
+ * @description Interface for the POST request body of the `daily-digest` function.
+ */
 interface RequestBody {
   user_id: string;
   trip_id?: string;
   tour_id?: string;
 }
 
+/**
+ * @description Supabase edge function to generate and retrieve daily message digests.
+ * - A POST request generates a new digest by summarizing the last 24 hours of messages
+ *   for a user (and optionally trip/tour) using OpenAI.
+ * - A GET request retrieves an existing digest for a given user and date.
+ *
+ * @param {Request} req - The incoming request object.
+ *
+ * @returns {Response} A response object containing the daily digest or an error message.
+ */
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
@@ -177,6 +193,13 @@ serve(async (req) => {
   }
 });
 
+/**
+ * @description Generates a summary of a given text using the OpenAI Chat Completions API.
+ *
+ * @param {string} messageText - The text to be summarized (e.g., a concatenation of messages).
+ * @param {string} apiKey - The OpenAI API key.
+ * @returns {Promise<string>} A promise that resolves to the generated summary text.
+ */
 async function generateSummary(messageText: string, apiKey: string): Promise<string> {
   const res = await fetch('https://api.openai.com/v1/chat/completions', {
     method: 'POST',

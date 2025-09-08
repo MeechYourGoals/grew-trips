@@ -1,11 +1,31 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+/**
+ * @description Supabase edge function for creating a new broadcast message for a trip.
+ * It authenticates the user, verifies their trip membership, and then inserts the
+ * new broadcast into the `broadcasts` table.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.trip_id - The ID of the trip to send the broadcast to.
+ * @param {string} req.body.content - The content of the broadcast message.
+ * @param {object} [req.body.location] - An optional location object to attach to the broadcast.
+ * @param {string} [req.body.tag] - An optional tag for the broadcast (e.g., 'urgent', 'info').
+ * @param {string} [req.body.scheduled_time] - An optional ISO 8601 timestamp for scheduling the broadcast.
+ *
+ * @returns {Response} A response object containing the newly created broadcast.
+ * @returns {object} Response.body.broadcast - The broadcast object that was created.
+ * @returns {object} Response.body.error - An error message if something went wrong.
+ */
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {

@@ -2,11 +2,18 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
+/**
+ * @description Interface for the request body of the `ai-features` function.
+ * Defines the shape of the JSON payload.
+ */
 interface RequestBody {
   feature: 'review-analysis' | 'message-template' | 'priority-classify' | 'send-time-suggest';
   url?: string;
@@ -20,6 +27,20 @@ interface RequestBody {
   tripId?: string;
 }
 
+/**
+ * @description Supabase edge function that serves as a dispatcher for various AI-powered features.
+ * It authenticates the user and routes the request to the appropriate sub-function
+ * based on the `feature` parameter in the request body.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {RequestBody} req.body - The JSON body of the request.
+ * @param {string} req.body.feature - The AI feature to execute.
+ * @param {object} [req.body.*] - Other parameters specific to the chosen feature.
+ *
+ * @returns {Response} A response object containing the result of the AI feature.
+ * @returns {object} Response.body.result - The result from the executed AI feature.
+ * @returns {object} Response.body.error - An error message if something went wrong.
+ */
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -102,6 +123,16 @@ serve(async (req) => {
   }
 })
 
+/**
+ * @description Analyzes online reviews for a given venue using the Perplexity API.
+ * It can take a URL directly or search for a venue by name and address.
+ *
+ * @param {string} [url] - A URL to a page with reviews.
+ * @param {string} [venue_name] - The name of the venue to search for.
+ * @param {string} [address] - The address of the venue.
+ * @param {string} [place_id] - The Google Place ID of the venue.
+ * @returns {Promise<object>} A promise that resolves to an object containing the review analysis.
+ */
 async function analyzeReviews(url?: string, venue_name?: string, address?: string, place_id?: string) {
   console.log('Analyzing reviews for:', { url, venue_name, address, place_id })
   
@@ -244,7 +275,15 @@ Find REAL reviews and data. Never use fictional, placeholder, or default data â€
   }
 }
 
-
+/**
+ * @description Generates a message from a template stored in the database.
+ * It fetches the template by ID and replaces placeholders with values from the context object.
+ *
+ * @param {string} [templateId] - The ID of the message template to use.
+ * @param {Record<string, any>} context - An object with key-value pairs to fill in the template's placeholders.
+ * @param {any} supabase - The Supabase client instance.
+ * @returns {Promise<object>} A promise that resolves to an object containing the generated message.
+ */
 async function generateMessageWithTemplate(templateId: string | undefined, context: Record<string, any>, supabase: any) {
   if (!templateId) {
     throw new Error('Template ID is required');
@@ -279,6 +318,13 @@ async function generateMessageWithTemplate(templateId: string | undefined, conte
   };
 }
 
+/**
+ * @description Classifies the priority of a message as 'urgent', 'reminder', or 'fyi'.
+ * It first tries to use the OpenAI API for classification and falls back to a keyword-based approach if the API call fails.
+ *
+ * @param {string} content - The content of the message to classify.
+ * @returns {Promise<object>} A promise that resolves to an object containing the priority and a confidence score.
+ */
 async function classifyMessagePriority(content: string) {
   try {
     // Use OpenAI for priority classification
@@ -336,7 +382,14 @@ async function classifyMessagePriority(content: string) {
   }
 }
 
-
+/**
+ * @description Suggests optimal send times for a message based on its content.
+ * This is a simple implementation that provides a few default suggestions based on keywords in the message.
+ *
+ * @param {string} content - The content of the message.
+ * @param {Record<string, any>} context - Additional context about the message (currently unused).
+ * @returns {Promise<object>} A promise that resolves to an object containing a list of suggested send times.
+ */
 async function suggestSendTimes(content: string, context: Record<string, any>) {
   const now = new Date();
   

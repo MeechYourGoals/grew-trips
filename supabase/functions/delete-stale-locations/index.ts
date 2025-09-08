@@ -5,6 +5,18 @@ import { corsHeaders } from "../_shared/cors.ts";
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
 
+/**
+ * @description Supabase edge function for performing a scheduled maintenance task.
+ * It deletes records from the `realtime_locations` table that are older than 48 hours.
+ * This is intended to be triggered by a cron job or a similar scheduling mechanism
+ * to prevent the table from growing indefinitely with stale location data.
+ *
+ * @param {Request} req - The incoming request object.
+ *
+ * @returns {Response} A response object indicating the number of deleted records.
+ * @returns {object} Response.body.deletedCount - The number of stale records that were deleted.
+ * @returns {object} Response.body.error - An error message if something went wrong.
+ */
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {

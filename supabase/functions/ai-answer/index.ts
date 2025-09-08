@@ -1,12 +1,34 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+/**
+ * @description CORS headers for cross-origin requests.
+ */
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
 };
 
+/**
+ * @description Supabase edge function for providing AI-powered answers based on trip-specific context.
+ * This function uses retrieval-augmented generation (RAG). It takes a user's query,
+ * finds relevant information from the trip's knowledge base (messages, files, etc.),
+ * and then uses a large language model to generate an answer based on that context.
+ *
+ * @param {Request} req - The incoming request object.
+ * @param {object} req.body - The JSON body of the request.
+ * @param {string} req.body.query - The user's question.
+ * @param {string} req.body.tripId - The ID of the trip to search within.
+ * @param {Array<object>} [req.body.chatHistory] - The recent chat history for context.
+ *
+ * @returns {Response} A response object with the AI-generated answer and citations.
+ * @returns {object} Response.body - The JSON body of the response.
+ * @returns {string} Response.body.answer - The AI-generated answer.
+ * @returns {Array<object>} Response.body.citations - The sources used for the answer.
+ * @returns {number} Response.body.contextUsed - The number of context sources found.
+ * @returns {object} Response.body.error - An error message if something went wrong.
+ */
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
