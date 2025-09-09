@@ -46,6 +46,36 @@ serve(async (req) => {
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
+    // Check privacy settings if trip context is provided
+    if (tripContext?.id) {
+      try {
+        const { data: privacyConfig } = await supabase
+          .from('trip_privacy_configs')
+          .select('*')
+          .eq('trip_id', tripContext.id)
+          .single();
+
+        // If high privacy mode or AI access disabled, return privacy notice
+        if (privacyConfig?.privacy_mode === 'high' || !privacyConfig?.ai_access_enabled) {
+          return new Response(
+            JSON.stringify({
+              answer: "🔒 **AI features are disabled for this trip.**\n\nThis trip uses high privacy mode with end-to-end encryption. AI assistance is not available to protect your privacy, but you can still use all other trip features.",
+              usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
+              sentimentScore: 0,
+              sources: []
+            }),
+            { 
+              headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+              status: 200
+            }
+          );
+        }
+      } catch (privacyError) {
+        console.log('Privacy check failed, proceeding with default behavior:', privacyError);
+        // Continue with normal processing if privacy config check fails
+      }
+    }
+
     // Build context-aware system prompt
     const systemPrompt = buildSystemPrompt(tripContext, analysisType, config.systemPrompt)
     
