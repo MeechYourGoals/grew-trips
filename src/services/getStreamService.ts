@@ -66,9 +66,10 @@ export class GetStreamService {
     const channelId = `trip-${tripId}`;
     const channel = this.client.channel('messaging', channelId, {
       members: [], // Will be populated dynamically
+      // Store privacy settings as custom data
       privacy_mode: privacyMode || 'standard',
       ai_access_enabled: privacyMode === 'standard',
-    });
+    } as any);
 
     await channel.create();
     return channel;
@@ -86,9 +87,10 @@ export class GetStreamService {
 
     await channel.sendMessage({
       text: processedContent,
+      // Store privacy metadata as custom data
       privacy_encrypted: encrypted,
       privacy_mode: privacyMode,
-    });
+    } as any);
   }
 
   async disconnectUser(): Promise<void> {

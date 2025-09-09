@@ -446,6 +446,8 @@ export type Database = {
           link_preview: Json | null
           media_type: string | null
           media_url: string | null
+          privacy_encrypted: boolean | null
+          privacy_mode: string | null
           sentiment: string | null
           trip_id: string
           updated_at: string
@@ -458,6 +460,8 @@ export type Database = {
           link_preview?: Json | null
           media_type?: string | null
           media_url?: string | null
+          privacy_encrypted?: boolean | null
+          privacy_mode?: string | null
           sentiment?: string | null
           trip_id: string
           updated_at?: string
@@ -470,6 +474,8 @@ export type Database = {
           link_preview?: Json | null
           media_type?: string | null
           media_url?: string | null
+          privacy_encrypted?: boolean | null
+          privacy_mode?: string | null
           sentiment?: string | null
           trip_id?: string
           updated_at?: string
@@ -897,6 +903,50 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_privacy_configs: {
+        Row: {
+          ai_access_enabled: boolean
+          can_change_privacy: boolean
+          created_at: string
+          created_by: string
+          id: string
+          participants_notified: boolean
+          privacy_mode: string
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          ai_access_enabled?: boolean
+          can_change_privacy?: boolean
+          created_at?: string
+          created_by: string
+          id?: string
+          participants_notified?: boolean
+          privacy_mode?: string
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          ai_access_enabled?: boolean
+          can_change_privacy?: boolean
+          created_at?: string
+          created_by?: string
+          id?: string
+          participants_notified?: boolean
+          privacy_mode?: string
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trip_privacy_configs_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: true
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trip_receipts: {
         Row: {
           amount: number
@@ -935,6 +985,7 @@ export type Database = {
       }
       trips: {
         Row: {
+          ai_access_enabled: boolean | null
           basecamp_address: string | null
           basecamp_name: string | null
           cover_image_url: string | null
@@ -946,11 +997,13 @@ export type Database = {
           id: string
           is_archived: boolean | null
           name: string
+          privacy_mode: string | null
           start_date: string | null
           trip_type: string | null
           updated_at: string
         }
         Insert: {
+          ai_access_enabled?: boolean | null
           basecamp_address?: string | null
           basecamp_name?: string | null
           cover_image_url?: string | null
@@ -962,11 +1015,13 @@ export type Database = {
           id: string
           is_archived?: boolean | null
           name: string
+          privacy_mode?: string | null
           start_date?: string | null
           trip_type?: string | null
           updated_at?: string
         }
         Update: {
+          ai_access_enabled?: boolean | null
           basecamp_address?: string | null
           basecamp_name?: string | null
           cover_image_url?: string | null
@@ -978,6 +1033,7 @@ export type Database = {
           id?: string
           is_archived?: boolean | null
           name?: string
+          privacy_mode?: string | null
           start_date?: string | null
           trip_type?: string | null
           updated_at?: string
