@@ -14,13 +14,14 @@ export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade }: TripVi
   const isMobile = useIsMobile();
 
   return (
-    <div className="w-full">
-      <ToggleGroup 
-        type="single" 
-        value={viewMode} 
-        onValueChange={(value) => value && onViewModeChange(value)}
-        className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-2 w-full flex justify-center"
-      >
+    <div className="flex justify-center">
+      <div className="w-full max-w-3xl px-2">
+        <ToggleGroup 
+          type="single" 
+          value={viewMode} 
+          onValueChange={(value) => value && onViewModeChange(value)}
+          className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-2 w-full flex justify-center"
+        >
         <ToggleGroupItem 
           value="myTrips" 
           className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-[hsl(45,95%,58%)] data-[state=on]:text-black transition-all font-medium ${isMobile ? 'text-sm' : ''}`}
@@ -58,7 +59,8 @@ export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade }: TripVi
           <Zap size={isMobile ? 16 : 18} />
           <span className={isMobile ? 'text-sm' : ''}>Upgrade Plan</span>
         </ToggleGroupItem>
-      </ToggleGroup>
+        </ToggleGroup>
+      </div>
     </div>
   );
 };
