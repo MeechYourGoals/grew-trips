@@ -185,7 +185,6 @@
       font-size: 16px;
     }
   }
-}
 
 /* Hide scrollbars on mobile for app-like experience */
 @media (max-width: 899px) {
