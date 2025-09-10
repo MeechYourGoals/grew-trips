@@ -39,7 +39,14 @@ export const TaskCreateModal = ({ tripId, onClose }: TaskCreateModalProps) => {
       is_poll: taskMode === 'poll'
     }, {
       onSuccess: () => {
+        setTitle('');
+        setDescription('');
+        setDueDate(undefined);
+        setTaskMode('solo');
         onClose();
+      },
+      onError: (error) => {
+        console.error('Task creation failed:', error);
       }
     });
   };

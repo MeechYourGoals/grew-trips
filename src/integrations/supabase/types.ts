@@ -1186,6 +1186,10 @@ export type Database = {
         Args: { "": string } | { "": unknown }
         Returns: unknown
       }
+      ensure_trip_membership: {
+        Args: { p_trip_id: string; p_user_id: string }
+        Returns: boolean
+      }
       halfvec_avg: {
         Args: { "": number[] }
         Returns: unknown

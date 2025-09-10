@@ -145,7 +145,20 @@ export const useTaskMutations = (tripId: string) => {
   const createTaskMutation = useMutation({
     mutationFn: async (task: CreateTaskRequest) => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!user) {
+        throw new Error('Please sign in to create tasks');
+      }
+
+      // Ensure user is a member of the trip (auto-join for consumer trips)
+      const { error: membershipError } = await supabase.rpc('ensure_trip_membership', {
+        p_trip_id: tripId,
+        p_user_id: user.id
+      });
+
+      if (membershipError) {
+        console.error('Membership error:', membershipError);
+        throw new Error('Unable to join trip. Please try again.');
+      }
 
       // Create the task in database
       const { data: newTask, error } = await supabase
@@ -161,7 +174,13 @@ export const useTaskMutations = (tripId: string) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Task creation error:', error);
+        if (error.code === 'PGRST116') {
+          throw new Error('Access denied. You must be a trip member to create tasks.');
+        }
+        throw error;
+      }
 
       // Create initial task status for creator
       await supabase
@@ -201,10 +220,12 @@ export const useTaskMutations = (tripId: string) => {
         description: 'Your task has been added to the list.'
       });
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Create task mutation error:', error);
+      const errorMessage = error.message || 'Failed to create task. Please try again.';
       toast({
-        title: 'Error',
-        description: 'Failed to create task. Please try again.',
+        title: 'Error Creating Task',
+        description: errorMessage,
         variant: 'destructive'
       });
     }
