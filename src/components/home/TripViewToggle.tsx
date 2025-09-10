@@ -51,13 +51,13 @@ export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade }: TripVi
           <Compass size={isMobile ? 16 : 18} />
           <span className={isMobile ? 'text-sm' : ''}>Chravel Recs</span>
         </ToggleGroupItem>
-        <button
-          onClick={onUpgrade}
-          className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-black bg-gradient-to-r from-[hsl(45,95%,58%)] to-[hsl(45,90%,65%)] hover:from-[hsl(45,90%,55%)] hover:to-[hsl(45,85%,62%)] transition-all font-medium flex items-center gap-2 ${isMobile ? 'text-sm' : ''} hover:scale-105 shadow-lg`}
+        <ToggleGroupItem 
+          value="upgrade" 
+          className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-black bg-gradient-to-r from-[hsl(45,95%,58%)] to-[hsl(45,90%,65%)] hover:from-[hsl(45,90%,55%)] hover:to-[hsl(45,85%,62%)] transition-all font-medium flex items-center gap-2 ${isMobile ? 'text-sm' : ''}`}
         >
           <Zap size={isMobile ? 16 : 18} />
           <span className={isMobile ? 'text-sm' : ''}>Upgrade Plan</span>
-        </button>
+        </ToggleGroupItem>
       </ToggleGroup>
     </div>
   );

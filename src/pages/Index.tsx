@@ -105,6 +105,10 @@ const Index = () => {
 
   // Simulate loading when switching view modes
   const handleViewModeChange = (newMode: string) => {
+    if (newMode === 'upgrade') {
+      setIsUpgradeModalOpen(true);
+      return;
+    }
     setIsLoading(true);
     setViewMode(newMode);
     setActiveFilter(''); // Reset filter when changing view mode
