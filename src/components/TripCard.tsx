@@ -1,13 +1,17 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, MapPin, User, Plus, MoreHorizontal, Archive } from 'lucide-react';
+import { Calendar, MapPin, User, Plus, MoreHorizontal, Archive, Flame, TrendingUp } from 'lucide-react';
 import { InviteModal } from './InviteModal';
 import { ShareTripModal } from './share/ShareTripModal';
 import { ArchiveConfirmDialog } from './ArchiveConfirmDialog';
 import { TravelerTooltip } from './ui/traveler-tooltip';
 import { archiveTrip } from '../services/archiveService';
 import { useToast } from '../hooks/use-toast';
+import { ProgressRing } from './gamification/ProgressRing';
+import { Badge } from './ui/badge';
+import { gamificationService } from '../services/gamificationService';
+import { isConsumerTrip } from '../utils/tripTierDetector';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -63,6 +67,13 @@ export const TripCard = ({ trip }: TripCardProps) => {
     avatar: participant.avatar || `https://images.unsplash.com/photo-${1649972904349 + index}-6e44c42644a7?w=40&h=40&fit=crop&crop=face`
   }));
 
+  // Gamification features for consumer trips only
+  const isConsumer = isConsumerTrip(trip.id.toString());
+  const progress = isConsumer ? gamificationService.calculateTripProgress(trip.id.toString()) : null;
+  const progressPercentage = progress ? gamificationService.calculateProgressPercentage(progress) : 0;
+  const daysUntil = isConsumer ? gamificationService.getDaysUntilTrip(trip.id.toString()) : 0;
+  const momentum = isConsumer ? gamificationService.getTripMomentum(trip.id.toString()) : 'cold';
+
   return (
     <div className="group bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-yellow-500/30 rounded-3xl overflow-hidden transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl shadow-black/20">
       {/* Trip Image/Header */}
@@ -76,9 +87,46 @@ export const TripCard = ({ trip }: TripCardProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
         <div className="relative z-10 flex justify-between items-start h-full">
           <div className="flex-1">
-            <h3 className="text-2xl font-bold text-white mb-2 group-hover:text-yellow-300 transition-colors">
-              {trip.title}
-            </h3>
+            <div className="flex items-start gap-3 mb-2">
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold text-white group-hover:text-yellow-300 transition-colors">
+                  {trip.title}
+                </h3>
+                {/* Trip Status Badges */}
+                {isConsumer && (
+                  <div className="flex gap-2 mt-1">
+                    {momentum === 'hot' && (
+                      <Badge variant="secondary" className="bg-red-500/20 text-red-300 border-red-500/30">
+                        <Flame size={12} className="mr-1" />
+                        Hot
+                      </Badge>
+                    )}
+                    {momentum === 'warm' && (
+                      <Badge variant="secondary" className="bg-orange-500/20 text-orange-300 border-orange-500/30">
+                        <TrendingUp size={12} className="mr-1" />
+                        Active
+                      </Badge>
+                    )}
+                    {daysUntil > 0 && daysUntil <= 7 && (
+                      <Badge variant="secondary" className="bg-yellow-500/20 text-yellow-300 border-yellow-500/30 animate-pulse">
+                        {daysUntil} {daysUntil === 1 ? 'day' : 'days'} left
+                      </Badge>
+                    )}
+                  </div>
+                )}
+              </div>
+              {/* Progress Ring */}
+              {isConsumer && (
+                <div className="flex-shrink-0">
+                  <ProgressRing 
+                    progress={progressPercentage} 
+                    size="md" 
+                    showPercentage={progressPercentage > 0}
+                    className="transform hover:scale-110 transition-transform"
+                  />
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-2 text-white/80 mb-3">
               <MapPin size={18} className="text-yellow-400" />
               <span className="font-medium">{trip.location}</span>
