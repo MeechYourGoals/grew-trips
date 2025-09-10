@@ -22,29 +22,29 @@ interface Metric {
 
 const testimonials: Testimonial[] = [
   {
-    name: "Sarah Chen",
-    role: "Event Director",
-    company: "SXSW",
-    avatar: "SC",
-    quote: "Chravel transformed how we coordinate our 400+ session festival. Cut our planning time by 60% and boosted attendee satisfaction scores to 4.8/5.",
+    name: "Paul George",
+    role: "AAU Travel Coach",
+    company: "Elite AAU team",
+    avatar: "PG",
+    quote: "This looks like the app we didn't know we needed. Please, please let us know once this is live. It would be so helpful for our team as well as AAU teams across the country.",
     rating: 5,
-    useCase: "Large Festival"
+    useCase: "Youth Sports"
   },
   {
-    name: "Marcus Rodriguez", 
-    role: "Tour Manager",
+    name: "Chris Burns", 
+    role: "Promoter",
     company: "Live Nation",
-    avatar: "MR",
-    quote: "Managing 50+ crew across 30 cities used to be chaos. Now it's seamless. The real-time updates and budget tracking alone saved us $45K last tour.",
+    avatar: "CB",
+    quote: "Managing double-digit people crews across the country always comes with a bit of chaos, but travel app looks poised to alleviate the headaches of thousands of artists.",
     rating: 5,
     useCase: "Music Tour"
   },
   {
-    name: "Emily Thompson",
-    role: "Bachelorette Organizer",
-    company: "Friend Group",
-    avatar: "ET",
-    quote: "Planned a 12-person Tulum trip in 2 hours instead of 2 weeks. Everyone stayed in the loop and we actually stayed on budget for once!",
+    name: "Carla Santiago",
+    role: "Mom, family trip planner",
+    company: "Family Vacation",
+    avatar: "CS",
+    quote: "As a mom, planning and organizing the family trips is draining and often overwhelming. I have needed something like Chravel for years and can't wait for the launch.",
     rating: 5,
     useCase: "Group Travel"
   }
