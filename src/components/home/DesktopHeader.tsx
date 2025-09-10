@@ -61,7 +61,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
 
           {/* Center Section: Search Bar */}
           <div className="flex-1 flex justify-center">
-            <div className="w-full max-w-2xl">
+            <div className="w-full max-w-3xl">
               <SearchBar
                 placeholder="Search for and plan your perfect trip."
                 onSearch={handleSearchClick}

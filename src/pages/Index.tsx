@@ -183,12 +183,14 @@ const Index = () => {
 
 
         {/* Enhanced Toggle with smooth transitions */}
-        <div className="animate-fade-in">
-          <TripViewToggle 
-            viewMode={viewMode} 
-            onViewModeChange={handleViewModeChange}
-            onUpgrade={() => setIsUpgradeModalOpen(true)}
-          />
+        <div className="animate-fade-in mb-8 flex justify-center">
+          <div className="w-full max-w-3xl">
+            <TripViewToggle 
+              viewMode={viewMode} 
+              onViewModeChange={handleViewModeChange}
+              onUpgrade={() => setIsUpgradeModalOpen(true)}
+            />
+          </div>
         </div>
 
         {/* Trip Stats Overview with loading state - moved above filters for travel recs */}
