@@ -119,6 +119,42 @@
     /* Mobile optimizations */
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Custom scrollbar styles for invite modal */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-white/20 rounded-full;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    @apply bg-white/30;
+  }
+  
+  .scrollbar-track-transparent::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  .scrollbar-thumb-white\/20::-webkit-scrollbar-thumb {
+    @apply bg-white/20 rounded-full;
+  }
+  
+  .hover\:scrollbar-thumb-white\/30:hover::-webkit-scrollbar-thumb {
+    @apply bg-white/30;
+  }
+    -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     
     /* Disable iOS zoom on input focus */
