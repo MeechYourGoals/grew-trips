@@ -8,14 +8,21 @@ interface InviteModalHeaderProps {
 
 export const InviteModalHeader = ({ tripName, onClose }: InviteModalHeaderProps) => {
   return (
-    <div className="flex items-center justify-between mb-6">
-      <div>
+    <>
+      {/* Close Button - Fixed Position */}
+      <button 
+        onClick={onClose} 
+        className="absolute top-4 right-4 z-10 hover:bg-white/20 text-white w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+        title="Close"
+      >
+        <X size={20} />
+      </button>
+
+      {/* Header Content */}
+      <div className="mb-6 pr-12">
         <h2 className="text-2xl font-bold text-white">Invite to Trip</h2>
         <p className="text-gray-400 text-sm">{tripName}</p>
       </div>
-      <button onClick={onClose} className="text-gray-400 hover:text-white">
-        <X size={24} />
-      </button>
-    </div>
+    </>
   );
 };
