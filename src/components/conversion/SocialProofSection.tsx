@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Star, Users, MapPin, Clock, TrendingUp } from 'lucide-react';
 import { Card, CardContent } from '../ui/card';
 import { Badge } from '../ui/badge';
+import { OptimizedImage } from '../OptimizedImage';
 
 interface Testimonial {
   name: string;
@@ -59,6 +60,7 @@ const metrics: Metric[] = [
 
 interface OrganizationLogo {
   name: string;
+  logoUrl?: string;
   logoComponent: React.ReactNode;
   altText: string;
 }
@@ -66,6 +68,7 @@ interface OrganizationLogo {
 const organizationLogos: OrganizationLogo[] = [
   {
     name: "Invest Fest",
+    logoUrl: "https://upload.wikimedia.org/wikipedia/commons/4/46/Milan_Harris_InvestFest_2023.png",
     altText: "Invest Fest by Earn Your Leisure",
     logoComponent: (
       <svg className="h-10 w-auto" viewBox="0 0 120 40" fill="none">
@@ -78,6 +81,7 @@ const organizationLogos: OrganizationLogo[] = [
   },
   {
     name: "Live Nation",
+    logoUrl: "https://seeklogo.com/images/L/live-nation-logo-4D7B585633-seeklogo.com.png",
     altText: "Live Nation Entertainment",
     logoComponent: (
       <svg className="h-10 w-auto" viewBox="0 0 100 40" fill="none">
@@ -90,6 +94,7 @@ const organizationLogos: OrganizationLogo[] = [
   },
   {
     name: "Philadelphia 76ers",
+    logoUrl: "https://seeklogo.com/images/P/philadelphia-76ers-logo-FF5126B54B-seeklogo.com.png",
     altText: "Philadelphia 76ers",
     logoComponent: (
       <svg className="h-10 w-auto" viewBox="0 0 80 40" fill="none">
@@ -105,6 +110,7 @@ const organizationLogos: OrganizationLogo[] = [
   },
   {
     name: "University of North Carolina",
+    logoUrl: "https://seeklogo.com/images/U/unc-university-of-north-carolina-logo-11AE017493-seeklogo.com.png",
     altText: "University of North Carolina Men's Lacrosse",
     logoComponent: (
       <svg className="h-10 w-auto" viewBox="0 0 80 40" fill="none">
@@ -117,6 +123,7 @@ const organizationLogos: OrganizationLogo[] = [
   },
   {
     name: "Los Angeles Chargers",
+    logoUrl: "https://seeklogo.com/images/L/los-angeles-chargers-logo-C290C6C1ED-seeklogo.com.png",
     altText: "Los Angeles Chargers",
     logoComponent: (
       <svg className="h-10 w-auto" viewBox="0 0 100 40" fill="none">
@@ -140,16 +147,40 @@ const organizationLogos: OrganizationLogo[] = [
     )
   },
   {
-    name: "Major Talent Agencies",
-    altText: "Managers and Touring Clients of Major Talent Agencies",
+    name: "Creative Artists Agency",
+    logoUrl: "https://seeklogo.com/images/C/creative-artists-agency-caa-logo-43C5CD9911-seeklogo.com.png",
+    altText: "Creative Artists Agency (CAA)",
     logoComponent: (
-      <svg className="h-10 w-auto" viewBox="0 0 140 40" fill="none">
-        <rect x="0" y="0" width="140" height="40" rx="6" fill="currentColor" opacity="0.1"/>
-        <text x="70" y="18" textAnchor="middle" className="text-xs font-medium fill-current">
-          MAJOR TALENT
+      <svg className="h-10 w-auto" viewBox="0 0 80 40" fill="none">
+        <rect x="0" y="0" width="80" height="40" rx="6" fill="currentColor" opacity="0.1"/>
+        <text x="40" y="25" textAnchor="middle" className="text-lg font-bold fill-current">
+          CAA
         </text>
-        <text x="70" y="30" textAnchor="middle" className="text-xs font-medium fill-current">
-          AGENCIES
+      </svg>
+    )
+  },
+  {
+    name: "William Morris Endeavor",
+    logoUrl: "https://latestlogo.com/wp-content/uploads/2023/05/WME-Logo-2048x1152.png",
+    altText: "William Morris Endeavor (WME)",
+    logoComponent: (
+      <svg className="h-10 w-auto" viewBox="0 0 80 40" fill="none">
+        <rect x="0" y="0" width="80" height="40" rx="6" fill="currentColor" opacity="0.1"/>
+        <text x="40" y="25" textAnchor="middle" className="text-lg font-bold fill-current">
+          WME
+        </text>
+      </svg>
+    )
+  },
+  {
+    name: "United Talent Agency",
+    logoUrl: "https://upload.wikimedia.org/wikipedia/commons/7/7e/United_Talent_Agency_logo.svg",
+    altText: "United Talent Agency (UTA)",
+    logoComponent: (
+      <svg className="h-10 w-auto" viewBox="0 0 80 40" fill="none">
+        <rect x="0" y="0" width="80" height="40" rx="6" fill="currentColor" opacity="0.1"/>
+        <text x="40" y="25" textAnchor="middle" className="text-lg font-bold fill-current">
+          UTA
         </text>
       </svg>
     )
@@ -226,7 +257,16 @@ export const SocialProofSection = () => {
               className="flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-200 grayscale hover:grayscale-0"
               title={org.altText}
             >
-              {org.logoComponent}
+              {org.logoUrl ? (
+                <OptimizedImage
+                  src={org.logoUrl}
+                  alt={org.altText}
+                  className="h-10 w-auto max-w-[120px] object-contain"
+                  lazy={true}
+                />
+              ) : (
+                org.logoComponent
+              )}
             </div>
           ))}
         </div>
