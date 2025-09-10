@@ -17,7 +17,7 @@ export const InviteLinkSection = ({
   onRegenerate 
 }: InviteLinkSectionProps) => {
   return (
-    <div className="mb-4">
+    <div className="mb-6">
       <div className="flex items-center justify-between mb-2">
         <label className="block text-gray-300 text-sm">Share Link</label>
         <button

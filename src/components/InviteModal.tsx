@@ -32,9 +32,8 @@ export const InviteModal = ({ isOpen, onClose, tripName, tripId }: InviteModalPr
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4 animate-fade-in">
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl max-w-md w-full max-h-[85vh] sm:max-h-[90vh] animate-scale-in relative flex flex-col shadow-2xl">
-        <div className="overflow-y-auto flex-1 px-6 py-4 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-white/20 hover:scrollbar-thumb-white/30">
+    <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto animate-scale-in relative">
         <InviteModalHeader tripName={tripName} onClose={onClose} />
         
         <InviteLinkSection
@@ -61,7 +60,6 @@ export const InviteModal = ({ isOpen, onClose, tripName, tripId }: InviteModalPr
         />
         
         <InviteInstructions />
-        </div>
       </div>
     </div>
   );
