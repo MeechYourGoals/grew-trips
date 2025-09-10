@@ -171,25 +171,26 @@ const Index = () => {
           viewMode={viewMode}
         />
 
-        {/* Desktop Header */}
-        {!isMobile && (
-          <DesktopHeader
-            viewMode={viewMode}
-            onCreateTrip={handleCreateTrip}
-            onUpgrade={() => setIsUpgradeModalOpen(true)}
-            onSettings={() => setIsSettingsOpen(true)}
-          />
-        )}
-
-
-        {/* Enhanced Toggle with smooth transitions */}
-        <div className="animate-fade-in mb-8 flex justify-center">
-          <div className="w-full max-w-3xl">
-            <TripViewToggle 
-              viewMode={viewMode} 
-              onViewModeChange={handleViewModeChange}
+        {/* Shared Alignment Container for SearchBar and Toggle */}
+        <div className="w-[600px] mx-auto p-0 m-0">
+          {/* Desktop Header */}
+          {!isMobile && (
+            <DesktopHeader
+              viewMode={viewMode}
+              onCreateTrip={handleCreateTrip}
               onUpgrade={() => setIsUpgradeModalOpen(true)}
+              onSettings={() => setIsSettingsOpen(true)}
             />
+          )}
+
+          {/* Enhanced Toggle with smooth transitions */}
+          <div className="animate-fade-in mb-8">
+          <TripViewToggle 
+            viewMode={viewMode} 
+            onViewModeChange={handleViewModeChange}
+            onUpgrade={() => setIsUpgradeModalOpen(true)}
+            style={{ outline: '2px solid green' }}
+          />
           </div>
         </div>
 

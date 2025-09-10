@@ -8,13 +8,15 @@ interface SearchBarProps {
   onSearch?: (query: string) => void;
   isLoading?: boolean;
   className?: string;
+  style?: React.CSSProperties;
 }
 
 export const SearchBar = ({ 
   placeholder = "Search trips, people, files...", 
   onSearch,
   isLoading = false,
-  className = ""
+  className = "",
+  style
 }: SearchBarProps) => {
   const [query, setQuery] = useState('');
 
@@ -24,7 +26,7 @@ export const SearchBar = ({
   };
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative ${className}`} style={style}>
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
         <Input

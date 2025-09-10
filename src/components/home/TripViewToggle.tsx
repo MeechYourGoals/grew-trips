@@ -8,20 +8,20 @@ interface TripViewToggleProps {
   viewMode: string;
   onViewModeChange: (value: string) => void;
   onUpgrade?: () => void;
+  style?: React.CSSProperties;
 }
 
-export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade }: TripViewToggleProps) => {
+export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade, style }: TripViewToggleProps) => {
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex justify-center">
-      <div className="w-full max-w-3xl px-2">
-        <ToggleGroup 
-          type="single" 
-          value={viewMode} 
-          onValueChange={(value) => value && onViewModeChange(value)}
-          className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-2 w-full flex justify-center"
-        >
+    <div style={style}>
+      <ToggleGroup 
+        type="single" 
+        value={viewMode} 
+        onValueChange={(value) => value && onViewModeChange(value)}
+        className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-2 w-full flex justify-center p-0 m-0"
+      >
         <ToggleGroupItem 
           value="myTrips" 
           className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-[hsl(45,95%,58%)] data-[state=on]:text-black transition-all font-medium ${isMobile ? 'text-sm' : ''}`}
@@ -60,7 +60,6 @@ export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade }: TripVi
           <span className={isMobile ? 'text-sm' : ''}>Upgrade Plan</span>
         </ToggleGroupItem>
         </ToggleGroup>
-      </div>
     </div>
   );
 };
