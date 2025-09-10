@@ -51,13 +51,13 @@ const testimonials: Testimonial[] = [
 ];
 
 const metrics: Metric[] = [
-  { value: "Built to help", label: "thousands of trips run smoother", icon: <MapPin size={16} />, trend: "join our early adopters" },
-  { value: "Predicted 70%", label: "less coordination time", icon: <Clock size={16} /> },
-  { value: "Goal: 94%", label: "user satisfaction", icon: <Star size={16} /> },
-  { value: "Potential", label: "budget savings for every group", icon: <TrendingUp size={16} />, trend: "track your savings soon" }
+  { value: "Instantly See", label: "Itinerary Conflicts", icon: <MapPin size={16} />, trend: "Automatically flags double-bookings before they happen" },
+  { value: "Automated", label: "Payment Tracking", icon: <Clock size={16} />, trend: "See who's paid and who hasn't, all in one place" },
+  { value: "Real-Time", label: "Updates", icon: <Star size={16} />, trend: "Everyone gets instant alerts when plans change" },
+  { value: "Proven for", label: "Complex Travel", icon: <TrendingUp size={16} />, trend: "Successfully handles sports teams, tours, and family reunions" }
 ];
 
-const logos = ["SXSW", "Live Nation", "Goldman Sachs", "Tesla", "Y Combinator", "UCLA"];
+const logos = ["Invest Fest", "Live Nation", "Goodwin Law", "Philadelphia 76ers", "University of North Carolina Men's Lacrosse", "Los Angeles Chargers", "Managers and Touring Clients of CAA", "A16Z Cultural Leadership Fund"];
 
 export const SocialProofSection = () => {
   return (
@@ -121,7 +121,7 @@ export const SocialProofSection = () => {
 
       {/* Logo Bar */}
       <div className="text-center space-y-4">
-        <p className="text-sm text-muted-foreground">Trusted by teams at</p>
+        <p className="text-sm text-muted-foreground">Anticipated by and wait list interest from teams at</p>
         <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
           {logos.map((logo, index) => (
             <div key={index} className="text-lg font-semibold text-muted-foreground">
