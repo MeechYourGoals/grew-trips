@@ -183,6 +183,7 @@ const Index = () => {
           <TripViewToggle 
             viewMode={viewMode} 
             onViewModeChange={handleViewModeChange}
+            onUpgrade={() => setIsUpgradeModalOpen(true)}
           />
         </div>
 

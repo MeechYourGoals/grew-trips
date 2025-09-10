@@ -46,14 +46,16 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
       <div className="mb-6">
         {/* Brand + Main Navigation Row */}
         <div className="flex items-center justify-between gap-6 mb-5">
-          {/* Left Section: Brand + Search */}
-          <div className="flex items-center gap-6 flex-1">
-            <h1 className="text-3xl font-semibold text-foreground tracking-tight flex-shrink-0" aria-label="Chravel Home">
+          {/* Left Section: Brand */}
+          <div className="flex-shrink-0">
+            <h1 className="text-3xl font-semibold text-foreground tracking-tight" aria-label="Chravel Home">
               Chravel
             </h1>
-            
-            {/* Expansive Search Bar */}
-            <div className="flex-1 max-w-2xl">
+          </div>
+
+          {/* Center Section: Search Bar */}
+          <div className="flex-1 flex justify-center">
+            <div className="w-full max-w-2xl">
               <SearchBar
                 placeholder="Search for and plan your perfect trip."
                 onSearch={handleSearchClick}
@@ -62,7 +64,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
             </div>
           </div>
 
-          {/* Right Section: Primary CTA + Actions */}
+          {/* Right Section: Actions */}
           <div className="flex items-center gap-3 flex-shrink-0">
             {/* Primary CTA - varies by view mode */}
             {viewMode === 'tripsPro' && (
@@ -81,15 +83,6 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
               >
                 <Crown size={18} />
                 Schedule Demo
-              </button>
-            )}
-            {(viewMode === 'myTrips' || viewMode === 'travelRecs') && (
-              <button
-                onClick={onUpgrade}
-                className="bg-gradient-to-r from-[hsl(45,95%,58%)] to-[hsl(45,90%,65%)] hover:from-[hsl(45,90%,55%)] hover:to-[hsl(45,85%,62%)] text-black px-4 py-2 h-12 rounded-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm"
-              >
-                <Crown size={18} />
-                Upgrade Chravel Experience
               </button>
             )}
             

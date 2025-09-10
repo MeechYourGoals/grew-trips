@@ -1,15 +1,16 @@
 
 import React from 'react';
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group';
-import { MapPin, Crown, Calendar, Compass } from 'lucide-react';
+import { MapPin, Crown, Calendar, Compass, Zap } from 'lucide-react';
 import { useIsMobile } from '../../hooks/use-mobile';
 
 interface TripViewToggleProps {
   viewMode: string;
   onViewModeChange: (value: string) => void;
+  onUpgrade?: () => void;
 }
 
-export const TripViewToggle = ({ viewMode, onViewModeChange }: TripViewToggleProps) => {
+export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade }: TripViewToggleProps) => {
   const isMobile = useIsMobile();
 
   return (
@@ -50,6 +51,13 @@ export const TripViewToggle = ({ viewMode, onViewModeChange }: TripViewTogglePro
           <Compass size={isMobile ? 16 : 18} />
           <span className={isMobile ? 'text-sm' : ''}>Chravel Recs</span>
         </ToggleGroupItem>
+        <button
+          onClick={onUpgrade}
+          className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-black bg-gradient-to-r from-[hsl(45,95%,58%)] to-[hsl(45,90%,65%)] hover:from-[hsl(45,90%,55%)] hover:to-[hsl(45,85%,62%)] transition-all font-medium flex items-center gap-2 ${isMobile ? 'text-sm' : ''} hover:scale-105 shadow-lg`}
+        >
+          <Zap size={isMobile ? 16 : 18} />
+          <span className={isMobile ? 'text-sm' : ''}>Upgrade Plan</span>
+        </button>
       </ToggleGroup>
     </div>
   );
