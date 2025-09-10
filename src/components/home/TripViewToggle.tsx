@@ -14,12 +14,12 @@ export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade }: TripVi
   const isMobile = useIsMobile();
 
   return (
-    <div className="flex justify-center mb-8">
+    <div className="w-full">
       <ToggleGroup 
         type="single" 
         value={viewMode} 
         onValueChange={(value) => value && onViewModeChange(value)}
-        className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-2"
+        className="bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-2 w-full flex justify-center"
       >
         <ToggleGroupItem 
           value="myTrips" 
