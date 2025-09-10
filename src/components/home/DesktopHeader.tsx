@@ -55,7 +55,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
             {/* Expansive Search Bar */}
             <div className="flex-1 max-w-2xl">
               <SearchBar
-                placeholder={`Use Concierge in any trip... • ${subtitle.toLowerCase()}`}
+                placeholder="Search for and plan your perfect trip."
                 onSearch={handleSearchClick}
                 className="cursor-pointer"
               />
