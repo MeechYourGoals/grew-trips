@@ -189,7 +189,6 @@ const Index = () => {
             viewMode={viewMode} 
             onViewModeChange={handleViewModeChange}
             onUpgrade={() => setIsUpgradeModalOpen(true)}
-            style={{ outline: '2px solid green' }}
           />
           </div>
         </div>

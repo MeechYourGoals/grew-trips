@@ -64,7 +64,6 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
               placeholder="Search for and plan your perfect trip."
               onSearch={handleSearchClick}
               className="cursor-pointer w-full p-0 m-0"
-              style={{ outline: '2px solid green' }}
             />
           </div>
 
