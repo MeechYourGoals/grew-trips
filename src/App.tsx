@@ -1,4 +1,5 @@
 
+import React, { Suspense, lazy } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,62 +8,121 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import { ConsumerSubscriptionProvider } from "./hooks/useConsumerSubscription";
 import { MobileAppLayout } from "./components/mobile/MobileAppLayout";
-import Index from "./pages/Index";
-import TripDetail from "./pages/TripDetail";
-import ItineraryAssignmentPage from "./pages/ItineraryAssignmentPage";
-import ProTripDetail from "./pages/ProTripDetail";
-import EventDetail from "./pages/EventDetail";
+import { ErrorBoundary } from "./components/ErrorBoundary";
+import { LazyRoute } from "./components/LazyRoute";
+import { performanceService } from "./services/performanceService";
 
-
-import NotFound from "./pages/NotFound";
-import JoinTrip from "./pages/JoinTrip";
-import SearchPage from "./pages/SearchPage";
-import ProfilePage from "./pages/ProfilePage";
-import SettingsPage from "./pages/SettingsPage";
-import MorePage from "./pages/MorePage";
-import ArchivePage from "./pages/ArchivePage";
-import { AdminDashboard } from "./pages/AdminDashboard";
+// Lazy load pages for better performance
+const Index = lazy(() => import("./pages/Index"));
+const TripDetail = lazy(() => import("./pages/TripDetail"));
+const ItineraryAssignmentPage = lazy(() => import("./pages/ItineraryAssignmentPage"));
+const ProTripDetail = lazy(() => import("./pages/ProTripDetail"));
+const EventDetail = lazy(() => import("./pages/EventDetail"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const JoinTrip = lazy(() => import("./pages/JoinTrip"));
+const SearchPage = lazy(() => import("./pages/SearchPage"));
+const ProfilePage = lazy(() => import("./pages/ProfilePage"));
+const SettingsPage = lazy(() => import("./pages/SettingsPage"));
+const MorePage = lazy(() => import("./pages/MorePage"));
+const ArchivePage = lazy(() => import("./pages/ArchivePage"));
+const AdminDashboard = lazy(() => import("./pages/AdminDashboard").then(module => ({ default: module.AdminDashboard })));
 
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <ConsumerSubscriptionProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <MobileAppLayout>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/trip/:tripId" element={<TripDetail />} />
-                <Route path="/trip/:tripId/edit-itinerary" element={<ItineraryAssignmentPage />} />
-                {/* Join trip route */}
-                <Route path="/join/:token" element={<JoinTrip />} />
-                {/* Pro trip routes - Fixed pattern to properly match URLs like /tour/pro-2 */}
-                <Route path="/tour/pro/:proTripId" element={<ProTripDetail />} />
-                {/* Events routes - New routes for Events functionality */}
-                <Route path="/event/:eventId" element={<EventDetail />} />
-                {/* Mobile navigation routes */}
-                <Route path="/search" element={<SearchPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-                <Route path="/settings" element={<SettingsPage />} />
-                <Route path="/more" element={<MorePage />} />
-                <Route path="/archive" element={<ArchivePage />} />
-                {/* AI Feature routes */}
-                
-                <Route path="/admin/scheduled-messages" element={<AdminDashboard />} />
-                {/* Catch-all route for 404 */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </MobileAppLayout>
-          </BrowserRouter>
-        </TooltipProvider>
-      </ConsumerSubscriptionProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  // Track app initialization performance
+  const stopTiming = performanceService.startTiming('App Initialization');
+  
+  React.useEffect(() => {
+    stopTiming();
+  }, [stopTiming]);
+
+  return (
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <ConsumerSubscriptionProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter>
+                <MobileAppLayout>
+                  <Routes>
+                    <Route path="/" element={
+                      <LazyRoute>
+                        <Index />
+                      </LazyRoute>
+                    } />
+                    <Route path="/trip/:tripId" element={
+                      <LazyRoute>
+                        <TripDetail />
+                      </LazyRoute>
+                    } />
+                    <Route path="/trip/:tripId/edit-itinerary" element={
+                      <LazyRoute>
+                        <ItineraryAssignmentPage />
+                      </LazyRoute>
+                    } />
+                    <Route path="/join/:token" element={
+                      <LazyRoute>
+                        <JoinTrip />
+                      </LazyRoute>
+                    } />
+                    <Route path="/tour/pro/:proTripId" element={
+                      <LazyRoute>
+                        <ProTripDetail />
+                      </LazyRoute>
+                    } />
+                    <Route path="/event/:eventId" element={
+                      <LazyRoute>
+                        <EventDetail />
+                      </LazyRoute>
+                    } />
+                    <Route path="/search" element={
+                      <LazyRoute>
+                        <SearchPage />
+                      </LazyRoute>
+                    } />
+                    <Route path="/profile" element={
+                      <LazyRoute>
+                        <ProfilePage />
+                      </LazyRoute>
+                    } />
+                    <Route path="/settings" element={
+                      <LazyRoute>
+                        <SettingsPage />
+                      </LazyRoute>
+                    } />
+                    <Route path="/more" element={
+                      <LazyRoute>
+                        <MorePage />
+                      </LazyRoute>
+                    } />
+                    <Route path="/archive" element={
+                      <LazyRoute>
+                        <ArchivePage />
+                      </LazyRoute>
+                    } />
+                    <Route path="/admin/scheduled-messages" element={
+                      <LazyRoute>
+                        <AdminDashboard />
+                      </LazyRoute>
+                    } />
+                    <Route path="*" element={
+                      <LazyRoute>
+                        <NotFound />
+                      </LazyRoute>
+                    } />
+                  </Routes>
+                </MobileAppLayout>
+              </BrowserRouter>
+            </TooltipProvider>
+          </ConsumerSubscriptionProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
+  );
+};
 
 export default App;
