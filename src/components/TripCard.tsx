@@ -8,7 +8,6 @@ import { ArchiveConfirmDialog } from './ArchiveConfirmDialog';
 import { TravelerTooltip } from './ui/traveler-tooltip';
 import { archiveTrip } from '../services/archiveService';
 import { useToast } from '../hooks/use-toast';
-import { ProgressRing } from './gamification/ProgressRing';
 import { Badge } from './ui/badge';
 import { gamificationService } from '../services/gamificationService';
 import { isConsumerTrip } from '../utils/tripTierDetector';
@@ -69,8 +68,6 @@ export const TripCard = ({ trip }: TripCardProps) => {
 
   // Gamification features for consumer trips only
   const isConsumer = isConsumerTrip(trip.id.toString());
-  const progress = isConsumer ? gamificationService.calculateTripProgress(trip.id.toString()) : null;
-  const progressPercentage = progress ? gamificationService.calculateProgressPercentage(progress) : 0;
   const daysUntil = isConsumer ? gamificationService.getDaysUntilTrip(trip.id.toString()) : 0;
   const momentum = isConsumer ? gamificationService.getTripMomentum(trip.id.toString()) : 'cold';
 
@@ -115,17 +112,6 @@ export const TripCard = ({ trip }: TripCardProps) => {
                   </div>
                 )}
               </div>
-              {/* Progress Ring */}
-              {isConsumer && (
-                <div className="flex-shrink-0">
-                  <ProgressRing 
-                    progress={progressPercentage} 
-                    size="md" 
-                    showPercentage={progressPercentage > 0}
-                    className="transform hover:scale-110 transition-transform"
-                  />
-                </div>
-              )}
             </div>
             <div className="flex items-center gap-2 text-white/80 mb-3">
               <MapPin size={18} className="text-yellow-400" />
