@@ -437,6 +437,41 @@ export type Database = {
         }
         Relationships: []
       }
+      task_status: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_status_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "trip_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trip_chat_messages: {
         Row: {
           author_name: string
@@ -980,6 +1015,48 @@ export type Database = {
           trip_id?: string
           updated_at?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      trip_tasks: {
+        Row: {
+          completed: boolean
+          completed_at: string | null
+          created_at: string
+          creator_id: string
+          description: string | null
+          due_at: string | null
+          id: string
+          is_poll: boolean
+          title: string
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          creator_id: string
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          is_poll?: boolean
+          title: string
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          completed?: boolean
+          completed_at?: string | null
+          created_at?: string
+          creator_id?: string
+          description?: string | null
+          due_at?: string | null
+          id?: string
+          is_poll?: boolean
+          title?: string
+          trip_id?: string
+          updated_at?: string
         }
         Relationships: []
       }
