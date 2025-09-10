@@ -31,6 +31,10 @@ export const MobileHeader = ({
           <h1 className="text-xl font-semibold text-foreground tracking-tight" aria-label="Chravel Home">
             Chravel
           </h1>
+          <div className="mt-0.5 space-y-0">
+            <p className="text-xs text-muted-foreground font-medium">The Group Chat for Group Travel.</p>
+            <p className="text-xs text-muted-foreground font-medium">Removing the Chaos from Coordination</p>
+          </div>
         </div>
         
         <div className="flex items-center gap-2">

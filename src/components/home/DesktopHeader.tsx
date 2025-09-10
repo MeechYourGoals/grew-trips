@@ -48,9 +48,15 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
         <div className="flex items-center justify-between gap-6 mb-5">
           {/* Left Section: Brand */}
           <div className="flex-shrink-0">
-            <h1 className="text-3xl font-semibold text-foreground tracking-tight" aria-label="Chravel Home">
-              Chravel
-            </h1>
+            <div>
+              <h1 className="text-3xl font-semibold text-foreground tracking-tight" aria-label="Chravel Home">
+                Chravel
+              </h1>
+              <div className="mt-1 space-y-0.5">
+                <p className="text-sm text-muted-foreground font-medium">The Group Chat for Group Travel.</p>
+                <p className="text-sm text-muted-foreground font-medium">Removing the Chaos from Coordination</p>
+              </div>
+            </div>
           </div>
 
           {/* Center Section: Search Bar */}
