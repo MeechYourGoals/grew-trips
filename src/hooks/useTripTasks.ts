@@ -93,8 +93,46 @@ export const useTripTasks = (tripId: string) => {
   return useQuery({
     queryKey: ['tripTasks', tripId],
     queryFn: async (): Promise<TripTask[]> => {
-      // Return seed tasks for consumer trips
-      return generateSeedTasks(tripId);
+      try {
+        // Fetch real tasks from database
+        const { data: tasks, error } = await supabase
+          .from('trip_tasks')
+          .select(`
+            *,
+            task_status(*)
+          `)
+          .eq('trip_id', tripId)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        // If no real tasks exist, return seed tasks for consumer trips
+        if (!tasks || tasks.length === 0) {
+          return generateSeedTasks(tripId);
+        }
+
+        // Transform database tasks to match TripTask interface
+        return tasks.map(task => ({
+          id: task.id,
+          trip_id: task.trip_id,
+          creator_id: task.creator_id,
+          title: task.title,
+          description: task.description,
+          due_at: task.due_at,
+          is_poll: task.is_poll,
+          created_at: task.created_at,
+          updated_at: task.updated_at,
+          creator: {
+            id: task.creator_id,
+            name: 'User'
+          },
+          task_status: (task.task_status || []) as any[]
+        }));
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+        // Fallback to seed tasks on error
+        return generateSeedTasks(tripId);
+      }
     },
     enabled: !!tripId
   });
@@ -106,28 +144,55 @@ export const useTaskMutations = (tripId: string) => {
 
   const createTaskMutation = useMutation({
     mutationFn: async (task: CreateTaskRequest) => {
-      // Mock implementation for now
-      const newTask: TripTask = {
-        id: Date.now().toString(),
-        trip_id: tripId,
-        creator_id: 'current-user',
-        title: task.title,
-        description: task.description,
-        due_at: task.due_at,
-        is_poll: task.is_poll,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      // Create the task in database
+      const { data: newTask, error } = await supabase
+        .from('trip_tasks')
+        .insert({
+          trip_id: tripId,
+          creator_id: user.id,
+          title: task.title,
+          description: task.description,
+          due_at: task.due_at,
+          is_poll: task.is_poll
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // Create initial task status for creator
+      await supabase
+        .from('task_status')
+        .insert({
+          task_id: newTask.id,
+          user_id: user.id,
+          completed: false
+        });
+
+      // Transform to TripTask format
+      return {
+        id: newTask.id,
+        trip_id: newTask.trip_id,
+        creator_id: newTask.creator_id,
+        title: newTask.title,
+        description: newTask.description,
+        due_at: newTask.due_at,
+        is_poll: newTask.is_poll,
+        created_at: newTask.created_at,
+        updated_at: newTask.updated_at,
         creator: {
-          id: 'current-user',
+          id: user.id,
           name: 'Current User'
         },
         task_status: [{
-          task_id: Date.now().toString(),
-          user_id: 'current-user',
+          task_id: newTask.id,
+          user_id: user.id,
           completed: false
         }]
-      };
-      return newTask;
+      } as TripTask;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['tripTasks', tripId] });
@@ -147,7 +212,20 @@ export const useTaskMutations = (tripId: string) => {
 
   const toggleTaskMutation = useMutation({
     mutationFn: async ({ taskId, completed }: ToggleTaskRequest) => {
-      // Mock implementation for now
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('User not authenticated');
+
+      // Update task status in database
+      const { error } = await supabase
+        .from('task_status')
+        .upsert({
+          task_id: taskId,
+          user_id: user.id,
+          completed,
+          completed_at: completed ? new Date().toISOString() : null
+        });
+
+      if (error) throw error;
       return { taskId, completed };
     },
     onMutate: async ({ taskId, completed }) => {
