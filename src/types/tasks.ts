@@ -33,6 +33,7 @@ export interface CreateTaskRequest {
   description?: string;
   due_at?: string;
   is_poll: boolean;
+  assignedTo?: string[];
 }
 
 export interface ToggleTaskRequest {

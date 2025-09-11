@@ -2,6 +2,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '../integrations/supabase/client';
 import { TripTask, CreateTaskRequest, ToggleTaskRequest } from '../types/tasks';
 import { useToast } from './use-toast';
+import { taskStorageService } from '../services/taskStorageService';
+import { useDemoMode } from './useDemoMode';
+import { useAuth } from './useAuth';
 
 const generateSeedTasks = (tripId: string): TripTask[] => {
   const consumerTripIds = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
@@ -90,11 +93,24 @@ const generateSeedTasks = (tripId: string): TripTask[] => {
 };
 
 export const useTripTasks = (tripId: string) => {
+  const { isDemoMode } = useDemoMode();
+  const { user } = useAuth();
+  
   return useQuery({
-    queryKey: ['tripTasks', tripId],
+    queryKey: ['tripTasks', tripId, isDemoMode],
     queryFn: async (): Promise<TripTask[]> => {
+      // Demo mode: use localStorage
+      if (isDemoMode || !user) {
+        const demoTasks = taskStorageService.getTasks(tripId);
+        // If no demo tasks exist, create seed tasks
+        if (demoTasks.length === 0) {
+          return generateSeedTasks(tripId);
+        }
+        return demoTasks;
+      }
+
+      // Authenticated mode: use Supabase
       try {
-        // Fetch real tasks from database
         const { data: tasks, error } = await supabase
           .from('trip_tasks')
           .select(`
@@ -130,8 +146,9 @@ export const useTripTasks = (tripId: string) => {
         }));
       } catch (error) {
         console.error('Error fetching tasks:', error);
-        // Fallback to seed tasks on error
-        return generateSeedTasks(tripId);
+        // Fallback to demo tasks
+        const demoTasks = taskStorageService.getTasks(tripId);
+        return demoTasks.length > 0 ? demoTasks : generateSeedTasks(tripId);
       }
     },
     enabled: !!tripId
@@ -141,18 +158,30 @@ export const useTripTasks = (tripId: string) => {
 export const useTaskMutations = (tripId: string) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { isDemoMode } = useDemoMode();
+  const { user } = useAuth();
 
   const createTaskMutation = useMutation({
-    mutationFn: async (task: CreateTaskRequest) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
+    mutationFn: async (task: CreateTaskRequest & { assignedTo?: string[] }) => {
+      // Demo mode: use localStorage
+      if (isDemoMode || !user) {
+        const assignedTo = task.assignedTo || ['demo-user'];
+        return taskStorageService.createTask(tripId, {
+          ...task,
+          assignedTo
+        });
+      }
+
+      // Authenticated mode: use Supabase
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) {
         throw new Error('Please sign in to create tasks');
       }
 
       // Ensure user is a member of the trip (auto-join for consumer trips)
       const { error: membershipError } = await supabase.rpc('ensure_trip_membership', {
         p_trip_id: tripId,
-        p_user_id: user.id
+        p_user_id: authUser.id
       });
 
       if (membershipError) {
@@ -165,7 +194,7 @@ export const useTaskMutations = (tripId: string) => {
         .from('trip_tasks')
         .insert({
           trip_id: tripId,
-          creator_id: user.id,
+          creator_id: authUser.id,
           title: task.title,
           description: task.description,
           due_at: task.due_at,
@@ -187,7 +216,7 @@ export const useTaskMutations = (tripId: string) => {
         .from('task_status')
         .insert({
           task_id: newTask.id,
-          user_id: user.id,
+          user_id: authUser.id,
           completed: false
         });
 
@@ -203,12 +232,12 @@ export const useTaskMutations = (tripId: string) => {
         created_at: newTask.created_at,
         updated_at: newTask.updated_at,
         creator: {
-          id: user.id,
+          id: authUser.id,
           name: 'Current User'
         },
         task_status: [{
           task_id: newTask.id,
-          user_id: user.id,
+          user_id: authUser.id,
           completed: false
         }]
       } as TripTask;
@@ -233,15 +262,22 @@ export const useTaskMutations = (tripId: string) => {
 
   const toggleTaskMutation = useMutation({
     mutationFn: async ({ taskId, completed }: ToggleTaskRequest) => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      // Demo mode: use localStorage
+      if (isDemoMode || !user) {
+        const currentUserId = user?.id || 'demo-user';
+        return taskStorageService.toggleTask(tripId, taskId, currentUserId, completed);
+      }
+
+      // Authenticated mode: use Supabase
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (!authUser) throw new Error('User not authenticated');
 
       // Update task status in database
       const { error } = await supabase
         .from('task_status')
         .upsert({
           task_id: taskId,
-          user_id: user.id,
+          user_id: authUser.id,
           completed,
           completed_at: completed ? new Date().toISOString() : null
         });
@@ -260,8 +296,9 @@ export const useTaskMutations = (tripId: string) => {
         
         return old.map(task => {
           if (task.id === taskId) {
+            const currentUserId = user?.id || 'demo-user';
             const updatedStatus = task.task_status?.map(status => {
-              if (status.user_id === 'current-user-id') { // TODO: Get from auth
+              if (status.user_id === currentUserId) {
                 return {
                   ...status,
                   completed,
@@ -294,7 +331,7 @@ export const useTaskMutations = (tripId: string) => {
       });
     },
     onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ['tripTasks', tripId] });
+      queryClient.invalidateQueries({ queryKey: ['tripTasks', tripId, isDemoMode] });
     }
   });
 

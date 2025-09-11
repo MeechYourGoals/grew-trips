@@ -10,6 +10,8 @@ import { formatDistanceToNow, isAfter } from 'date-fns';
 import { TripTask } from '../../types/tasks';
 import { hapticService } from '../../services/hapticService';
 import { Progress } from '../ui/progress';
+import { useAuth } from '../../hooks/useAuth';
+import { useDemoMode } from '../../hooks/useDemoMode';
 
 interface TaskRowProps {
   task: TripTask;
@@ -27,7 +29,19 @@ export const TaskRow = ({ task, tripId }: TaskRowProps) => {
 
   const isOverdue = task.due_at && isAfter(new Date(), new Date(task.due_at)) && !isCompleted;
   
-  const currentUserStatus = task.task_status?.find(s => s.user_id === 'current-user-id'); // TODO: Get from auth
+  const { user } = useAuth();
+  const { isDemoMode } = useDemoMode();
+
+  // Get current user ID based on auth state
+  const getCurrentUserId = () => {
+    if (isDemoMode || !user) {
+      return 'demo-user';
+    }
+    return user.id;
+  };
+  
+  const currentUserId = getCurrentUserId();
+  const currentUserStatus = task.task_status?.find(s => s.user_id === currentUserId);
   const userCompleted = currentUserStatus?.completed || false;
 
   const completionCount = task.task_status?.filter(s => s.completed).length || 0;

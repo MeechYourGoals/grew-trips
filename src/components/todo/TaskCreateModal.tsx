@@ -10,6 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Calendar as CalendarComponent } from '../ui/calendar';
 import { useTaskMutations } from '../../hooks/useTripTasks';
 import { useTripVariant } from '../../contexts/TripVariantContext';
+import { CollaboratorSelector } from './CollaboratorSelector';
 import { format } from 'date-fns';
 
 interface TaskCreateModalProps {
@@ -23,6 +24,7 @@ export const TaskCreateModal = ({ tripId, onClose }: TaskCreateModalProps) => {
   const [dueDate, setDueDate] = useState<Date | undefined>();
   const [taskMode, setTaskMode] = useState<'solo' | 'poll'>('solo');
   const [showCalendar, setShowCalendar] = useState(false);
+  const [assignedMembers, setAssignedMembers] = useState<string[]>([]);
   
   const { createTaskMutation } = useTaskMutations(tripId);
   const { accentColors } = useTripVariant();
@@ -36,13 +38,15 @@ export const TaskCreateModal = ({ tripId, onClose }: TaskCreateModalProps) => {
       title: title.trim(),
       description: description.trim() || undefined,
       due_at: dueDate?.toISOString(),
-      is_poll: taskMode === 'poll'
+      is_poll: taskMode === 'poll',
+      assignedTo: assignedMembers
     }, {
       onSuccess: () => {
         setTitle('');
         setDescription('');
         setDueDate(undefined);
         setTaskMode('solo');
+        setAssignedMembers([]);
         onClose();
       },
       onError: (error) => {
@@ -124,7 +128,7 @@ export const TaskCreateModal = ({ tripId, onClose }: TaskCreateModalProps) => {
                 <RadioGroupItem value="solo" id="solo" />
                 <Label htmlFor="solo" className="flex items-center gap-2 text-gray-300">
                   <User size={16} />
-                  Single Task - One person completes this
+                  Single Task - Assign to specific people
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
@@ -136,6 +140,14 @@ export const TaskCreateModal = ({ tripId, onClose }: TaskCreateModalProps) => {
               </div>
             </RadioGroup>
           </div>
+
+          {/* Assignment Section */}
+          <CollaboratorSelector
+            tripId={tripId}
+            selectedMembers={assignedMembers}
+            onMembersChange={setAssignedMembers}
+            isSingleTask={taskMode === 'solo'}
+          />
 
           {/* Actions */}
           <div className="flex gap-3 pt-4">
