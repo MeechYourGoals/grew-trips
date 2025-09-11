@@ -2,7 +2,7 @@ import React from 'react';
 import { Check, ChevronDown, Users, User } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '../ui/command';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '../ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Badge } from '../ui/badge';
 import { useTripMembers } from '../../hooks/useTripMembers';
@@ -26,7 +26,8 @@ export const CollaboratorSelector = ({
   onMembersChange,
   isSingleTask
 }: CollaboratorSelectorProps) => {
-  const { tripMembers, loading } = useTripMembers(tripId);
+  const { tripMembers: rawTripMembers, loading } = useTripMembers(tripId);
+  const tripMembers = Array.isArray(rawTripMembers) ? rawTripMembers : [];
   const [open, setOpen] = React.useState(false);
 
   // Auto-select all members for group tasks
@@ -117,37 +118,39 @@ export const CollaboratorSelector = ({
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0 bg-gray-800 border-gray-600">
+        <PopoverContent className="w-full p-0 bg-gray-800 border-gray-600 z-50">
           <Command className="bg-gray-800">
             <CommandInput 
               placeholder="Search members..." 
               className="bg-gray-800 border-gray-600 text-white"
             />
-            <CommandEmpty>No members found.</CommandEmpty>
-            <CommandGroup>
-              {tripMembers.map((member) => (
-                <CommandItem
-                  key={member.id}
-                  onSelect={() => handleMemberToggle(member.id)}
-                  className="flex items-center gap-3 cursor-pointer hover:bg-gray-700"
-                >
-                  <div className="flex items-center gap-2 flex-1">
-                    <Avatar className="w-6 h-6">
-                      <AvatarImage src={member.avatar} />
-                      <AvatarFallback className="text-xs">
-                        {member.name.charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="text-white">{member.name}</span>
-                  </div>
-                  <Check
-                    className={`h-4 w-4 ${
-                      selectedMembers.includes(member.id) ? 'opacity-100' : 'opacity-0'
-                    }`}
-                  />
-                </CommandItem>
-              ))}
-            </CommandGroup>
+            <CommandList>
+              <CommandEmpty>No members found.</CommandEmpty>
+              <CommandGroup>
+                {tripMembers.map((member) => (
+                  <CommandItem
+                    key={member.id}
+                    onSelect={() => handleMemberToggle(member.id)}
+                    className="flex items-center gap-3 cursor-pointer hover:bg-gray-700"
+                  >
+                    <div className="flex items-center gap-2 flex-1">
+                      <Avatar className="w-6 h-6">
+                        <AvatarImage src={member.avatar} />
+                        <AvatarFallback className="text-xs">
+                          {member.name.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <span className="text-white">{member.name}</span>
+                    </div>
+                    <Check
+                      className={`h-4 w-4 ${
+                        selectedMembers.includes(member.id) ? 'opacity-100' : 'opacity-0'
+                      }`}
+                    />
+                  </CommandItem>
+                ))}
+              </CommandGroup>
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>
