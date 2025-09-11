@@ -71,24 +71,17 @@ export const PaymentMessage = ({
 
         {/* Payment Summary */}
         <div className="space-y-2 mb-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h4 className="font-semibold text-lg text-foreground">
-                {formatCurrency(payment.amount, payment.currency)}
-              </h4>
-              <p className="text-sm text-muted-foreground">{payment.description}</p>
+          <div>
+            <h4 className="font-semibold text-lg text-foreground">
+              {payment.description} - {formatCurrency(payment.amount, payment.currency)} 
+              <span className="text-sm font-normal text-muted-foreground ml-2">
+                (split {payment.splitCount} ways, {formatCurrency(amountPerPerson, payment.currency)} each)
+              </span>
+            </h4>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+              <Users size={14} />
+              <span>Paid by {payer?.name || 'Unknown'}</span>
             </div>
-            <div className="text-right">
-              <div className="text-sm text-muted-foreground">Split {payment.splitCount} ways</div>
-              <div className="font-medium text-payment-primary">
-                {formatCurrency(amountPerPerson, payment.currency)} per person
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Users size={14} />
-            <span>Paid by {payer?.name || 'Unknown'}</span>
           </div>
         </div>
 

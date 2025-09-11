@@ -77,6 +77,37 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
     );
   };
 
+  const handleSelectAllParticipants = () => {
+    const allSelected = selectedParticipants.length === tripMembers.length;
+    if (allSelected) {
+      setSelectedParticipants([]);
+      setSplitCount(0);
+    } else {
+      const allIds = tripMembers.map(member => member.id);
+      setSelectedParticipants(allIds);
+      setSplitCount(allIds.length);
+    }
+  };
+
+  const handleSelectAllPaymentMethods = () => {
+    const allSelected = selectedPaymentMethods.length === paymentMethodOptions.length;
+    if (allSelected) {
+      setSelectedPaymentMethods([]);
+    } else {
+      setSelectedPaymentMethods(paymentMethodOptions.map(method => method.id));
+    }
+  };
+
+  // Update split count when participants change
+  React.useEffect(() => {
+    setSplitCount(selectedParticipants.length);
+  }, [selectedParticipants]);
+
+  // Calculate per-person amount for display
+  const amountPerPerson = amount && selectedParticipants.length > 0 
+    ? parseFloat(amount) / selectedParticipants.length 
+    : 0;
+
   if (!isVisible) return null;
 
   return (
@@ -134,10 +165,26 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
 
           {/* Split Options */}
           <div>
-            <Label className="flex items-center gap-2">
-              <Users size={16} />
-              Split between {selectedParticipants.length} people
-            </Label>
+            <div className="flex items-center justify-between mb-2">
+              <Label className="flex items-center gap-2">
+                <Users size={16} />
+                Split between {selectedParticipants.length} people
+                {amountPerPerson > 0 && (
+                  <span className="text-payment-primary font-medium">
+                    (${amountPerPerson.toFixed(2)} each)
+                  </span>
+                )}
+              </Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleSelectAllParticipants}
+                className="text-xs h-7"
+              >
+                {selectedParticipants.length === tripMembers.length ? 'Deselect All' : 'Select All'}
+              </Button>
+            </div>
             <div className="mt-2 max-h-32 overflow-y-auto space-y-2 p-2 bg-white dark:bg-white rounded border">
               {tripMembers.map(member => (
                 <div key={member.id} className="flex items-center gap-2">
@@ -166,10 +213,21 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
 
           {/* Payment Methods */}
           <div>
-            <Label className="flex items-center gap-2">
-              <CheckSquare size={16} />
-              Preferred payment methods
-            </Label>
+            <div className="flex items-center justify-between mb-2">
+              <Label className="flex items-center gap-2">
+                <CheckSquare size={16} />
+                Preferred payment methods
+              </Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={handleSelectAllPaymentMethods}
+                className="text-xs h-7"
+              >
+                {selectedPaymentMethods.length === paymentMethodOptions.length ? 'Deselect All' : 'Select All'}
+              </Button>
+            </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
               {paymentMethodOptions.map(method => (
                 <div key={method.id} className="flex items-center gap-2">
