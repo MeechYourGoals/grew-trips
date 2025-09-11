@@ -36,8 +36,9 @@ export const TourChat = () => {
     if (!isPayment && !message.trim()) return;
     
     if (isPayment && paymentData) {
-      // Create payment message
-      const paymentMessage = `💳 Payment: ${paymentData.description} - ${paymentData.currency} ${paymentData.amount.toFixed(2)} (split ${paymentData.splitCount} ways)`;
+      // Calculate per-person amount and create payment message
+      const perPersonAmount = (paymentData.amount / paymentData.splitCount).toFixed(2);
+      const paymentMessage = `${paymentData.description} - ${paymentData.currency} ${paymentData.amount.toFixed(2)} (split ${paymentData.splitCount} ways) • Pay me $${perPersonAmount} via Venmo: @yourvenmo`;
       addMessage(paymentMessage, undefined, finalTourId);
       
       // TODO: Save payment data to database
