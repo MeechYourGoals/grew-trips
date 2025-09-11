@@ -41,6 +41,20 @@ export const PaymentMessage = ({
     return names[method] || method;
   };
 
+  const getPaymentIdentifier = (method: string, payerName: string) => {
+    // Mock payment identifiers for demo purposes
+    const identifiers: Record<string, string> = {
+      venmo: `@${payerName?.toLowerCase().replace(/\s+/g, '')}`,
+      zelle: '(555) 123-4567',
+      paypal: `@${payerName?.toLowerCase().replace(/\s+/g, '')}.music`,
+      cashapp: `$${payerName?.toLowerCase().replace(/\s+/g, '')}`,
+      applepay: payerName || 'Apple Pay',
+      cash: 'In person',
+      other: payerName || 'Contact directly'
+    };
+    return identifiers[method] || payerName;
+  };
+
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -55,137 +69,106 @@ export const PaymentMessage = ({
     });
   };
 
-  return (
-    <Card className="bg-payment-background-light border-payment-border dark:bg-payment-background dark:border-payment-border">
-      <CardContent className="p-4">
-        {/* Payment Header */}
-        <div className="flex items-center gap-2 mb-3">
-          <DollarSign size={18} className="text-payment-primary" />
-          <Badge variant="secondary" className="bg-payment-primary text-payment-primary-foreground">
-            💳 PAYMENT
-          </Badge>
-          <span className="text-xs text-muted-foreground ml-auto">
-            {formatTime(payment.createdAt)}
-          </span>
-        </div>
+  const primaryPaymentMethod = payment.paymentMethods[0] || 'venmo';
+  const perPersonAmount = amountPerPerson.toFixed(2);
 
-        {/* Payment Summary */}
-        <div className="space-y-2 mb-4">
+  return (
+    <div className="space-y-2">
+      {/* Payment Badge */}
+      <div className="flex items-center gap-2">
+        <Badge variant="secondary" className="bg-payment-primary text-payment-primary-foreground text-xs">
+          💳 PAYMENT
+        </Badge>
+        <span className="text-xs text-muted-foreground">
+          {formatTime(payment.createdAt)}
+        </span>
+      </div>
+
+      {/* Main Payment Message */}
+      <div className="text-foreground">
+        <span className="font-medium">
+          {payment.description} - {payment.currency} {payment.amount.toFixed(2)} (split {payment.splitCount} ways) • Pay me ${perPersonAmount} via {getPaymentMethodName(primaryPaymentMethod)}: {getPaymentIdentifier(primaryPaymentMethod, payer?.name || 'Unknown')}
+        </span>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex gap-2 items-center">
+        {!isPaidByCurrentUser && (
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-xs"
+            onClick={() => {
+              const preferredMethod = userPaymentMethods.find(m => m.isPreferred)?.type || primaryPaymentMethod;
+              onSettlePayment?.(payment.id, preferredMethod);
+            }}
+          >
+            <Check size={12} className="mr-1" />
+            Mark Paid
+          </Button>
+        )}
+        
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowDetails(!showDetails)}
+          className="text-xs text-muted-foreground"
+        >
+          {showDetails ? 'Hide Details' : 'Details'}
+        </Button>
+      </div>
+
+      {/* Detailed View */}
+      {showDetails && (
+        <div className="mt-3 p-3 border border-border rounded-lg bg-muted/50 space-y-3">
+          {/* Split Breakdown */}
           <div>
-            <h4 className="font-semibold text-lg text-foreground">
-              {payment.description} - {formatCurrency(payment.amount, payment.currency)} 
-              <span className="text-sm font-normal text-muted-foreground ml-2">
-                (split {payment.splitCount} ways, {formatCurrency(amountPerPerson, payment.currency)} each)
-              </span>
-            </h4>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-              <Users size={14} />
-              <span>Paid by {payer?.name || 'Unknown'}</span>
+            <h5 className="font-medium text-sm mb-2">Split breakdown:</h5>
+            <div className="space-y-1">
+              {payment.splitParticipants.map(participantId => {
+                const participant = tripMembers.find(m => m.id === participantId);
+                const isCurrentUser = participantId === currentUserId;
+                const isPayer = participantId === payment.createdBy;
+                
+                return (
+                  <div key={participantId} className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      {participant?.avatar && (
+                        <img 
+                          src={participant.avatar} 
+                          alt={participant.name}
+                          className="w-4 h-4 rounded-full"
+                        />
+                      )}
+                      <span className={isCurrentUser ? 'font-medium' : ''}>
+                        {isCurrentUser ? 'You' : participant?.name || 'Unknown'}
+                        {isPayer && ' (paid)'}
+                      </span>
+                    </div>
+                    <span className={isPayer ? 'text-payment-primary' : 'text-orange-600'}>
+                      {isPayer ? '+' : '-'}{formatCurrency(amountPerPerson, payment.currency)}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        </div>
 
-        {/* Payment Methods */}
-        <div className="mb-4">
-          <div className="text-sm text-muted-foreground mb-2">Preferred payment methods:</div>
-          <div className="flex flex-wrap gap-1">
-            {payment.paymentMethods.map(method => (
-              <Badge key={method} variant="outline" className="text-xs">
-                {getPaymentMethodName(method)}
-              </Badge>
-            ))}
-          </div>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowDetails(!showDetails)}
-            className="flex-1"
-          >
-            {showDetails ? 'Hide Details' : 'View Details'}
-          </Button>
-
-          {!isPaidByCurrentUser && (
-            <Button
-              size="sm"
-              className="bg-payment-primary hover:bg-payment-primary/90 text-payment-primary-foreground"
-              onClick={() => {
-                const preferredMethod = userPaymentMethods.find(m => m.isPreferred)?.type || 'venmo';
-                onSettlePayment?.(payment.id, preferredMethod);
-              }}
-            >
-              <Check size={14} className="mr-1" />
-              Mark Paid
-            </Button>
+          {/* Payment Options */}
+          {!isPaidByCurrentUser && payment.paymentMethods.length > 1 && (
+            <div>
+              <h5 className="font-medium text-sm mb-2">Other payment options:</h5>
+              <div className="space-y-1">
+                {payment.paymentMethods.slice(1).map(method => (
+                  <div key={method} className="text-sm text-muted-foreground">
+                    {getPaymentMethodName(method)}: {getPaymentIdentifier(method, payer?.name || 'Unknown')}
+                  </div>
+                ))}
+              </div>
+            </div>
           )}
         </div>
-
-        {/* Detailed View */}
-        {showDetails && (
-          <div className="mt-4 pt-4 border-t border-payment-border">
-            <div className="space-y-3">
-              {/* Who Owes What */}
-              <div>
-                <h5 className="font-medium text-sm mb-2">Split breakdown:</h5>
-                <div className="space-y-1">
-                  {payment.splitParticipants.map(participantId => {
-                    const participant = tripMembers.find(m => m.id === participantId);
-                    const isCurrentUser = participantId === currentUserId;
-                    const isPayer = participantId === payment.createdBy;
-                    
-                    return (
-                      <div key={participantId} className="flex items-center justify-between text-sm">
-                        <div className="flex items-center gap-2">
-                          {participant?.avatar && (
-                            <img 
-                              src={participant.avatar} 
-                              alt={participant.name}
-                              className="w-5 h-5 rounded-full"
-                            />
-                          )}
-                          <span className={isCurrentUser ? 'font-medium' : ''}>
-                            {isCurrentUser ? 'You' : participant?.name || 'Unknown'}
-                            {isPayer && ' (paid)'}
-                          </span>
-                        </div>
-                        <span className={isPayer ? 'text-payment-primary' : 'text-orange-600'}>
-                          {isPayer ? '+' : '-'}{formatCurrency(amountPerPerson, payment.currency)}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Your Payment Options (if you owe money) */}
-              {!isPaidByCurrentUser && (
-                <div>
-                  <h5 className="font-medium text-sm mb-2">Pay {payer?.name}:</h5>
-                  <div className="space-y-1">
-                    {payment.paymentMethods.map(method => (
-                      <Button
-                        key={method}
-                        variant="outline"
-                        size="sm"
-                        className="w-full justify-start text-xs"
-                        onClick={() => {
-                          // Would open payment app or copy payment info
-                          console.log(`Pay via ${method}`);
-                        }}
-                      >
-                        Pay via {getPaymentMethodName(method)}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 };
