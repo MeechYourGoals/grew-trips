@@ -54,7 +54,7 @@ export const useCalendarEvents = (tripId?: string) => {
   };
 
   const deleteEvent = async (eventId: string): Promise<boolean> => {
-    const success = await calendarService.deleteEvent(eventId);
+    const success = await calendarService.deleteEvent(eventId, tripId);
     if (success) {
       setEvents(prevEvents => prevEvents.filter(event => event.id !== eventId));
     }

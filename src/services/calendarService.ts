@@ -1,5 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { CalendarEvent } from '@/types/calendar';
+import { demoModeService } from './demoModeService';
+import { calendarStorageService } from './calendarStorageService';
 
 export interface TripEvent {
   id: string;
@@ -34,6 +36,15 @@ export interface CreateEventData {
 export const calendarService = {
   async createEvent(eventData: CreateEventData): Promise<TripEvent | null> {
     try {
+      // Check if in demo mode
+      const isDemoMode = await demoModeService.isDemoModeEnabled();
+      
+      if (isDemoMode) {
+        // Use localStorage for demo mode
+        return calendarStorageService.createEvent(eventData);
+      }
+
+      // Use Supabase for authenticated users
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
@@ -60,6 +71,15 @@ export const calendarService = {
 
   async getTripEvents(tripId: string): Promise<TripEvent[]> {
     try {
+      // Check if in demo mode
+      const isDemoMode = await demoModeService.isDemoModeEnabled();
+      
+      if (isDemoMode) {
+        // Use localStorage for demo mode
+        return calendarStorageService.getEvents(tripId);
+      }
+
+      // Use Supabase for authenticated users
       const { data, error } = await supabase
         .from('trip_events')
         .select('*')
@@ -76,6 +96,17 @@ export const calendarService = {
 
   async updateEvent(eventId: string, updates: Partial<TripEvent>): Promise<boolean> {
     try {
+      // Check if in demo mode
+      const isDemoMode = await demoModeService.isDemoModeEnabled();
+      
+      if (isDemoMode) {
+        // Extract trip_id from the eventId or use updates
+        const tripId = updates.trip_id || eventId.split('-')[0]; // Fallback logic
+        const updatedEvent = calendarStorageService.updateEvent(tripId, eventId, updates);
+        return updatedEvent !== null;
+      }
+
+      // Use Supabase for authenticated users
       const { error } = await supabase
         .from('trip_events')
         .update(updates)
@@ -88,8 +119,21 @@ export const calendarService = {
     }
   },
 
-  async deleteEvent(eventId: string): Promise<boolean> {
+  async deleteEvent(eventId: string, tripId?: string): Promise<boolean> {
     try {
+      // Check if in demo mode
+      const isDemoMode = await demoModeService.isDemoModeEnabled();
+      
+      if (isDemoMode) {
+        // For demo mode, we need the trip ID to delete from localStorage
+        if (!tripId) {
+          console.error('Trip ID required for demo mode event deletion');
+          return false;
+        }
+        return calendarStorageService.deleteEvent(tripId, eventId);
+      }
+
+      // Use Supabase for authenticated users
       const { error } = await supabase
         .from('trip_events')
         .delete()
