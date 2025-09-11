@@ -63,12 +63,15 @@ export const TripChat = ({
     const messageId = `msg_${Date.now()}`;
     
     if (isPayment && paymentData) {
+      // Calculate per-person amount
+      const perPersonAmount = (paymentData.amount / paymentData.splitCount).toFixed(2);
+      
       // Create payment message with preferred payment method
       const preferredPaymentMethod = "Venmo: @yourvenmo"; // In real app, fetch from user's payment methods
       
       const paymentMessage: MockMessage = {
         id: messageId,
-        text: `${paymentData.description} - ${paymentData.currency} ${paymentData.amount.toFixed(2)} (split ${paymentData.splitCount} ways) • Pay me via ${preferredPaymentMethod}`,
+        text: `${paymentData.description} - ${paymentData.currency} ${paymentData.amount.toFixed(2)} (split ${paymentData.splitCount} ways) • Pay me $${perPersonAmount} via ${preferredPaymentMethod}`,
         sender: { 
           id: 'user1', 
           name: 'You', 
