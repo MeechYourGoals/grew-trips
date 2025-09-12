@@ -57,103 +57,15 @@ const metrics: Metric[] = [
   { value: "Proven for", label: "Complex Travel", icon: <TrendingUp size={16} />, trend: "Successfully handles sports teams, tours, and family reunions" }
 ];
 
-interface OrganizationLogo {
-  name: string;
-  logoComponent: React.ReactNode;
-  altText: string;
-}
-
-const organizationLogos: OrganizationLogo[] = [
-  {
-    name: "Invest Fest",
-    altText: "Invest Fest by Earn Your Leisure",
-    logoComponent: (
-      <svg className="h-10 w-auto" viewBox="0 0 120 40" fill="none">
-        <rect x="0" y="0" width="120" height="40" rx="8" fill="currentColor" opacity="0.1"/>
-        <text x="60" y="25" textAnchor="middle" className="text-sm font-bold fill-current">
-          INVEST FEST
-        </text>
-      </svg>
-    )
-  },
-  {
-    name: "Live Nation",
-    altText: "Live Nation Entertainment",
-    logoComponent: (
-      <svg className="h-10 w-auto" viewBox="0 0 100 40" fill="none">
-        <rect x="0" y="0" width="100" height="40" rx="6" fill="currentColor" opacity="0.1"/>
-        <text x="50" y="25" textAnchor="middle" className="text-sm font-bold fill-current">
-          LIVE NATION
-        </text>
-      </svg>
-    )
-  },
-  {
-    name: "Philadelphia 76ers",
-    altText: "Philadelphia 76ers",
-    logoComponent: (
-      <svg className="h-10 w-auto" viewBox="0 0 80 40" fill="none">
-        <circle cx="20" cy="20" r="18" fill="currentColor" opacity="0.1"/>
-        <text x="20" y="26" textAnchor="middle" className="text-lg font-bold fill-current">
-          76ERS
-        </text>
-        <text x="65" y="25" textAnchor="middle" className="text-xs font-medium fill-current opacity-60">
-          NBA
-        </text>
-      </svg>
-    )
-  },
-  {
-    name: "University of North Carolina",
-    altText: "University of North Carolina Men's Lacrosse",
-    logoComponent: (
-      <svg className="h-10 w-auto" viewBox="0 0 80 40" fill="none">
-        <rect x="0" y="0" width="80" height="40" rx="6" fill="currentColor" opacity="0.1"/>
-        <text x="40" y="25" textAnchor="middle" className="text-lg font-bold fill-current">
-          UNC
-        </text>
-      </svg>
-    )
-  },
-  {
-    name: "Los Angeles Chargers",
-    altText: "Los Angeles Chargers",
-    logoComponent: (
-      <svg className="h-10 w-auto" viewBox="0 0 100 40" fill="none">
-        <path d="M10 20 L30 10 L25 20 L30 30 Z" fill="currentColor" opacity="0.2"/>
-        <text x="60" y="25" textAnchor="middle" className="text-sm font-bold fill-current">
-          CHARGERS
-        </text>
-      </svg>
-    )
-  },
-  {
-    name: "Goodwin Law",
-    altText: "Goodwin Procter LLP",
-    logoComponent: (
-      <svg className="h-10 w-auto" viewBox="0 0 110 40" fill="none">
-        <rect x="0" y="0" width="110" height="40" rx="4" fill="currentColor" opacity="0.05"/>
-        <text x="55" y="25" textAnchor="middle" className="text-sm font-medium fill-current">
-          GOODWIN LAW
-        </text>
-      </svg>
-    )
-  },
-  {
-    name: "Major Talent Agencies",
-    altText: "Managers and Touring Clients of Major Talent Agencies",
-    logoComponent: (
-      <svg className="h-10 w-auto" viewBox="0 0 140 40" fill="none">
-        <rect x="0" y="0" width="140" height="40" rx="6" fill="currentColor" opacity="0.1"/>
-        <text x="70" y="18" textAnchor="middle" className="text-xs font-medium fill-current">
-          MAJOR TALENT
-        </text>
-        <text x="70" y="30" textAnchor="middle" className="text-xs font-medium fill-current">
-          AGENCIES
-        </text>
-      </svg>
-    )
-  }
+const organizations = [
+  "Healthcare Conferences",
+  "Live Nation", 
+  "Philadelphia 76ers",
+  "Los Angeles Chargers",
+  "University of North Carolina",
+  "nationally touring music artists",
+  "nationally touring stand-up comedians", 
+  "AAU Travel Sports"
 ];
 
 export const SocialProofSection = () => {
@@ -216,19 +128,13 @@ export const SocialProofSection = () => {
         </div>
       </div>
 
-      {/* Logo Bar */}
+      {/* Organizations Text List */}
       <div className="text-center space-y-6">
         <p className="text-sm text-muted-foreground">Anticipated by and wait list interest from teams at</p>
-        <div className="flex flex-wrap justify-center items-center gap-6 sm:gap-8 lg:gap-12 opacity-70 hover:opacity-90 transition-opacity">
-          {organizationLogos.map((org, index) => (
-            <div 
-              key={index} 
-              className="flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-200 grayscale hover:grayscale-0"
-              title={org.altText}
-            >
-              {org.logoComponent}
-            </div>
-          ))}
+        <div className="text-muted-foreground font-medium tracking-wide leading-relaxed max-w-4xl mx-auto">
+          <span className="font-inter font-medium text-base">
+            {organizations.join(" • ")}
+          </span>
         </div>
       </div>
     </div>
