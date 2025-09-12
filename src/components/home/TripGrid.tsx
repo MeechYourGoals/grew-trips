@@ -183,33 +183,27 @@ export const TripGrid = ({
       <div className={`grid gap-6 ${isMobile ? 'grid-cols-1' : 'md:grid-cols-2 xl:grid-cols-3'}`}>
         {viewMode === 'myTrips' ? (
           activeTrips.map((trip) => (
-            <React.Fragment key={trip.id}>
-              {isMobile ? (
-                <MobileTripCard trip={trip} />
-              ) : (
-                <TripCard trip={trip} />
-              )}
-            </React.Fragment>
+            isMobile ? (
+              <MobileTripCard key={trip.id} trip={trip} />
+            ) : (
+              <TripCard key={trip.id} trip={trip} />
+            )
           ))
         ) : viewMode === 'tripsPro' ? (
           Object.values(activeProTrips).map((trip) => (
-            <React.Fragment key={trip.id}>
-              {isMobile ? (
-                <MobileProTripCard trip={trip} />
-              ) : (
-                <ProTripCard trip={trip} />
-              )}
-            </React.Fragment>
+            isMobile ? (
+              <MobileProTripCard key={trip.id} trip={trip} />
+            ) : (
+              <ProTripCard key={trip.id} trip={trip} />
+            )
           ))
         ) : viewMode === 'events' ? (
           Object.values(activeEvents).map((event) => (
-            <React.Fragment key={event.id}>
-              {isMobile ? (
-                <MobileEventCard event={event} />
-              ) : (
-                <EventCard event={event} />
-              )}
-            </React.Fragment>
+            isMobile ? (
+              <MobileEventCard key={event.id} event={event} />
+            ) : (
+              <EventCard key={event.id} event={event} />
+            )
           ))
         ) : viewMode === 'travelRecs' ? (
           filteredRecommendations.map((recommendation) => (

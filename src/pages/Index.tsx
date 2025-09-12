@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { MobileHeader } from '../components/MobileHeader';
 import { CreateTripModal } from '../components/CreateTripModal';
 import { UpgradeModal } from '../components/UpgradeModal';
@@ -62,7 +62,8 @@ const Index = () => {
     }
   };
 
-  const getFilteredData = () => {
+  // Memoize expensive filtering operations
+  const filteredData = useMemo(() => {
     if (!activeFilter || activeFilter === 'total') {
       return {
         trips,
@@ -101,21 +102,17 @@ const Index = () => {
       default:
         return { trips, proTrips: proTripMockData, events: eventsMockData };
     }
-  };
+  }, [activeFilter, viewMode, trips]);
 
-  // Simulate loading when switching view modes
+  // Handle view mode changes without artificial delays
   const handleViewModeChange = (newMode: string) => {
     if (newMode === 'upgrade') {
       setIsUpgradeModalOpen(true);
       return;
     }
-    setIsLoading(true);
     setViewMode(newMode);
     setActiveFilter(''); // Reset filter when changing view mode
-    // Simulate API delay
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
+    setIsLoading(false); // Immediate response
   };
 
   const handleFilterClick = (filter: string) => {
@@ -140,7 +137,7 @@ const Index = () => {
     }
   };
 
-  const filteredData = getFilteredData();
+  
 
   // Open settings to saved recs if requested via query params
   useEffect(() => {

@@ -71,29 +71,47 @@ export const useTripMembers = (tripId?: string) => {
     }
   }, [tripId]);
 
-  // Real-time subscription for trip members
+  // Real-time subscription for trip members - only when database queries succeed
   useEffect(() => {
     if (!tripId) return;
 
-    const channel = supabase
-      .channel('trip-members-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: '*',
-          schema: 'public',
-          table: 'trip_members',
-          filter: `trip_id=eq.${tripId}`
-        },
-        () => {
-          // Reload members when changes occur
-          loadTripMembers(tripId);
+    let channel: any;
+
+    // Only create subscription if we have a valid trip ID and database connection
+    const createSubscription = async () => {
+      try {
+        // Test if we can connect to the database first
+        const { data } = await supabase.from('trip_members').select('id').limit(1);
+        
+        if (data !== null) {
+          channel = supabase
+            .channel(`trip-members-${tripId}`)
+            .on(
+              'postgres_changes',
+              {
+                event: '*',
+                schema: 'public',
+                table: 'trip_members',
+                filter: `trip_id=eq.${tripId}`
+              },
+              () => {
+                // Reload members when changes occur
+                loadTripMembers(tripId);
+              }
+            )
+            .subscribe();
         }
-      )
-      .subscribe();
+      } catch (error) {
+        console.log('Database subscription not available, using local data only');
+      }
+    };
+
+    createSubscription();
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) {
+        supabase.removeChannel(channel);
+      }
     };
   }, [tripId]);
 
