@@ -108,48 +108,25 @@ export const useTripPolls = (tripId: string) => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      // Get current poll data
+      // Get current poll version for optimistic locking
       const { data: poll, error: fetchError } = await supabase
         .from('trip_polls')
-        .select('*')
+        .select('version')
         .eq('id', pollId)
         .single();
 
       if (fetchError) throw fetchError;
 
-      // Update options with new vote
-      const currentOptions = Array.isArray(poll.options) ? poll.options : [];
-      const updatedOptions = currentOptions.map((option: any) => {
-        if (option.id === optionId) {
-          const hasVoted = option.voters?.includes(user.id);
-          return {
-            ...option,
-            votes: hasVoted ? option.votes - 1 : option.votes + 1,
-            voters: hasVoted 
-              ? (option.voters || []).filter((v: string) => v !== user.id)
-              : [...(option.voters || []), user.id]
-          };
-        }
-        // Remove user's vote from other options
-        return {
-          ...option,
-          votes: (option.voters || []).includes(user.id) ? option.votes - 1 : option.votes,
-          voters: (option.voters || []).filter((v: string) => v !== user.id)
-        };
-      });
+      // Use atomic function to vote on poll with optimistic locking
+      const { error } = await supabase
+        .rpc('vote_on_poll', {
+          p_poll_id: pollId,
+          p_option_id: optionId,
+          p_user_id: user.id,
+          p_current_version: poll.version
+        });
 
-      const totalVotes = updatedOptions.reduce((sum, option) => sum + option.votes, 0);
-
-      // Update poll in database
-      const { error: updateError } = await supabase
-        .from('trip_polls')
-        .update({
-          options: updatedOptions,
-          total_votes: totalVotes
-        })
-        .eq('id', pollId);
-
-      if (updateError) throw updateError;
+      if (error) throw error;
       return { pollId, optionId };
     },
     onSuccess: () => {

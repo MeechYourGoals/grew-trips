@@ -268,18 +268,26 @@ export const useTaskMutations = (tripId: string) => {
         return taskStorageService.toggleTask(tripId, taskId, currentUserId, completed);
       }
 
-      // Authenticated mode: use Supabase
+      // Authenticated mode: use atomic function with optimistic locking
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) throw new Error('User not authenticated');
 
-      // Update task status in database
+      // Get current task version for optimistic locking
+      const { data: task, error: fetchError } = await supabase
+        .from('trip_tasks')
+        .select('version')
+        .eq('id', taskId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Use atomic function to toggle task status
       const { error } = await supabase
-        .from('task_status')
-        .upsert({
-          task_id: taskId,
-          user_id: authUser.id,
-          completed,
-          completed_at: completed ? new Date().toISOString() : null
+        .rpc('toggle_task_status', {
+          p_task_id: taskId,
+          p_user_id: authUser.id,
+          p_completed: completed,
+          p_current_version: task.version
         });
 
       if (error) throw error;

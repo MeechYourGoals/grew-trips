@@ -44,25 +44,33 @@ export const calendarService = {
         return calendarStorageService.createEvent(eventData);
       }
 
-      // Use Supabase for authenticated users
+      // Use Supabase with conflict detection for authenticated users
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('User not authenticated');
 
-      const { data, error } = await supabase
-        .from('trip_events')
-        .insert({
-          ...eventData,
-          created_by: user.id,
-          event_category: eventData.event_category || 'other',
-          include_in_itinerary: eventData.include_in_itinerary ?? true,
-          source_type: eventData.source_type || 'manual',
-          source_data: eventData.source_data || {}
-        })
-        .select()
-        .single();
+      // Use atomic function to create event with conflict detection
+      const { data: eventId, error } = await supabase
+        .rpc('create_event_with_conflict_check', {
+          p_trip_id: eventData.trip_id,
+          p_title: eventData.title,
+          p_description: eventData.description || '',
+          p_location: eventData.location || '',
+          p_start_time: eventData.start_time,
+          p_end_time: eventData.end_time || null,
+          p_created_by: user.id
+        });
 
       if (error) throw error;
-      return data;
+      
+      // Fetch the created event to return complete data
+      const { data: createdEvent, error: fetchError } = await supabase
+        .from('trip_events')
+        .select('*')
+        .eq('id', eventId)
+        .single();
+
+      if (fetchError) throw fetchError;
+      return createdEvent;
     } catch (error) {
       console.error('Error creating event:', error);
       return null;

@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
+import { rateLimiter } from '@/utils/concurrencyUtils';
+import { InputValidator } from '@/utils/securityUtils';
 
 interface TripChatMessage {
   id: string;
@@ -45,9 +47,14 @@ export const useTripChat = (tripId: string) => {
     enabled: !!tripId
   });
 
-  // Real-time subscription for new messages
+  // Enhanced real-time subscription with rate limiting and batching
   useEffect(() => {
     if (!tripId) return;
+
+    let messageCount = 0;
+    const maxMessagesPerMinute = 100;
+    const rateLimitWindow = 60000; // 1 minute
+    let windowStart = Date.now();
 
     const channel = supabase
       .channel(`trip_chat_${tripId}`)
@@ -60,10 +67,37 @@ export const useTripChat = (tripId: string) => {
           filter: `trip_id=eq.${tripId}`
         },
         (payload) => {
-          queryClient.setQueryData(['tripChat', tripId], (old: TripChatMessage[] = []) => [
-            ...old,
-            payload.new as TripChatMessage
-          ]);
+          const now = Date.now();
+          
+          // Reset rate limit window if needed
+          if (now - windowStart > rateLimitWindow) {
+            messageCount = 0;
+            windowStart = now;
+          }
+          
+          // Rate limit protection
+          if (messageCount >= maxMessagesPerMinute) {
+            console.warn('Message rate limit exceeded, dropping message');
+            return;
+          }
+          
+          messageCount++;
+          
+          // Update query data with optimistic ordering
+          queryClient.setQueryData(['tripChat', tripId], (old: TripChatMessage[] = []) => {
+            const newMessage = payload.new as TripChatMessage;
+            
+            // Prevent duplicate messages
+            if (old.some(msg => msg.id === newMessage.id)) {
+              return old;
+            }
+            
+            // Insert message in correct chronological order
+            const newMessages = [...old, newMessage];
+            return newMessages.sort((a, b) => 
+              new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+            );
+          });
         }
       )
       .subscribe();
@@ -73,15 +107,32 @@ export const useTripChat = (tripId: string) => {
     };
   }, [tripId, queryClient]);
 
-  // Create message mutation
+  // Create message mutation with rate limiting
   const createMessageMutation = useMutation({
     mutationFn: async (message: CreateMessageRequest) => {
+      // Rate limit check - 30 messages per minute per user
+      const rateLimitKey = `chat_${tripId}_${message.author_name}`;
+      if (!rateLimiter.checkLimit(rateLimitKey, 30, 60000)) {
+        throw new Error('Rate limit exceeded. Please slow down your messages.');
+      }
+
+      // Sanitize message content
+      const sanitizedContent = InputValidator.sanitizeText(message.content);
+      if (!sanitizedContent.trim()) {
+        throw new Error('Message cannot be empty.');
+      }
+
+      // Validate message length
+      if (sanitizedContent.length > 1000) {
+        throw new Error('Message is too long. Please keep it under 1000 characters.');
+      }
+
       const { data, error } = await supabase
         .from('trip_chat_messages')
         .insert({
           trip_id: tripId,
-          content: message.content,
-          author_name: message.author_name,
+          content: sanitizedContent,
+          author_name: InputValidator.sanitizeText(message.author_name),
           media_type: message.media_type,
           media_url: message.media_url
         })
@@ -91,10 +142,12 @@ export const useTripChat = (tripId: string) => {
       if (error) throw error;
       return data;
     },
-    onError: () => {
+    onError: (error: any) => {
+      console.error('Message creation error:', error);
+      const errorMessage = error.message || 'Failed to send message. Please try again.';
       toast({
         title: 'Error',
-        description: 'Failed to send message. Please try again.',
+        description: errorMessage,
         variant: 'destructive'
       });
     }

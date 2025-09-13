@@ -95,44 +95,21 @@ export const paymentService = {
     }
   ): Promise<string | null> {
     try {
-      const { data, error } = await supabase
-        .from('trip_payment_messages')
-        .insert({
-          trip_id: tripId,
-          amount: paymentData.amount,
-          currency: paymentData.currency,
-          description: paymentData.description,
-          split_count: paymentData.splitCount,
-          split_participants: paymentData.splitParticipants,
-          payment_methods: paymentData.paymentMethods,
-          created_by: userId,
-        })
-        .select('id')
-        .single();
+      // Use atomic function to create payment with splits
+      const { data: paymentId, error } = await supabase
+        .rpc('create_payment_with_splits', {
+          p_trip_id: tripId,
+          p_amount: paymentData.amount,
+          p_currency: paymentData.currency,
+          p_description: paymentData.description,
+          p_split_count: paymentData.splitCount,
+          p_split_participants: paymentData.splitParticipants,
+          p_payment_methods: paymentData.paymentMethods,
+          p_created_by: userId
+        });
 
       if (error) throw error;
-
-      // Create payment splits for each participant
-      const amountPerPerson = paymentData.amount / paymentData.splitCount;
-      const splits = paymentData.splitParticipants
-        .filter(participantId => participantId !== userId) // Don't create split for the payer
-        .map(participantId => ({
-          payment_message_id: data.id,
-          debtor_user_id: participantId,
-          amount_owed: amountPerPerson,
-        }));
-
-      if (splits.length > 0) {
-        const { error: splitsError } = await supabase
-          .from('payment_splits')
-          .insert(splits);
-
-        if (splitsError) {
-          console.error('Error creating payment splits:', splitsError);
-        }
-      }
-
-      return data.id;
+      return paymentId;
     } catch (error) {
       console.error('Error creating payment message:', error);
       return null;
@@ -172,6 +149,19 @@ export const paymentService = {
   // Payment Settlement
   async settlePayment(splitId: string, settlementMethod: string): Promise<boolean> {
     try {
+      // Add optimistic locking by checking the current state first
+      const { data: currentSplit, error: fetchError } = await supabase
+        .from('payment_splits')
+        .select('is_settled')
+        .eq('id', splitId)
+        .single();
+
+      if (fetchError) throw fetchError;
+      
+      if (currentSplit.is_settled) {
+        throw new Error('Payment has already been settled by another user.');
+      }
+
       const { error } = await supabase
         .from('payment_splits')
         .update({
@@ -179,7 +169,8 @@ export const paymentService = {
           settled_at: new Date().toISOString(),
           settlement_method: settlementMethod,
         })
-        .eq('id', splitId);
+        .eq('id', splitId)
+        .eq('is_settled', false); // Ensure it hasn't been settled by another transaction
 
       return !error;
     } catch (error) {
