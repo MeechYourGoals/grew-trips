@@ -533,6 +533,7 @@ export type Database = {
           title: string
           trip_id: string
           updated_at: string
+          version: number | null
         }
         Insert: {
           created_at?: string
@@ -549,6 +550,7 @@ export type Database = {
           title: string
           trip_id: string
           updated_at?: string
+          version?: number | null
         }
         Update: {
           created_at?: string
@@ -565,6 +567,7 @@ export type Database = {
           title?: string
           trip_id?: string
           updated_at?: string
+          version?: number | null
         }
         Relationships: []
       }
@@ -821,6 +824,7 @@ export type Database = {
           split_participants: Json
           trip_id: string
           updated_at: string
+          version: number | null
         }
         Insert: {
           amount: number
@@ -836,6 +840,7 @@ export type Database = {
           split_participants?: Json
           trip_id: string
           updated_at?: string
+          version?: number | null
         }
         Update: {
           amount?: number
@@ -851,6 +856,7 @@ export type Database = {
           split_participants?: Json
           trip_id?: string
           updated_at?: string
+          version?: number | null
         }
         Relationships: []
       }
@@ -865,6 +871,7 @@ export type Database = {
           total_votes: number
           trip_id: string
           updated_at: string
+          version: number | null
         }
         Insert: {
           created_at?: string
@@ -876,6 +883,7 @@ export type Database = {
           total_votes?: number
           trip_id: string
           updated_at?: string
+          version?: number | null
         }
         Update: {
           created_at?: string
@@ -887,6 +895,7 @@ export type Database = {
           total_votes?: number
           trip_id?: string
           updated_at?: string
+          version?: number | null
         }
         Relationships: []
       }
@@ -1031,6 +1040,7 @@ export type Database = {
           title: string
           trip_id: string
           updated_at: string
+          version: number | null
         }
         Insert: {
           completed?: boolean
@@ -1044,6 +1054,7 @@ export type Database = {
           title: string
           trip_id: string
           updated_at?: string
+          version?: number | null
         }
         Update: {
           completed?: boolean
@@ -1057,6 +1068,7 @@ export type Database = {
           title?: string
           trip_id?: string
           updated_at?: string
+          version?: number | null
         }
         Relationships: []
       }
@@ -1186,6 +1198,31 @@ export type Database = {
         Args: { "": string } | { "": unknown }
         Returns: unknown
       }
+      create_event_with_conflict_check: {
+        Args: {
+          p_created_by: string
+          p_description: string
+          p_end_time: string
+          p_location: string
+          p_start_time: string
+          p_title: string
+          p_trip_id: string
+        }
+        Returns: string
+      }
+      create_payment_with_splits: {
+        Args: {
+          p_amount: number
+          p_created_by: string
+          p_currency: string
+          p_description: string
+          p_payment_methods: Json
+          p_split_count: number
+          p_split_participants: Json
+          p_trip_id: string
+        }
+        Returns: string
+      }
       ensure_trip_membership: {
         Args: { p_trip_id: string; p_user_id: string }
         Returns: boolean
@@ -1270,6 +1307,15 @@ export type Database = {
         Args: { "": unknown[] }
         Returns: number
       }
+      toggle_task_status: {
+        Args: {
+          p_completed: boolean
+          p_current_version: number
+          p_task_id: string
+          p_user_id: string
+        }
+        Returns: boolean
+      }
       vector_avg: {
         Args: { "": number[] }
         Returns: string
@@ -1293,6 +1339,15 @@ export type Database = {
       vector_typmod_in: {
         Args: { "": unknown[] }
         Returns: number
+      }
+      vote_on_poll: {
+        Args: {
+          p_current_version: number
+          p_option_id: string
+          p_poll_id: string
+          p_user_id: string
+        }
+        Returns: Json
       }
     }
     Enums: {
