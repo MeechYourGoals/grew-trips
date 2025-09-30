@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { demoModeService } from './demoModeService';
 
 export interface Trip {
   id: string;
@@ -65,6 +66,12 @@ export const tripService = {
 
   async getUserTrips(): Promise<Trip[]> {
     try {
+      // Check if demo mode is enabled
+      const isDemoMode = await demoModeService.isDemoModeEnabled();
+      if (isDemoMode) {
+        return await demoModeService.getMockTrips();
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 

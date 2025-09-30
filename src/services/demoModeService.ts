@@ -23,6 +23,56 @@ interface MockBroadcast {
   timestamp_offset_hours?: number;
 }
 
+export interface MockTrip {
+  id: string;
+  name: string;
+  description?: string;
+  destination?: string;
+  start_date?: string;
+  end_date?: string;
+  cover_image_url?: string;
+  trip_type: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+  is_archived: boolean;
+}
+
+export interface MockPayment {
+  id: string;
+  trip_id: string;
+  amount: number;
+  currency: string;
+  description: string;
+  split_count: number;
+  split_participants: string[];
+  payment_methods: string[];
+  created_by: string;
+  created_at: string;
+  is_settled: boolean;
+}
+
+export interface MockPoll {
+  id: string;
+  trip_id: string;
+  question: string;
+  options: Array<{ id: string; text: string; votes: number }>;
+  total_votes: number;
+  created_by: string;
+  created_at: string;
+  status: string;
+}
+
+export interface MockMember {
+  id: string;
+  trip_id: string;
+  user_id: string;
+  role: string;
+  display_name: string;
+  avatar_url?: string;
+  created_at: string;
+}
+
 class DemoModeService {
   getTripType(trip: any): string {
     if (!trip) return 'demo';
@@ -254,6 +304,181 @@ class DemoModeService {
     console.log('Disconnecting user from GetStream (placeholder)');
     return Promise.resolve();
   };
+
+  async getMockTrips(): Promise<MockTrip[]> {
+    return [
+      {
+        id: 'demo-trip-1',
+        name: 'Spring Break Cancun 2026',
+        description: 'Beach getaway with friends',
+        destination: 'Cancun, Mexico',
+        start_date: '2026-03-15',
+        end_date: '2026-03-22',
+        cover_image_url: 'https://images.unsplash.com/photo-1519046904884-53103b34b206',
+        trip_type: 'consumer',
+        created_by: 'demo-user',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_archived: false
+      },
+      {
+        id: 'demo-trip-2',
+        name: 'Tokyo Adventure',
+        description: 'Exploring Japanese culture and cuisine',
+        destination: 'Tokyo, Japan',
+        start_date: '2026-04-10',
+        end_date: '2026-04-18',
+        cover_image_url: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf',
+        trip_type: 'consumer',
+        created_by: 'demo-user',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_archived: false
+      },
+      {
+        id: 'demo-trip-3',
+        name: 'Bali Wellness Retreat',
+        description: 'Yoga, meditation, and relaxation',
+        destination: 'Bali, Indonesia',
+        start_date: '2026-05-20',
+        end_date: '2026-05-27',
+        cover_image_url: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4',
+        trip_type: 'consumer',
+        created_by: 'demo-user',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+        is_archived: false
+      }
+    ];
+  }
+
+  async getMockPayments(tripId: string): Promise<MockPayment[]> {
+    return [
+      {
+        id: 'demo-payment-1',
+        trip_id: tripId,
+        amount: 240.00,
+        currency: 'USD',
+        description: 'Dinner at Sakura Restaurant',
+        split_count: 4,
+        split_participants: ['user1', 'user2', 'user3', 'user4'],
+        payment_methods: ['Venmo', 'Zelle'],
+        created_by: 'user1',
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+        is_settled: false
+      },
+      {
+        id: 'demo-payment-2',
+        trip_id: tripId,
+        amount: 65.00,
+        currency: 'USD',
+        description: 'Taxi to airport',
+        split_count: 6,
+        split_participants: ['user1', 'user2', 'user3', 'user4', 'user5', 'user6'],
+        payment_methods: ['Zelle'],
+        created_by: 'user2',
+        created_at: new Date(Date.now() - 43200000).toISOString(),
+        is_settled: true
+      },
+      {
+        id: 'demo-payment-3',
+        trip_id: tripId,
+        amount: 180.00,
+        currency: 'USD',
+        description: 'Concert tickets',
+        split_count: 3,
+        split_participants: ['user1', 'user2', 'user3'],
+        payment_methods: ['PayPal'],
+        created_by: 'user3',
+        created_at: new Date().toISOString(),
+        is_settled: false
+      }
+    ];
+  }
+
+  async getMockPolls(tripId: string): Promise<MockPoll[]> {
+    return [
+      {
+        id: 'demo-poll-1',
+        trip_id: tripId,
+        question: 'Which restaurant should we try for dinner tonight?',
+        options: [
+          { id: 'opt1', text: 'Italian Bistro', votes: 7 },
+          { id: 'opt2', text: 'Sushi Bar', votes: 12 },
+          { id: 'opt3', text: 'Mexican Grill', votes: 5 },
+          { id: 'opt4', text: 'Thai Cuisine', votes: 3 }
+        ],
+        total_votes: 27,
+        created_by: 'user1',
+        created_at: new Date(Date.now() - 172800000).toISOString(),
+        status: 'active'
+      },
+      {
+        id: 'demo-poll-2',
+        trip_id: tripId,
+        question: 'What time should we leave for the beach?',
+        options: [
+          { id: 'opt1', text: '8:00 AM - Early start', votes: 4 },
+          { id: 'opt2', text: '10:00 AM - Mid-morning', votes: 15 },
+          { id: 'opt3', text: '12:00 PM - Noon', votes: 6 }
+        ],
+        total_votes: 25,
+        created_by: 'user2',
+        created_at: new Date(Date.now() - 86400000).toISOString(),
+        status: 'active'
+      }
+    ];
+  }
+
+  async getMockMembers(tripId: string): Promise<MockMember[]> {
+    return [
+      {
+        id: 'demo-member-1',
+        trip_id: tripId,
+        user_id: 'user1',
+        role: 'admin',
+        display_name: 'Sarah Chen',
+        avatar_url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 'demo-member-2',
+        trip_id: tripId,
+        user_id: 'user2',
+        role: 'member',
+        display_name: 'Marcus Johnson',
+        avatar_url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 'demo-member-3',
+        trip_id: tripId,
+        user_id: 'user3',
+        role: 'member',
+        display_name: 'Priya Patel',
+        avatar_url: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 'demo-member-4',
+        trip_id: tripId,
+        user_id: 'user4',
+        role: 'member',
+        display_name: 'Alex Kim',
+        avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e',
+        created_at: new Date().toISOString()
+      },
+      {
+        id: 'demo-member-5',
+        trip_id: tripId,
+        user_id: 'user5',
+        role: 'member',
+        display_name: 'Emma Rodriguez',
+        avatar_url: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb',
+        created_at: new Date().toISOString()
+      }
+    ];
+  }
 }
 
 export const demoModeService = new DemoModeService();

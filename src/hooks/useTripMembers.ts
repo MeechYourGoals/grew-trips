@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { tripService } from '@/services/tripService';
 import { supabase } from '@/integrations/supabase/client';
 import { getTripById } from '@/data/tripsData';
+import { demoModeService } from '@/services/demoModeService';
 
 interface TripMember {
   id: string;
@@ -44,6 +45,20 @@ export const useTripMembers = (tripId?: string) => {
     setLoading(true);
     
     try {
+      // Check if demo mode is enabled
+      const isDemoMode = await demoModeService.isDemoModeEnabled();
+      if (isDemoMode) {
+        const mockMembers = await demoModeService.getMockMembers(tripId);
+        const formattedMembers = mockMembers.map(member => ({
+          id: member.user_id,
+          name: member.display_name,
+          avatar: member.avatar_url
+        }));
+        setTripMembers(formattedMembers);
+        setLoading(false);
+        return;
+      }
+
       // Try to fetch from database first
       const dbMembers = await tripService.getTripMembers(tripId);
       

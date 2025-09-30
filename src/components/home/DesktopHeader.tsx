@@ -3,6 +3,7 @@ import { Crown, Plus, Settings, User, LogIn } from 'lucide-react';
 import { NotificationBell } from '../NotificationBell';
 import { SearchBar } from '../SearchBar';
 import { AuthModal } from '../AuthModal';
+import { DemoModeToggle } from '../DemoModeToggle';
 
 
 import { useAuth } from '../../hooks/useAuth';
@@ -42,6 +43,11 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
 
   return (
     <>
+      {/* Demo Mode Toggle - Top Level */}
+      <div className="flex justify-end mb-3">
+        <DemoModeToggle />
+      </div>
+
       {/* Main Header Container */}
       <div className="mb-6">
         {/* Brand + Main Navigation Row */}

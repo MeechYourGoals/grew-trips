@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Plus, Crown, Settings, Menu, X } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
 import { NotificationBell } from './NotificationBell';
+import { DemoModeToggle } from './DemoModeToggle';
 
 interface MobileHeaderProps {
   onCreateTrip: () => void;
@@ -26,6 +27,10 @@ export const MobileHeader = ({
 
   return (
     <>
+      <div className="flex items-center justify-between mb-2 gap-2">
+        <DemoModeToggle />
+      </div>
+      
       <div className="flex items-center justify-between mb-6 bg-gray-900/80 backdrop-blur-md border border-gray-700 rounded-2xl p-4">
         <div>
           <h1 className="text-xl font-semibold text-foreground tracking-tight" aria-label="Chravel Home">

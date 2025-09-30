@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { PaymentMethod, PaymentMessage, PaymentSplit } from '../types/payments';
+import { demoModeService } from './demoModeService';
 
 export const paymentService = {
   // User Payment Methods
@@ -118,6 +119,26 @@ export const paymentService = {
 
   async getTripPaymentMessages(tripId: string): Promise<PaymentMessage[]> {
     try {
+      // Check if demo mode is enabled
+      const isDemoMode = await demoModeService.isDemoModeEnabled();
+      if (isDemoMode) {
+        const mockPayments = await demoModeService.getMockPayments(tripId);
+        return mockPayments.map(payment => ({
+          id: payment.id,
+          tripId: payment.trip_id,
+          messageId: null,
+          amount: payment.amount,
+          currency: payment.currency,
+          description: payment.description,
+          splitCount: payment.split_count,
+          splitParticipants: payment.split_participants,
+          paymentMethods: payment.payment_methods,
+          createdBy: payment.created_by,
+          createdAt: payment.created_at,
+          isSettled: payment.is_settled,
+        }));
+      }
+
       const { data, error } = await supabase
         .from('trip_payment_messages')
         .select('*')

@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from './use-toast';
+import { demoModeService } from '@/services/demoModeService';
 
 interface TripPoll {
   id: string;
@@ -39,6 +40,28 @@ export const useTripPolls = (tripId: string) => {
   const { data: polls = [], isLoading } = useQuery({
     queryKey: ['tripPolls', tripId],
     queryFn: async (): Promise<TripPoll[]> => {
+      // Check if demo mode is enabled
+      const isDemoMode = await demoModeService.isDemoModeEnabled();
+      if (isDemoMode) {
+        const mockPolls = await demoModeService.getMockPolls(tripId);
+        return mockPolls.map(poll => ({
+          id: poll.id,
+          trip_id: poll.trip_id,
+          question: poll.question,
+          options: poll.options.map(opt => ({
+            id: opt.id,
+            text: opt.text,
+            votes: opt.votes,
+            voters: []
+          })),
+          total_votes: poll.total_votes,
+          status: poll.status as 'active' | 'closed',
+          created_by: poll.created_by,
+          created_at: poll.created_at,
+          updated_at: poll.created_at
+        }));
+      }
+
       const { data, error } = await supabase
         .from('trip_polls')
         .select('*')
