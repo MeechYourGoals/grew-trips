@@ -8,6 +8,9 @@ export const postMaloneJellyRollTour: ProTripData = {
   dateRange: 'Jun 1 - Sep 30, 2026',
   category: 'Music Tour',
   tags: ['Stadium', 'North America', 'Hip-Hop', 'Country Rock'],
+  basecamp_name: 'AT&T Stadium',
+  basecamp_address: '1 AT&T Way, Arlington, TX 76011',
+  broadcasts: [],
   participants: [
     { id: 1, name: 'Post Malone', avatar: '/images/avatars/blank-01.png', role: 'Headliner' },
     { id: 2, name: 'Jelly Roll', avatar: '/images/avatars/blank-02.png', role: 'Co-Headliner' },

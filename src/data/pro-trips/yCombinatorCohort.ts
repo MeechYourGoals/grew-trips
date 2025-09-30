@@ -9,6 +9,9 @@ export const yCombinatorCohort: ProTripData = {
   category: 'Startup',
   proTripCategory: 'Other',
   tags: ['Startup', 'Accelerator', 'Andreessen Horowitz'],
+  basecamp_name: 'Andreessen Horowitz HQ',
+  basecamp_address: '2865 Sand Hill Rd, Menlo Park, CA 94025',
+  broadcasts: [],
   participants: Array.from({ length: 35 }, (_, i) => {
     const id = 24 + i;
     const avatars = [

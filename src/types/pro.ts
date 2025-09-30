@@ -300,6 +300,11 @@ export interface ProTripData {
     | 'Other';
   tags: string[];
   participants: ProTripParticipant[];
+  // Basecamp info
+  basecamp_name?: string;
+  basecamp_address?: string;
+  // Broadcasts for the trip
+  broadcasts?: Broadcast[];
   // Feature toggles for Pro/Event trips
   enabled_features?: string[];
   archived?: boolean;

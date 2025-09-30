@@ -9,6 +9,9 @@ export const uncMensLacrosse: ProTripData = {
   category: 'Sports',
   proTripCategory: 'Sports – Pro, Collegiate, Youth',
   tags: ['Sports', 'Lacrosse', 'NCAA Division I', 'UNC'],
+  basecamp_name: 'Dorrance Field',
+  basecamp_address: '104 Stadium Drive, Chapel Hill, NC 27514',
+  broadcasts: [],
   participants: Array.from({ length: 45 }, (_, i) => {
     const id = 201 + i;
     const avatars = [

@@ -9,6 +9,9 @@ export const kaiDruskiStream: ProTripData = {
   category: 'Entertainment',
   proTripCategory: 'Content',
   tags: ['Content', 'Live Stream', 'Gaming'],
+  basecamp_name: 'State Farm Arena',
+  basecamp_address: '1 State Farm Drive, Atlanta, GA 30303',
+  broadcasts: [],
   participants: [
     { id: 1, name: 'Kai Cenat', avatar: '/images/avatars/blank-09.png', role: 'Content Creators' },
     { id: 2, name: 'Druski', avatar: '/images/avatars/blank-10.png', role: 'Content Creators' },

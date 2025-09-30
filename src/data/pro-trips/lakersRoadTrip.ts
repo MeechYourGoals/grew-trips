@@ -9,6 +9,9 @@ export const lakersRoadTrip: ProTripData = {
   category: 'Sports',
   proTripCategory: 'Sports – Pro, Collegiate, Youth',
   tags: ['Sports', 'Basketball', 'Road Trip'],
+  basecamp_name: 'Staples Center',
+  basecamp_address: '1111 S Figueroa St, Los Angeles, CA 90015',
+  broadcasts: [],
   participants: [
     { id: 1, name: 'LeBron James', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Players' },
     { id: 2, name: 'Anthony Davis', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Players' },

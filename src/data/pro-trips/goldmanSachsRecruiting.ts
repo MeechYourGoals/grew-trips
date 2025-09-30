@@ -8,6 +8,9 @@ export const goldmanSachsRecruiting: ProTripData = {
   dateRange: 'Sep 18 - Sep 19, 2025',
   category: 'Business Travel',
   tags: ['Recruiting', 'Finance', 'Campus', 'Investment Banking'],
+  basecamp_name: 'Georgia Tech Student Center',
+  basecamp_address: '350 Ferst Drive NW, Atlanta, GA 30332',
+  broadcasts: [],
   participants: [
     { id: 1, name: 'David Solomon', avatar: '/images/avatars/blank-05.png', role: 'CEO Speaker' },
     { id: 2, name: 'Rachel Ma', avatar: '/images/avatars/blank-06.png', role: 'Campus Lead' },

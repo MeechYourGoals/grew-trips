@@ -8,6 +8,9 @@ export const nvidiaBowlingNight: ProTripData = {
   dateRange: 'Dec 8, 2025',
   category: 'Team-Building',
   tags: ['Corporate Event', 'Tech', 'Entertainment', 'Employee Engagement'],
+  basecamp_name: 'NVIDIA Headquarters',
+  basecamp_address: '2788 San Tomas Expressway, Santa Clara, CA 95051',
+  broadcasts: [],
   participants: [
     { id: 1, name: 'Jensen Huang', avatar: '/images/avatars/blank-09.png', role: 'Host' },
     { id: 2, name: 'Colette Kress', avatar: '/images/avatars/blank-10.png', role: 'CFO' },

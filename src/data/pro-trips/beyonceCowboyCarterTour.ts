@@ -9,6 +9,9 @@ export const beyonceCowboyCarterTour: ProTripData = {
   category: 'Entertainment',
   proTripCategory: 'Tour – Music, Comedy, etc.',
   tags: ['Music Tour', 'Concert', 'International'],
+  basecamp_name: 'Wembley Stadium',
+  basecamp_address: 'Wembley, London HA9 0WS, United Kingdom',
+  broadcasts: [],
   participants: [
     { id: 4, name: 'Beyoncé', avatar: '/images/avatars/blank-05.png', role: 'Artists' },
     { id: 5, name: 'Les Twins', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Dancers' },

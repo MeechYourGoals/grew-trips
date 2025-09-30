@@ -8,6 +8,9 @@ export const paulGeorgeEliteAau: ProTripData = {
   dateRange: 'Jul 8 - Jul 14, 2025',
   category: 'Sports – Team Trip',
   tags: ['Sports – Team Trip', 'Basketball', 'AAU', 'Nationals'],
+  basecamp_name: 'Orange County Convention Center',
+  basecamp_address: '9800 International Drive, Orlando, FL 32819',
+  broadcasts: [],
   participants: Array.from({ length: 120 }, (_, i) => {
     const id = 101 + i;
     const avatars = [

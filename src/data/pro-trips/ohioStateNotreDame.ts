@@ -9,6 +9,9 @@ export const ohioStateNotreDame: ProTripData = {
   category: 'Sports',
   proTripCategory: 'Sports – Pro, Collegiate, Youth',
   tags: ['Sports', 'NCAA Division I', 'Football'],
+  basecamp_name: 'Notre Dame Stadium',
+  basecamp_address: 'Notre Dame, IN 46556',
+  broadcasts: [],
   participants: Array.from({ length: 150 }, (_, i) => {
     const id = 301 + i;
     const avatars = [

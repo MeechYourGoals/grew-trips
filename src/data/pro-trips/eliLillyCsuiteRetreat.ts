@@ -9,6 +9,9 @@ export const eliLillyCsuiteRetreat: ProTripData = {
   category: 'Business Travel',
   proTripCategory: 'Business Travel',
   tags: ['Business Travel', 'Executive', 'Strategy'],
+  basecamp_name: 'Terranea Resort',
+  basecamp_address: '100 Terranea Way, Rancho Palos Verdes, CA 90275',
+  broadcasts: [],
   participants: [
     { id: 9, name: 'David Ricks', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Executives' },
     { id: 10, name: 'Anat Ashkenazi', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Executives' },

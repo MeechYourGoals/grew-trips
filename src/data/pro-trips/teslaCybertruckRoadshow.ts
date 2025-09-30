@@ -9,6 +9,9 @@ export const teslaCybertruckRoadshow: ProTripData = {
   category: 'Enterprise',
   proTripCategory: 'Business Travel',
   tags: ['Automotive', 'Product Launch', 'Enterprise'],
+  basecamp_name: 'Tesla Gigafactory Texas',
+  basecamp_address: '1 Tesla Road, Austin, TX 78725',
+  broadcasts: [],
   participants: [
     { id: 1, name: 'Elon Musk', avatar: '/images/avatars/blank-17.png', role: 'Executive Team' },
     { id: 2, name: 'Franz von Holzhausen', avatar: '/images/avatars/blank-18.png', role: 'Design Team' },

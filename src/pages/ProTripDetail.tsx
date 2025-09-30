@@ -102,60 +102,61 @@ const ProTripDetail = () => {
   };
 
   return (
-    <TripVariantProvider category={tripData.category}>
+    <TripVariantProvider variant="pro">
       <div className="min-h-screen bg-black text-white">
         <ProTripDetailHeader
-          tripId={proTripId}
-          onToggleInbox={() => setShowInbox(!showInbox)}
-          onSettings={() => setShowSettings(true)}
-          onInvite={() => setShowInvite(true)}
-          onAuth={() => setShowAuth(true)}
-          onTripSettings={() => setShowTripSettings(true)}
           tripContext={tripContext}
+          showInbox={showInbox}
+          onToggleInbox={() => setShowInbox(!showInbox)}
+          onShowInvite={() => setShowInvite(true)}
+          onShowTripSettings={() => setShowTripSettings(true)}
+          onShowAuth={() => setShowAuth(true)}
         />
 
         {showInbox && (
-          <MessageInbox
-            messages={getMessagesForTrip(proTripId)}
-            onClose={() => setShowInbox(false)}
-          />
+          <MessageInbox />
         )}
 
         <TripHeader
-          title={tripData.title}
-          location={tripData.location}
-          dateRange={tripData.dateRange}
-          participants={tripData.participants}
+          trip={{
+            id: parseInt(tripData.id) || 0,
+            title: tripData.title,
+            location: tripData.location,
+            dateRange: tripData.dateRange,
+            description: tripData.description || '',
+            participants: tripData.participants
+          }}
           category={tripData.category as ProTripCategory}
-          tripId={proTripId}
+          tags={tripData.tags}
           onCategoryChange={() => {}}
-          isPro={true}
         />
 
         <ProTripDetailContent
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          onShowInviteModal={() => setShowInvite(true)}
+          onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
           tripId={proTripId}
           basecamp={basecamp}
           tripPreferences={tripPreferences}
+          onPreferencesChange={setTripPreferences}
           tripData={tripData}
           selectedCategory={tripData.category as ProTripCategory}
         />
 
         <TripDetailModals
           showSettings={showSettings}
-          showInvite={showInvite}
-          showAuth={showAuth}
-          showTripSettings={showTripSettings}
-          showTripsPlusModal={showTripsPlusModal}
           onCloseSettings={() => setShowSettings(false)}
+          showInvite={showInvite}
           onCloseInvite={() => setShowInvite(false)}
+          showAuth={showAuth}
           onCloseAuth={() => setShowAuth(false)}
+          showTripSettings={showTripSettings}
           onCloseTripSettings={() => setShowTripSettings(false)}
+          showTripsPlusModal={showTripsPlusModal}
           onCloseTripsPlusModal={() => setShowTripsPlusModal(false)}
-          onUpgradeToPlus={() => setShowTripsPlusModal(true)}
+          tripName={tripData.title}
           tripId={proTripId}
+          userId={user?.id}
         />
       </div>
     </TripVariantProvider>
