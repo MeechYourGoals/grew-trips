@@ -3,8 +3,8 @@ import { Broadcast } from './Broadcast';
 import { BroadcastComposer } from './BroadcastComposer';
 import { Radio, Clock } from 'lucide-react';
 import { beyonceCowboyCarterTour } from '../data/pro-trips/beyonceCowboyCarterTour';
-import { demoModeService } from '@/services/demoModeService';
 import { useDemoMode } from '@/hooks/useDemoMode';
+import { mockBroadcasts as mockBroadcastData } from '@/mockData/broadcasts';
 import { useParams } from 'react-router-dom';
 import { getMockAvatar } from '@/utils/mockAvatars';
 import { detectTripTier } from '@/utils/tripTierDetector';
@@ -62,49 +62,24 @@ const mockBroadcasts: BroadcastData[] = [
 export const Broadcasts = () => {
   const { tripId, eventId, proTripId } = useParams();
   const { isDemoMode } = useDemoMode();
-  const [broadcasts, setBroadcasts] = useState<BroadcastData[]>(mockBroadcasts);
+  
+  const initialBroadcasts: BroadcastData[] = isDemoMode ? [
+    {
+      id: 'mock-1',
+      sender: 'Sarah Chen',
+      message: 'Just booked my flight, landing at 3:30 on Friday',
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+      category: 'logistics' as const,
+      recipients: 'everyone',
+      responses: { coming: 5, wait: 0, cant: 1 }
+    }
+  ] : [];
+  
+  const [broadcasts, setBroadcasts] = useState<BroadcastData[]>(initialBroadcasts);
   const [userResponses, setUserResponses] = useState<Record<string, 'coming' | 'wait' | 'cant'>>({});
-  const [mockBroadcastsLoaded, setMockBroadcastsLoaded] = useState(false);
 
   const currentTripId = tripId || eventId || proTripId || 'default-trip';
   const tripTier = detectTripTier(currentTripId);
-
-  // Load mock broadcasts in demo mode
-  useEffect(() => {
-    const loadMockBroadcasts = async () => {
-      if (isDemoMode && !mockBroadcastsLoaded) {
-        const tripType = demoModeService.getTripType({ 
-          title: currentTripId,
-          category: currentTripId.includes('pro-') ? 'pro' : 'consumer'
-        });
-        
-        const mockBroadcasts = await demoModeService.getMockBroadcasts(tripType);
-        
-        if (mockBroadcasts.length > 0) {
-          const demoBroadcasts: BroadcastData[] = mockBroadcasts.map((mock, index) => ({
-            id: mock.id,
-            sender: mock.sender_name,
-            message: mock.content,
-            timestamp: new Date(Date.now() - (index + 1) * 60 * 60 * 1000), // 1 hour intervals
-            location: mock.location || undefined,
-            category: mock.tag,
-            recipients: 'everyone',
-            responses: { 
-              coming: Math.floor(Math.random() * 8) + 2, 
-              wait: Math.floor(Math.random() * 3), 
-              cant: Math.floor(Math.random() * 2) 
-            }
-          }));
-          
-          setBroadcasts([...demoBroadcasts, ...broadcasts]);
-        }
-        
-        setMockBroadcastsLoaded(true);
-      }
-    };
-
-    loadMockBroadcasts();
-  }, [isDemoMode, mockBroadcastsLoaded, currentTripId, broadcasts]);
 
   const handleNewBroadcast = (newBroadcast: {
     message: string;

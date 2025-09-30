@@ -3,17 +3,25 @@ import React, { useState } from 'react';
 import { Archive, Calendar, MapPin, Users, Search } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Badge } from '../components/ui/badge';
+import { useDemoMode } from '../hooks/useDemoMode';
 import { tripsData } from '../data/tripsData';
 import { proTripMockData } from '../data/proTripMockData';
 import { eventsMockData } from '../data/eventsMockData';
 import { useNavigate } from 'react-router-dom';
+import { EmptyStateWithDemo } from '../components/EmptyStateWithDemo';
 
 const ArchivePage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { isDemoMode } = useDemoMode();
 
   // Get archived trips (trips where end date has passed)
   const getArchivedTrips = () => {
+    // Only return trips if demo mode is enabled
+    if (!isDemoMode) {
+      return [];
+    }
+    
     const archived = [];
     
     // Regular trips
@@ -97,7 +105,14 @@ const ArchivePage = () => {
 
       {/* Archived Trips */}
       <div className="space-y-3">
-        {archivedTrips.length === 0 ? (
+        {!isDemoMode ? (
+          <EmptyStateWithDemo
+            icon={Archive}
+            title="No archived trips"
+            description="Turn on Demo Mode to view sample archived trips"
+            showDemoPrompt={true}
+          />
+        ) : archivedTrips.length === 0 ? (
           <div className="text-center py-12 text-gray-400">
             <Archive size={48} className="mx-auto mb-4 opacity-50" />
             <h3 className="text-lg font-medium mb-2">No archived trips found</h3>

@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { demoModeService } from './demoModeService';
+import { mockConsumerTrips } from '@/mockData/trips';
 
 export interface Trip {
   id: string;
@@ -69,7 +70,7 @@ export const tripService = {
       // Check if demo mode is enabled
       const isDemoMode = await demoModeService.isDemoModeEnabled();
       if (isDemoMode) {
-        return await demoModeService.getMockTrips();
+        return mockConsumerTrips;
       }
 
       const { data: { user } } = await supabase.auth.getUser();

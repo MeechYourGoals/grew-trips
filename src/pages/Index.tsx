@@ -20,6 +20,7 @@ import { DemoModal } from '../components/conversion/DemoModal';
 
 import { useAuth } from '../hooks/useAuth';
 import { useIsMobile } from '../hooks/use-mobile';
+import { useDemoMode } from '../hooks/useDemoMode';
 import { proTripMockData } from '../data/proTripMockData';
 import { eventsMockData } from '../data/eventsMockData';
 import { tripsData } from '../data/tripsData';
@@ -41,9 +42,10 @@ const Index = () => {
   const { user } = useAuth();
   const isMobile = useIsMobile();
   const location = useLocation();
+  const { isDemoMode } = useDemoMode();
 
-  // Use centralized trip data
-  const trips = tripsData;
+  // Use centralized trip data - only show if demo mode is enabled
+  const trips = isDemoMode ? tripsData : [];
 
   console.log('Index - proTripMockData IDs:', Object.keys(proTripMockData));
   console.log('Index - eventsMockData IDs:', Object.keys(eventsMockData));
@@ -67,8 +69,8 @@ const Index = () => {
     if (!activeFilter || activeFilter === 'total') {
       return {
         trips,
-        proTrips: proTripMockData,
-        events: eventsMockData
+        proTrips: isDemoMode ? proTripMockData : {},
+        events: isDemoMode ? eventsMockData : {}
       };
     }
 

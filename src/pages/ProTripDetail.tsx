@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { TripHeader } from '../components/TripHeader';
@@ -9,6 +8,7 @@ import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { TripVariantProvider } from '../contexts/TripVariantContext';
 import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../hooks/useMessages';
+import { useDemoMode } from '../hooks/useDemoMode';
 import { proTripMockData } from '../data/proTripMockData';
 import { ProTripNotFound } from '../components/pro/ProTripNotFound';
 import { TripPreferences as TripPreferencesType } from '../types/consumer';
@@ -18,6 +18,7 @@ const ProTripDetail = () => {
   const { proTripId } = useParams<{ proTripId?: string }>();
   const { user } = useAuth();
   const { getMessagesForTrip } = useMessages();
+  const { isDemoMode } = useDemoMode();
   const [activeTab, setActiveTab] = useState('chat');
   const [showInbox, setShowInbox] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -27,8 +28,15 @@ const ProTripDetail = () => {
   const [showTripsPlusModal, setShowTripsPlusModal] = useState(false);
   const [tripPreferences, setTripPreferences] = useState<TripPreferencesType | undefined>();
 
-  console.log('ProTripDetail - proTripId from params:', proTripId);
-  console.log('ProTripDetail - available mock data keys:', Object.keys(proTripMockData));
+  // Gate demo content
+  if (!isDemoMode) {
+    return (
+      <ProTripNotFound 
+        message="Demo Mode is disabled"
+        details="Turn on Demo Mode to view sample professional trips and explore all features."
+      />
+    );
+  }
 
   if (!proTripId) {
     return (
@@ -47,156 +55,107 @@ const ProTripDetail = () => {
   }
 
   const tripData = proTripMockData[proTripId];
-  console.log('ProTripDetail - found trip data:', tripData);
-  
-  const [selectedCategory, setSelectedCategory] = useState<ProTripCategory>(
-    tripData.proTripCategory || 'Business Travel'
-  );
-  const [tripDescription, setTripDescription] = useState<string>('');
-  const [currentTripData, setCurrentTripData] = useState(tripData);
 
-  // Convert Pro trip data to standard trip format
+  // Transform trip data to match consumer trip structure
+  const participants = tripData.participants || [];
+
   const trip = {
-    id: parseInt(proTripId),
-    title: currentTripData.title,
-    location: currentTripData.location,
-    dateRange: currentTripData.dateRange,
-    description: tripDescription || currentTripData.description || `Professional ${currentTripData.category.toLowerCase()} in ${currentTripData.location}`,
-    participants: currentTripData.participants.map(p => ({
-      id: p.id,
-      name: p.name,
-      avatar: p.avatar,
-      role: (p as any).role
-    }))
+    id: tripData.id,
+    name: tripData.title,
+    description: tripData.description || '',
+    destination: tripData.location,
+    start_date: tripData.dateRange.split(' - ')[0],
+    end_date: tripData.dateRange.split(' - ')[1],
+    created_by: 'demo-user',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    is_archived: false,
+    trip_type: 'pro' as const
   };
 
-  // Initialize description state when trip data is loaded
-  React.useEffect(() => {
-    if (tripData.description && !tripDescription) {
-      setTripDescription(tripData.description);
-    }
-  }, [tripData.description, tripDescription]);
-
-  // Handle trip data updates (like roster changes)
-  const handleUpdateTripData = (updates: Partial<typeof tripData>) => {
-    setCurrentTripData(prevData => ({
-      ...prevData,
-      ...updates
-    }));
-    console.log('Trip data updated:', updates);
-  };
-
-  // Mock basecamp data for Pro trips
   const basecamp = {
-    name: "Enterprise Headquarters",
-    address: `${tripData.location}, Business District`
+    name: tripData.basecamp_name || '',
+    address: tripData.basecamp_address || ''
   };
 
-  // Get trip messages for context
-  const tripMessages = getMessagesForTrip(proTripId);
+  const broadcasts = tripData.broadcasts || [];
+  const links = tripData.links || [];
 
-  // Mock data for Pro trip context
-  const mockBroadcasts = [
-    { id: 1, senderName: "Team Lead", content: `${tripData.category} schedule confirmed for all participants`, timestamp: "2025-01-15T15:30:00Z" },
-    { id: 2, senderName: "Operations", content: `Budget approved for ${tripData.title} - all expenses covered`, timestamp: "2025-01-15T10:00:00Z" }
-  ];
-
-  const mockLinks = [
-    { id: 1, title: "Executive Accommodation", url: "https://enterprise-stays.com/premium", category: "Accommodation" },
-    { id: 2, title: "Corporate Event Venue", url: "https://venues.com/corporate", category: "Venues" },
-    { id: 3, title: "Team Building Activities", url: "https://team-events.com/pro", category: "Activities" }
-  ];
-
-  // Build comprehensive trip context
   const tripContext = {
-    id: proTripId,
-    title: tripData.title,
-    location: tripData.location,
-    dateRange: tripData.dateRange,
+    ...trip,
     basecamp,
-    preferences: tripPreferences,
-    calendar: tripData.itinerary,
-    broadcasts: mockBroadcasts,
-    links: mockLinks,
-    messages: tripMessages,
-    collaborators: trip.participants,
-    itinerary: tripData.itinerary,
+    broadcasts,
+    links,
+    category: tripData.category,
+    proTripCategory: tripData.proTripCategory,
     budget: tripData.budget,
-    isPro: true,
-    // Enhanced Pro features with role-based access
-    proFeatures: {
-      roster: true,
-      logistics: true,
-      schedule: true,
-      finance: true,
-      medical: true,
-      media: true,
-      sponsors: true,
-      roleBasedAccess: true,
-      permissionSystem: true
-    }
+    schedule: tripData.schedule,
+    roster: tripData.roster,
+    roomAssignments: tripData.roomAssignments,
+    equipment: tripData.equipment,
+    perDiem: tripData.perDiem,
+    settlement: tripData.settlement,
+    medical: tripData.medical,
+    compliance: tripData.compliance,
+    media: tripData.media,
+    sponsors: tripData.sponsors
   };
 
   return (
-    <TripVariantProvider variant="pro">
-      <div className="min-h-screen bg-black">
-        <div className="container mx-auto px-6 py-8 max-w-7xl">
-          {/* Top Navigation */}
-          <ProTripDetailHeader
-            tripContext={tripContext}
-            showInbox={showInbox}
-            onToggleInbox={() => setShowInbox(!showInbox)}
-            onShowInvite={() => setShowInvite(true)}
-            onShowTripSettings={() => setShowTripSettings(true)}
-            onShowAuth={() => setShowAuth(true)}
+    <TripVariantProvider category={tripData.category}>
+      <div className="min-h-screen bg-black text-white">
+        <ProTripDetailHeader
+          tripId={proTripId}
+          onToggleInbox={() => setShowInbox(!showInbox)}
+          onSettings={() => setShowSettings(true)}
+          onInvite={() => setShowInvite(true)}
+          onAuth={() => setShowAuth(true)}
+          onTripSettings={() => setShowTripSettings(true)}
+          tripContext={tripContext}
+        />
+
+        {showInbox && (
+          <MessageInbox
+            messages={getMessagesForTrip(proTripId)}
+            onClose={() => setShowInbox(false)}
           />
+        )}
 
-          {/* Message Inbox */}
-          {showInbox && user && (
-            <div className="mb-8">
-              <MessageInbox />
-            </div>
-          )}
+        <TripHeader
+          title={tripData.title}
+          location={tripData.location}
+          dateRange={tripData.dateRange}
+          participants={tripData.participants}
+          category={tripData.category as ProTripCategory}
+          tripId={proTripId}
+          onCategoryChange={() => {}}
+          isPro={true}
+        />
 
-          {/* Trip Header with Category Selection */}
-          <TripHeader 
-            trip={trip}
-            category={selectedCategory}
-            tags={tripData.tags}
-            onCategoryChange={setSelectedCategory}
-            onDescriptionUpdate={setTripDescription}
-          />
+        <ProTripDetailContent
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          onShowInviteModal={() => setShowInvite(true)}
+          tripId={proTripId}
+          basecamp={basecamp}
+          tripPreferences={tripPreferences}
+          tripData={tripData}
+          selectedCategory={tripData.category as ProTripCategory}
+        />
 
-          {/* Enhanced Pro Content with Dynamic Category */}
-          <ProTripDetailContent
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-            onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
-            tripId={proTripId}
-            basecamp={basecamp}
-            tripPreferences={tripPreferences}
-            onPreferencesChange={setTripPreferences}
-            tripData={currentTripData}
-            selectedCategory={selectedCategory}
-            onUpdateTripData={handleUpdateTripData}
-          />
-        </div>
-
-        {/* All the same modals as standard trips */}
         <TripDetailModals
           showSettings={showSettings}
-          onCloseSettings={() => setShowSettings(false)}
           showInvite={showInvite}
-          onCloseInvite={() => setShowInvite(false)}
           showAuth={showAuth}
-          onCloseAuth={() => setShowAuth(false)}
           showTripSettings={showTripSettings}
-          onCloseTripSettings={() => setShowTripSettings(false)}
           showTripsPlusModal={showTripsPlusModal}
+          onCloseSettings={() => setShowSettings(false)}
+          onCloseInvite={() => setShowInvite(false)}
+          onCloseAuth={() => setShowAuth(false)}
+          onCloseTripSettings={() => setShowTripSettings(false)}
           onCloseTripsPlusModal={() => setShowTripsPlusModal(false)}
-          tripName={tripData.title}
+          onUpgradeToPlus={() => setShowTripsPlusModal(true)}
           tripId={proTripId}
-          userId={user?.id}
         />
       </div>
     </TripVariantProvider>

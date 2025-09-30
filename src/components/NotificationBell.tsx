@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Bell, MessageCircle, Calendar, Radio, X, FilePlus, Image, BarChart2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { getDemoMode } from '@/utils/demoMode';
 
 interface Notification {
   id: string;
@@ -19,15 +20,14 @@ export const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
-  // Mock notifications
-  const [notifications, setNotifications] = useState<Notification[]>([
+  const [notifications, setNotifications] = useState<Notification[]>(getDemoMode() ? [
     {
       id: '1',
       type: 'message',
-      title: 'New message from Emma',
-      description: 'Hey, what time should we meet tomorrow?',
+      title: 'New message in Spring Break Cancun',
+      description: 'Sarah Chen: Super excited for this trip!',
       tripId: '1',
-      tripName: 'Summer in Paris',
+      tripName: 'Spring Break Cancun',
       timestamp: '2 minutes ago',
       isRead: false,
       isHighPriority: false
@@ -35,135 +35,23 @@ export const NotificationBell = () => {
     {
       id: '2',
       type: 'broadcast',
-      title: 'Trip Update: Itinerary Changed',
-      description: 'The Eiffel Tower visit has been moved to Thursday',
+      title: 'Broadcast in Spring Break Cancun',
+      description: 'Marcus Johnson: Just booked my flight',
       tripId: '1',
-      tripName: 'Summer in Paris',
+      tripName: 'Spring Break Cancun',
       timestamp: '1 hour ago',
       isRead: false,
       isHighPriority: true
-    },
-    {
-      id: '3',
-      type: 'calendar',
-      title: 'Upcoming: Dinner Reservation',
-      description: 'Le Comptoir du Relais - Tonight at 7:30 PM',
-      tripId: '1',
-      tripName: 'Summer in Paris',
-      timestamp: '3 hours ago',
-      isRead: false,
-      isHighPriority: false
-    },
-    {
-      id: '4',
-      type: 'photos',
-      title: 'Jake uploaded new photos',
-      description: "5 photos added from yesterday's museum visit",
-      tripId: '2',
-      tripName: 'Tokyo Adventure',
-      timestamp: '1 day ago',
-      isRead: true,
-      isHighPriority: false
-    },
-    {
-      id: '5',
-      type: 'message',
-      title: 'You were mentioned by Alex',
-      description: 'Alex: @You could you share your passport details? ',
-      tripId: '1',
-      tripName: 'Summer in Paris',
-      timestamp: 'just now',
-      isRead: false,
-      isHighPriority: false
-    },
-    {
-      id: '6',
-      type: 'poll',
-      title: 'New poll proposed: Tuesday dinner time',
-      description: 'Options: 6:30 PM, 7:30 PM, 8:30 PM',
-      tripId: '2',
-      tripName: 'Tokyo Adventure',
-      timestamp: '8 minutes ago',
-      isRead: false,
-      isHighPriority: false
-    },
-    {
-      id: '7',
-      type: 'files',
-      title: '3 new files added to trip',
-      description: 'Rooming list.pdf, Itinerary.pdf, Packing checklist.docx',
-      tripId: '2',
-      tripName: 'Tokyo Adventure',
-      timestamp: '25 minutes ago',
-      isRead: false,
-      isHighPriority: false
-    },
-    {
-      id: '8',
-      type: 'broadcast',
-      title: 'Safety update: Transit strike tomorrow',
-      description: 'Expect delays on Metro Line 2 — plan extra time',
-      tripId: '1',
-      tripName: 'Summer in Paris',
-      timestamp: '2 hours ago',
-      isRead: false,
-      isHighPriority: true
-    },
-    {
-      id: '9',
-      type: 'calendar',
-      title: 'Reminder: Airport transfer pickup',
-      description: 'CDG Terminal 2E — Driver: Pierre, Plate: AB-123-CD',
-      tripId: '1',
-      tripName: 'Summer in Paris',
-      timestamp: 'in 1 hour',
-      isRead: true,
-      isHighPriority: false
-    },
-    {
-      id: '10',
-      type: 'message',
-      title: 'New reply in “Hotel Options” thread',
-      description: 'Liam: Park Hyatt looks great — within budget too',
-      tripId: '2',
-      tripName: 'Tokyo Adventure',
-      timestamp: 'yesterday',
-      isRead: true,
-      isHighPriority: false
-    },
-    {
-      id: '11',
-      type: 'files',
-      title: 'Invoice uploaded: Hotel deposit',
-      description: 'Payment receipt for 2 rooms — Park Hyatt Paris',
-      tripId: '1',
-      tripName: 'Summer in Paris',
-      timestamp: '3 days ago',
-      isRead: true,
-      isHighPriority: false
-    },
-    {
-      id: '12',
-      type: 'photos',
-      title: 'Sofia added 8 new photos',
-      description: 'Night market highlights — check the album!',
-      tripId: '2',
-      tripName: 'Tokyo Adventure',
-      timestamp: '4 days ago',
-      isRead: true,
-      isHighPriority: false
     }
-  ]);
+  ] : []);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   const handleNotificationClick = (notification: Notification) => {
-    // Mark as read
     setNotifications(prev => 
       prev.map(n => n.id === notification.id ? { ...n, isRead: true } : n)
     );
 
-    // Navigate to the trip
     if (notification.type === 'message') {
       navigate(`/trip/${notification.tripId}?tab=chat`);
     } else if (notification.type === 'calendar') {
@@ -216,13 +104,8 @@ export const NotificationBell = () => {
 
       {isOpen && (
         <>
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 z-40" 
-            onClick={() => setIsOpen(false)}
-          />
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
           
-          {/* Notification Panel */}
           <div className="absolute right-0 top-full mt-2 w-96 bg-gray-900/95 backdrop-blur-md border border-gray-700 rounded-2xl shadow-2xl z-50 max-h-96 overflow-hidden">
             <div className="p-4 border-b border-gray-700 flex items-center justify-between">
               <h3 className="text-lg font-semibold text-white">Notifications</h3>
@@ -235,10 +118,7 @@ export const NotificationBell = () => {
                     Mark all read
                   </button>
                 )}
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="text-gray-400 hover:text-white transition-colors"
-                >
+                <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white transition-colors">
                   <X size={16} />
                 </button>
               </div>
@@ -279,12 +159,8 @@ export const NotificationBell = () => {
                           {notification.description}
                         </p>
                         <div className="flex items-center justify-between">
-                          <p className="text-xs text-gray-500">
-                            {notification.tripName}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {notification.timestamp}
-                          </p>
+                          <p className="text-xs text-gray-500">{notification.tripName}</p>
+                          <p className="text-xs text-gray-500">{notification.timestamp}</p>
                         </div>
                       </div>
                     </div>

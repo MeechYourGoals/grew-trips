@@ -7,10 +7,12 @@ import { Badge } from '../components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '../hooks/use-mobile';
+import { useDemoMode } from '../hooks/useDemoMode';
 import { tripsData } from '../data/tripsData';
 import { proTripMockData } from '../data/proTripMockData';
 import { eventsMockData } from '../data/eventsMockData';
 import { MobileModal } from '../components/mobile/MobileModal';
+import { EmptyStateWithDemo } from '../components/EmptyStateWithDemo';
 
 interface SearchResult {
   id: string;
@@ -37,9 +39,16 @@ const SearchPage = () => {
   
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { isDemoMode } = useDemoMode();
 
   const performSearch = useCallback((searchQuery: string) => {
     if (!searchQuery.trim()) {
+      setResults([]);
+      return;
+    }
+
+    // Only search demo data if demo mode is enabled
+    if (!isDemoMode) {
       setResults([]);
       return;
     }
@@ -202,17 +211,22 @@ const SearchPage = () => {
 
       {/* Results */}
       <div className="space-y-3">
-        {query && results.length === 0 && (
+        {!isDemoMode ? (
+          <EmptyStateWithDemo
+            icon={Search}
+            title="Search unavailable"
+            description="Turn on Demo Mode to search through sample trips"
+            showDemoPrompt={true}
+          />
+        ) : query && results.length === 0 ? (
           <div className="text-center py-8 text-gray-400">
             No trips found for "{query}"
           </div>
-        )}
-        
-        {!query && (
+        ) : !query ? (
           <div className="text-center py-8 text-gray-400">
             Start typing to search your trips...
           </div>
-        )}
+        ) : null}
 
         {results.map((result) => (
           <div

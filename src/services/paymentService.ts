@@ -1,6 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import { PaymentMethod, PaymentMessage, PaymentSplit } from '../types/payments';
 import { demoModeService } from './demoModeService';
+import { mockPayments } from '@/mockData/payments';
 
 export const paymentService = {
   // User Payment Methods
@@ -122,8 +123,7 @@ export const paymentService = {
       // Check if demo mode is enabled
       const isDemoMode = await demoModeService.isDemoModeEnabled();
       if (isDemoMode) {
-        const mockPayments = await demoModeService.getMockPayments(tripId);
-        return mockPayments.map(payment => ({
+        return mockPayments.filter(p => p.trip_id === tripId).map((payment: any) => ({
           id: payment.id,
           tripId: payment.trip_id,
           messageId: null,

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { tripService } from '@/services/tripService';
 import { supabase } from '@/integrations/supabase/client';
 import { getTripById } from '@/data/tripsData';
-import { demoModeService } from '@/services/demoModeService';
+import { useDemoMode } from './useDemoMode';
 
 interface TripMember {
   id: string;
@@ -13,6 +13,7 @@ interface TripMember {
 export const useTripMembers = (tripId?: string) => {
   const [tripMembers, setTripMembers] = useState<TripMember[]>([]);
   const [loading, setLoading] = useState(false);
+  const { isDemoMode } = useDemoMode();
 
   const formatTripMembers = (dbMembers: any[]): TripMember[] => {
     return dbMembers.map(member => ({
@@ -45,16 +46,13 @@ export const useTripMembers = (tripId?: string) => {
     setLoading(true);
     
     try {
-      // Check if demo mode is enabled
-      const isDemoMode = await demoModeService.isDemoModeEnabled();
       if (isDemoMode) {
-        const mockMembers = await demoModeService.getMockMembers(tripId);
-        const formattedMembers = mockMembers.map(member => ({
-          id: member.user_id,
-          name: member.display_name,
-          avatar: member.avatar_url
-        }));
-        setTripMembers(formattedMembers);
+        // Mock members for demo mode
+        setTripMembers([
+          { id: 'mock-1', name: 'Sarah Chen', avatar: '/images/avatars/blank-01.png' },
+          { id: 'mock-2', name: 'Marcus Johnson', avatar: '/images/avatars/blank-02.png' },
+          { id: 'mock-3', name: 'Emma Williams', avatar: '/images/avatars/blank-03.png' }
+        ]);
         setLoading(false);
         return;
       }
