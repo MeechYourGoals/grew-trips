@@ -1,5 +1,5 @@
 
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -11,6 +11,7 @@ import { MobileAppLayout } from "./components/mobile/MobileAppLayout";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LazyRoute } from "./components/LazyRoute";
 import { performanceService } from "./services/performanceService";
+import { useDemoModeStore } from "./store/demoModeStore";
 
 // Lazy load pages for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -37,6 +38,11 @@ const App = () => {
   React.useEffect(() => {
     stopTiming();
   }, [stopTiming]);
+
+  // Initialize demo mode store once on mount
+  useEffect(() => {
+    useDemoModeStore.getState().init();
+  }, []);
 
   return (
     <ErrorBoundary>
