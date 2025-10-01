@@ -63,20 +63,27 @@ export const Broadcasts = () => {
   const { tripId, eventId, proTripId } = useParams();
   const { isDemoMode } = useDemoMode();
   
-  const initialBroadcasts: BroadcastData[] = isDemoMode ? [
-    {
-      id: 'mock-1',
-      sender: 'Sarah Chen',
-      message: 'Just booked my flight, landing at 3:30 on Friday',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      category: 'logistics' as const,
-      recipients: 'everyone',
-      responses: { coming: 5, wait: 0, cant: 1 }
-    }
-  ] : [];
-  
-  const [broadcasts, setBroadcasts] = useState<BroadcastData[]>(initialBroadcasts);
+  const [broadcasts, setBroadcasts] = useState<BroadcastData[]>([]);
   const [userResponses, setUserResponses] = useState<Record<string, 'coming' | 'wait' | 'cant'>>({});
+
+  // Update broadcasts when demo mode changes
+  useEffect(() => {
+    if (isDemoMode) {
+      setBroadcasts([
+        {
+          id: 'mock-1',
+          sender: 'Sarah Chen',
+          message: 'Just booked my flight, landing at 3:30 on Friday',
+          timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+          category: 'logistics' as const,
+          recipients: 'everyone',
+          responses: { coming: 5, wait: 0, cant: 1 }
+        }
+      ]);
+    } else {
+      setBroadcasts([]);
+    }
+  }, [isDemoMode]);
 
   const currentTripId = tripId || eventId || proTripId || 'default-trip';
   const tripTier = detectTripTier(currentTripId);

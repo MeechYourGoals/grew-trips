@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, MessageCircle, Calendar, Radio, X, FilePlus, Image, BarChart2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { getDemoMode } from '@/utils/demoMode';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { mockNotifications } from '@/mockData/notifications';
 
 interface Notification {
   id: string;
@@ -19,31 +20,28 @@ interface Notification {
 export const NotificationBell = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const { isDemoMode } = useDemoMode();
 
-  const [notifications, setNotifications] = useState<Notification[]>(getDemoMode() ? [
-    {
-      id: '1',
-      type: 'message',
-      title: 'New message in Spring Break Cancun',
-      description: 'Sarah Chen: Super excited for this trip!',
-      tripId: '1',
-      tripName: 'Spring Break Cancun',
-      timestamp: '2 minutes ago',
-      isRead: false,
-      isHighPriority: false
-    },
-    {
-      id: '2',
-      type: 'broadcast',
-      title: 'Broadcast in Spring Break Cancun',
-      description: 'Marcus Johnson: Just booked my flight',
-      tripId: '1',
-      tripName: 'Spring Break Cancun',
-      timestamp: '1 hour ago',
-      isRead: false,
-      isHighPriority: true
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  // Update notifications when demo mode changes
+  useEffect(() => {
+    if (isDemoMode) {
+      setNotifications(mockNotifications.map(n => ({
+        id: n.id,
+        type: n.type,
+        title: n.title,
+        description: n.message,
+        tripId: n.tripId,
+        tripName: 'Spring Break Cancun',
+        timestamp: '2 minutes ago',
+        isRead: n.read,
+        isHighPriority: n.type === 'broadcast'
+      })));
+    } else {
+      setNotifications([]);
     }
-  ] : []);
+  }, [isDemoMode]);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 

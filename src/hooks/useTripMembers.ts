@@ -82,7 +82,7 @@ export const useTripMembers = (tripId?: string) => {
     if (tripId) {
       loadTripMembers(tripId);
     }
-  }, [tripId]);
+  }, [tripId, isDemoMode]);
 
   // Real-time subscription for trip members - only when database queries succeed
   useEffect(() => {

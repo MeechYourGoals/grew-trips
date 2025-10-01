@@ -50,10 +50,10 @@ const Index = () => {
   console.log('Index - proTripMockData IDs:', Object.keys(proTripMockData));
   console.log('Index - eventsMockData IDs:', Object.keys(eventsMockData));
 
-  // Calculate stats for each view mode
+  // Calculate stats for each view mode - gate by demo mode
   const tripStats = calculateTripStats(trips);
-  const proTripStats = calculateProTripStats(proTripMockData);
-  const eventStats = calculateEventStats(eventsMockData);
+  const proTripStats = isDemoMode ? calculateProTripStats(proTripMockData) : calculateProTripStats({});
+  const eventStats = isDemoMode ? calculateEventStats(eventsMockData) : calculateEventStats({});
 
   const getCurrentStats = () => {
     switch (viewMode) {
@@ -78,33 +78,37 @@ const Index = () => {
       case 'myTrips':
         return {
           trips: filterItemsByStatus(trips, activeFilter),
-          proTrips: proTripMockData,
-          events: eventsMockData
+          proTrips: isDemoMode ? proTripMockData : {},
+          events: isDemoMode ? eventsMockData : {}
         };
       case 'tripsPro':
         return {
           trips,
-          proTrips: Object.fromEntries(
+          proTrips: isDemoMode ? Object.fromEntries(
             Object.entries(proTripMockData).filter(([_, trip]) => 
               filterItemsByStatus([trip], activeFilter).length > 0
             )
-          ),
-          events: eventsMockData
+          ) : {},
+          events: isDemoMode ? eventsMockData : {}
         };
       case 'events':
         return {
           trips,
-          proTrips: proTripMockData,
-          events: Object.fromEntries(
+          proTrips: isDemoMode ? proTripMockData : {},
+          events: isDemoMode ? Object.fromEntries(
             Object.entries(eventsMockData).filter(([_, event]) => 
               filterItemsByStatus([event], activeFilter).length > 0
             )
-          )
+          ) : {}
         };
       default:
-        return { trips, proTrips: proTripMockData, events: eventsMockData };
+        return { 
+          trips, 
+          proTrips: isDemoMode ? proTripMockData : {}, 
+          events: isDemoMode ? eventsMockData : {} 
+        };
     }
-  }, [activeFilter, viewMode, trips]);
+  }, [activeFilter, viewMode, trips, isDemoMode]);
 
   // Handle view mode changes without artificial delays
   const handleViewModeChange = (newMode: string) => {
