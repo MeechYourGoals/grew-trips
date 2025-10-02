@@ -48,7 +48,7 @@ export const ConsumerNotificationsSection = () => {
       if (type === 'push' && 'Notification' in window) {
         new Notification('Test Notification', {
           body: 'This is a test push notification from your travel app!',
-          icon: '/favicon.ico'
+          icon: '/chravel-logo.png'
         });
       }
     } catch (error) {

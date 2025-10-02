@@ -100,7 +100,7 @@ export const useNotifications = () => {
       await notificationService.sendLocalNotification({
         title,
         body,
-        icon: '/favicon.ico'
+        icon: '/chravel-logo.png'
       });
     } catch (error) {
       console.error('Error sending test notification:', error);

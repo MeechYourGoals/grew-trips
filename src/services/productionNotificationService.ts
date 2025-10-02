@@ -297,8 +297,8 @@ export class ProductionNotificationService {
     try {
       const notification = new Notification(payload.title, {
         body: payload.body,
-        icon: payload.icon || '/favicon.ico',
-        badge: payload.badge || '/favicon.ico',
+        icon: payload.icon || '/chravel-logo.png',
+        badge: payload.badge || '/chravel-logo.png',
         data: payload.data,
         requireInteraction: true
       });

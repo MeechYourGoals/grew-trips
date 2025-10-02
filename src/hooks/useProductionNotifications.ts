@@ -118,7 +118,7 @@ export const useProductionNotifications = () => {
       await productionNotificationService.sendLocalNotification({
         title,
         body,
-        icon: '/favicon.ico'
+        icon: '/chravel-logo.png'
       });
     } catch (error) {
       console.error('Error sending test notification:', error);

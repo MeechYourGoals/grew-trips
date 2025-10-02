@@ -28,7 +28,7 @@ export const MediaAggregatedPhotos = ({ tripId }: MediaAggregatedPhotosProps) =>
       setMediaItems([
         {
           id: '1',
-          media_url: '/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png',
+          media_url: '/chravel-logo.png',
           filename: 'trip-photo.png',
           media_type: 'image',
           metadata: { source: 'chat' },

@@ -13,13 +13,13 @@
   "scope": "/",
   "icons": [
     {
-      "src": "/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png",
+      "src": "/chravel-logo.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png",
+      "src": "/chravel-logo.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -27,7 +27,7 @@
   ],
   "screenshots": [
     {
-      "src": "/lovable-uploads/2c4cc09a-de6f-437c-88e8-8a37ff8bb566.png",
+      "src": "/chravel-logo.png",
       "sizes": "1280x720",
       "type": "image/png",
       "form_factor": "wide"
