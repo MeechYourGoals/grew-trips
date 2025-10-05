@@ -1,10 +1,11 @@
-
 import React, { useState } from 'react';
 import { Send, MapPin, Languages } from 'lucide-react';
 import { Button } from './ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { RecipientSelector } from './broadcast/RecipientSelector';
 import { broadcastService } from '../services/broadcastService';
 import { toast } from 'sonner';
+import { useBroadcastComposer } from '@/hooks/useBroadcastComposer';
 
 interface Participant {
   id: string | number;
@@ -25,13 +26,26 @@ interface BroadcastComposerProps {
 }
 
 export const BroadcastComposer = ({ participants, tripTier = 'consumer', tripId, onSend }: BroadcastComposerProps) => {
-  const [message, setMessage] = useState('');
-  const [location, setLocation] = useState('');
-  const [category, setCategory] = useState<'chill' | 'logistics' | 'urgent'>('chill');
-  const [showDetails, setShowDetails] = useState(false);
-  const [recipient, setRecipient] = useState('everyone');
-  const [translateTo, setTranslateTo] = useState<string>('none');
   const [isLoading, setIsLoading] = useState(false);
+  
+  const {
+    message,
+    location,
+    category,
+    recipient,
+    translateTo,
+    showDetails,
+    characterCount,
+    maxCharacters,
+    setMessage,
+    setLocation,
+    setCategory,
+    setRecipient,
+    setTranslateTo,
+    setShowDetails,
+    resetForm,
+    getCategoryColor
+  } = useBroadcastComposer();
 
   const languages = [
     { code: 'none', name: 'No Translation' },
@@ -81,12 +95,7 @@ export const BroadcastComposer = ({ participants, tripTier = 'consumer', tripId,
         });
 
         // Reset form
-        setMessage('');
-        setLocation('');
-        setCategory('chill');
-        setRecipient('everyone');
-        setShowDetails(false);
-        setTranslateTo('none');
+        resetForm();
       } else {
         toast.error('Failed to send broadcast. Please try again.');
       }
@@ -95,15 +104,6 @@ export const BroadcastComposer = ({ participants, tripTier = 'consumer', tripId,
       toast.error('Failed to send broadcast. Please try again.');
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const getCategoryColor = (cat: string) => {
-    switch (cat) {
-      case 'chill': return 'bg-blue-600';
-      case 'logistics': return 'bg-yellow-600';
-      case 'urgent': return 'bg-red-600';
-      default: return 'bg-slate-600';
     }
   };
 
@@ -149,32 +149,19 @@ export const BroadcastComposer = ({ participants, tripTier = 'consumer', tripId,
                    </Select>
                  </div>
                )}
-              <span className="text-xs text-slate-500">
-                {message.length}/140
+               <span className="text-xs text-slate-500">
+                {characterCount}/{maxCharacters}
               </span>
             </div>
             
             <div className="flex items-center gap-2">
               {/* Recipient selector - only for Pro/Event trips */}
-              {!isConsumerTrip && (
-                <select
-                  value={recipient}
-                  onChange={(e) => setRecipient(e.target.value)}
-                  className="bg-slate-700 text-white text-xs rounded px-2 py-1"
-                >
-                  <option value="everyone">Everyone</option>
-                  {roleOptions.map((role) => (
-                    <option key={`role-${role}`} value={`role:${role}`}>
-                      {role}
-                    </option>
-                  ))}
-                  {participants.map((p) => (
-                    <option key={`user-${p.id}`} value={`user:${p.id}`}>
-                      {p.name}
-                    </option>
-                  ))}
-                </select>
-              )}
+              <RecipientSelector
+                participants={participants}
+                recipient={recipient}
+                onRecipientChange={setRecipient}
+                isConsumerTrip={isConsumerTrip}
+              />
 
               {/* Category selector - only for Pro/Event trips */}
               {!isConsumerTrip && (

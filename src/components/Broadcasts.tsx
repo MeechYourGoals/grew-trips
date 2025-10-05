@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Broadcast } from './Broadcast';
 import { BroadcastComposer } from './BroadcastComposer';
+import { BroadcastList } from './broadcast/BroadcastList';
+import { BroadcastFilters } from './broadcast/BroadcastFilters';
 import { Radio, Clock } from 'lucide-react';
 import { beyonceCowboyCarterTour } from '../data/pro-trips/beyonceCowboyCarterTour';
 import { useDemoMode } from '@/hooks/useDemoMode';
-import { mockBroadcasts as mockBroadcastData } from '@/mockData/broadcasts';
 import { useParams } from 'react-router-dom';
-import { getMockAvatar } from '@/utils/mockAvatars';
 import { detectTripTier } from '@/utils/tripTierDetector';
+import { useBroadcastFilters } from '@/hooks/useBroadcastFilters';
 
 const participants = beyonceCowboyCarterTour.participants;
 
@@ -65,6 +65,14 @@ export const Broadcasts = () => {
   
   const [broadcasts, setBroadcasts] = useState<BroadcastData[]>([]);
   const [userResponses, setUserResponses] = useState<Record<string, 'coming' | 'wait' | 'cant'>>({});
+  
+  const {
+    priority,
+    setPriority,
+    applyFilters,
+    hasActiveFilters,
+    clearFilters
+  } = useBroadcastFilters();
 
   // Update broadcasts when demo mode changes
   useEffect(() => {
@@ -142,6 +150,9 @@ export const Broadcasts = () => {
     const hoursDiff = (Date.now() - broadcast.timestamp.getTime()) / (1000 * 60 * 60);
     return hoursDiff <= 48;
   });
+  
+  // Apply additional filters
+  const filteredBroadcasts = applyFilters(recentBroadcasts);
 
   return (
     <div className="p-6">
@@ -158,27 +169,20 @@ export const Broadcasts = () => {
       {/* Broadcast Composer */}
       <BroadcastComposer participants={participants} tripTier={tripTier} tripId={currentTripId} onSend={handleNewBroadcast} />
 
+      {/* Filters */}
+      <BroadcastFilters
+        priority={priority}
+        onPriorityChange={setPriority}
+        hasActiveFilters={hasActiveFilters}
+        onClearFilters={clearFilters}
+      />
+
       {/* Active Broadcasts */}
-      <div className="space-y-4">
-        {recentBroadcasts.length > 0 ? (
-          recentBroadcasts.map((broadcast) => (
-            <Broadcast
-              key={broadcast.id}
-              {...broadcast}
-              userResponse={userResponses[broadcast.id]}
-              onRespond={handleResponse}
-            />
-          ))
-        ) : (
-          <div className="text-center py-12">
-            <Radio size={48} className="text-slate-600 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-slate-400 mb-2">No Recent Broadcasts</h3>
-            <p className="text-slate-500 text-sm">
-              Share quick updates and alerts with your group
-            </p>
-          </div>
-        )}
-      </div>
+      <BroadcastList
+        broadcasts={filteredBroadcasts}
+        userResponses={userResponses}
+        onRespond={handleResponse}
+      />
 
       {recentBroadcasts.length > 0 && (
         <div className="mt-6 text-center">
