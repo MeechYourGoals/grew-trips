@@ -15,7 +15,11 @@ export function useUnifiedMessages({ tripId, tripType, enabled = true }: UseUnif
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ 
+    id: string; 
+    email?: string;
+    user_metadata?: Record<string, unknown>;
+  } | null>(null);
   const providerRef = useRef<IMessagingProvider | null>(null);
 
   // Get current user
@@ -40,7 +44,7 @@ export function useUnifiedMessages({ tripId, tripType, enabled = true }: UseUnif
             tripId,
             userId: user.id,
             userName: user.email || 'Unknown User',
-            userAvatar: user.user_metadata?.avatar_url
+            userAvatar: (user.user_metadata?.avatar_url as string | undefined) || undefined
           });
         }
 

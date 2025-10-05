@@ -1,15 +1,21 @@
 /**
  * Platform-agnostic navigation utilities
  * Web: Uses react-router-dom
- * Mobile: Would use React Navigation
+ * Mobile: Will use React Navigation or native routing
  */
 
 export interface NavigationOptions {
   replace?: boolean;
-  state?: any;
+  state?: Record<string, unknown>;
 }
 
-class WebNavigation {
+export interface NavigationService {
+  openURL: (url: string, external?: boolean) => void;
+  canOpenURL: (url: string) => boolean;
+  goBack: () => void;
+}
+
+class WebNavigation implements NavigationService {
   openURL(url: string, external = true): void {
     if (external) {
       window.open(url, '_blank', 'noopener,noreferrer');
@@ -30,11 +36,15 @@ class WebNavigation {
   goBack(): void {
     window.history.back();
   }
-
-  /**
-   * Note: For actual navigation within the app, use useNavigate() from react-router-dom
-   * This is just for platform-level navigation utilities
-   */
 }
 
-export const platformNavigation = new WebNavigation();
+export const platformNavigation: NavigationService = new WebNavigation();
+
+/**
+ * Note: For in-app navigation with React Router, continue using:
+ * - useNavigate() hook
+ * - Link component
+ * - Navigate component
+ * 
+ * This service is for platform-level navigation utilities (external URLs, back button)
+ */

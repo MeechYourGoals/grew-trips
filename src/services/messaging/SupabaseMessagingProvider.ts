@@ -116,18 +116,18 @@ export class SupabaseMessagingProvider implements IMessagingProvider {
     return this.config !== null && this.subscription !== null;
   }
 
-  private transformToMessage(data: any): Message {
+  private transformToMessage(data: Record<string, unknown>): Message {
     return {
-      id: data.id,
-      content: data.content,
-      userId: data.author_name, // Supabase uses author_name as identifier
-      userName: data.author_name,
-      timestamp: new Date(data.created_at),
-      metadata: data.link_preview || {},
+      id: String(data.id),
+      content: String(data.content || ''),
+      userId: String(data.author_name), // Supabase uses author_name as identifier
+      userName: String(data.author_name),
+      timestamp: new Date(String(data.created_at)),
+      metadata: (data.link_preview as Record<string, unknown>) || {},
       attachments: data.media_url ? [{
-        id: data.id,
-        type: data.media_type || 'file',
-        url: data.media_url
+        id: String(data.id),
+        type: (data.media_type as 'image' | 'video' | 'file' | 'link') || 'file',
+        url: String(data.media_url)
       }] : []
     };
   }

@@ -1,4 +1,4 @@
-import { StreamChat, Channel } from 'stream-chat';
+import { StreamChat, Channel, MessageResponse } from 'stream-chat';
 import { 
   IMessagingProvider, 
   Message, 
@@ -118,19 +118,22 @@ export class StreamMessagingProvider implements IMessagingProvider {
     return this.client !== null && this.channel !== null;
   }
 
-  private transformToMessage(streamMessage: any): Message {
+  private transformToMessage(streamMessage: MessageResponse): Message {
+    const user = streamMessage.user;
+    const attachments = streamMessage.attachments || [];
+    
     return {
       id: streamMessage.id,
       content: streamMessage.text || '',
-      userId: streamMessage.user?.id || '',
-      userName: streamMessage.user?.name || 'Unknown',
-      userAvatar: streamMessage.user?.image,
-      timestamp: new Date(streamMessage.created_at),
-      metadata: streamMessage.custom_data,
-      attachments: (streamMessage.attachments || []).map((att: any) => ({
-        id: att.id || streamMessage.id,
-        type: att.type,
-        url: att.asset_url || att.image_url,
+      userId: user?.id || '',
+      userName: user?.name || 'Unknown',
+      userAvatar: user?.image,
+      timestamp: new Date(streamMessage.created_at || Date.now()),
+      metadata: {},
+      attachments: attachments.map((att, index) => ({
+        id: `${streamMessage.id}-${index}`,
+        type: (att.type as 'image' | 'video' | 'file' | 'link') || 'file',
+        url: att.asset_url || att.image_url || '',
         name: att.title
       }))
     };

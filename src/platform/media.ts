@@ -1,7 +1,7 @@
 /**
  * Platform-agnostic media picker
  * Web: Uses file input
- * Mobile: Would use ImagePicker or DocumentPicker
+ * Mobile: Will use Capacitor Camera/Filesystem plugins
  */
 
 export interface MediaPickerOptions {
@@ -17,7 +17,12 @@ export interface MediaPickerResult {
   error?: string;
 }
 
-class WebMediaPicker {
+export interface MediaService {
+  pickMedia: (options?: MediaPickerOptions) => Promise<MediaPickerResult>;
+  takePicture: (options?: { quality?: number }) => Promise<MediaPickerResult>;
+}
+
+class WebMediaPicker implements MediaService {
   private createFileInput(options: MediaPickerOptions): HTMLInputElement {
     const input = document.createElement('input');
     input.type = 'file';
@@ -89,4 +94,4 @@ class WebMediaPicker {
   }
 }
 
-export const platformMedia = new WebMediaPicker();
+export const platformMedia: MediaService = new WebMediaPicker();

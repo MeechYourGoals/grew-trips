@@ -12,3 +12,4 @@ export * from './media';
 export * from './clipboard';
 export * from './navigation';
 export * from './utils';
+export * from './pushNotifications';
