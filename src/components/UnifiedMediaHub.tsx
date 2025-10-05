@@ -1,230 +1,24 @@
-import React, { useState, useEffect } from 'react';
-import { Camera, Video, FileText, Music, Link, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
+import { Camera } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { supabase } from '@/integrations/supabase/client';
-import { useDemoMode } from '@/hooks/useDemoMode';
-import { demoModeService } from '../services/demoModeService';
-import MockDataService from '../services/mockDataService';
-import TripSpecificMockDataService from '../services/tripSpecificMockDataService';
-import UniversalMockDataService from '../services/UniversalMockDataService';
-import { detectTripTier } from '../utils/tripTierDetector';
-import { proTripMockData } from '../data/proTripMockData';
-import { eventsMockData } from '../data/eventsMockData';
+import { useMediaManagement } from '@/hooks/useMediaManagement';
 import { MediaSubTabs } from './MediaSubTabs';
-
-interface MediaItem {
-  id: string;
-  media_url: string;
-  filename: string;
-  media_type: 'image' | 'video' | 'audio' | 'document';
-  metadata: any;
-  created_at: string;
-  source: 'chat' | 'upload';
-}
-
-interface LinkItem {
-  id: string;
-  url: string;
-  title: string;
-  description: string;
-  domain: string;
-  image_url?: string;
-  created_at: string;
-  source: 'chat' | 'manual' | 'pinned';
-  category?: 'Housing' | 'Eats' | 'Activities';
-  tags?: string[];
-}
+import { MediaGrid } from './media/MediaGrid';
+import { LinksList } from './media/LinksList';
 
 interface UnifiedMediaHubProps {
   tripId: string;
 }
 
 export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
-  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
-  const [linkItems, setLinkItems] = useState<LinkItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('all');
-  const { isDemoMode } = useDemoMode();
-
-  useEffect(() => {
-    fetchMediaItems();
-    fetchLinkItems();
-  }, [tripId, isDemoMode]);
-
-  const fetchMediaItems = async () => {
-    setLoading(true);
-    try {
-      let items: MediaItem[] = [];
-      const tripTier = detectTripTier(tripId);
-
-      if (isDemoMode || TripSpecificMockDataService.isEnabled()) {
-        // Check for trip-specific mock data first
-        if (tripTier === 'consumer' && TripSpecificMockDataService.getTripMediaItems(parseInt(tripId)).length > 0) {
-          items = TripSpecificMockDataService.getTripMediaItems(parseInt(tripId));
-          console.log('Using trip-specific mock data for consumer trip:', tripId);
-        } else if (tripTier === 'pro' && proTripMockData[tripId]) {
-          // Use Pro trip media if available
-          const proData = proTripMockData[tripId];
-          items = [
-            ...(proData.photos || []).map(item => ({ ...item, media_type: 'image' as const })),
-            ...(proData.videos || []).map(item => ({ ...item, media_type: 'video' as const })),
-            ...(proData.audio || []).map(item => ({ ...item, media_type: 'audio' as const })),
-            ...(proData.files || []).map(item => ({ ...item, media_type: 'document' as const }))
-          ];
-          console.log('Using pro trip mock data for trip:', tripId);
-        } else if (tripTier === 'event' && eventsMockData[tripId]) {
-          // Use Event media if available
-          const eventData = eventsMockData[tripId];
-          items = [
-            ...(eventData.photos || []).map(item => ({ ...item, media_type: 'image' as const })),
-            ...(eventData.videos || []).map(item => ({ ...item, media_type: 'video' as const })),
-            ...(eventData.audio || []).map(item => ({ ...item, media_type: 'audio' as const })),
-            ...(eventData.files || []).map(item => ({ ...item, media_type: 'document' as const }))
-          ];
-          console.log('Using event mock data for trip:', tripId);
-        } else {
-          // Fall back to universal mock data for trips without specific data
-          items = UniversalMockDataService.getCombinedMediaItems(tripId);
-          console.log('Using universal fallback mock data for trip:', tripId, 'tier:', tripTier);
-        }
-      } else {
-        // Fetch from Supabase in production
-        const [mediaResponse, filesResponse] = await Promise.all([
-          supabase
-            .from('trip_media_index')
-            .select('*')
-            .eq('trip_id', tripId)
-            .order('created_at', { ascending: false }),
-          
-          supabase
-            .from('trip_files')
-            .select('*')
-            .eq('trip_id', tripId)
-            .order('created_at', { ascending: false })
-        ]);
-
-        const combinedMedia = [
-          ...(mediaResponse.data || []).map(item => ({
-            id: item.id,
-            media_url: item.media_url,
-            filename: item.filename || 'Untitled',
-            media_type: item.media_type as 'image' | 'video' | 'audio' | 'document',
-            metadata: item.metadata || {},
-            created_at: item.created_at,
-            source: 'chat' as const
-          })),
-          ...(filesResponse.data || []).map(item => ({
-            id: item.id,
-            media_url: `/storage/trip-files/${item.name}`,
-            filename: item.name,
-            media_type: item.file_type as 'image' | 'video' | 'audio' | 'document',
-            metadata: { extracted_events: item.extracted_events },
-            created_at: item.created_at,
-            source: 'upload' as const
-          }))
-        ];
-
-        items = combinedMedia;
-      }
-
-      setMediaItems(items);
-    } catch (error) {
-      console.error('Error fetching media items:', error);
-      // Even on error, provide fallback mock data for demo
-      if (isDemoMode) {
-        setMediaItems(UniversalMockDataService.getCombinedMediaItems(tripId));
-      } else {
-        setMediaItems([]);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fetchLinkItems = async () => {
-    try {
-      let items: LinkItem[] = [];
-      const tripTier = detectTripTier(tripId);
-
-      if (isDemoMode || TripSpecificMockDataService.isEnabled()) {
-        // Check for trip-specific mock data first
-        if (tripTier === 'consumer' && TripSpecificMockDataService.getTripLinkItems(parseInt(tripId)).length > 0) {
-          items = TripSpecificMockDataService.getTripLinkItems(parseInt(tripId));
-          console.log('Using trip-specific mock links for consumer trip:', tripId);
-        } else if (tripTier === 'pro' && proTripMockData[tripId]) {
-          // Use Pro trip links if available
-          const proData = proTripMockData[tripId];
-          items = proData.links || [];
-          console.log('Using pro trip mock links for trip:', tripId);
-        } else if (tripTier === 'event' && eventsMockData[tripId]) {
-          // Use Event links if available
-          const eventData = eventsMockData[tripId];
-          items = eventData.links || [];
-          console.log('Using event mock links for trip:', tripId);
-        } else {
-          // Fall back to universal mock data for trips without specific data
-          items = UniversalMockDataService.getLinkItems(tripId);
-          console.log('Using universal fallback mock links for trip:', tripId, 'tier:', tripTier);
-        }
-      } else {
-        // Fetch from Supabase in production
-        const [linksResponse, manualLinksResponse] = await Promise.all([
-          supabase
-            .from('trip_link_index')
-            .select('*')
-            .eq('trip_id', tripId)
-            .order('created_at', { ascending: false }),
-          
-          supabase
-            .from('trip_links')
-            .select('*')
-            .eq('trip_id', tripId)
-            .order('created_at', { ascending: false })
-        ]);
-
-        const combinedLinks = [
-          ...(linksResponse.data || []).map(item => ({
-            id: item.id,
-            url: item.url,
-            title: item.og_title || 'Untitled Link',
-            description: item.og_description || '',
-            domain: item.domain || new URL(item.url).hostname,
-            image_url: item.og_image_url,
-            created_at: item.created_at,
-            source: 'chat' as const,
-            category: 'Activities' as const,
-            tags: []
-          })),
-          ...(manualLinksResponse.data || []).map(item => ({
-            id: item.id,
-            url: item.url,
-            title: item.title || 'Untitled Link',
-            description: item.description || '',
-            domain: new URL(item.url).hostname,
-            image_url: undefined,
-            created_at: item.created_at,
-            source: 'manual' as const,
-            category: item.category as 'Housing' | 'Eats' | 'Activities' || 'Activities' as const,
-            tags: []
-          }))
-        ];
-
-        items = combinedLinks;
-      }
-
-      setLinkItems(items);
-    } catch (error) {
-      console.error('Error fetching link items:', error);
-      // Even on error, provide fallback mock data for demo
-      if (isDemoMode) {
-        setLinkItems(UniversalMockDataService.getLinkItems(tripId));
-      } else {
-        setLinkItems([]);
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  
+  const {
+    mediaItems,
+    linkItems,
+    loading,
+    getAllItemsSorted
+  } = useMediaManagement(tripId);
 
   const filterMediaByType = (type: string) => {
     if (type === 'all') return [...mediaItems, ...linkItems];
@@ -249,70 +43,17 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
       );
     }
 
-    // Display combined media and links in a mixed grid/list layout
-    const allItems = [...mediaItems, ...linkItems].sort((a, b) => 
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
+    const allItems = getAllItemsSorted();
+    const displayItems = allItems.slice(0, 8);
+    
+    // Type guard to separate media and links
+    const mediaOnlyItems = displayItems.filter((item): item is typeof mediaItems[0] => 'media_type' in item);
+    const linkOnlyItems = displayItems.filter((item): item is typeof linkItems[0] => !('media_type' in item));
 
     return (
       <div className="space-y-4">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {allItems.slice(0, 8).map((item, index) => {
-            // Check if item is a media item or link item
-            if ('media_type' in item) {
-              const mediaItem = item as MediaItem;
-              return (
-                <div key={mediaItem.id} className="group relative aspect-square rounded-lg overflow-hidden bg-muted">
-                  {mediaItem.media_type === 'image' ? (
-                    <img
-                      src={mediaItem.media_url}
-                      alt={mediaItem.filename}
-                      className="w-full h-full object-cover transition-transform group-hover:scale-105"
-                    />
-                  ) : mediaItem.media_type === 'video' ? (
-                    <div className="relative w-full h-full bg-black flex items-center justify-center">
-                      <video
-                        src={mediaItem.media_url}
-                        className="w-full h-full object-cover"
-                        muted
-                        preload="metadata"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                        <Video className="w-12 h-12 text-white" />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="w-full h-full bg-white/10 flex flex-col items-center justify-center p-4">
-                      {mediaItem.media_type === 'audio' ? <Music className="w-8 h-8 text-purple-400" /> : <FileText className="w-8 h-8 text-blue-400" />}
-                      <span className="text-xs text-center mt-2 truncate w-full">{mediaItem.filename}</span>
-                    </div>
-                  )}
-                </div>
-              );
-            } else {
-              const linkItem = item as LinkItem;
-              return (
-                <div key={linkItem.id} className="group relative aspect-square rounded-lg overflow-hidden bg-muted border border-white/10 p-3 flex flex-col">
-                  {linkItem.image_url ? (
-                    <img
-                      src={linkItem.image_url}
-                      alt={linkItem.title}
-                      className="w-full flex-1 object-cover rounded mb-2"
-                    />
-                  ) : (
-                    <div className="w-full flex-1 bg-white/5 rounded mb-2 flex items-center justify-center">
-                      <ExternalLink className="w-8 h-8 text-gray-400" />
-                    </div>
-                  )}
-                  <div className="text-xs">
-                    <p className="text-white font-medium truncate">{linkItem.title}</p>
-                    <p className="text-gray-400 text-xs">{linkItem.domain}</p>
-                  </div>
-                </div>
-              );
-            }
-          })}
-        </div>
+        {mediaOnlyItems.length > 0 && <MediaGrid items={mediaOnlyItems} />}
+        {linkOnlyItems.length > 0 && <LinksList items={linkOnlyItems} />}
         {allItems.length > 8 && (
           <p className="text-center text-gray-400 text-sm">
             Showing 8 of {allItems.length} items • Use tabs above to filter by type

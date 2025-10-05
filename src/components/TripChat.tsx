@@ -1,15 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
-import { addMinutes } from 'date-fns';
 import { useParams } from 'react-router-dom';
-import { demoModeService, MockMessage as DemoMockMessage } from '../services/demoModeService';
+import { demoModeService } from '../services/demoModeService';
 import { useDemoMode } from '../hooks/useDemoMode';
-import { useChatMessageParser } from '../hooks/useChatMessageParser';
-import { MessageCircle, Megaphone, DollarSign } from 'lucide-react';
+import { useChatComposer } from '../hooks/useChatComposer';
 import { ChatInput } from './chat/ChatInput';
-import { MessageReactionBar } from './chat/MessageReactionBar';
+import { MessageList } from './chat/MessageList';
+import { MessageFilters } from './chat/MessageFilters';
 import { InlineReplyComponent } from './chat/InlineReplyComponent';
-import { ReplyData } from './chat/types';
 import { getMockAvatar } from '../utils/mockAvatars';
 import { useTripMembers } from '../hooks/useTripMembers';
 
@@ -42,88 +39,34 @@ export const TripChat = ({
 }: TripChatProps) => {
   const [messages, setMessages] = useState<MockMessage[]>([]);
   const [loading, setLoading] = useState(true);
-  const [inputMessage, setInputMessage] = useState('');
-  const [messageFilter, setMessageFilter] = useState<'all' | 'broadcast' | 'payments'>('all');
   const [reactions, setReactions] = useState<{ [messageId: string]: { [reaction: string]: { count: number; userReacted: boolean } } }>({});
-  const [replyingTo, setReplyingTo] = useState<{ id: string; text: string; senderName: string } | null>(null);
 
   const { tripId } = useParams();
   const demoMode = useDemoMode();
-  const { parseMessage } = useChatMessageParser();
   const { tripMembers } = useTripMembers(tripId);
-
-  const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  };
+  
+  const {
+    inputMessage,
+    setInputMessage,
+    messageFilter,
+    setMessageFilter,
+    replyingTo,
+    setReply,
+    clearReply,
+    sendMessage,
+    filterMessages
+  } = useChatComposer({ tripId, demoMode: demoMode.isDemoMode });
 
   const handleSendMessage = async (isBroadcast = false, isPayment = false, paymentData?: any) => {
-    if (!isPayment && inputMessage.trim() === '') return;
-
-    const messageId = `msg_${Date.now()}`;
+    const message = await sendMessage({ 
+      isBroadcast, 
+      isPayment, 
+      paymentData 
+    });
     
-    if (isPayment && paymentData) {
-      // Calculate per-person amount
-      const perPersonAmount = (paymentData.amount / paymentData.splitCount).toFixed(2);
-      
-      // Create payment message with preferred payment method
-      const preferredPaymentMethod = "Venmo: @yourvenmo"; // In real app, fetch from user's payment methods
-      
-      const paymentMessage: MockMessage = {
-        id: messageId,
-        text: `${paymentData.description} - ${paymentData.currency} ${paymentData.amount.toFixed(2)} (split ${paymentData.splitCount} ways) • Pay me $${perPersonAmount} via ${preferredPaymentMethod}`,
-        sender: { 
-          id: 'user1', 
-          name: 'You', 
-          avatar: getMockAvatar('You')
-        },
-        createdAt: new Date().toISOString(),
-        isBroadcast: false,
-        reactions: {},
-        tags: ['payment'],
-        replyTo: replyingTo ? {
-          id: replyingTo.id,
-          text: replyingTo.text,
-          sender: replyingTo.senderName
-        } : undefined
-      };
-
-      setMessages(prev => [...prev, paymentMessage]);
-      
-      // TODO: Save payment data to database
-      console.log('Payment data:', paymentData);
-      
-    } else {
-      // Regular message
-      const newMessage: MockMessage = {
-        id: messageId,
-        text: inputMessage,
-        sender: { 
-          id: 'user1', 
-          name: 'You', 
-          avatar: getMockAvatar('You')
-        },
-        createdAt: new Date().toISOString(),
-        isBroadcast,
-        reactions: {},
-        replyTo: replyingTo ? {
-          id: replyingTo.id,
-          text: replyingTo.text,
-          sender: replyingTo.senderName
-        } : undefined
-      };
-
-      setMessages(prev => [...prev, newMessage]);
-      
-      // Parse message for media and links (only if not in demo mode)
-      if (!demoMode.isDemoMode && tripId) {
-        await parseMessage(messageId, inputMessage, tripId);
-      }
-      
-      setInputMessage('');
+    if (message) {
+      setMessages(prev => [...prev, message as MockMessage]);
     }
-    
-    setReplyingTo(null);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -145,10 +88,6 @@ export const TripChat = ({
 
     updatedReactions[messageId][reactionType] = currentReaction;
     setReactions(updatedReactions);
-  };
-
-  const handleReplyToMessage = (messageId: string, messageText: string, senderName: string) => {
-    setReplyingTo({ id: messageId, text: messageText, senderName });
   };
 
   useEffect(() => {
@@ -181,12 +120,7 @@ export const TripChat = ({
     loadDemoData();
   }, [demoMode.isDemoMode]);
 
-  const filteredMessages = messages.filter(message => {
-    if (messageFilter === 'all') return true;
-    if (messageFilter === 'broadcast') return message.isBroadcast;
-    if (messageFilter === 'payments') return message.text.includes('💳 Payment') || message.tags?.includes('payment');
-    return true;
-  });
+  const filteredMessages = filterMessages(messages);
 
   if (loading) {
     return <div>Loading messages...</div>;
@@ -194,137 +128,25 @@ export const TripChat = ({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Message Filters - Only All Messages and Broadcasts */}
       {messages.length > 0 && (
-        <div className="flex justify-center gap-2 p-4 border-b border-gray-700">
-          <button
-            onClick={() => setMessageFilter('all')}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-              messageFilter === 'all' ? 'bg-blue-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            All Messages
-          </button>
-          <button
-            onClick={() => setMessageFilter('broadcast')}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-              messageFilter === 'broadcast' ? 'bg-orange-600 text-white' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            <Megaphone size={14} />
-            Broadcasts
-          </button>
-          <button
-            onClick={() => setMessageFilter('payments')}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-              messageFilter === 'payments' ? 'bg-payment-primary text-payment-primary-foreground' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-            }`}
-          >
-            <DollarSign size={14} />
-            Payments
-          </button>
+        <div className="p-4 border-b border-gray-700">
+          <MessageFilters 
+            activeFilter={messageFilter} 
+            onFilterChange={setMessageFilter} 
+          />
         </div>
       )}
 
-      {filteredMessages.length === 0 ? (
-        <div className="text-center py-8">
-          <MessageCircle size={48} className="text-gray-600 mx-auto mb-4" />
-          <h4 className="text-lg font-medium text-gray-400 mb-2">
-            {messageFilter === 'all' ? 'Start your trip chat' : 
-             messageFilter === 'broadcast' ? 'No broadcasts yet' : 'No payments yet'}
-          </h4>
-          <p className="text-gray-500 text-sm">
-            {messageFilter === 'all' ? 'Send a message to get the conversation started!' :
-             messageFilter === 'broadcast' ? 'Send an announcement to all trip members' :
-             'Add a payment to track trip expenses'}
-          </p>
+      <div className="flex-1 overflow-y-auto bg-gray-800/30 rounded-lg mx-4 mb-4">
+        <div className="p-4">
+          <MessageList
+            messages={filteredMessages}
+            reactions={reactions}
+            onReaction={handleReaction}
+          />
         </div>
-      ) : (
-        <div className="flex-1 overflow-y-auto bg-gray-800/30 rounded-lg mx-4 mb-4">
-          <div className="space-y-4 p-4">
-            {filteredMessages.map((message) => (
-            <div key={message.id} className="flex items-start gap-3">
-              {/* Avatar */}
-              <img
-                src={message.sender.avatar || getMockAvatar(message.sender.name)}
-                alt={message.sender.name}
-                className="w-10 h-10 rounded-full flex-shrink-0 object-cover border border-gray-600"
-              />
-              
-              {/* Message Content */}
-              <div className="flex-1 min-w-0">
-                {/* Sender Name */}
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-sm font-medium text-gray-300">
-                    {message.sender.name}
-                  </span>
-                  <span className="text-xs text-gray-500">
-                    {formatTime(message.createdAt)}
-                  </span>
-                </div>
-                
-                {/* Message Bubble */}
-                <div className={`
-                  max-w-md p-3 rounded-lg relative
-                  ${message.isBroadcast
-                    ? 'bg-gradient-to-r from-orange-100 to-red-50 border border-orange-300 text-black [&_*]:!text-black'
-                    : message.text.includes('💳 Payment') || message.tags?.includes('payment')
-                    ? 'bg-gradient-to-r from-green-100 to-emerald-50 border border-green-300 text-green-900 dark:from-green-900/30 dark:to-emerald-900/30 dark:border-green-700 dark:text-green-100'
-                    : 'bg-gray-700 text-gray-200'
-                  }
-                `} role={message.isBroadcast ? 'alert' : undefined}
-                    aria-label={message.isBroadcast ? 'Broadcast message' : undefined}>
-                  
-                  {/* Broadcast Header */}
-                  {message.isBroadcast && (
-                    <div className="flex items-center gap-2 text-xs font-bold mb-2 text-black">
-                      <Megaphone size={14} className="text-orange-600" />
-                      <span className="text-black">📢 BROADCAST</span>
-                    </div>
-                  )}
-                  
-                  {/* Payment Header */}
-                  {(message.text.includes('💳 Payment') || message.tags?.includes('payment')) && (
-                    <div className="flex items-center gap-2 text-xs font-bold mb-2">
-                      <DollarSign size={14} className="text-green-600 dark:text-green-400" />
-                      <span className="text-green-600 dark:text-green-400">💳 PAYMENT</span>
-                    </div>
-                  )}
-                  
-                  {/* Reply Context */}
-                  {message.replyTo && (
-                    <div className={`text-xs opacity-70 mb-2 p-2 bg-black/10 rounded border-l-2 border-gray-500 ${message.isBroadcast ? 'text-black' : ''}`}>
-                      Replying to {message.replyTo.sender}: "{message.replyTo.text}"
-                    </div>
-                  )}
-                  
-                  {/* Message Text */}
-                  <div className={`leading-relaxed ${message.isBroadcast ? 'text-black font-bold' : ''}`}>{message.text}</div>
-                </div>
-                
-                {/* Message Actions */}
-                <div className="mt-2 space-y-1">
-                  <MessageReactionBar 
-                    messageId={message.id}
-                    reactions={reactions[message.id] || {}} 
-                    onReaction={handleReaction}
-                  />
-                  
-                  <button 
-                    onClick={() => handleReplyToMessage(message.id, message.text, message.sender.name)}
-                    className="text-xs text-gray-400 hover:text-gray-200 transition-colors"
-                  >
-                    Reply
-                  </button>
-                </div>
-              </div>
-            </div>
-            ))}
-          </div>
-        </div>
-      )}
+      </div>
 
-      {/* Reply Context */}
       {replyingTo && (
         <InlineReplyComponent 
           replyTo={{ 
@@ -332,11 +154,10 @@ export const TripChat = ({
             text: replyingTo.text,
             senderName: replyingTo.senderName 
           }}
-          onCancel={() => setReplyingTo(null)} 
+          onCancel={clearReply} 
         />
       )}
 
-      {/* Message Input */}
       <div className="p-4">
         <ChatInput
           inputMessage={inputMessage}
