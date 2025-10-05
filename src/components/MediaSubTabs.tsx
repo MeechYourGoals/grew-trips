@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Camera, Video, Music, FileText, Link, Play, Download, MessageCircle, ExternalLink, Receipt, DollarSign, Users } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { PaymentMethodIcon } from './receipts/PaymentMethodIcon';
 import { generatePaymentDeeplink } from '../utils/paymentDeeplinks';
+import { AddLinkModal } from './AddLinkModal';
 
 interface MediaItem {
   id: string;
@@ -37,6 +38,7 @@ interface MediaSubTabsProps {
 
 export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
   const [selectedCategory, setSelectedCategory] = React.useState<'Housing' | 'Eats' | 'Activities' | null>(null);
+  const [isAddLinkModalOpen, setIsAddLinkModalOpen] = useState(false);
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',
@@ -117,10 +119,7 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => {
-              // Mock functionality - in real app this would open a modal
-              alert('Add Link functionality - would open modal to manually add links');
-            }}
+            onClick={() => setIsAddLinkModalOpen(true)}
             className="text-xs ml-auto"
           >
             <Link className="w-4 h-4 mr-1" />
@@ -179,6 +178,11 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
             </div>
           </div>
         ))}
+        
+        <AddLinkModal 
+          isOpen={isAddLinkModalOpen}
+          onClose={() => setIsAddLinkModalOpen(false)}
+        />
       </div>
     );
   }
