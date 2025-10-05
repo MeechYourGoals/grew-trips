@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Camera, Upload, Image as ImageIcon, Film } from 'lucide-react';
+import { usePullToRefresh } from '../../hooks/usePullToRefresh';
+import { PullToRefreshIndicator } from './PullToRefreshIndicator';
+import { MediaSkeleton } from './SkeletonLoader';
 import { hapticService } from '../../services/hapticService';
 import { capacitorIntegration } from '../../services/capacitorIntegration';
 
@@ -34,6 +37,19 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
     }
   ]);
   const [selectedTab, setSelectedTab] = useState<'all' | 'photos' | 'videos'>('all');
+  const [isLoading, setIsLoading] = useState(true);
+
+  const { isPulling, isRefreshing, pullDistance } = usePullToRefresh({
+    onRefresh: async () => {
+      setIsLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsLoading(false);
+    }
+  });
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 500);
+  }, []);
 
   const handleTakePicture = async () => {
     await hapticService.medium();
@@ -69,7 +85,13 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
   });
 
   return (
-    <div className="flex flex-col h-full bg-black">
+    <div className="flex flex-col h-full bg-black relative">
+      <PullToRefreshIndicator
+        isRefreshing={isRefreshing}
+        pullDistance={pullDistance}
+        threshold={80}
+      />
+
       {/* Action Buttons */}
       <div className="px-4 py-4 border-b border-white/10">
         <div className="grid grid-cols-2 gap-3">
@@ -116,7 +138,9 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
 
       {/* Media Grid */}
       <div className="flex-1 overflow-y-auto px-4 py-4">
-        {filteredMedia.length === 0 ? (
+        {isLoading ? (
+          <MediaSkeleton />
+        ) : filteredMedia.length === 0 ? (
           <div className="text-center py-12">
             <ImageIcon size={48} className="text-gray-600 mx-auto mb-3" />
             <p className="text-gray-400 mb-2">No media yet</p>
@@ -137,6 +161,7 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
                   src={item.url}
                   alt="Trip media"
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
                 {item.type === 'video' && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30">

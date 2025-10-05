@@ -4,6 +4,10 @@ import { MessageList } from '../chat/MessageList';
 import { InlineReplyComponent } from '../chat/InlineReplyComponent';
 import { useChatComposer, ChatMessage } from '../../hooks/useChatComposer';
 import { useKeyboardHandler } from '../../hooks/useKeyboardHandler';
+import { usePullToRefresh } from '../../hooks/usePullToRefresh';
+import { useSwipeGesture } from '../../hooks/useSwipeGesture';
+import { PullToRefreshIndicator } from './PullToRefreshIndicator';
+import { MessageSkeleton } from './SkeletonLoader';
 import { hapticService } from '../../services/hapticService';
 
 interface MobileTripChatProps {
@@ -12,7 +16,9 @@ interface MobileTripChatProps {
 
 export const MobileTripChat = ({ tripId }: MobileTripChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [reactions, setReactions] = useState<{ [messageId: string]: { [reaction: string]: { count: number; userReacted: boolean } } }>({});
   
   const {
@@ -23,17 +29,32 @@ export const MobileTripChat = ({ tripId }: MobileTripChatProps) => {
     sendMessage
   } = useChatComposer({ tripId });
 
+  // Pull to refresh
+  const { isPulling, isRefreshing, pullDistance, shouldTrigger } = usePullToRefresh({
+    onRefresh: async () => {
+      setIsLoading(true);
+      // Simulate loading new messages
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsLoading(false);
+    },
+    threshold: 80
+  });
+
   // Handle keyboard visibility for better UX
   const { isKeyboardVisible } = useKeyboardHandler({
     preventZoom: true,
     adjustViewport: true,
     onShow: () => {
-      // Scroll to bottom when keyboard appears
       setTimeout(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
       }, 300);
     }
   });
+
+  // Simulate initial load
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 800);
+  }, []);
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -69,9 +90,16 @@ export const MobileTripChat = ({ tripId }: MobileTripChatProps) => {
   };
 
   return (
-    <div className="flex flex-col h-full bg-black">
+    <div className="flex flex-col h-full bg-black relative">
+      <PullToRefreshIndicator
+        isRefreshing={isRefreshing}
+        pullDistance={pullDistance}
+        threshold={80}
+      />
+
       {/* Messages Container - Scrollable */}
       <div 
+        ref={containerRef}
         className="flex-1 overflow-y-auto px-4 py-4"
         style={{
           maxHeight: isKeyboardVisible 
@@ -79,14 +107,20 @@ export const MobileTripChat = ({ tripId }: MobileTripChatProps) => {
             : 'calc(100vh - 280px)'
         }}
       >
-        <MessageList
-          messages={messages}
-          reactions={reactions}
-          onReaction={handleReaction}
-          emptyStateTitle="Start the conversation"
-          emptyStateDescription="Send your first message to the group"
-        />
-        <div ref={messagesEndRef} />
+        {isLoading ? (
+          <MessageSkeleton />
+        ) : (
+          <>
+            <MessageList
+              messages={messages}
+              reactions={reactions}
+              onReaction={handleReaction}
+              emptyStateTitle="Start the conversation"
+              emptyStateDescription="Send your first message to the group"
+            />
+            <div ref={messagesEndRef} />
+          </>
+        )}
       </div>
 
       {/* Reply Bar (if replying) */}

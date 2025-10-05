@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, MapPin, Clock, Users } from 'lucide-react';
+import { usePullToRefresh } from '../../hooks/usePullToRefresh';
+import { PullToRefreshIndicator } from './PullToRefreshIndicator';
+import { CalendarSkeleton } from './SkeletonLoader';
 import { hapticService } from '../../services/hapticService';
 import { format } from 'date-fns';
 
@@ -19,6 +22,7 @@ interface MobileGroupCalendarProps {
 
 export const MobileGroupCalendar = ({ tripId }: MobileGroupCalendarProps) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isLoading, setIsLoading] = useState(true);
   const [events] = useState<CalendarEvent[]>([
     {
       id: '1',
@@ -40,14 +44,38 @@ export const MobileGroupCalendar = ({ tripId }: MobileGroupCalendarProps) => {
     }
   ]);
 
+  const { isPulling, isRefreshing, pullDistance } = usePullToRefresh({
+    onRefresh: async () => {
+      setIsLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsLoading(false);
+    }
+  });
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 700);
+  }, []);
+
   const handleAddEvent = async () => {
     await hapticService.medium();
     // Add event modal/sheet would open here
   };
 
   return (
-    <div className="flex flex-col h-full bg-black">
-      {/* Date Selector - Horizontal scroll */}
+    <div className="flex flex-col h-full bg-black relative">
+      <PullToRefreshIndicator
+        isRefreshing={isRefreshing}
+        pullDistance={pullDistance}
+        threshold={80}
+      />
+
+      {isLoading ? (
+        <div className="px-4 py-4">
+          <CalendarSkeleton />
+        </div>
+      ) : (
+        <>
+          {/* Date Selector - Horizontal scroll */}
       <div className="px-4 py-4 border-b border-white/10">
         <div className="flex overflow-x-auto scrollbar-hide gap-3">
           {Array.from({ length: 7 }, (_, i) => {
@@ -136,6 +164,8 @@ export const MobileGroupCalendar = ({ tripId }: MobileGroupCalendarProps) => {
           )}
         </div>
       </div>
+        </>
+      )}
     </div>
   );
 };

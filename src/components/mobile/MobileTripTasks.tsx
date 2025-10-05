@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { Plus, Check, X } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Plus, Check, X, Trash2 } from 'lucide-react';
+import { usePullToRefresh } from '../../hooks/usePullToRefresh';
+import { PullToRefreshIndicator } from './PullToRefreshIndicator';
+import { TaskSkeleton } from './SkeletonLoader';
 import { hapticService } from '../../services/hapticService';
 
 interface Task {
@@ -21,6 +24,20 @@ export const MobileTripTasks = ({ tripId }: MobileTripTasksProps) => {
     { id: '3', title: 'Plan day 1 itinerary', completed: false, assignee: 'Alex' }
   ]);
   const [showCompleted, setShowCompleted] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [swipedTaskId, setSwipedTaskId] = useState<string | null>(null);
+
+  const { isPulling, isRefreshing, pullDistance } = usePullToRefresh({
+    onRefresh: async () => {
+      setIsLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      setIsLoading(false);
+    }
+  });
+
+  useEffect(() => {
+    setTimeout(() => setIsLoading(false), 600);
+  }, []);
 
   const handleToggleTask = async (taskId: string) => {
     await hapticService.success();
@@ -30,15 +47,24 @@ export const MobileTripTasks = ({ tripId }: MobileTripTasksProps) => {
   };
 
   const handleDeleteTask = async (taskId: string) => {
-    await hapticService.medium();
-    setTasks(tasks.filter(task => task.id !== taskId));
+    await hapticService.heavy();
+    setSwipedTaskId(null);
+    setTimeout(() => {
+      setTasks(tasks.filter(task => task.id !== taskId));
+    }, 150);
   };
 
   const activeTasks = tasks.filter(t => !t.completed);
   const completedTasks = tasks.filter(t => t.completed);
 
   return (
-    <div className="flex flex-col h-full bg-black px-4 py-4">
+    <div className="flex flex-col h-full bg-black px-4 py-4 relative">
+      <PullToRefreshIndicator
+        isRefreshing={isRefreshing}
+        pullDistance={pullDistance}
+        threshold={80}
+      />
+
       {/* Header with Add Button */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -60,40 +86,82 @@ export const MobileTripTasks = ({ tripId }: MobileTripTasksProps) => {
 
       {/* Active Tasks */}
       <div className="flex-1 overflow-y-auto">
-        <div className="space-y-3 mb-6">
-          {activeTasks.map((task) => (
-            <div
-              key={task.id}
-              className="bg-white/10 rounded-xl p-4 active:bg-white/15 transition-colors"
-            >
-              <div className="flex items-start gap-3">
-                <button
-                  onClick={() => handleToggleTask(task.id)}
-                  className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full border-2 border-gray-400 flex items-center justify-center active:scale-95 transition-transform"
+        {isLoading ? (
+          <TaskSkeleton />
+        ) : (
+          <div className="space-y-3 mb-6">
+            {activeTasks.map((task) => {
+              const isSwiped = swipedTaskId === task.id;
+              
+              return (
+                <div
+                  key={task.id}
+                  className="relative overflow-hidden rounded-xl"
+                  onTouchStart={(e) => {
+                    const startX = e.touches[0].clientX;
+                    const handleTouchMove = (moveEvent: TouchEvent) => {
+                      const currentX = moveEvent.touches[0].clientX;
+                      const diff = startX - currentX;
+                      if (diff > 80) {
+                        setSwipedTaskId(task.id);
+                        hapticService.light();
+                      }
+                    };
+                    const handleTouchEnd = () => {
+                      document.removeEventListener('touchmove', handleTouchMove);
+                      document.removeEventListener('touchend', handleTouchEnd);
+                    };
+                    document.addEventListener('touchmove', handleTouchMove);
+                    document.addEventListener('touchend', handleTouchEnd);
+                  }}
+                  onClick={() => {
+                    if (isSwiped) setSwipedTaskId(null);
+                  }}
                 >
-                  {task.completed && <Check size={14} className="text-white" />}
-                </button>
-                <div className="flex-1">
-                  <h4 className="text-white font-medium">{task.title}</h4>
-                  <div className="flex items-center gap-3 mt-1">
-                    {task.assignee && (
-                      <span className="text-xs text-gray-400">@{task.assignee}</span>
-                    )}
-                    {task.dueDate && (
-                      <span className="text-xs text-orange-400">{task.dueDate}</span>
-                    )}
+                  {/* Delete button revealed on swipe */}
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-4 bg-red-500/20">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteTask(task.id);
+                      }}
+                      className="p-3 bg-red-500 rounded-lg"
+                    >
+                      <Trash2 size={18} className="text-white" />
+                    </button>
+                  </div>
+
+                  {/* Task content */}
+                  <div
+                    className={`bg-white/10 rounded-xl p-4 transition-transform ${
+                      isSwiped ? '-translate-x-24' : 'translate-x-0'
+                    }`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <button
+                        onClick={() => handleToggleTask(task.id)}
+                        className="mt-0.5 flex-shrink-0 w-6 h-6 rounded-full border-2 border-gray-400 flex items-center justify-center active:scale-95 transition-transform"
+                      >
+                        {task.completed && <Check size={14} className="text-white" />}
+                      </button>
+                      <div className="flex-1">
+                        <h4 className="text-white font-medium">{task.title}</h4>
+                        <div className="flex items-center gap-3 mt-1">
+                          {task.assignee && (
+                            <span className="text-xs text-gray-400">@{task.assignee}</span>
+                          )}
+                          {task.dueDate && (
+                            <span className="text-xs text-orange-400">{task.dueDate}</span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <button
-                  onClick={() => handleDeleteTask(task.id)}
-                  className="p-1 text-gray-400 active:text-red-400 active:scale-95 transition-all"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Completed Tasks */}
         {completedTasks.length > 0 && (
