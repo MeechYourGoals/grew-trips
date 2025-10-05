@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { BasecampLocation } from '@/types/basecamp';
+import { getStorageItem, setStorageItem, removeStorageItem } from '@/platform/storage';
 
 interface BasecampContextType {
   basecamp: BasecampLocation | null;
@@ -15,32 +16,34 @@ const BASECAMP_STORAGE_KEY = 'trip-basecamp';
 export const BasecampProvider = ({ children }: { children: ReactNode }) => {
   const [basecamp, setBasecampState] = useState<BasecampLocation | null>(null);
 
-  // Load basecamp from localStorage on mount
+  // Load basecamp from platform storage on mount
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(BASECAMP_STORAGE_KEY);
-      if (stored) {
-        const parsedBasecamp = JSON.parse(stored);
-        setBasecampState(parsedBasecamp);
+    const loadBasecamp = async () => {
+      try {
+        const stored = await getStorageItem<BasecampLocation>(BASECAMP_STORAGE_KEY);
+        if (stored) {
+          setBasecampState(stored);
+        }
+      } catch (error) {
+        console.warn('Failed to load basecamp from storage:', error);
+        await removeStorageItem(BASECAMP_STORAGE_KEY);
       }
-    } catch (error) {
-      console.warn('Failed to load basecamp from localStorage:', error);
-      localStorage.removeItem(BASECAMP_STORAGE_KEY);
-    }
+    };
+    loadBasecamp();
   }, []);
 
-  // Save basecamp to localStorage whenever it changes
-  const setBasecamp = (newBasecamp: BasecampLocation | null) => {
+  // Save basecamp to platform storage whenever it changes
+  const setBasecamp = async (newBasecamp: BasecampLocation | null) => {
     setBasecampState(newBasecamp);
     
-    if (newBasecamp) {
-      try {
-        localStorage.setItem(BASECAMP_STORAGE_KEY, JSON.stringify(newBasecamp));
-      } catch (error) {
-        console.warn('Failed to save basecamp to localStorage:', error);
+    try {
+      if (newBasecamp) {
+        await setStorageItem(BASECAMP_STORAGE_KEY, newBasecamp);
+      } else {
+        await removeStorageItem(BASECAMP_STORAGE_KEY);
       }
-    } else {
-      localStorage.removeItem(BASECAMP_STORAGE_KEY);
+    } catch (error) {
+      console.warn('Failed to save basecamp to storage:', error);
     }
   };
 

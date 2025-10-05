@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { getStorageItem, setStorageItem, removeStorageItem } from '@/platform/storage';
 
 interface UserPreferences {
   archived_trips?: {
@@ -23,19 +24,18 @@ export class SecureStorageService {
     return SecureStorageService.instance;
   }
 
-  // Get user preferences from secure server-side storage (fallback to localStorage for now)
+  // Get user preferences from secure server-side storage (fallback to platform storage for now)
   async getUserPreferences(userId: string): Promise<UserPreferences> {
     try {
-      // For now, use localStorage until user_preferences table is set up
-      const stored = localStorage.getItem(`user_preferences_${userId}`);
-      return stored ? JSON.parse(stored) : {};
+      // For now, use platform storage until user_preferences table is set up
+      return await getStorageItem<UserPreferences>(`user_preferences_${userId}`, {});
     } catch (error) {
       console.error('Error in getUserPreferences:', error);
       return {};
     }
   }
 
-  // Save user preferences to secure server-side storage (fallback to localStorage for now)
+  // Save user preferences to secure server-side storage (fallback to platform storage for now)
   async saveUserPreferences(userId: string, preferences: UserPreferences): Promise<void> {
     try {
       const updatedPreferences = {
@@ -43,27 +43,26 @@ export class SecureStorageService {
         last_updated: new Date().toISOString()
       };
       
-      // For now, use localStorage until user_preferences table is set up
-      localStorage.setItem(`user_preferences_${userId}`, JSON.stringify(updatedPreferences));
+      // For now, use platform storage until user_preferences table is set up
+      await setStorageItem(`user_preferences_${userId}`, updatedPreferences);
     } catch (error) {
       console.error('Error in saveUserPreferences:', error);
     }
   }
 
-  // Fallback to localStorage for non-authenticated users (demo mode only)
-  private getLocalPreferences(key: string): any {
+  // Fallback to platform storage for non-authenticated users (demo mode only)
+  private async getLocalPreferences<T>(key: string): Promise<T | null> {
     try {
-      const stored = localStorage.getItem(key);
-      return stored ? JSON.parse(stored) : null;
+      return await getStorageItem<T>(key);
     } catch (error) {
       console.warn('Failed to parse local preferences:', error);
       return null;
     }
   }
 
-  private setLocalPreferences(key: string, value: any): void {
+  private async setLocalPreferences<T>(key: string, value: T): Promise<void> {
     try {
-      localStorage.setItem(key, JSON.stringify(value));
+      await setStorageItem(key, value);
     } catch (error) {
       console.warn('Failed to save local preferences:', error);
     }
@@ -99,7 +98,8 @@ export class SecureStorageService {
       const preferences = await this.getUserPreferences(userId);
       return preferences.demo_mode_enabled || false;
     } else {
-      return localStorage.getItem('TRIPS_DEMO_MODE') === 'true';
+      const value = await getStorageItem<string>('TRIPS_DEMO_MODE');
+      return value === 'true';
     }
   }
 
@@ -112,9 +112,9 @@ export class SecureStorageService {
       });
     } else {
       if (enabled) {
-        localStorage.setItem('TRIPS_DEMO_MODE', 'true');
+        await setStorageItem('TRIPS_DEMO_MODE', 'true');
       } else {
-        localStorage.removeItem('TRIPS_DEMO_MODE');
+        await removeStorageItem('TRIPS_DEMO_MODE');
       }
     }
   }

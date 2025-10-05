@@ -1,3 +1,5 @@
+import { getStorageItem } from '@/platform/storage';
+
 interface TripSpecificMediaItem {
   id: string;
   media_url: string;
@@ -1213,10 +1215,11 @@ class TripSpecificMockDataService {
   }
 
   // Helper methods for compatibility
-  static isEnabled(): boolean {
+  static async isEnabled(): Promise<boolean> {
     // Check both environment variable and demo mode
     const envEnabled = import.meta.env.VITE_USE_MOCK_DATA === 'true';
-    const demoModeEnabled = localStorage.getItem('TRIPS_DEMO_MODE') === 'true';
+    const demoModeValue = await getStorageItem<string>('TRIPS_DEMO_MODE');
+    const demoModeEnabled = demoModeValue === 'true';
     return envEnabled || demoModeEnabled;
   }
 

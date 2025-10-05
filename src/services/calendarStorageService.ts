@@ -1,4 +1,5 @@
 import { TripEvent, CreateEventData } from './calendarService';
+import { getStorageItem, setStorageItem, removeStorageItem, platformStorage } from '@/platform/storage';
 
 class CalendarStorageService {
   private getStorageKey(tripId: string): string {
@@ -6,28 +7,27 @@ class CalendarStorageService {
   }
 
   // Get all events for a trip
-  getEvents(tripId: string): TripEvent[] {
+  async getEvents(tripId: string): Promise<TripEvent[]> {
     try {
-      const stored = localStorage.getItem(this.getStorageKey(tripId));
-      return stored ? JSON.parse(stored) : [];
+      return await getStorageItem<TripEvent[]>(this.getStorageKey(tripId), []);
     } catch (error) {
-      console.error('Error loading calendar events from localStorage:', error);
+      console.error('Error loading calendar events from storage:', error);
       return [];
     }
   }
 
   // Save events for a trip
-  private saveEvents(tripId: string, events: TripEvent[]): void {
+  private async saveEvents(tripId: string, events: TripEvent[]): Promise<void> {
     try {
-      localStorage.setItem(this.getStorageKey(tripId), JSON.stringify(events));
+      await setStorageItem(this.getStorageKey(tripId), events);
     } catch (error) {
-      console.error('Error saving calendar events to localStorage:', error);
+      console.error('Error saving calendar events to storage:', error);
     }
   }
 
   // Create a new event
-  createEvent(eventData: CreateEventData): TripEvent {
-    const events = this.getEvents(eventData.trip_id);
+  async createEvent(eventData: CreateEventData): Promise<TripEvent> {
+    const events = await this.getEvents(eventData.trip_id);
     
     const newEvent: TripEvent = {
       id: `demo-event-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -48,13 +48,13 @@ class CalendarStorageService {
 
     events.push(newEvent);
     events.sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
-    this.saveEvents(eventData.trip_id, events);
+    await this.saveEvents(eventData.trip_id, events);
     return newEvent;
   }
 
   // Update an event
-  updateEvent(tripId: string, eventId: string, updates: Partial<TripEvent>): TripEvent | null {
-    const events = this.getEvents(tripId);
+  async updateEvent(tripId: string, eventId: string, updates: Partial<TripEvent>): Promise<TripEvent | null> {
+    const events = await this.getEvents(tripId);
     const eventIndex = events.findIndex(e => e.id === eventId);
     
     if (eventIndex === -1) return null;
@@ -67,17 +67,17 @@ class CalendarStorageService {
     
     events[eventIndex] = updatedEvent;
     events.sort((a, b) => new Date(a.start_time).getTime() - new Date(b.start_time).getTime());
-    this.saveEvents(tripId, events);
+    await this.saveEvents(tripId, events);
     return updatedEvent;
   }
 
   // Delete an event
-  deleteEvent(tripId: string, eventId: string): boolean {
-    const events = this.getEvents(tripId);
+  async deleteEvent(tripId: string, eventId: string): Promise<boolean> {
+    const events = await this.getEvents(tripId);
     const filteredEvents = events.filter(e => e.id !== eventId);
     
     if (filteredEvents.length !== events.length) {
-      this.saveEvents(tripId, filteredEvents);
+      await this.saveEvents(tripId, filteredEvents);
       return true;
     }
     
@@ -85,18 +85,27 @@ class CalendarStorageService {
   }
 
   // Clear all events for a trip (useful for demo reset)
-  clearEvents(tripId: string): void {
-    localStorage.removeItem(this.getStorageKey(tripId));
+  async clearEvents(tripId: string): Promise<void> {
+    await removeStorageItem(this.getStorageKey(tripId));
   }
 
   // Clear all demo calendar data
-  clearAllDemoEvents(): void {
-    const keys = Object.keys(localStorage);
-    keys.forEach(key => {
-      if (key.startsWith('calendar_events_')) {
-        localStorage.removeItem(key);
+  async clearAllDemoEvents(): Promise<void> {
+    // Get all keys from storage
+    const allKeys: string[] = [];
+    for (let i = 0; i < (await platformStorage.getItem('length') ? parseInt(await platformStorage.getItem('length') || '0') : 0); i++) {
+      const key = `calendar_events_${i}`;
+      if (await platformStorage.getItem(key)) {
+        allKeys.push(key);
       }
-    });
+    }
+    
+    // Remove calendar event keys
+    for (const key of allKeys) {
+      if (key.startsWith('calendar_events_')) {
+        await removeStorageItem(key);
+      }
+    }
   }
 }
 

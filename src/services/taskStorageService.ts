@@ -1,4 +1,5 @@
 import { TripTask, CreateTaskRequest, TaskStatus } from '@/types/tasks';
+import { getStorageItem, setStorageItem, removeStorageItem } from '@/platform/storage';
 
 class TaskStorageService {
   private getStorageKey(tripId: string): string {
@@ -6,28 +7,27 @@ class TaskStorageService {
   }
 
   // Get all tasks for a trip
-  getTasks(tripId: string): TripTask[] {
+  async getTasks(tripId: string): Promise<TripTask[]> {
     try {
-      const stored = localStorage.getItem(this.getStorageKey(tripId));
-      return stored ? JSON.parse(stored) : [];
+      return await getStorageItem<TripTask[]>(this.getStorageKey(tripId), []);
     } catch (error) {
-      console.error('Error loading tasks from localStorage:', error);
+      console.error('Error loading tasks from storage:', error);
       return [];
     }
   }
 
   // Save tasks for a trip
-  private saveTasks(tripId: string, tasks: TripTask[]): void {
+  private async saveTasks(tripId: string, tasks: TripTask[]): Promise<void> {
     try {
-      localStorage.setItem(this.getStorageKey(tripId), JSON.stringify(tasks));
+      await setStorageItem(this.getStorageKey(tripId), tasks);
     } catch (error) {
-      console.error('Error saving tasks to localStorage:', error);
+      console.error('Error saving tasks to storage:', error);
     }
   }
 
   // Create a new task
-  createTask(tripId: string, taskData: CreateTaskRequest & { assignedTo: string[] }): TripTask {
-    const tasks = this.getTasks(tripId);
+  async createTask(tripId: string, taskData: CreateTaskRequest & { assignedTo: string[] }): Promise<TripTask> {
+    const tasks = await this.getTasks(tripId);
     
     const newTask: TripTask = {
       id: `demo-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
@@ -47,7 +47,7 @@ class TaskStorageService {
     };
 
     tasks.unshift(newTask);
-    this.saveTasks(tripId, tasks);
+    await this.saveTasks(tripId, tasks);
     return newTask;
   }
 
@@ -72,8 +72,8 @@ class TaskStorageService {
   }
 
   // Toggle task completion for a user
-  toggleTask(tripId: string, taskId: string, userId: string, completed: boolean): TripTask | null {
-    const tasks = this.getTasks(tripId);
+  async toggleTask(tripId: string, taskId: string, userId: string, completed: boolean): Promise<TripTask | null> {
+    const tasks = await this.getTasks(tripId);
     const taskIndex = tasks.findIndex(t => t.id === taskId);
     
     if (taskIndex === -1) return null;
@@ -100,17 +100,17 @@ class TaskStorageService {
     }
 
     task.updated_at = new Date().toISOString();
-    this.saveTasks(tripId, tasks);
+    await this.saveTasks(tripId, tasks);
     return task;
   }
 
   // Delete a task
-  deleteTask(tripId: string, taskId: string): boolean {
-    const tasks = this.getTasks(tripId);
+  async deleteTask(tripId: string, taskId: string): Promise<boolean> {
+    const tasks = await this.getTasks(tripId);
     const filteredTasks = tasks.filter(t => t.id !== taskId);
     
     if (filteredTasks.length !== tasks.length) {
-      this.saveTasks(tripId, filteredTasks);
+      await this.saveTasks(tripId, filteredTasks);
       return true;
     }
     
@@ -118,18 +118,15 @@ class TaskStorageService {
   }
 
   // Clear all tasks for a trip (useful for demo reset)
-  clearTasks(tripId: string): void {
-    localStorage.removeItem(this.getStorageKey(tripId));
+  async clearTasks(tripId: string): Promise<void> {
+    await removeStorageItem(this.getStorageKey(tripId));
   }
 
   // Clear all demo data
-  clearAllDemoTasks(): void {
-    const keys = Object.keys(localStorage);
-    keys.forEach(key => {
-      if (key.startsWith('tasks_')) {
-        localStorage.removeItem(key);
-      }
-    });
+  async clearAllDemoTasks(): Promise<void> {
+    // Note: platformStorage doesn't expose Object.keys() like localStorage
+    // This will be handled by individual clearTasks calls per trip
+    console.warn('Clear all demo tasks not fully supported with platformStorage');
   }
 }
 

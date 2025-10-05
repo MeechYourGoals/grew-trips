@@ -32,7 +32,7 @@ export const EnhancedMediaAggregatedLinks = ({ tripId }: EnhancedMediaAggregated
     try {
       if (isDemoMode || MockDataService.isUsingMockData()) {
         // Use mock data
-        const mockLinks = MockDataService.getMockLinkItems(tripId);
+        const mockLinks = await MockDataService.getMockLinkItems(tripId);
         setLinkItems(mockLinks);
         setLoading(false);
         return;
@@ -205,8 +205,8 @@ export const EnhancedMediaAggregatedLinks = ({ tripId }: EnhancedMediaAggregated
             🚧 Development Mode: Using mock data
           </p>
           <button
-            onClick={() => {
-              MockDataService.reseedMockData(tripId);
+            onClick={async () => {
+              await MockDataService.reseedMockData(tripId);
               fetchLinkItems();
             }}
             className="text-xs px-3 py-1 bg-yellow-500/20 hover:bg-yellow-500/30 rounded-md transition-colors"

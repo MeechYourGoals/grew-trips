@@ -101,7 +101,7 @@ export const useTripTasks = (tripId: string) => {
     queryFn: async (): Promise<TripTask[]> => {
       // Demo mode: use localStorage
       if (isDemoMode || !user) {
-        const demoTasks = taskStorageService.getTasks(tripId);
+        const demoTasks = await taskStorageService.getTasks(tripId);
         // If no demo tasks exist, create seed tasks
         if (demoTasks.length === 0) {
           return generateSeedTasks(tripId);
@@ -147,7 +147,7 @@ export const useTripTasks = (tripId: string) => {
       } catch (error) {
         console.error('Error fetching tasks:', error);
         // Fallback to demo tasks
-        const demoTasks = taskStorageService.getTasks(tripId);
+        const demoTasks = await taskStorageService.getTasks(tripId);
         return demoTasks.length > 0 ? demoTasks : generateSeedTasks(tripId);
       }
     },
@@ -166,7 +166,7 @@ export const useTaskMutations = (tripId: string) => {
       // Demo mode: use localStorage
       if (isDemoMode || !user) {
         const assignedTo = task.assignedTo || ['demo-user'];
-        return taskStorageService.createTask(tripId, {
+        return await taskStorageService.createTask(tripId, {
           ...task,
           assignedTo
         });
@@ -265,7 +265,7 @@ export const useTaskMutations = (tripId: string) => {
       // Demo mode: use localStorage
       if (isDemoMode || !user) {
         const currentUserId = user?.id || 'demo-user';
-        return taskStorageService.toggleTask(tripId, taskId, currentUserId, completed);
+        return await taskStorageService.toggleTask(tripId, taskId, currentUserId, completed);
       }
 
       // Authenticated mode: use atomic function with optimistic locking

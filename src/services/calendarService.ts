@@ -41,7 +41,7 @@ export const calendarService = {
       
       if (isDemoMode) {
         // Use localStorage for demo mode
-        return calendarStorageService.createEvent(eventData);
+        return await calendarStorageService.createEvent(eventData);
       }
 
       // Use Supabase with conflict detection for authenticated users
@@ -84,7 +84,7 @@ export const calendarService = {
       
       if (isDemoMode) {
         // Use localStorage for demo mode
-        return calendarStorageService.getEvents(tripId);
+        return await calendarStorageService.getEvents(tripId);
       }
 
       // Use Supabase for authenticated users
@@ -110,7 +110,7 @@ export const calendarService = {
       if (isDemoMode) {
         // Extract trip_id from the eventId or use updates
         const tripId = updates.trip_id || eventId.split('-')[0]; // Fallback logic
-        const updatedEvent = calendarStorageService.updateEvent(tripId, eventId, updates);
+        const updatedEvent = await calendarStorageService.updateEvent(tripId, eventId, updates);
         return updatedEvent !== null;
       }
 
@@ -138,7 +138,7 @@ export const calendarService = {
           console.error('Trip ID required for demo mode event deletion');
           return false;
         }
-        return calendarStorageService.deleteEvent(tripId, eventId);
+        return await calendarStorageService.deleteEvent(tripId, eventId);
       }
 
       // Use Supabase for authenticated users

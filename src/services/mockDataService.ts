@@ -1,3 +1,5 @@
+import { getStorageItem, setStorageItem, removeStorageItem } from '@/platform/storage';
+
 interface MockMediaItem {
   id: string;
   media_url: string;
@@ -331,62 +333,55 @@ class MockDataService {
     return `${this.STORAGE_PREFIX}${tripId}_${type}`;
   }
 
-  static getMockMediaItems(tripId: string): MockMediaItem[] {
+  static async getMockMediaItems(tripId: string): Promise<MockMediaItem[]> {
     if (!this.USE_MOCK_DATA) return [];
     
     const storageKey = this.getStorageKey(tripId, 'media');
     
     // Always return fresh data to ensure updates are shown
     const mockData = this.getMockMediaData();
-    localStorage.setItem(storageKey, JSON.stringify(mockData));
+    await setStorageItem(storageKey, mockData);
     return mockData;
   }
 
-  static getMockLinkItems(tripId: string): MockLinkItem[] {
+  static async getMockLinkItems(tripId: string): Promise<MockLinkItem[]> {
     if (!this.USE_MOCK_DATA) return [];
     
     const storageKey = this.getStorageKey(tripId, 'links');
-    const stored = localStorage.getItem(storageKey);
+    const stored = await getStorageItem<MockLinkItem[]>(storageKey);
     
     if (stored) {
-      try {
-        return JSON.parse(stored);
-      } catch (error) {
-        console.warn('Failed to parse stored mock link data:', error);
-      }
+      return stored;
     }
     
     // First time - initialize with mock data
     const mockData = this.getMockLinksData();
-    localStorage.setItem(storageKey, JSON.stringify(mockData));
+    await setStorageItem(storageKey, mockData);
     return mockData;
   }
 
-  static reseedMockData(tripId: string): void {
+  static async reseedMockData(tripId: string): Promise<void> {
     if (!this.USE_MOCK_DATA) return;
     
     // Clear existing data
-    localStorage.removeItem(this.getStorageKey(tripId, 'media'));
-    localStorage.removeItem(this.getStorageKey(tripId, 'links'));
+    await removeStorageItem(this.getStorageKey(tripId, 'media'));
+    await removeStorageItem(this.getStorageKey(tripId, 'links'));
     
     // Reinitialize
-    this.getMockMediaItems(tripId);
-    this.getMockLinkItems(tripId);
+    await this.getMockMediaItems(tripId);
+    await this.getMockLinkItems(tripId);
     
     console.log('Mock data reseeded for trip:', tripId);
   }
 
-  static clearMockData(tripId?: string): void {
+  static async clearMockData(tripId?: string): Promise<void> {
     if (tripId) {
-      localStorage.removeItem(this.getStorageKey(tripId, 'media'));
-      localStorage.removeItem(this.getStorageKey(tripId, 'links'));
+      await removeStorageItem(this.getStorageKey(tripId, 'media'));
+      await removeStorageItem(this.getStorageKey(tripId, 'links'));
     } else {
-      // Clear all mock data
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith(this.STORAGE_PREFIX)) {
-          localStorage.removeItem(key);
-        }
-      });
+      // Note: platformStorage doesn't expose Object.keys() like localStorage
+      // This will be handled by individual clearMockData calls per trip
+      console.warn('Clear all mock data not fully supported with platformStorage');
     }
   }
 }

@@ -2,7 +2,10 @@
  * Synchronous utility to check demo mode status
  * Used for initial state and conditional imports
  */
-export const getDemoMode = (): boolean => {
+import { getStorageItem } from '@/platform/storage';
+
+export const getDemoMode = async (): Promise<boolean> => {
   if (typeof window === 'undefined') return false;
-  return localStorage.getItem('TRIPS_DEMO_MODE') === 'true';
+  const value = await getStorageItem<string>('TRIPS_DEMO_MODE');
+  return value === 'true';
 };

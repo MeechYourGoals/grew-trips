@@ -5,6 +5,7 @@ import { proTripMockData } from '../data/proTripMockData';
 import { eventsMockData } from '../data/eventsMockData';
 import { secureStorageService } from './secureStorageService';
 import { useAuth } from '@/hooks/useAuth';
+import { removeStorageItem } from '@/platform/storage';
 
 type TripType = 'consumer' | 'pro' | 'event';
 
@@ -132,7 +133,7 @@ export const clearAllArchivedTrips = async (userId?: string): Promise<void> => {
   if (userId) {
     await secureStorageService.saveArchivedTrips({ consumer: [], pro: [], event: [] }, userId);
   } else {
-    localStorage.removeItem('trips_archive_state');
+    await removeStorageItem('trips_archive_state');
   }
 };
 
