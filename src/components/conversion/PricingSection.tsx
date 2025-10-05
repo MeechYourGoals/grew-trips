@@ -161,7 +161,7 @@ const proTiers: PricingTier[] = [
   {
     id: 'starter-pro',
     name: 'Starter Pro',
-    price: '$149',
+    price: '$49',
     description: 'Perfect for small touring acts, AAU teams, local clubs',
     icon: <Building size={24} />,
     features: [
@@ -179,7 +179,7 @@ const proTiers: PricingTier[] = [
   {
     id: 'growth-pro',
     name: 'Growth Pro',
-    price: '$399',
+    price: '$199',
     description: 'For college teams, mid-size productions, corporate groups',
     icon: <TrendingUp size={24} />,
     features: [
@@ -199,11 +199,11 @@ const proTiers: PricingTier[] = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    price: 'Starting at $999',
+    price: '$499',
     description: 'For professional leagues, major tours, Fortune 500',
     icon: <Shield size={24} />,
     features: [
-      'Unlimited users',
+      'Up to 500 team members',
       'Custom integrations',
       'Dedicated success manager',
       'SLA guarantees',
@@ -316,7 +316,7 @@ const faqItems = [
   },
   {
     question: "Do you offer enterprise discounts?",
-    answer: "Yes! Enterprise plans start at $999/month with volume discounts available. Contact sales for custom pricing."
+    answer: "Yes! Enterprise plans start at $499/month with volume discounts available for teams over 500 members. Contact sales for custom pricing."
   }
 ];
 

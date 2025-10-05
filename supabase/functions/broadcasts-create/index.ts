@@ -1,15 +1,11 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { createSecureResponse, createErrorResponse, createOptionsResponse } from "../_shared/securityHeaders.ts";
 
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return createOptionsResponse();
   }
 
   try {
@@ -80,24 +76,13 @@ serve(async (req) => {
       throw new Error('Failed to create broadcast');
     }
 
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        broadcast 
-      }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    return createSecureResponse({ 
+      success: true, 
+      broadcast 
+    });
 
   } catch (error) {
     console.error('Error in broadcasts-create function:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    );
+    return createErrorResponse(error instanceof Error ? error.message : 'Internal server error', 500);
   }
 });
