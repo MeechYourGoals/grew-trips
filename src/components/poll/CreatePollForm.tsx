@@ -1,8 +1,9 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Plus, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Poll } from './types';
+import { usePollManager } from '@/hooks/usePollManager';
 
 interface CreatePollFormProps {
   onCreatePoll: (poll: Poll) => void;
@@ -10,46 +11,32 @@ interface CreatePollFormProps {
 }
 
 export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) => {
-  const [pollQuestion, setPollQuestion] = useState('');
-  const [pollOptions, setPollOptions] = useState(['', '']);
+  const {
+    question,
+    options,
+    setQuestion,
+    addOption,
+    updateOption,
+    removeOption,
+    getPollData
+  } = usePollManager();
 
   const handleCreatePoll = () => {
-    if (!pollQuestion.trim() || pollOptions.filter(opt => opt.trim()).length < 2) return;
+    const pollData = getPollData();
+    if (!pollData) return;
 
     const newPoll: Poll = {
       id: Date.now().toString(),
-      question: pollQuestion,
-      options: pollOptions
-        .filter(opt => opt.trim())
-        .map((opt, index) => ({
-          id: String.fromCharCode(97 + index),
-          text: opt.trim(),
-          votes: 0
-        })),
+      question: pollData.question,
+      options: pollData.options.map((opt, index) => ({
+        id: String.fromCharCode(97 + index),
+        text: opt,
+        votes: 0
+      })),
       totalVotes: 0
     };
 
     onCreatePoll(newPoll);
-    setPollQuestion('');
-    setPollOptions(['', '']);
-  };
-
-  const addOption = () => {
-    if (pollOptions.length < 6) {
-      setPollOptions([...pollOptions, '']);
-    }
-  };
-
-  const updateOption = (index: number, value: string) => {
-    const updated = [...pollOptions];
-    updated[index] = value;
-    setPollOptions(updated);
-  };
-
-  const removeOption = (index: number) => {
-    if (pollOptions.length > 2) {
-      setPollOptions(pollOptions.filter((_, i) => i !== index));
-    }
   };
 
   return (
@@ -71,8 +58,8 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
           </label>
           <input
             type="text"
-            value={pollQuestion}
-            onChange={(e) => setPollQuestion(e.target.value)}
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
             placeholder="What would you like to ask the group?"
             className="w-full bg-gray-900 border border-gray-600 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20"
           />
@@ -83,16 +70,16 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
             Options
           </label>
           <div className="space-y-2">
-            {pollOptions.map((option, index) => (
-              <div key={index} className="flex gap-2">
+            {options.map((option, index) => (
+              <div key={option.id} className="flex gap-2">
                 <input
                   type="text"
-                  value={option}
+                  value={option.text}
                   onChange={(e) => updateOption(index, e.target.value)}
                   placeholder={`Option ${index + 1}`}
                   className="flex-1 bg-gray-900 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-red-500"
                 />
-                {pollOptions.length > 2 && (
+                {options.length > 2 && (
                   <button
                     onClick={() => removeOption(index)}
                     className="w-8 h-8 rounded-lg bg-red-600 hover:bg-red-700 flex items-center justify-center text-white transition-colors"
@@ -102,7 +89,7 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
                 )}
               </div>
             ))}
-            {pollOptions.length < 6 && (
+            {options.length < 6 && (
               <button
                 onClick={addOption}
                 className="w-full h-10 border-2 border-dashed border-gray-600 rounded-lg text-gray-400 hover:border-gray-500 hover:text-gray-300 transition-colors flex items-center justify-center gap-2"
@@ -124,7 +111,7 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
           </Button>
           <Button
             onClick={handleCreatePoll}
-            disabled={!pollQuestion.trim() || pollOptions.filter(opt => opt.trim()).length < 2}
+            disabled={!question.trim() || options.filter(opt => opt.text.trim()).length < 2}
             className="flex-1 h-10 rounded-lg bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 font-semibold text-black border border-yellow-500/50"
           >
             Create Poll

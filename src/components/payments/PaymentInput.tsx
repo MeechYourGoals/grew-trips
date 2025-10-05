@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DollarSign, Users, CheckSquare } from 'lucide-react';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -6,6 +6,7 @@ import { Button } from '../ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Checkbox } from '../ui/checkbox';
 import { Card, CardContent } from '../ui/card';
+import { usePaymentSplits } from '@/hooks/usePaymentSplits';
 
 interface PaymentInputProps {
   onSubmit: (paymentData: {
@@ -21,92 +22,43 @@ interface PaymentInputProps {
 }
 
 export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputProps) => {
-  const [amount, setAmount] = useState('');
-  const [currency, setCurrency] = useState('USD');
-  const [description, setDescription] = useState('');
-  const [splitCount, setSplitCount] = useState(tripMembers.length);
-  const [selectedParticipants, setSelectedParticipants] = useState<string[]>(
-    tripMembers.map(member => member.id)
-  );
-  const [selectedPaymentMethods, setSelectedPaymentMethods] = useState<string[]>(['venmo']);
+  const {
+    amount,
+    currency,
+    description,
+    selectedParticipants,
+    selectedPaymentMethods,
+    perPersonAmount,
+    allParticipantsSelected,
+    allPaymentMethodsSelected,
+    setAmount,
+    setCurrency,
+    setDescription,
+    toggleParticipant,
+    togglePaymentMethod,
+    selectAllParticipants,
+    selectAllPaymentMethods,
+    getPaymentData,
+    resetForm
+  } = usePaymentSplits(tripMembers);
 
   const paymentMethodOptions = [
     { id: 'venmo', label: 'Venmo' },
-    { id: 'zelle', label: 'Zelle' },
+    { id: 'splitwise', label: 'Splitwise' },
     { id: 'cashapp', label: 'Cash App' },
-    { id: 'applepay', label: 'Apple Pay' },
-    { id: 'paypal', label: 'PayPal' },
-    { id: 'cash', label: 'Cash' },
-    { id: 'other', label: 'Other' }
+    { id: 'zelle', label: 'Zelle' }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!amount || !description) return;
-
-    onSubmit({
-      amount: parseFloat(amount),
-      currency,
-      description,
-      splitCount,
-      splitParticipants: selectedParticipants,
-      paymentMethods: selectedPaymentMethods
-    });
-
-    // Reset form
-    setAmount('');
-    setDescription('');
-    setSplitCount(tripMembers.length);
-    setSelectedParticipants(tripMembers.map(member => member.id));
-    setSelectedPaymentMethods(['venmo']);
-  };
-
-  const handleParticipantToggle = (participantId: string) => {
-    setSelectedParticipants(prev => 
-      prev.includes(participantId)
-        ? prev.filter(id => id !== participantId)
-        : [...prev, participantId]
-    );
-  };
-
-  const handlePaymentMethodToggle = (methodId: string) => {
-    setSelectedPaymentMethods(prev => 
-      prev.includes(methodId)
-        ? prev.filter(id => id !== methodId)
-        : [...prev, methodId]
-    );
-  };
-
-  const handleSelectAllParticipants = () => {
-    const allSelected = selectedParticipants.length === tripMembers.length;
-    if (allSelected) {
-      setSelectedParticipants([]);
-      setSplitCount(0);
-    } else {
-      const allIds = tripMembers.map(member => member.id);
-      setSelectedParticipants(allIds);
-      setSplitCount(allIds.length);
+    const paymentData = getPaymentData();
+    if (paymentData) {
+      onSubmit(paymentData);
+      resetForm();
     }
   };
 
-  const handleSelectAllPaymentMethods = () => {
-    const allSelected = selectedPaymentMethods.length === paymentMethodOptions.length;
-    if (allSelected) {
-      setSelectedPaymentMethods([]);
-    } else {
-      setSelectedPaymentMethods(paymentMethodOptions.map(method => method.id));
-    }
-  };
-
-  // Update split count when participants change
-  React.useEffect(() => {
-    setSplitCount(selectedParticipants.length);
-  }, [selectedParticipants]);
-
-  // Calculate per-person amount for display
-  const amountPerPerson = amount && selectedParticipants.length > 0 
-    ? parseFloat(amount) / selectedParticipants.length 
-    : 0;
+  const amountPerPerson = perPersonAmount;
 
   if (!isVisible) return null;
 
@@ -127,8 +79,8 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                 id="amount"
                 type="number"
                 step="0.01"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
+                value={amount || ''}
+                onChange={(e) => setAmount(Number(e.target.value))}
                 placeholder="0.00"
                 className="bg-white dark:bg-white !text-black placeholder:!text-gray-500"
                 required
@@ -179,10 +131,10 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={handleSelectAllParticipants}
+                onClick={selectAllParticipants}
                 className="text-xs h-7"
               >
-                {selectedParticipants.length === tripMembers.length ? 'Deselect All' : 'Select All'}
+                {allParticipantsSelected ? 'Deselect All' : 'Select All'}
               </Button>
             </div>
             <div className="mt-2 max-h-32 overflow-y-auto space-y-2 p-2 bg-white dark:bg-white rounded border">
@@ -191,7 +143,7 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                   <Checkbox
                     id={`participant-${member.id}`}
                     checked={selectedParticipants.includes(member.id)}
-                    onCheckedChange={() => handleParticipantToggle(member.id)}
+                    onCheckedChange={() => toggleParticipant(member.id)}
                   />
                   <label 
                     htmlFor={`participant-${member.id}`}
@@ -222,10 +174,10 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                 type="button"
                 variant="outline"
                 size="sm"
-                onClick={handleSelectAllPaymentMethods}
+                onClick={selectAllPaymentMethods}
                 className="text-xs h-7"
               >
-                {selectedPaymentMethods.length === paymentMethodOptions.length ? 'Deselect All' : 'Select All'}
+                {allPaymentMethodsSelected ? 'Deselect All' : 'Select All'}
               </Button>
             </div>
             <div className="mt-2 grid grid-cols-2 gap-2">
@@ -233,8 +185,8 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                 <div key={method.id} className="flex items-center gap-2">
                   <Checkbox
                     id={`payment-${method.id}`}
-                    checked={selectedPaymentMethods.includes(method.id)}
-                    onCheckedChange={() => handlePaymentMethodToggle(method.id)}
+                    checked={selectedPaymentMethods.includes(method.id as any)}
+                    onCheckedChange={() => togglePaymentMethod(method.id as any)}
                   />
                   <label 
                     htmlFor={`payment-${method.id}`}
