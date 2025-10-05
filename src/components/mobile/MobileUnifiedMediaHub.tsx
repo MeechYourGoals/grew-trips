@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Camera, Upload, Image as ImageIcon, Film } from 'lucide-react';
 import { usePullToRefresh } from '../../hooks/usePullToRefresh';
+import { useLongPress } from '../../hooks/useLongPress';
 import { PullToRefreshIndicator } from './PullToRefreshIndicator';
 import { MediaSkeleton } from './SkeletonLoader';
+import { OptimizedImage } from './OptimizedImage';
 import { hapticService } from '../../services/hapticService';
 import { capacitorIntegration } from '../../services/capacitorIntegration';
 
@@ -148,28 +150,39 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
           </div>
         ) : (
           <div className="grid grid-cols-3 gap-2">
-            {filteredMedia.map((item) => (
-              <button
-                key={item.id}
-                onClick={async () => {
-                  await hapticService.light();
-                  // Open full screen viewer
-                }}
-                className="aspect-square rounded-lg overflow-hidden bg-white/10 active:opacity-80 transition-opacity relative"
-              >
-                <img
-                  src={item.url}
-                  alt="Trip media"
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-                {item.type === 'video' && (
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <Film size={24} className="text-white" />
-                  </div>
-                )}
-              </button>
-            ))}
+            {filteredMedia.map((item) => {
+              const longPressHandlers = useLongPress({
+                onLongPress: () => {
+                  console.log('Long press on media item:', item.id);
+                  // Could show options menu (delete, share, etc.)
+                },
+              });
+
+              return (
+                <button
+                  key={item.id}
+                  {...longPressHandlers}
+                  onClick={async () => {
+                    await hapticService.light();
+                    // Open full screen viewer
+                  }}
+                  className="aspect-square rounded-lg overflow-hidden bg-white/10 active:opacity-80 transition-opacity relative"
+                >
+                  <OptimizedImage
+                    src={item.url}
+                    alt="Trip media"
+                    className="w-full h-full object-cover"
+                    width={300}
+                    loading="lazy"
+                  />
+                  {item.type === 'video' && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                      <Film size={24} className="text-white" />
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
         )}
       </div>

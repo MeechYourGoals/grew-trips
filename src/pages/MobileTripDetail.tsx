@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, MoreVertical, Users } from 'lucide-react';
 import { MobileTripTabs } from '../components/mobile/MobileTripTabs';
+import { MobileErrorBoundary } from '../components/mobile/MobileErrorBoundary';
 import { TripHeader } from '../components/TripHeader';
 import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../hooks/useMessages';
@@ -75,7 +76,8 @@ export const MobileTripDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black pb-mobile-nav-height">
+    <MobileErrorBoundary>
+      <div className="min-h-screen bg-black pb-mobile-nav-height">
       {/* Mobile Header - Sticky */}
       <div className="sticky top-0 z-50 bg-black/95 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center justify-between px-4 py-3">
@@ -129,6 +131,7 @@ export const MobileTripDetail = () => {
         tripPreferences={tripPreferences}
         onPreferencesChange={setTripPreferences}
       />
-    </div>
+      </div>
+    </MobileErrorBoundary>
   );
 };
