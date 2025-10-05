@@ -1,20 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-interface LinkTripRequest {
-  tripId: string;
-  organizationId: string;
-}
+import { validateInput, LinkTripToOrgSchema } from "../_shared/validation.ts";
+import { createSecureResponse, createErrorResponse, createOptionsResponse } from "../_shared/securityHeaders.ts";
 
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return createOptionsResponse();
   }
 
   try {
@@ -25,7 +17,7 @@ serve(async (req) => {
     // Get user from auth header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      throw new Error('No authorization header');
+      return createErrorResponse('No authorization header', 401);
     }
 
     const { data: { user }, error: userError } = await supabase.auth.getUser(
@@ -33,10 +25,18 @@ serve(async (req) => {
     );
 
     if (userError || !user) {
-      throw new Error('Unauthorized');
+      return createErrorResponse('Unauthorized', 401);
     }
 
-    const { tripId, organizationId }: LinkTripRequest = await req.json();
+    // Parse and validate request body
+    const body = await req.json();
+    const validation = validateInput(LinkTripToOrgSchema, body);
+    
+    if (!validation.success) {
+      return createErrorResponse(`Validation error: ${validation.error}`, 400);
+    }
+
+    const { tripId, organizationId } = validation.data;
 
     console.log('Linking trip to organization:', { tripId, organizationId, userId: user.id });
 
@@ -102,25 +102,13 @@ serve(async (req) => {
 
     console.log('Trip linked successfully:', link.id);
 
-    return new Response(
-      JSON.stringify({ 
-        success: true,
-        linkId: link.id
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
-    );
+    return createSecureResponse({ 
+      success: true,
+      linkId: link.id
+    });
 
   } catch (error) {
     console.error('Error in link-trip-to-organization:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400 
-      }
-    );
+    return createErrorResponse(error);
   }
 });

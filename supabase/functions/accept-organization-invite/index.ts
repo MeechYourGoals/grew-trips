@@ -1,19 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-interface AcceptInviteRequest {
-  token: string;
-}
+import { validateInput, AcceptInviteSchema } from "../_shared/validation.ts";
+import { createSecureResponse, createErrorResponse, createOptionsResponse } from "../_shared/securityHeaders.ts";
 
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return createOptionsResponse();
   }
 
   try {
@@ -24,7 +17,7 @@ serve(async (req) => {
     // Get user from auth header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      throw new Error('No authorization header');
+      return createErrorResponse('No authorization header', 401);
     }
 
     const { data: { user }, error: userError } = await supabase.auth.getUser(
@@ -32,10 +25,18 @@ serve(async (req) => {
     );
 
     if (userError || !user) {
-      throw new Error('Unauthorized');
+      return createErrorResponse('Unauthorized', 401);
     }
 
-    const { token }: AcceptInviteRequest = await req.json();
+    // Parse and validate request body
+    const body = await req.json();
+    const validation = validateInput(AcceptInviteSchema, body);
+    
+    if (!validation.success) {
+      return createErrorResponse(`Validation error: ${validation.error}`, 400);
+    }
+
+    const { token } = validation.data;
 
     console.log('Accepting invite with token:', token);
 
@@ -150,26 +151,14 @@ serve(async (req) => {
 
     console.log('Invite accepted successfully');
 
-    return new Response(
-      JSON.stringify({ 
-        success: true,
-        organizationId: invite.organization_id,
-        seatId
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
-      }
-    );
+    return createSecureResponse({ 
+      success: true,
+      organizationId: invite.organization_id,
+      seatId
+    });
 
   } catch (error) {
     console.error('Error in accept-organization-invite:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400 
-      }
-    );
+    return createErrorResponse(error);
   }
 });

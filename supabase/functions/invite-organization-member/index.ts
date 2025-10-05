@@ -1,21 +1,12 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-interface InviteRequest {
-  organizationId: string;
-  email: string;
-  role: 'admin' | 'member';
-}
+import { validateInput, InviteOrganizationMemberSchema, sanitizeEmail } from "../_shared/validation.ts";
+import { createSecureResponse, createErrorResponse, createOptionsResponse } from "../_shared/securityHeaders.ts";
 
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return createOptionsResponse();
   }
 
   try {
@@ -26,7 +17,7 @@ serve(async (req) => {
     // Get user from auth header
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      throw new Error('No authorization header');
+      return createErrorResponse('No authorization header', 401);
     }
 
     const { data: { user }, error: userError } = await supabase.auth.getUser(
@@ -34,12 +25,21 @@ serve(async (req) => {
     );
 
     if (userError || !user) {
-      throw new Error('Unauthorized');
+      return createErrorResponse('Unauthorized', 401);
     }
 
-    const { organizationId, email, role }: InviteRequest = await req.json();
+    // Parse and validate request body
+    const body = await req.json();
+    const validation = validateInput(InviteOrganizationMemberSchema, body);
+    
+    if (!validation.success) {
+      return createErrorResponse(`Validation error: ${validation.error}`, 400);
+    }
 
-    console.log('Inviting member:', { organizationId, email, role, invitedBy: user.id });
+    const { organizationId, email, role } = validation.data;
+    const sanitizedEmail = sanitizeEmail(email);
+
+    console.log('Inviting member:', { organizationId, email: sanitizedEmail, role, invitedBy: user.id });
 
     // Verify user is admin of the organization
     const { data: membership, error: membershipError } = await supabase
@@ -64,7 +64,7 @@ serve(async (req) => {
       .from('organization_invites')
       .insert({
         organization_id: organizationId,
-        email,
+        email: sanitizedEmail,
         role,
         invited_by: user.id,
         token,
@@ -88,53 +88,25 @@ serve(async (req) => {
 
     const inviteLink = `https://20feaa04-0946-4c68-a68d-0eb88cc1b9c4.lovableproject.com/accept-invite/${token}`;
     
-    // TODO: Integrate with email service (Resend, SendGrid, etc.)
-    // For now, we'll log the invite details
     console.log('Invite created successfully:', {
       inviteId: invite.id,
-      email,
+      email: sanitizedEmail,
       organizationName: org?.display_name,
       inviteLink
     });
 
-    // Email template to be sent:
-    // Subject: You've been invited to join {org.display_name} on Chravel
-    // Body:
-    // Hi,
-    // 
-    // You've been invited to join {org.display_name} on Chravel as a {role}.
-    // 
-    // Click here to accept your invitation: {inviteLink}
-    // 
-    // This invitation expires in 7 days.
-    // 
-    // Best,
-    // The Chravel Team
-
-    return new Response(
-      JSON.stringify({ 
-        success: true, 
-        invite: {
-          id: invite.id,
-          token,
-          expiresAt: expiresAt.toISOString(),
-          inviteLink
-        }
-      }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200 
+    return createSecureResponse({ 
+      success: true, 
+      invite: {
+        id: invite.id,
+        token,
+        expiresAt: expiresAt.toISOString(),
+        inviteLink
       }
-    );
+    });
 
   } catch (error) {
     console.error('Error in invite-organization-member:', error);
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400 
-      }
-    );
+    return createErrorResponse(error);
   }
 });
