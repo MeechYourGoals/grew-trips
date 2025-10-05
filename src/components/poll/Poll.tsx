@@ -14,8 +14,8 @@ export const Poll = ({ poll, onVote }: PollProps) => {
   };
 
   return (
-    <div className="bg-gray-800 border-2 border-gray-700 rounded-2xl p-6 shadow-lg">
-      <h3 className="text-lg font-bold text-white mb-4">{poll.question}</h3>
+    <div className="bg-white border border-glass-light-border rounded-2xl p-6 shadow-enterprise">
+      <h3 className="text-lg font-semibold text-glass-enterprise-blue mb-4">{poll.question}</h3>
       <div className="space-y-3">
         {poll.options.map((option) => (
           <PollOption
@@ -28,7 +28,7 @@ export const Poll = ({ poll, onVote }: PollProps) => {
         ))}
       </div>
       {poll.userVote && (
-        <p className="text-sm text-gray-400 mt-4 text-center">
+        <p className="text-sm text-muted-foreground mt-4 text-center">
           {poll.totalVotes} total votes
         </p>
       )}

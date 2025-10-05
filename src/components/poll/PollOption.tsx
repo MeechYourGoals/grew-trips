@@ -17,26 +17,26 @@ export const PollOption = ({ option, totalVotes, userVote, onVote }: PollOptionP
     <button
       onClick={() => onVote(option.id)}
       disabled={!!userVote}
-      className={`w-full text-left p-4 rounded-xl border-2 transition-all ${
+      className={`w-full text-left p-4 rounded-xl border transition-all ${
         userVote
           ? isVoted
-            ? 'border-red-500 bg-red-900/20'
-            : 'border-gray-600 bg-gray-700/50'
-          : 'border-gray-600 hover:border-red-400 hover:bg-red-900/10'
+            ? 'border-glass-enterprise-blue bg-glass-enterprise-blue/10'
+            : 'border-glass-light-border bg-gray-50'
+          : 'border-glass-light-border hover:border-glass-enterprise-blue hover:bg-glass-enterprise-blue/5'
       } ${!userVote ? 'cursor-pointer' : 'cursor-default'}`}
     >
       <div className="flex justify-between items-center mb-2">
-        <span className="font-medium text-white">{option.text}</span>
+        <span className="font-medium text-glass-text-primary">{option.text}</span>
         {userVote && (
-          <span className="text-sm font-semibold text-gray-400">
+          <span className="text-sm font-semibold text-muted-foreground">
             {option.votes} votes ({percentage.toFixed(0)}%)
           </span>
         )}
       </div>
       {userVote && (
-        <div className="w-full bg-gray-600 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-2">
           <div
-            className="bg-gradient-to-r from-red-500 to-yellow-500 h-2 rounded-full transition-all duration-500"
+            className="bg-gradient-to-r from-glass-enterprise-blue to-glass-accent-orange h-2 rounded-full transition-all duration-500"
             style={{ width: `${percentage}%` }}
           />
         </div>
