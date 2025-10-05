@@ -9,6 +9,7 @@ export interface ChatMessage {
   createdAt: string;
   isAiMessage?: boolean;
   isBroadcast?: boolean;
+  isPayment?: boolean;
   reactions?: { [key: string]: string[] };
   replyTo?: { id: string; text: string; sender: string };
   tags?: string[];
@@ -62,6 +63,7 @@ export const useChatComposer = ({ tripId, demoMode = false }: UseChatComposerOpt
         sender: { id: 'user1', name: 'You', avatar: getMockAvatar('You') },
         createdAt: new Date().toISOString(),
         isBroadcast: false,
+        isPayment: true,
         reactions: {},
         tags: ['payment'],
         replyTo: replyingTo ? {

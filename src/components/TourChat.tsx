@@ -10,8 +10,7 @@ import { useParams } from 'react-router-dom';
 import { proTripMockData } from '../data/proTripMockData';
 import { AiMessageModal } from './ai/AiMessageModal';
 import { AiMessageButton } from './ai/AiMessageButton';
-import { getMockAvatar } from '@/utils/mockAvatars';
-import { MessageReactionBar } from './chat/MessageReactionBar';
+import { MessageBubble } from './chat/MessageBubble';
 
 export const TourChat = () => {
   const { proTripId, tourId } = useParams();
@@ -132,25 +131,18 @@ export const TourChat = () => {
       <div className="space-y-4 mb-6 max-h-80 overflow-y-auto">
         {tourMessages.length > 0 ? (
           tourMessages.map((msg) => (
-            <div key={msg.id} className="flex items-start gap-3">
-              <img
-                src={msg.senderAvatar || getMockAvatar(msg.senderName)}
-                alt={msg.senderName}
-                className="w-8 h-8 rounded-full object-cover border border-gray-600/50"
-              />
-              <div className="flex-1">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-white font-medium text-sm">{msg.senderName}</span>
-                  <span className="text-gray-400 text-xs">{formatTime(msg.timestamp)}</span>
-                </div>
-                <p className="text-gray-300 text-sm">{msg.content}</p>
-                <MessageReactionBar
-                  messageId={msg.id}
-                  reactions={reactions[msg.id]}
-                  onReaction={handleReaction}
-                />
-              </div>
-            </div>
+            <MessageBubble
+              key={msg.id}
+              id={msg.id}
+              text={msg.content}
+              senderName={msg.senderName}
+              senderAvatar={msg.senderAvatar}
+              timestamp={msg.timestamp}
+              isBroadcast={false}
+              isPayment={msg.content.includes('split') && msg.content.includes('Pay me')}
+              reactions={reactions[msg.id]}
+              onReaction={handleReaction}
+            />
           ))
         ) : (
           <div className="text-center py-8">

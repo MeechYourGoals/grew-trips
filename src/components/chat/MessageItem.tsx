@@ -17,7 +17,7 @@ export const MessageItem = ({ message, reactions, onReaction }: MessageItemProps
       senderAvatar={message.sender.avatar}
       timestamp={message.createdAt}
       isBroadcast={message.isBroadcast}
-      isPayment={false}
+      isPayment={message.isPayment || message.tags?.includes('payment')}
       reactions={reactions}
       onReaction={onReaction}
     />
