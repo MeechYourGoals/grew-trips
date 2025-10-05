@@ -54,18 +54,18 @@ export class MockKnowledgeService {
       });
     }
 
-    // Mock to-do/task data
-    if (lowercaseQuery.includes('todo') || lowercaseQuery.includes('task') || lowercaseQuery.includes('list')) {
+    // Mock task data
+    if (lowercaseQuery.includes('task') || lowercaseQuery.includes('list')) {
       results.push({
-        id: 'mock_todo_1',
+        id: 'mock_task_1',
         objectType: 'message',
-        objectId: 'todo_1',
+        objectId: 'task_1',
         tripId,
         tripName: 'Demo Trip',
         content: 'Outstanding tasks: Pack snorkeling gear, Confirm dinner reservations, Buy sunscreen',
-        snippet: 'To-do items still pending completion',
+        snippet: 'Task items still pending completion',
         score: 0.9,
-        deepLink: '#todo',
+        deepLink: '#tasks',
         matchReason: 'Task list match',
         metadata: {
           date: this.getDateFromOffset(0)
@@ -110,9 +110,9 @@ export class MockKnowledgeService {
       return "The restaurant poll had three options: Italian Bistro, Sushi Palace, and Local BBQ. The poll was asking 'Where should we eat tonight?' and was created by Priya Patel yesterday.";
     }
 
-    // To-do list items
-    if (lowercaseQuery.includes('todo') || lowercaseQuery.includes('task')) {
-      return "The current to-do list has these outstanding items: 1) Pack snorkeling gear, 2) Confirm dinner reservations, and 3) Buy sunscreen. These tasks are still pending completion.";
+    // Task list items
+    if (lowercaseQuery.includes('task')) {
+      return "The current task list has these outstanding items: 1) Pack snorkeling gear, 2) Confirm dinner reservations, and 3) Buy sunscreen. These tasks are still pending completion.";
     }
 
     // Flight information

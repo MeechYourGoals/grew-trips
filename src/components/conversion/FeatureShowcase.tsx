@@ -53,7 +53,7 @@ const features: Feature[] = [
   },
   {
     id: 'todolist',
-    title: 'Shared To-Do List',
+    title: 'Shared Task List',
     description: 'Keep everyone accountable with shared tasks, due dates, and completion tracking for seamless trip coordination',
     icon: <CheckSquare size={24} />
   },

@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Checkbox } from '../ui/checkbox';
 import { Card, CardContent } from '../ui/card';
 import { usePaymentSplits } from '@/hooks/usePaymentSplits';
+import { PaymentMethodId } from '@/types/paymentMethods';
 
 interface PaymentInputProps {
   onSubmit: (paymentData: {
@@ -42,7 +43,7 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
     resetForm
   } = usePaymentSplits(tripMembers);
 
-  const paymentMethodOptions = [
+  const paymentMethodOptions: Array<{ id: PaymentMethodId; label: string }> = [
     { id: 'venmo', label: 'Venmo' },
     { id: 'splitwise', label: 'Splitwise' },
     { id: 'cashapp', label: 'Cash App' },
@@ -185,8 +186,8 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                 <div key={method.id} className="flex items-center gap-2">
                   <Checkbox
                     id={`payment-${method.id}`}
-                    checked={selectedPaymentMethods.includes(method.id as any)}
-                    onCheckedChange={() => togglePaymentMethod(method.id as any)}
+                    checked={selectedPaymentMethods.includes(method.id)}
+                    onCheckedChange={() => togglePaymentMethod(method.id)}
                   />
                   <label 
                     htmlFor={`payment-${method.id}`}

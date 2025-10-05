@@ -104,7 +104,7 @@ export const useOrganization = () => {
 
       await fetchUserOrganizations();
       return { data: newOrg, error: null };
-    } catch (error: any) {
+    } catch (error) {
       return { data: null, error };
     }
   };
@@ -130,7 +130,7 @@ export const useOrganization = () => {
 
       if (error) throw error;
       return { data, error: null };
-    } catch (error: any) {
+    } catch (error) {
       return { data: null, error };
     }
   };
@@ -149,7 +149,7 @@ export const useOrganization = () => {
       }
       
       return { error: null };
-    } catch (error: any) {
+    } catch (error) {
       return { error };
     }
   };
@@ -168,7 +168,7 @@ export const useOrganization = () => {
       }
       
       return { error: null };
-    } catch (error: any) {
+    } catch (error) {
       return { error };
     }
   };

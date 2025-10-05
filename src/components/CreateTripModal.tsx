@@ -104,7 +104,7 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
     broadcasts: 'Broadcasts',
     links: 'Links & Ideas',
     polls: 'Polls & Voting',
-    todo: 'To-Do Lists',
+    tasks: 'Tasks',
     calendar: 'Calendar',
     photos: 'Photo Sharing',
     files: 'File Sharing',

@@ -32,7 +32,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
   const tabs = [
     { id: 'chat', label: 'Chat', icon: MessageCircle, enabled: features.showChat },
     { id: 'calendar', label: 'Calendar', icon: Calendar, enabled: features.showCalendar },
-    { id: 'todo', label: 'To-Do List', icon: ClipboardList, enabled: features.showTodo },
+    { id: 'tasks', label: 'Tasks', icon: ClipboardList, enabled: features.showTasks },
     { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
     { id: 'media', label: 'Media', icon: Camera, enabled: features.showMedia }
   ];
@@ -49,7 +49,7 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
         return <TripChat />;
       case 'polls':
         return <CommentsWall />;
-      case 'todo':
+      case 'tasks':
         return <TripTasksTab tripId={tripId} />;
       case 'calendar':
         return <GroupCalendar />;

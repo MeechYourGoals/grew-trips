@@ -28,7 +28,7 @@ export const TripTasksTab = ({ tripId }: TripTasksTabProps) => {
     clearFilters
   } = useTaskFilters();
 
-  // Mock todo items for demo
+  // Mock task items for demo
   const mockTasks = [
     {
       id: 'task-1',
@@ -108,7 +108,7 @@ export const TripTasksTab = ({ tripId }: TripTasksTabProps) => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-white">To-Do List</h2>
+          <h2 className="text-xl font-semibold text-white">Tasks</h2>
           <p className="text-gray-400 text-sm">Keep track of everything that needs to get done</p>
         </div>
         <Button
