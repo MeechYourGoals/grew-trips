@@ -3,9 +3,11 @@ import { corsHeaders } from "../_shared/cors.ts";
 import { validateAndSanitizeInput, checkRateLimit, addSecurityHeaders } from "../_shared/security.ts";
 
 serve(async (req) => {
+  const { createOptionsResponse, createErrorResponse, createSecureResponse } = await import('../_shared/securityHeaders.ts');
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+    return createOptionsResponse();
   }
 
   try {

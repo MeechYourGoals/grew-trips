@@ -84,8 +84,8 @@ export const PaymentMessage = ({
         </span>
       </div>
 
-      {/* Main Payment Message */}
-      <div className="text-foreground">
+      {/* Main Payment Message - Green text for payment content */}
+      <div className="text-payment-content">
         <span className="font-medium">
           {payment.description} - {payment.currency} {payment.amount.toFixed(2)} (split {payment.splitCount} ways) • Pay me ${perPersonAmount} via {getPaymentMethodName(primaryPaymentMethod)}: {getPaymentIdentifier(primaryPaymentMethod, payer?.name || 'Unknown')}
         </span>

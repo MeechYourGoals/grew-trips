@@ -4,6 +4,8 @@ import { validateInput, LinkTripToOrgSchema } from "../_shared/validation.ts";
 import { createSecureResponse, createErrorResponse, createOptionsResponse } from "../_shared/securityHeaders.ts";
 
 serve(async (req) => {
+  const { createOptionsResponse, createErrorResponse, createSecureResponse } = await import('../_shared/securityHeaders.ts');
+  
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return createOptionsResponse();

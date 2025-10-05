@@ -13,6 +13,8 @@ interface RequestBody {
 }
 
 serve(async (req) => {
+  const { createOptionsResponse, createErrorResponse, createSecureResponse } = await import('../_shared/securityHeaders.ts');
+  
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }

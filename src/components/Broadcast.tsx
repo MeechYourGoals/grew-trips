@@ -94,8 +94,8 @@ export const Broadcast = ({
         Sent to: {formatRecipients()}
       </div>
 
-      {/* Message */}
-      <p className="text-white mb-3 leading-relaxed font-bold">{message}</p>
+      {/* Message - Orange text for broadcasts */}
+      <p className="text-broadcast-content mb-3 leading-relaxed font-semibold">{message}</p>
 
       {/* Location */}
       {location && (

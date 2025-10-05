@@ -1,91 +1,87 @@
+import React, { useState } from 'react';
+import { getMockAvatar } from '@/utils/mockAvatars';
+import { MessageReactionBar } from './MessageReactionBar';
+import { cn } from '@/lib/utils';
 
-import React from 'react';
-import { Megaphone } from 'lucide-react';
-
-interface MessageBubbleProps {
+export interface MessageBubbleProps {
+  id: string;
   text: string;
   senderName: string;
+  senderAvatar?: string;
   timestamp: string;
-  avatar: string;
   isBroadcast?: boolean;
-  replyTo?: {
-    id: string;
-    text: string;
-    sender: string;
-  };
-  children?: React.ReactNode; // For reactions and actions
+  isPayment?: boolean;
+  reactions?: Record<string, { count: number; userReacted: boolean }>;
+  onReaction: (messageId: string, reactionType: string) => void;
 }
 
 export const MessageBubble = ({
+  id,
   text,
   senderName,
+  senderAvatar,
   timestamp,
-  avatar,
-  isBroadcast = false,
-  replyTo,
-  children
+  isBroadcast,
+  isPayment,
+  reactions,
+  onReaction
 }: MessageBubbleProps) => {
+  const [showReactions, setShowReactions] = useState(false);
+
   const formatTime = (timestamp: string) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    return new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
+
+  const getTextColorClass = () => {
+    if (isBroadcast) return 'text-orange-400';
+    if (isPayment) return 'text-green-400';
+    return 'text-foreground';
+  };
+
+  const getBubbleClasses = () => {
+    if (isBroadcast) {
+      return 'bg-orange-600/10 border-orange-500/30 shadow-[0_2px_12px_rgba(251,146,60,0.15)]';
+    }
+    if (isPayment) {
+      return 'bg-green-600/10 border-green-500/30 shadow-[0_2px_12px_rgba(34,197,94,0.15)]';
+    }
+    return 'bg-card/50 border-border shadow-sm';
   };
 
   return (
-    <div className="flex items-start gap-3">
-      {/* Avatar */}
+    <div
+      className="group flex items-start gap-3"
+      onMouseEnter={() => setShowReactions(true)}
+      onMouseLeave={() => setShowReactions(false)}
+    >
       <img
-        src={avatar}
+        src={senderAvatar || getMockAvatar(senderName)}
         alt={senderName}
-        className="w-10 h-10 rounded-full flex-shrink-0 object-cover border border-gray-600"
+        className="w-10 h-10 rounded-full object-cover border-2 border-border/50"
       />
       
-      {/* Message Content */}
-      <div className="flex-1 min-w-0">
-        {/* Sender Name & Time */}
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-sm font-medium text-gray-300">
-            {senderName}
-          </span>
-          <span className="text-xs text-gray-500">
-            {formatTime(timestamp)}
-          </span>
-        </div>
-        
-        {/* Message Bubble */}
-        <div className={`
-          max-w-md p-3 rounded-lg relative
-          ${isBroadcast
-            ? 'bg-orange-100 border border-orange-300 text-orange-900'
-            : 'bg-gray-700 text-gray-200'
-          }
-        `} role={isBroadcast ? 'alert' : undefined}
-            aria-label={isBroadcast ? 'Broadcast message' : undefined}>
-          
-          {/* Broadcast Header */}
-          {isBroadcast && (
-            <div className="flex items-center gap-2 text-xs font-bold mb-2">
-              <Megaphone size={14} className="text-orange-600" />
-              <span className="text-orange-600">📢 BROADCAST</span>
-            </div>
-          )}
-          
-          {/* Reply Context */}
-          {replyTo && (
-            <div className="text-xs opacity-70 mb-2 p-2 bg-black/10 rounded border-l-2 border-gray-500">
-              Replying to {replyTo.sender}: "{replyTo.text}"
-            </div>
-          )}
-          
-          {/* Message Text */}
-          <div className="leading-relaxed">{text}</div>
-        </div>
-        
-        {/* Message Actions (reactions, reply button, etc.) */}
-        {children && (
-          <div className="mt-2 space-y-1">
-            {children}
+      <div className="flex-1">
+        <div className={cn('rounded-xl px-4 py-3 backdrop-blur-sm border transition-all', getBubbleClasses())}>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="font-semibold text-sm text-foreground">{senderName}</span>
+            <span className="text-xs text-muted-foreground">{formatTime(timestamp)}</span>
+            {isBroadcast && (
+              <span className="text-xs bg-orange-600/20 text-orange-400 px-2 py-0.5 rounded-full">
+                📢 Broadcast
+              </span>
+            )}
+            {isPayment && (
+              <span className="text-xs bg-green-600/20 text-green-400 px-2 py-0.5 rounded-full">
+                💳 Payment
+              </span>
+            )}
           </div>
-        )}
+          <p className={cn('text-sm leading-relaxed', getTextColorClass())}>{text}</p>
+        </div>
+        
+        <div className={cn('mt-2 transition-opacity', showReactions ? 'opacity-100' : 'opacity-0')}>
+          <MessageReactionBar messageId={id} reactions={reactions} onReaction={onReaction} />
+        </div>
       </div>
     </div>
   );
