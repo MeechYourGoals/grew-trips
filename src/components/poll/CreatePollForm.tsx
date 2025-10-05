@@ -40,20 +40,20 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
   };
 
   return (
-    <div className="bg-white border border-glass-light-border rounded-2xl p-6 shadow-enterprise">
+    <div className="bg-glass-slate-card border border-glass-slate-border rounded-2xl p-6 shadow-enterprise-lg">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-glass-enterprise-blue">Create New Poll</h3>
+        <h3 className="text-lg font-semibold text-white">Create New Poll</h3>
         <button
           onClick={onCancel}
-          className="w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors"
+          className="w-8 h-8 rounded-full bg-glass-slate-bg hover:bg-glass-slate-border flex items-center justify-center transition-colors"
         >
-          <X size={16} className="text-gray-600" />
+          <X size={16} className="text-gray-400" />
         </button>
       </div>
 
       <div className="space-y-4">
         <div>
-          <label className="block text-sm font-semibold text-glass-text-primary mb-2">
+          <label className="block text-sm font-semibold text-white mb-2">
             Poll Question
           </label>
           <input
@@ -61,12 +61,12 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
             placeholder="What would you like to ask the group?"
-            className="w-full bg-gray-50 border border-glass-light-border rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-glass-enterprise-blue focus:ring-2 focus:ring-glass-enterprise-blue/20"
+            className="w-full bg-glass-slate-bg border border-glass-slate-border rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-glass-enterprise-blue focus:ring-2 focus:ring-glass-enterprise-blue/20"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-glass-text-primary mb-2">
+          <label className="block text-sm font-semibold text-white mb-2">
             Options
           </label>
           <div className="space-y-2">
@@ -77,7 +77,7 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
                   value={option.text}
                   onChange={(e) => updateOption(index, e.target.value)}
                   placeholder={`Option ${index + 1}`}
-                  className="flex-1 bg-gray-50 border border-glass-light-border rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 focus:outline-none focus:border-glass-enterprise-blue"
+                  className="flex-1 bg-glass-slate-bg border border-glass-slate-border rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-glass-enterprise-blue"
                 />
                 {options.length > 2 && (
                   <button
@@ -92,7 +92,7 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
             {options.length < 6 && (
               <button
                 onClick={addOption}
-                className="w-full h-10 border-2 border-dashed border-glass-light-border rounded-lg text-gray-600 hover:border-glass-enterprise-blue hover:text-glass-enterprise-blue transition-colors flex items-center justify-center gap-2"
+                className="w-full h-10 border-2 border-dashed border-glass-slate-border rounded-lg text-gray-400 hover:border-glass-enterprise-blue hover:text-glass-enterprise-blue transition-colors flex items-center justify-center gap-2"
               >
                 <Plus size={16} />
                 Add Option
@@ -105,14 +105,14 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
           <Button
             onClick={onCancel}
             variant="outline"
-            className="flex-1 h-10 rounded-lg border border-glass-light-border hover:border-gray-300 font-semibold bg-white text-gray-900 hover:bg-gray-50"
+            className="flex-1 h-10 rounded-lg border border-glass-slate-border hover:border-gray-500 font-semibold bg-glass-slate-bg text-white hover:bg-glass-slate-border"
           >
             Cancel
           </Button>
           <Button
             onClick={handleCreatePoll}
             disabled={!question.trim() || options.filter(opt => opt.text.trim()).length < 2}
-            className="flex-1 h-10 rounded-lg bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 font-semibold text-black border border-yellow-500/50"
+            className="flex-1 h-10 rounded-lg bg-gradient-to-r from-glass-enterprise-blue to-glass-enterprise-blue-light hover:from-glass-enterprise-blue-light hover:to-glass-enterprise-blue font-semibold text-white border border-glass-enterprise-blue/50"
           >
             Create Poll
           </Button>
