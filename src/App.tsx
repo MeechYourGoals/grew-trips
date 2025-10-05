@@ -31,6 +31,7 @@ const OrganizationDashboard = lazy(() => import("./pages/OrganizationDashboard")
 const OrganizationsHub = lazy(() => import("./pages/OrganizationsHub").then(module => ({ default: module.OrganizationsHub })));
 const MobileEnterpriseHub = lazy(() => import("./pages/MobileEnterpriseHub").then(module => ({ default: module.MobileEnterpriseHub })));
 const MobileOrganizationPage = lazy(() => import("./pages/MobileOrganizationPage").then(module => ({ default: module.MobileOrganizationPage })));
+const AcceptOrganizationInvite = lazy(() => import("./pages/AcceptOrganizationInvite").then(module => ({ default: module.AcceptOrganizationInvite })));
 
 
 const queryClient = new QueryClient();
@@ -132,6 +133,11 @@ const App = () => {
                     <Route path="/organization/:orgId" element={
                       <LazyRoute>
                         <OrganizationDashboard />
+                      </LazyRoute>
+                    } />
+                    <Route path="/accept-invite/:token" element={
+                      <LazyRoute>
+                        <AcceptOrganizationInvite />
                       </LazyRoute>
                     } />
                     <Route path="*" element={

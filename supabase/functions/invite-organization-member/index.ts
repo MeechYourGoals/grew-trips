@@ -79,11 +79,37 @@ serve(async (req) => {
       throw new Error('Failed to create invitation');
     }
 
-    // TODO: Send email with invite link
-    // For now, we'll just return the invite info
-    // In production, integrate with email service (Resend, SendGrid, etc.)
+    // Get organization details for email
+    const { data: org } = await supabase
+      .from('organizations')
+      .select('display_name')
+      .eq('id', organizationId)
+      .single();
+
+    const inviteLink = `https://20feaa04-0946-4c68-a68d-0eb88cc1b9c4.lovableproject.com/accept-invite/${token}`;
     
-    console.log('Invite created successfully:', invite.id);
+    // TODO: Integrate with email service (Resend, SendGrid, etc.)
+    // For now, we'll log the invite details
+    console.log('Invite created successfully:', {
+      inviteId: invite.id,
+      email,
+      organizationName: org?.display_name,
+      inviteLink
+    });
+
+    // Email template to be sent:
+    // Subject: You've been invited to join {org.display_name} on Chravel
+    // Body:
+    // Hi,
+    // 
+    // You've been invited to join {org.display_name} on Chravel as a {role}.
+    // 
+    // Click here to accept your invitation: {inviteLink}
+    // 
+    // This invitation expires in 7 days.
+    // 
+    // Best,
+    // The Chravel Team
 
     return new Response(
       JSON.stringify({ 
@@ -92,7 +118,7 @@ serve(async (req) => {
           id: invite.id,
           token,
           expiresAt: expiresAt.toISOString(),
-          // inviteLink: `${baseUrl}/accept-invite?token=${token}`
+          inviteLink
         }
       }),
       { 

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Calendar, MapPin, Users, Building, PartyPopper, ChevronDown, Settings } from 'lucide-react';
 import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
@@ -7,6 +7,8 @@ import { Switch } from './ui/switch';
 import { Checkbox } from './ui/checkbox';
 import { DEFAULT_FEATURES } from '../hooks/useFeatureToggle';
 import { useTrips } from '../hooks/useTrips';
+import { useOrganization } from '../hooks/useOrganization';
+import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PrivacyModeSelector } from './PrivacyModeSelector';
 import { PrivacyMode, getDefaultPrivacyMode } from '../types/privacy';
@@ -19,6 +21,7 @@ interface CreateTripModalProps {
 export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
   const [tripType, setTripType] = useState<'consumer' | 'pro' | 'event'>('consumer');
   const [privacyMode, setPrivacyMode] = useState<PrivacyMode>(() => getDefaultPrivacyMode('consumer'));
+  const [selectedOrganization, setSelectedOrganization] = useState<string>('');
   const [formData, setFormData] = useState({
     title: '',
     location: '',
@@ -29,10 +32,17 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   
   const { createTrip } = useTrips();
+  const { organizations, fetchUserOrganizations } = useOrganization();
   const [enableAllFeatures, setEnableAllFeatures] = useState(true);
   const [selectedFeatures, setSelectedFeatures] = useState<Record<string, boolean>>(
     DEFAULT_FEATURES.reduce((acc, feature) => ({ ...acc, [feature]: true }), {})
   );
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchUserOrganizations();
+    }
+  }, [isOpen]);
 
   // Update privacy mode when trip type changes
   const handleTripTypeChange = (newTripType: 'consumer' | 'pro' | 'event') => {
@@ -65,6 +75,25 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
       const newTrip = await createTrip(tripData);
       
       if (newTrip) {
+        // Link to organization if selected
+        if (selectedOrganization && (tripType === 'pro' || tripType === 'event')) {
+          try {
+            const { error: linkError } = await supabase.functions.invoke('link-trip-to-organization', {
+              body: {
+                tripId: tripId,
+                organizationId: selectedOrganization
+              }
+            });
+            
+            if (linkError) {
+              console.error('Error linking trip to organization:', linkError);
+              toast.error('Trip created but failed to link to organization');
+            }
+          } catch (linkErr) {
+            console.error('Error linking trip:', linkErr);
+          }
+        }
+        
         toast.success('Trip created successfully!');
         onClose();
         // Reset form
@@ -77,6 +106,7 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
         });
         setTripType('consumer');
         setPrivacyMode(getDefaultPrivacyMode('consumer'));
+        setSelectedOrganization('');
       } else {
         toast.error('Failed to create trip. Please try again.');
       }
@@ -251,6 +281,30 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
               showOverrideOption={true}
             />
           </div>
+
+          {/* Organization Selector - Only for Pro/Event trips */}
+          {(tripType === 'pro' || tripType === 'event') && organizations.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-slate-300 mb-2">
+                Link to Organization (Optional)
+              </label>
+              <select
+                value={selectedOrganization}
+                onChange={(e) => setSelectedOrganization(e.target.value)}
+                className="w-full bg-slate-700/50 border border-slate-600 rounded-xl px-4 py-3 text-white focus:border-blue-500 focus:outline-none transition-colors"
+              >
+                <option value="">No organization</option>
+                {organizations.map((org) => (
+                  <option key={org.id} value={org.id}>
+                    {org.display_name}
+                  </option>
+                ))}
+              </select>
+              <p className="text-xs text-slate-400 mt-2">
+                Link this trip to an organization to share it with all members
+              </p>
+            </div>
+          )}
 
           {/* Advanced Feature Settings - Only for Pro/Event trips */}
           {tripType !== 'consumer' && (

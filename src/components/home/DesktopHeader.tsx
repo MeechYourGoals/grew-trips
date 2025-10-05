@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Crown, Plus, Settings, User, LogIn } from 'lucide-react';
+import { Crown, Plus, Settings, User, LogIn, Building } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { NotificationBell } from '../NotificationBell';
 import { SearchBar } from '../SearchBar';
 import { AuthModal } from '../AuthModal';
@@ -22,6 +23,7 @@ interface DesktopHeaderProps {
 }
 
 export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }: DesktopHeaderProps) => {
+  const navigate = useNavigate();
   const [showAuthModal, setShowAuthModal] = useState(false);
   const { user, signOut } = useAuth();
 
@@ -142,6 +144,15 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
                   <Crown size={16} className="text-[hsl(45,95%,58%)]" />
                   Upgrade Chravel Experience
                 </DropdownMenuItem>
+                {user && (
+                  <DropdownMenuItem 
+                    onClick={() => navigate('/organizations')}
+                    className="flex items-center gap-3 px-4 py-3 hover:bg-gray-800/80 cursor-pointer"
+                  >
+                    <Building size={16} />
+                    My Organizations
+                  </DropdownMenuItem>
+                )}
                 {user && (
                   <DropdownMenuItem 
                     onClick={signOut}

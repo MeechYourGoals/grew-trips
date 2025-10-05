@@ -4,6 +4,7 @@ import { Building, Users, Briefcase, Settings, UserPlus, ChevronLeft } from 'luc
 import { useOrganization } from '@/hooks/useOrganization';
 import { useAuth } from '@/hooks/useAuth';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -25,6 +26,8 @@ export const OrganizationDashboard = () => {
   
   const [activeTab, setActiveTab] = useState('overview');
   const [showInviteModal, setShowInviteModal] = useState(false);
+  const [linkedTrips, setLinkedTrips] = useState<any[]>([]);
+  const [loadingTrips, setLoadingTrips] = useState(false);
 
   useEffect(() => {
     fetchUserOrganizations();
@@ -33,12 +36,44 @@ export const OrganizationDashboard = () => {
   useEffect(() => {
     if (orgId) {
       fetchOrgMembers(orgId);
+      fetchLinkedTrips(orgId);
       const org = organizations.find(o => o.id === orgId);
       if (org) {
         setCurrentOrg(org);
       }
     }
   }, [orgId, organizations]);
+
+  const fetchLinkedTrips = async (organizationId: string) => {
+    try {
+      setLoadingTrips(true);
+      const { data, error } = await supabase
+        .from('pro_trip_organizations')
+        .select(`
+          trip_id,
+          trips:trip_id (
+            id,
+            name,
+            description,
+            destination,
+            start_date,
+            end_date,
+            trip_type,
+            cover_image_url
+          )
+        `)
+        .eq('organization_id', organizationId);
+
+      if (error) throw error;
+      
+      const trips = data?.map(item => item.trips).filter(Boolean) || [];
+      setLinkedTrips(trips);
+    } catch (error) {
+      console.error('Error fetching linked trips:', error);
+    } finally {
+      setLoadingTrips(false);
+    }
+  };
 
   const handleChangeRole = async (memberId: string, newRole: string) => {
     const { error } = await updateMemberRole(memberId, newRole as 'admin' | 'member');
@@ -323,16 +358,53 @@ export const OrganizationDashboard = () => {
           </TabsContent>
 
           <TabsContent value="trips" className="mt-6">
-            <Card className="bg-white/5 border-white/10">
-              <CardContent className="p-12 text-center">
-                <Briefcase size={64} className="text-gray-600 mx-auto mb-4" />
-                <h3 className="text-xl font-bold text-white mb-2">No Pro Trips Yet</h3>
-                <p className="text-gray-400 mb-6">Create your first Pro trip to get started</p>
-                <Button onClick={() => navigate('/trips/create')}>
-                  Create Pro Trip
-                </Button>
-              </CardContent>
-            </Card>
+            {loadingTrips ? (
+              <div className="text-center py-12">
+                <div className="w-12 h-12 border-4 border-glass-orange border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <p className="text-gray-400">Loading trips...</p>
+              </div>
+            ) : linkedTrips.length === 0 ? (
+              <Card className="bg-white/5 border-white/10">
+                <CardContent className="p-12 text-center">
+                  <Briefcase size={64} className="text-gray-600 mx-auto mb-4" />
+                  <h3 className="text-xl font-bold text-white mb-2">No Pro Trips Yet</h3>
+                  <p className="text-gray-400 mb-6">Create your first Pro trip and link it to this organization</p>
+                  <Button onClick={() => navigate('/')}>
+                    Create Pro Trip
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {linkedTrips.map((trip: any) => (
+                  <Card
+                    key={trip.id}
+                    className="bg-white/5 border-white/10 hover:bg-white/10 transition-all cursor-pointer group"
+                    onClick={() => navigate(`/tour/pro/${trip.id}`)}
+                  >
+                    {trip.cover_image_url && (
+                      <div className="h-32 bg-cover bg-center rounded-t-lg" style={{ backgroundImage: `url(${trip.cover_image_url})` }} />
+                    )}
+                    <CardHeader>
+                      <CardTitle className="text-white group-hover:text-glass-orange transition-colors">
+                        {trip.name}
+                      </CardTitle>
+                      <p className="text-sm text-gray-400">{trip.destination}</p>
+                    </CardHeader>
+                    <CardContent>
+                      {trip.start_date && trip.end_date && (
+                        <p className="text-xs text-gray-500">
+                          {new Date(trip.start_date).toLocaleDateString()} - {new Date(trip.end_date).toLocaleDateString()}
+                        </p>
+                      )}
+                      {trip.description && (
+                        <p className="text-sm text-gray-400 mt-2 line-clamp-2">{trip.description}</p>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
           </TabsContent>
 
           {isAdmin && (
