@@ -60,7 +60,7 @@ export const PollComponent = () => {
       {!showCreatePoll && (
         <Button
           onClick={() => setShowCreatePoll(true)}
-          className="w-full h-12 rounded-xl bg-gradient-to-r from-yellow-600 to-yellow-700 hover:from-yellow-700 hover:to-yellow-800 font-semibold shadow-lg shadow-yellow-500/25 border border-yellow-500/50 text-black"
+          className="w-full h-12 rounded-xl bg-gradient-to-r from-glass-enterprise-blue to-glass-enterprise-blue-light hover:from-glass-enterprise-blue-light hover:to-glass-enterprise-blue font-semibold shadow-enterprise border border-glass-enterprise-blue/50 text-white"
         >
           <BarChart3 size={20} className="mr-2" />
           Create Poll

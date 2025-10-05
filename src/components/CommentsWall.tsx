@@ -74,11 +74,11 @@ export const CommentsWall = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-6 space-y-6 bg-glass-slate-bg min-h-screen">
       {/* Polls Section */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <MessageCircle size={20} className="text-blue-600" />
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <MessageCircle size={20} className="text-glass-enterprise-blue" />
           Group Polls
         </h3>
         <PollComponent />
@@ -86,25 +86,25 @@ export const CommentsWall = () => {
 
       {/* Comments Section */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-          <MessageCircle size={20} className="text-purple-600" />
+        <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <MessageCircle size={20} className="text-purple-400" />
           Link Comments
         </h3>
 
         {/* Add Comment */}
-        <div className="bg-gray-50 rounded-2xl p-4 mb-6">
+        <div className="bg-glass-slate-bg rounded-2xl p-4 mb-6">
           <textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
             placeholder="Share your thoughts about the links posted..."
-            className="w-full bg-white border border-gray-200 rounded-xl p-4 text-gray-900 placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 resize-none"
+            className="w-full bg-glass-slate-card border border-glass-slate-border rounded-xl p-4 text-white placeholder-gray-500 focus:outline-none focus:border-glass-enterprise-blue focus:ring-2 focus:ring-glass-enterprise-blue/20 resize-none"
             rows={3}
           />
           <div className="flex justify-end mt-3">
             <button
               onClick={handleAddComment}
               disabled={!newComment.trim()}
-              className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded-xl font-semibold transition-all"
+              className="bg-gradient-to-r from-glass-enterprise-blue to-glass-enterprise-blue-light hover:from-glass-enterprise-blue-light hover:to-glass-enterprise-blue disabled:opacity-50 disabled:cursor-not-allowed text-white px-6 py-2 rounded-xl font-semibold transition-all shadow-enterprise border border-glass-enterprise-blue/50"
             >
               Post Comment
             </button>
@@ -114,17 +114,17 @@ export const CommentsWall = () => {
         {/* Comments List */}
         {comments.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-400 text-lg mb-2">No comments yet</div>
-            <div className="text-gray-500">Start the conversation about the places you're visiting!</div>
+            <div className="text-gray-500 text-lg mb-2">No comments yet</div>
+            <div className="text-gray-400">Start the conversation about the places you're visiting!</div>
           </div>
         ) : (
           <div className="space-y-4">
             {comments.map((comment) => (
-              <div key={comment.id} className="bg-white border-2 border-gray-100 rounded-2xl p-6 shadow-sm">
+              <div key={comment.id} className="bg-glass-slate-card border border-glass-slate-border rounded-2xl p-6 shadow-enterprise">
                 {/* Link Preview */}
                 {comment.linkUrl && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-4">
-                    <div className="flex items-center gap-2 text-blue-700 font-medium mb-1">
+                  <div className="bg-glass-enterprise-blue/10 border border-glass-enterprise-blue/30 rounded-xl p-4 mb-4">
+                    <div className="flex items-center gap-2 text-glass-enterprise-blue font-medium mb-1">
                       <ExternalLink size={16} />
                       {comment.linkTitle}
                     </div>
@@ -132,7 +132,7 @@ export const CommentsWall = () => {
                       href={comment.linkUrl} 
                       target="_blank" 
                       rel="noopener noreferrer"
-                      className="text-blue-600 text-sm hover:underline break-all"
+                      className="text-glass-enterprise-blue-light text-sm hover:underline break-all"
                     >
                       {comment.linkUrl}
                     </a>
@@ -148,21 +148,21 @@ export const CommentsWall = () => {
                   />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-gray-900">{comment.author}</span>
-                      <span className="text-gray-500 text-sm">{comment.timestamp}</span>
+                      <span className="font-semibold text-white">{comment.author}</span>
+                      <span className="text-gray-400 text-sm">{comment.timestamp}</span>
                     </div>
-                    <p className="text-gray-700 mb-3">{comment.content}</p>
+                    <p className="text-gray-300 mb-3">{comment.content}</p>
                     
                     {/* Actions */}
                     <div className="flex items-center gap-4">
                       <button
                         onClick={() => handleLike(comment.id)}
-                        className="flex items-center gap-1 text-gray-500 hover:text-red-500 transition-colors"
+                        className="flex items-center gap-1 text-gray-400 hover:text-red-400 transition-colors"
                       >
                         <Heart size={16} />
                         <span className="text-sm">{comment.likes}</span>
                       </button>
-                      <button className="flex items-center gap-1 text-gray-500 hover:text-blue-500 transition-colors">
+                      <button className="flex items-center gap-1 text-gray-400 hover:text-glass-enterprise-blue transition-colors">
                         <Reply size={16} />
                         <span className="text-sm">Reply</span>
                       </button>
@@ -170,7 +170,7 @@ export const CommentsWall = () => {
 
                     {/* Replies */}
                     {comment.replies && comment.replies.length > 0 && (
-                      <div className="mt-4 space-y-3 border-l-2 border-gray-100 pl-4">
+                      <div className="mt-4 space-y-3 border-l-2 border-glass-slate-border pl-4">
                         {comment.replies.map((reply) => (
                           <div key={reply.id} className="flex gap-3">
                             <img 
@@ -180,13 +180,13 @@ export const CommentsWall = () => {
                             />
                             <div className="flex-1">
                               <div className="flex items-center gap-2 mb-1">
-                                <span className="font-medium text-gray-900 text-sm">{reply.author}</span>
-                                <span className="text-gray-500 text-xs">{reply.timestamp}</span>
+                                <span className="font-medium text-white text-sm">{reply.author}</span>
+                                <span className="text-gray-400 text-xs">{reply.timestamp}</span>
                               </div>
-                              <p className="text-gray-700 text-sm mb-2">{reply.content}</p>
+                              <p className="text-gray-300 text-sm mb-2">{reply.content}</p>
                               <button
                                 onClick={() => handleLike(reply.id)}
-                                className="flex items-center gap-1 text-gray-500 hover:text-red-500 transition-colors"
+                                className="flex items-center gap-1 text-gray-400 hover:text-red-400 transition-colors"
                               >
                                 <Heart size={14} />
                                 <span className="text-xs">{reply.likes}</span>
