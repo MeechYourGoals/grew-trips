@@ -26,3 +26,12 @@ verify_jwt = true
 
 [functions.check-subscription]
 verify_jwt = true
+
+[functions.invite-organization-member]
+verify_jwt = true
+
+[functions.accept-organization-invite]
+verify_jwt = true
+
+[functions.link-trip-to-organization]
+verify_jwt = true

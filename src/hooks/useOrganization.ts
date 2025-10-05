@@ -179,6 +179,7 @@ export const useOrganization = () => {
     setCurrentOrg,
     members,
     loading,
+    fetchUserOrganizations,
     fetchOrgMembers,
     createOrganization,
     inviteMember,

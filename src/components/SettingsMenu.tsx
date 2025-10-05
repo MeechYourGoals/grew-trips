@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { X, User, Bell, Crown, LogOut } from 'lucide-react';
+import { X, User, Bell, Crown, LogOut, Building } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 import { ProUpgradeModal } from './ProUpgradeModal';
 import { EnterpriseSettings } from './EnterpriseSettings';
@@ -20,6 +21,7 @@ interface SettingsMenuProps {
 
 export const SettingsMenu = ({ isOpen, onClose, initialConsumerSection }: SettingsMenuProps) => {
   const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [showProModal, setShowProModal] = useState(false);
   const [activeSection, setActiveSection] = useState('profile');
   const [settingsType, setSettingsType] = useState<'consumer' | 'enterprise' | 'events'>('consumer');

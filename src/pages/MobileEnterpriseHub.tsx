@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Building2, Plus, Settings } from 'lucide-react';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -13,10 +13,14 @@ export const MobileEnterpriseHub = () => {
   const isMobile = useIsMobile();
   const [showCreateModal, setShowCreateModal] = useState(false);
   
-  const { organizations, loading } = useOrganization();
+  const { organizations, loading, fetchUserOrganizations } = useOrganization();
+
+  React.useEffect(() => {
+    fetchUserOrganizations();
+  }, []);
 
   if (!isMobile) {
-    navigate('/settings');
+    navigate('/organizations');
     return null;
   }
 

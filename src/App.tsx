@@ -27,6 +27,8 @@ const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const MorePage = lazy(() => import("./pages/MorePage"));
 const ArchivePage = lazy(() => import("./pages/ArchivePage"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard").then(module => ({ default: module.AdminDashboard })));
+const OrganizationDashboard = lazy(() => import("./pages/OrganizationDashboard").then(module => ({ default: module.OrganizationDashboard })));
+const OrganizationsHub = lazy(() => import("./pages/OrganizationsHub").then(module => ({ default: module.OrganizationsHub })));
 const MobileEnterpriseHub = lazy(() => import("./pages/MobileEnterpriseHub").then(module => ({ default: module.MobileEnterpriseHub })));
 const MobileOrganizationPage = lazy(() => import("./pages/MobileOrganizationPage").then(module => ({ default: module.MobileOrganizationPage })));
 
@@ -122,9 +124,14 @@ const App = () => {
                         <MobileEnterpriseHub />
                       </LazyRoute>
                     } />
+                    <Route path="/organizations" element={
+                      <LazyRoute>
+                        <OrganizationsHub />
+                      </LazyRoute>
+                    } />
                     <Route path="/organization/:orgId" element={
                       <LazyRoute>
-                        <MobileOrganizationPage />
+                        <OrganizationDashboard />
                       </LazyRoute>
                     } />
                     <Route path="*" element={
