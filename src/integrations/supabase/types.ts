@@ -464,6 +464,8 @@ export type Database = {
           role: string | null
           show_email: boolean | null
           show_phone: boolean | null
+          stripe_customer_id: string | null
+          subscription_product_id: string | null
           updated_at: string
           user_id: string
         }
@@ -481,6 +483,8 @@ export type Database = {
           role?: string | null
           show_email?: boolean | null
           show_phone?: boolean | null
+          stripe_customer_id?: string | null
+          subscription_product_id?: string | null
           updated_at?: string
           user_id: string
         }
@@ -498,6 +502,8 @@ export type Database = {
           role?: string | null
           show_email?: boolean | null
           show_phone?: boolean | null
+          stripe_customer_id?: string | null
+          subscription_product_id?: string | null
           updated_at?: string
           user_id?: string
         }

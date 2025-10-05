@@ -2,6 +2,9 @@
 import { useState, useEffect, createContext, useContext } from 'react';
 import { ConsumerSubscription } from '../types/consumer';
 import { useAuth } from './useAuth';
+import { supabase } from '@/integrations/supabase/client';
+import { STRIPE_PRODUCTS } from '@/constants/stripe';
+import { toast } from 'sonner';
 
 interface ConsumerSubscriptionContextType {
   subscription: ConsumerSubscription | null;
@@ -18,39 +21,66 @@ export const ConsumerSubscriptionProvider = ({ children }: { children: React.Rea
   const [subscription, setSubscription] = useState<ConsumerSubscription | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Mock subscription data - now defaulting to plus for all users
-  const mockSubscription: ConsumerSubscription = {
-    tier: 'plus', // Changed from 'free' to 'plus'
-    status: 'active'
-  };
-
   useEffect(() => {
     if (user) {
-      setSubscription(mockSubscription);
-    } else {
-      setSubscription(mockSubscription); // Even non-authenticated users get plus access
+      checkSubscription();
     }
   }, [user]);
 
   const checkSubscription = async () => {
+    if (!user) return;
+    
     setIsLoading(true);
-    // TODO: Implement actual subscription check with Supabase/Stripe
-    setTimeout(() => {
+    try {
+      const { data, error } = await supabase.functions.invoke('check-subscription');
+      
+      if (error) throw error;
+
+      const { subscribed, product_id, subscription_end } = data;
+      
+      // Check if user has Consumer Plus
+      const isConsumerPlus = product_id === STRIPE_PRODUCTS['consumer-plus'].product_id;
+      
+      setSubscription({
+        tier: isConsumerPlus ? 'plus' : 'free',
+        status: subscribed ? 'active' : 'expired',
+        subscriptionEndsAt: subscription_end,
+        stripeCustomerId: data.stripe_customer_id,
+      });
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+      setSubscription({ tier: 'free', status: 'expired' });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   const upgradeToPlus = async () => {
+    if (!user) {
+      toast.error('Please sign in to upgrade');
+      return;
+    }
+
     setIsLoading(true);
-    // TODO: Implement Stripe checkout for Plus
-    console.log('Upgrading to Plus...');
-    setTimeout(() => {
-      setSubscription(prev => prev ? { ...prev, tier: 'plus' } : null);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { tier: 'consumer-plus' }
+      });
+      
+      if (error) throw error;
+      
+      if (data.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast.error('Failed to start checkout');
+    } finally {
       setIsLoading(false);
-    }, 2000);
+    }
   };
 
-  const isPlus = true; // Always return true to remove paywall
+  const isPlus = subscription?.tier === 'plus' && subscription?.status === 'active';
 
   return (
     <ConsumerSubscriptionContext.Provider value={{

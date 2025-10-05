@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { X, Crown, Building, Sparkles, MessageCircle, Settings, Zap, Users, Shield, TrendingUp, Star, BarChart3, Calendar, Wallet, Globe, Phone, CalendarPlus, UserCheck, Clock, FileText, DollarSign, TrendingDown, Mail, Ticket, Megaphone, Paintbrush, Camera } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TRIPS_PLUS_PRICE, TRIPS_PLUS_ANNUAL_PRICE } from '../types/consumer';
+import { supabase } from '@/integrations/supabase/client';
+import { SUBSCRIPTION_TIER_MAP } from '@/constants/stripe';
+import { toast } from 'sonner';
 
 interface UpgradeModalProps {
   isOpen: boolean;
@@ -19,10 +22,26 @@ export const UpgradeModal = ({ isOpen, onClose }: UpgradeModalProps) => {
     if (selectedPlan === 'plus') {
       await upgradeToPlus();
       onClose();
+    } else if (selectedPlan === 'pro') {
+      // Handle Pro upgrade - use Pro Starter by default
+      try {
+        const { data, error } = await supabase.functions.invoke('create-checkout', {
+          body: { tier: 'pro-starter' }
+        });
+        
+        if (error) throw error;
+        
+        if (data.url) {
+          window.open(data.url, '_blank');
+          onClose();
+        }
+      } catch (error) {
+        console.error('Error creating checkout:', error);
+        toast.error('Failed to start checkout');
+      }
     } else {
-      // Handle Pro upgrade - activate Pro features
-      console.log('Upgrading to Pro...');
-      // TODO: Implement Pro activation logic
+      // Events tier - coming soon
+      toast.info('Events tier coming soon!');
       onClose();
     }
   };

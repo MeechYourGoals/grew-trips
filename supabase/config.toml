@@ -20,3 +20,9 @@ verify_jwt = true
 
 [functions.seed-demo-data]
 verify_jwt = false
+
+[functions.create-checkout]
+verify_jwt = true
+
+[functions.check-subscription]
+verify_jwt = true

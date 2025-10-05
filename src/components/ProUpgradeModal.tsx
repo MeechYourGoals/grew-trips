@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { X, Crown, Users, Shield, Zap, TrendingUp, Building, Star } from 'lucide-react';
 import { SUBSCRIPTION_TIERS } from '../types/pro';
 import { useIsMobile } from '../hooks/use-mobile';
+import { supabase } from '@/integrations/supabase/client';
+import { SUBSCRIPTION_TIER_MAP } from '@/constants/stripe';
+import { toast } from 'sonner';
 
 interface ProUpgradeModalProps {
   isOpen: boolean;
@@ -10,14 +13,29 @@ interface ProUpgradeModalProps {
 
 export const ProUpgradeModal = ({ isOpen, onClose }: ProUpgradeModalProps) => {
   const [selectedTier, setSelectedTier] = useState<'starter' | 'growing' | 'enterprise' | 'enterprise-plus'>('growing');
+  const [isLoading, setIsLoading] = useState(false);
   const isMobile = useIsMobile();
 
   if (!isOpen) return null;
 
-  const handleStartFreeTrial = (tier: string) => {
-    console.log(`Starting free trial for ${tier} tier`);
-    // TODO: Implement Pro activation logic
-    onClose();
+  const handleStartFreeTrial = async (tier: string) => {
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: { tier: SUBSCRIPTION_TIER_MAP[tier as keyof typeof SUBSCRIPTION_TIER_MAP] }
+      });
+      
+      if (error) throw error;
+      
+      if (data.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error) {
+      console.error('Error creating checkout:', error);
+      toast.error('Failed to start checkout');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const tierIcons = {
@@ -148,9 +166,10 @@ export const ProUpgradeModal = ({ isOpen, onClose }: ProUpgradeModalProps) => {
           <div className={`flex justify-center ${isMobile ? '' : ''}`}>
             <button
               onClick={() => handleStartFreeTrial(selectedTier)}
-              className="px-8 py-3 bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg"
+              disabled={isLoading}
+              className="px-8 py-3 bg-gradient-to-r from-glass-orange to-glass-yellow hover:from-glass-orange/80 hover:to-glass-yellow/80 text-white font-medium rounded-2xl transition-all duration-200 hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Start Free Trial - {SUBSCRIPTION_TIERS[selectedTier].name}
+              {isLoading ? 'Processing...' : `Start Free Trial - ${SUBSCRIPTION_TIERS[selectedTier].name}`}
             </button>
           </div>
         </div>
