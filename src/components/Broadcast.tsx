@@ -1,6 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Clock, MapPin, Users } from 'lucide-react';
+import { useBroadcastReactions, ReactionType, ReactionCounts } from '../hooks/useBroadcastReactions';
+import { BroadcastResponseButtons } from './broadcast/BroadcastResponseButtons';
 
 interface BroadcastProps {
   id: string;
@@ -10,13 +12,9 @@ interface BroadcastProps {
   location?: string;
   category: 'chill' | 'logistics' | 'urgent' | 'emergency';
   recipients: string;
-  responses: {
-    coming: number;
-    wait: number;
-    cant: number;
-  };
-  userResponse?: 'coming' | 'wait' | 'cant';
-  onRespond: (broadcastId: string, response: 'coming' | 'wait' | 'cant') => void;
+  responses: ReactionCounts;
+  userResponse?: ReactionType;
+  onRespond: (broadcastId: string, response: ReactionType) => void;
 }
 
 export const Broadcast = ({ 
@@ -27,10 +25,17 @@ export const Broadcast = ({
   location,
   category,
   recipients,
-  responses,
-  userResponse,
+  responses: initialResponses,
+  userResponse: initialUserResponse,
   onRespond
 }: BroadcastProps) => {
+  const { userResponse, responses, handleResponse } = useBroadcastReactions({
+    broadcastId: id,
+    initialResponses,
+    userResponse: initialUserResponse,
+    onRespond
+  });
+
   const getCategoryColors = () => {
     switch (category) {
       case 'chill':
@@ -57,10 +62,6 @@ export const Broadcast = ({
     } else {
       return date.toLocaleDateString();
     }
-  };
-
-  const handleResponse = (response: 'coming' | 'wait' | 'cant') => {
-    onRespond(id, response);
   };
 
   const formatRecipients = () => {
@@ -105,40 +106,11 @@ export const Broadcast = ({
       )}
 
       {/* Response Options */}
-      <div className="flex items-center gap-3">
-        <div className="flex gap-2">
-          <button
-            onClick={() => handleResponse('coming')}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1 ${
-              userResponse === 'coming' 
-                ? 'bg-green-600 text-white' 
-                : 'bg-slate-700 text-slate-300 hover:bg-green-600/50'
-            }`}
-          >
-            ✅ Coming ({responses.coming})
-          </button>
-          <button
-            onClick={() => handleResponse('wait')}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1 ${
-              userResponse === 'wait' 
-                ? 'bg-yellow-600 text-white' 
-                : 'bg-slate-700 text-slate-300 hover:bg-yellow-600/50'
-            }`}
-          >
-            ✋ Wait ({responses.wait})
-          </button>
-          <button
-            onClick={() => handleResponse('cant')}
-            className={`px-3 py-1 rounded-full text-xs font-medium transition-colors flex items-center gap-1 ${
-              userResponse === 'cant' 
-                ? 'bg-red-600 text-white' 
-                : 'bg-slate-700 text-slate-300 hover:bg-red-600/50'
-            }`}
-          >
-            ❌ Can't ({responses.cant})
-          </button>
-        </div>
-      </div>
+      <BroadcastResponseButtons
+        responses={responses}
+        userResponse={userResponse}
+        onRespond={handleResponse}
+      />
     </div>
   );
 };
