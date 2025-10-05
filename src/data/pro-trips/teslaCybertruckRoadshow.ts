@@ -6,7 +6,6 @@ export const teslaCybertruckRoadshow: ProTripData = {
   description: 'Tesla Cybertruck nationwide launch roadshow covering major markets across the United States.',
   location: 'Austin, TX',
   dateRange: 'Apr 1 - Jun 30, 2025',
-  category: 'Enterprise',
   proTripCategory: 'Business Travel',
   tags: ['Automotive', 'Product Launch', 'Enterprise'],
   basecamp_name: 'Tesla Gigafactory Texas',

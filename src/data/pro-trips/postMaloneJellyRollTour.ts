@@ -6,7 +6,7 @@ export const postMaloneJellyRollTour: ProTripData = {
   description: 'Major stadium tour featuring Post Malone and Jelly Roll across North America with full production crew.',
   location: 'Multiple Cities, USA',
   dateRange: 'Jun 1 - Sep 30, 2026',
-  category: 'Music Tour',
+  proTripCategory: 'Tour – Music, Comedy, etc.',
   tags: ['Stadium', 'North America', 'Hip-Hop', 'Country Rock'],
   basecamp_name: 'AT&T Stadium',
   basecamp_address: '1 AT&T Way, Arlington, TX 76011',

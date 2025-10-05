@@ -6,7 +6,7 @@ export const goldmanSachsRecruiting: ProTripData = {
   description: 'Campus recruiting visit to Georgia Tech featuring CEO keynote and networking events.',
   location: 'Atlanta, GA',
   dateRange: 'Sep 18 - Sep 19, 2025',
-  category: 'Business Travel',
+  proTripCategory: 'Business Travel',
   tags: ['Recruiting', 'Finance', 'Campus', 'Investment Banking'],
   basecamp_name: 'Georgia Tech Student Center',
   basecamp_address: '350 Ferst Drive NW, Atlanta, GA 30332',

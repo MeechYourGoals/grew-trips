@@ -30,6 +30,13 @@ export const getVisibleTabs = (userRole: string, userPermissions: string[], cate
   // Filter tabs based on category if provided
   if (category) {
     const categoryConfig = getCategoryConfig(category);
+    
+    // Defensive check: if category is invalid, log error and show all tabs
+    if (!categoryConfig) {
+      console.error(`Invalid ProTripCategory: "${category}". Showing all tabs.`);
+      return proTabs;
+    }
+    
     availableTabs = proTabs.filter(tab => 
       !tab.proOnly || categoryConfig.availableTabs.includes(tab.id) || ['chat', 'places', 'ai-chat'].includes(tab.id)
     );

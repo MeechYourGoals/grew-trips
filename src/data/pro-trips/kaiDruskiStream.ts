@@ -6,7 +6,6 @@ export const kaiDruskiStream: ProTripData = {
   description: '24-hour collaborative live-stream event featuring top content creators in Atlanta.',
   location: 'Atlanta, GA',
   dateRange: 'Aug 7 - Aug 8, 2025',
-  category: 'Entertainment',
   proTripCategory: 'Content',
   tags: ['Content', 'Live Stream', 'Gaming'],
   basecamp_name: 'State Farm Arena',

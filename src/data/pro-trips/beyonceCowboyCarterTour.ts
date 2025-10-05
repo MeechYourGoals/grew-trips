@@ -6,7 +6,6 @@ export const beyonceCowboyCarterTour: ProTripData = {
   description: 'International leg of Beyoncé Cowboy Carter World Tour covering major stadiums across Europe and Asia.',
   location: 'London, Paris, Tokyo, Sydney',
   dateRange: 'Mar 1 - Apr 30, 2025',
-  category: 'Entertainment',
   proTripCategory: 'Tour – Music, Comedy, etc.',
   tags: ['Music Tour', 'Concert', 'International'],
   basecamp_name: 'Wembley Stadium',

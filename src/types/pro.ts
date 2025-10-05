@@ -278,7 +278,7 @@ export interface ProTripData {
   description: string;
   location: string;
   dateRange: string;
-  category: string;
+  category?: string; // Legacy field - use proTripCategory instead
   // Updated category options - consolidated and simplified
   proTripCategory?:
     | 'Sports – Pro, Collegiate, Youth'

@@ -6,7 +6,6 @@ export const yCombinatorCohort: ProTripData = {
   description: 'Participation in Andreessen Horowitz Speedrun 2026 accelerator program in Menlo Park.',
   location: 'Menlo Park, CA',
   dateRange: 'Jan 15 - Mar 30, 2026',
-  category: 'Startup',
   proTripCategory: 'Other',
   tags: ['Startup', 'Accelerator', 'Andreessen Horowitz'],
   basecamp_name: 'Andreessen Horowitz HQ',

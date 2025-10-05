@@ -6,7 +6,6 @@ export const eliLillyCsuiteRetreat: ProTripData = {
   description: 'Executive strategic planning retreat at Terranea Resort for senior leadership team.',
   location: 'Terranea Resort, Rancho Palos Verdes CA',
   dateRange: 'Jan 15 - Jan 18, 2026',
-  category: 'Business Travel',
   proTripCategory: 'Business Travel',
   tags: ['Business Travel', 'Executive', 'Strategy'],
   basecamp_name: 'Terranea Resort',

@@ -6,7 +6,7 @@ export const paulGeorgeEliteAau: ProTripData = {
   description: 'AAU National Championship tournament for Paul George Elite 17U basketball team.',
   location: 'Orlando FL',
   dateRange: 'Jul 8 - Jul 14, 2025',
-  category: 'Sports – Team Trip',
+  proTripCategory: 'Sports – Pro, Collegiate, Youth',
   tags: ['Sports – Team Trip', 'Basketball', 'AAU', 'Nationals'],
   basecamp_name: 'Orange County Convention Center',
   basecamp_address: '9800 International Drive, Orlando, FL 32819',

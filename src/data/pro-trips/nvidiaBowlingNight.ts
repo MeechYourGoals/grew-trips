@@ -6,7 +6,7 @@ export const nvidiaBowlingNight: ProTripData = {
   description: 'Team building bowling event for NVIDIA employees with dinner and prizes.',
   location: 'Santa Clara, CA',
   dateRange: 'Dec 8, 2025',
-  category: 'Team-Building',
+  proTripCategory: 'Other',
   tags: ['Corporate Event', 'Tech', 'Entertainment', 'Employee Engagement'],
   basecamp_name: 'NVIDIA Headquarters',
   basecamp_address: '2788 San Tomas Expressway, Santa Clara, CA 95051',

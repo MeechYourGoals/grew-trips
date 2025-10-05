@@ -6,7 +6,6 @@ export const uncMensLacrosse: ProTripData = {
   description: 'University of North Carolina Tar Heels Men\'s Lacrosse 2025 season coordination and game travel.',
   location: 'Chapel Hill NC',
   dateRange: 'Feb 1 - May 31, 2025',
-  category: 'Sports',
   proTripCategory: 'Sports – Pro, Collegiate, Youth',
   tags: ['Sports', 'Lacrosse', 'NCAA Division I', 'UNC'],
   basecamp_name: 'Dorrance Field',

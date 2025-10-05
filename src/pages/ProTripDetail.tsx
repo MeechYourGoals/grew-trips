@@ -86,7 +86,6 @@ const ProTripDetail = () => {
     basecamp,
     broadcasts,
     links,
-    category: tripData.category,
     proTripCategory: tripData.proTripCategory,
     budget: tripData.budget,
     schedule: tripData.schedule,
@@ -125,7 +124,7 @@ const ProTripDetail = () => {
             description: tripData.description || '',
             participants: tripData.participants
           }}
-          category={tripData.category as ProTripCategory}
+          category={tripData.proTripCategory as ProTripCategory}
           tags={tripData.tags}
           onCategoryChange={() => {}}
         />
@@ -139,7 +138,7 @@ const ProTripDetail = () => {
           tripPreferences={tripPreferences}
           onPreferencesChange={setTripPreferences}
           tripData={tripData}
-          selectedCategory={tripData.category as ProTripCategory}
+          selectedCategory={tripData.proTripCategory as ProTripCategory}
         />
 
         <TripDetailModals
