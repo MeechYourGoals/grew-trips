@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Search, User, Settings, MoreHorizontal } from 'lucide-react';
+import { Home, Search, Building2, Settings, MoreHorizontal } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { hapticService } from '@/services/hapticService';
 
 interface MobileBottomNavProps {
   className?: string;
@@ -28,11 +29,11 @@ export const MobileBottomNav = ({ className }: MobileBottomNavProps) => {
       isActive: location.pathname.includes('/search')
     },
     {
-      id: 'profile',
-      label: 'Profile',
-      icon: User,
-      path: '/profile',
-      isActive: location.pathname.includes('/profile')
+      id: 'enterprise',
+      label: 'Enterprise',
+      icon: Building2,
+      path: '/enterprise',
+      isActive: location.pathname.includes('/enterprise') || location.pathname.includes('/organization')
     },
     {
       id: 'settings',
@@ -50,12 +51,9 @@ export const MobileBottomNav = ({ className }: MobileBottomNavProps) => {
     }
   ];
 
-  const handleTabPress = (tab: typeof tabs[0]) => {
-    // Add haptic feedback if available
-    if ('vibrate' in navigator) {
-      navigator.vibrate(10);
-    }
-    
+  const handleTabPress = async (tab: typeof tabs[0]) => {
+    // Add haptic feedback
+    await hapticService.light();
     navigate(tab.path);
   };
 

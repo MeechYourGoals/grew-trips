@@ -27,6 +27,8 @@ const SettingsPage = lazy(() => import("./pages/SettingsPage"));
 const MorePage = lazy(() => import("./pages/MorePage"));
 const ArchivePage = lazy(() => import("./pages/ArchivePage"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard").then(module => ({ default: module.AdminDashboard })));
+const MobileEnterpriseHub = lazy(() => import("./pages/MobileEnterpriseHub").then(module => ({ default: module.MobileEnterpriseHub })));
+const MobileOrganizationPage = lazy(() => import("./pages/MobileOrganizationPage").then(module => ({ default: module.MobileOrganizationPage })));
 
 
 const queryClient = new QueryClient();
@@ -113,6 +115,16 @@ const App = () => {
                     <Route path="/admin/scheduled-messages" element={
                       <LazyRoute>
                         <AdminDashboard />
+                      </LazyRoute>
+                    } />
+                    <Route path="/enterprise" element={
+                      <LazyRoute>
+                        <MobileEnterpriseHub />
+                      </LazyRoute>
+                    } />
+                    <Route path="/organization/:orgId" element={
+                      <LazyRoute>
+                        <MobileOrganizationPage />
                       </LazyRoute>
                     } />
                     <Route path="*" element={
