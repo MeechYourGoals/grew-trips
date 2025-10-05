@@ -1,7 +1,9 @@
 /**
  * Platform-agnostic persistent storage
  * Web: Uses localStorage
- * Mobile: Would use AsyncStorage or MMKV
+ * Mobile: Will use Capacitor Preferences when Capacitor is fully integrated
+ * 
+ * TODO: Enable MobileStorage implementation when @capacitor/preferences is installed
  */
 
 export interface PlatformStorage {
@@ -46,4 +48,31 @@ class WebStorage implements PlatformStorage {
   }
 }
 
+// Create singleton storage instance
+// Currently uses WebStorage for all platforms
+// MobileStorage with Capacitor Preferences will be enabled in mobile-specific builds
 export const platformStorage: PlatformStorage = new WebStorage();
+
+// Helper functions for typed storage
+export async function getStorageItem<T>(key: string, defaultValue?: T): Promise<T | null> {
+  const value = await platformStorage.getItem(key);
+  
+  if (value === null) {
+    return defaultValue ?? null;
+  }
+  
+  try {
+    return JSON.parse(value) as T;
+  } catch {
+    return value as any;
+  }
+}
+
+export async function setStorageItem<T>(key: string, value: T): Promise<void> {
+  const serialized = typeof value === 'string' ? value : JSON.stringify(value);
+  await platformStorage.setItem(key, serialized);
+}
+
+export async function removeStorageItem(key: string): Promise<void> {
+  await platformStorage.removeItem(key);
+}

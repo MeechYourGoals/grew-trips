@@ -12,6 +12,8 @@ import { ErrorBoundary } from "./components/ErrorBoundary";
 import { LazyRoute } from "./components/LazyRoute";
 import { performanceService } from "./services/performanceService";
 import { useDemoModeStore } from "./store/demoModeStore";
+import { errorTracking } from "./services/errorTracking";
+import { supabase } from "./integrations/supabase/client";
 
 // Lazy load pages for better performance
 const Index = lazy(() => import("./pages/Index"));
@@ -47,6 +49,19 @@ const App = () => {
   // Initialize demo mode store once on mount
   useEffect(() => {
     useDemoModeStore.getState().init();
+  }, []);
+
+  // Initialize error tracking with user context
+  useEffect(() => {
+    errorTracking.init({ environment: import.meta.env.MODE });
+    
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        errorTracking.setUser(data.user.id, {
+          email: data.user.email
+        });
+      }
+    });
   }, []);
 
   return (
