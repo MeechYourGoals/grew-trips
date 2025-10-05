@@ -32,7 +32,6 @@ export const CategoryEventForms = ({ category, isOpen, onClose, onSubmit, select
     priceRange: '',
     duration: '',
     difficulty: '',
-    equipmentNeeded: '',
     dressCode: '',
     coverCharge: '',
     ageRequirement: ''
@@ -54,7 +53,6 @@ export const CategoryEventForms = ({ category, isOpen, onClose, onSubmit, select
       priceRange: '',
       duration: '',
       difficulty: '',
-      equipmentNeeded: '',
       dressCode: '',
       coverCharge: '',
       ageRequirement: ''
@@ -159,13 +157,6 @@ export const CategoryEventForms = ({ category, isOpen, onClose, onSubmit, select
                 <option value="expert">Expert</option>
               </select>
             </div>
-            <input
-              type="text"
-              placeholder="Equipment needed"
-              value={formData.equipmentNeeded}
-              onChange={(e) => setFormData({...formData, equipmentNeeded: e.target.value})}
-              className="w-full bg-gray-800 border border-gray-600 rounded-lg px-3 py-2 text-white placeholder-gray-400 focus:outline-none focus:border-yellow-500"
-            />
           </>
         );
 

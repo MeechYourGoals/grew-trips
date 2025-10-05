@@ -28,7 +28,7 @@ export const paulGeorgeEliteAau: ProTripData = {
       const coaches = ['Matt Barnes', 'Brandon Lincoln', 'Byron Joseph', 'Jerald Dickson', 'Dave McClure', 'Travis Oscar', 'Eddie Cruz', 'Paul George', 'Assistant Coach 1', 'Assistant Coach 2'];
       return { id, name: coaches[i] || `Coach ${i + 1}`, avatar: avatars[i % avatars.length], role: 'Coaches' };
     } else if (i < 20) {
-      const staff = ['Team Manager', 'Equipment Manager', 'Team Doctor', 'Athletic Trainer', 'Team Photographer', 'Video Coordinator', 'Nutrition Specialist', 'Transportation Coordinator', 'Team Administrator', 'Academic Advisor'];
+      const staff = ['Team Manager', 'Logistics Manager', 'Team Doctor', 'Athletic Trainer', 'Team Photographer', 'Video Coordinator', 'Nutrition Specialist', 'Transportation Coordinator', 'Team Administrator', 'Academic Advisor'];
       return { id, name: staff[i - 10] || `Staff ${i - 9}`, avatar: avatars[i % avatars.length], role: 'Staff' };
     } else if (i < 100) {
       const playerNames = ['Carter Bryant', 'Jaden DePina', 'James Evans Jr.', 'Ifiok Peter', 'Michael Johnson', 'David Williams', 'Chris Brown', 'Kevin Davis', 'Anthony Miller', 'Brandon Wilson'];
@@ -205,38 +205,6 @@ export const paulGeorgeEliteAau: ProTripData = {
       checkOut: '2025-07-14T11:00:00Z',
       roomType: 'double',
       specialRequests: ['connecting-rooms']
-    }
-  ],
-  equipment: [
-    {
-      id: 'eq-pg1',
-      name: 'Team Practice Basketballs (15)',
-      category: 'sports',
-      quantity: 15,
-      location: 'Equipment Bus',
-      status: 'packed',
-      assignedTo: '101',
-      notes: 'Official Spalding TF-1000 basketballs'
-    },
-    {
-      id: 'eq-pg2',
-      name: 'Team Uniforms - Red Jersey Set',
-      category: 'general',
-      quantity: 15,
-      location: 'Equipment Bus',
-      status: 'packed',
-      assignedTo: '104',
-      notes: 'Home red jerseys for tournament games'
-    },
-    {
-      id: 'eq-pg3',
-      name: 'Training Table Setup',
-      category: 'general',
-      quantity: 1,
-      location: 'Medical Bus',
-      status: 'packed',
-      assignedTo: '107',
-      notes: 'Portable training table with supplies'
     }
   ],
   schedule: [

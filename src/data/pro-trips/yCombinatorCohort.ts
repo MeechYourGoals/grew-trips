@@ -117,18 +117,6 @@ export const yCombinatorCohort: ProTripData = {
       specialRequests: ['startup-workspace', 'high-speed-internet']
     }
   ],
-  equipment: [
-    {
-      id: 'eq-yc1',
-      name: 'Development Laptops (3)',
-      category: 'general',
-      quantity: 3,
-      location: 'Apartment',
-      status: 'setup',
-      assignedTo: '24',
-      notes: 'High-performance development machines'
-    }
-  ],
   schedule: [
     {
       id: 'sched-yc1',

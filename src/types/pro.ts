@@ -79,17 +79,6 @@ export interface RoomAssignment {
   specialRequests?: string[];
 }
 
-export interface Equipment {
-  id: string;
-  name: string;
-  category: 'audio' | 'video' | 'lighting' | 'instruments' | 'sports' | 'general';
-  quantity: number;
-  location: string;
-  status: 'packed' | 'in-transit' | 'delivered' | 'setup' | 'missing';
-  assignedTo?: string;
-  notes?: string;
-  trackingNumber?: string;
-}
 
 export interface ProSchedule {
   id: string;
@@ -378,7 +367,6 @@ export interface ProTripData {
   // Enhanced Pro features
   roster: ProParticipant[];
   roomAssignments: RoomAssignment[];
-  equipment: Equipment[];
   schedule: ProSchedule[];
   perDiem: PerDiemData;
   settlement: SettlementData[];
@@ -400,7 +388,6 @@ export const SUBSCRIPTION_TIERS = {
       'Broadcast messaging with translation',
       'Shared itinerary building',
       'Travel wallet integration',
-      'Equipment tracking',
       'Basic compliance tools',
       'Email support'
     ]
@@ -416,7 +403,6 @@ export const SUBSCRIPTION_TIERS = {
       'Travel booking integrations (Saber, Concur)',
       'Financial tools integration',
       'Travel wallet & rewards tracking',
-      'Equipment QR code tracking',
       'Advanced compliance & reporting',
       'Priority phone support',
       'Custom branding options',

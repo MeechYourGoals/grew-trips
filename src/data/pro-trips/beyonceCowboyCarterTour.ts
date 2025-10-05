@@ -159,40 +159,17 @@ export const beyonceCowboyCarterTour: ProTripData = {
       specialRequests: ['extra-security', 'private-entrance', 'soundproofing']
     }
   ],
-  equipment: [
-    {
-      id: 'eq-ts1',
-      name: 'Main Sound System',
-      category: 'audio',
-      quantity: 1,
-      location: 'Production Truck #1',
-      status: 'in-transit',
-      assignedTo: '8',
-      notes: 'L-Acoustics K2 line array system',
-      trackingNumber: 'TR-2025-001'
-    },
-    {
-      id: 'eq-ts2',
-      name: 'Stage Lighting Rig',
-      category: 'lighting',
-      quantity: 1,
-      location: 'Production Truck #2',
-      status: 'in-transit',
-      assignedTo: '6',
-      notes: 'Complete LED lighting system with moving heads'
-    }
-  ],
   schedule: [
     {
       id: 'sched-ts1',
       type: 'load-in',
-      title: 'Equipment Load-in',
+      title: 'Production Load-in',
       startTime: '2025-03-01T08:00:00Z',
       endTime: '2025-03-01T12:00:00Z',
       location: 'Wembley Stadium Loading Dock',
       participants: ['6', '8'],
       priority: 'critical',
-      notes: 'All production equipment must be in place before sound check'
+      notes: 'All production gear must be in place before sound check'
     }
   ],
   perDiem: {

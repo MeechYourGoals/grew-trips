@@ -98,13 +98,11 @@ export class EnhancedTripContextService {
       }],
       confirmationNumbers: {
         venue: 'VEN-' + Math.random().toString(36).substr(2, 9),
-        transportation: 'TRN-' + Math.random().toString(36).substr(2, 9),
-        equipment: 'EQP-' + Math.random().toString(36).substr(2, 9),
+        transportation: 'TRN-' + Math.random().toString(36).substr(2, 9)
       },
       isPro: true,
       proData: {
-        category: proTrip.category || 'professional',
-        equipment: (proTrip.equipment || []).map(e => typeof e === 'string' ? e : e.name)
+        category: proTrip.category || 'professional'
       }
     };
   }

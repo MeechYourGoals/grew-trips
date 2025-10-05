@@ -16,7 +16,7 @@ interface AddMemberModalProps {
 
 const getRolesByCategory = (category: TripCategory): string[] => {
   const roleMap: Record<TripCategory, string[]> = {
-    'Sports – Pro, Collegiate, Youth': ['Player', 'Coach', 'Assistant Coach', 'Trainer', 'Equipment Manager', 'Team Manager', 'Student-Athlete', 'Athletic Director'],
+    'Sports – Pro, Collegiate, Youth': ['Player', 'Coach', 'Assistant Coach', 'Trainer', 'Team Manager', 'Student-Athlete', 'Athletic Director'],
     'Tour – Music, Comedy, etc.': ['Artist', 'Tour Manager', 'Sound Engineer', 'Lighting Tech', 'Crew', 'Security', 'Photographer', 'Comedian', 'Performer'],
     'Business Travel': ['Executive', 'Manager', 'Employee', 'Consultant', 'Client', 'Admin', 'Participant', 'Organizer'],
     'School Trip': ['Student', 'Teacher', 'Chaperone', 'Guide', 'Bus Driver', 'Admin'],

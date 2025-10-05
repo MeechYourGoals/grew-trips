@@ -94,18 +94,6 @@ export const googleIO2026: ProTripData = {
       specialRequests: ['executive-floor', 'private-check-in']
     }
   ],
-  equipment: [
-    {
-      id: 'eq-gio1',
-      name: 'AI Demo Hardware Setup',
-      category: 'general',
-      quantity: 1,
-      location: 'Demo Pavilion',
-      status: 'setup',
-      assignedTo: '2',
-      notes: 'Latest AI/ML hardware for live demonstrations'
-    }
-  ],
   schedule: [
     {
       id: 'sched-gio1',

@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { useToast } from '@/hooks/use-toast';
 
 interface ParseConfig {
-  targetType: 'roster' | 'schedule' | 'equipment' | 'events';
+  targetType: 'roster' | 'schedule' | 'events';
   expectedFields: string[];
   description: string;
 }
@@ -29,7 +29,6 @@ export const SmartImport = ({ targetCollection, parseConfig, onDataImported, cla
     switch (parseConfig.targetType) {
       case 'roster': return Users;
       case 'schedule': return Calendar;
-      case 'equipment': return Package;
       case 'events': return Calendar;
       default: return FileText;
     }
@@ -282,13 +281,6 @@ function processImportedData(data: any, targetType: string): any[] {
       if (data.games) return data.games;
       if (data.events) return data.events;
       if (data.schedule) return data.schedule;
-      if (Array.isArray(data)) return data;
-      break;
-    
-    case 'equipment':
-      if (data.equipment) return data.equipment;
-      if (data.items) return data.items;
-      if (data.inventory) return data.inventory;
       if (Array.isArray(data)) return data;
       break;
     

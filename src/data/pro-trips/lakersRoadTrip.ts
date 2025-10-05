@@ -34,7 +34,7 @@ export const lakersRoadTrip: ProTripData = {
     { id: 19, name: 'Team Doctor', avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=40&h=40&fit=crop&crop=face', role: 'Medical Staff' },
     { id: 20, name: 'Head Trainer', avatar: 'https://images.unsplash.com/photo-1519345182560-3f2917c472ef?w=40&h=40&fit=crop&crop=face', role: 'Medical Staff' },
     { id: 21, name: 'Team Manager', avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=40&h=40&fit=crop&crop=face', role: 'Team Operations' },
-    { id: 22, name: 'Equipment Manager', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Team Operations' }
+    { id: 22, name: 'Logistics Coordinator', avatar: 'https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=40&h=40&fit=crop&crop=face', role: 'Team Operations' }
   ],
   budget: {
     total: 150000,
@@ -43,7 +43,7 @@ export const lakersRoadTrip: ProTripData = {
       { name: 'Travel', budgeted: 60000, spent: 20000 },
       { name: 'Accommodation', budgeted: 50000, spent: 15000 },
       { name: 'Meals', budgeted: 30000, spent: 8000 },
-      { name: 'Equipment', budgeted: 10000, spent: 2000 }
+      { name: 'Logistics', budgeted: 10000, spent: 2000 }
     ]
   },
   itinerary: [
@@ -101,18 +101,6 @@ export const lakersRoadTrip: ProTripData = {
       checkOut: '2025-01-21T11:00:00Z',
       roomType: 'suite',
       specialRequests: ['late-checkout', 'quiet-floor']
-    }
-  ],
-  equipment: [
-    {
-      id: 'eq-1',
-      name: 'Team Basketball Equipment',
-      category: 'sports',
-      quantity: 50,
-      location: 'Equipment Truck',
-      status: 'packed',
-      assignedTo: '3',
-      notes: 'Includes basketballs, training gear, medical supplies'
     }
   ],
   schedule: [

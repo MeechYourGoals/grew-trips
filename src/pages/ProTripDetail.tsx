@@ -92,7 +92,6 @@ const ProTripDetail = () => {
     schedule: tripData.schedule,
     roster: tripData.roster,
     roomAssignments: tripData.roomAssignments,
-    equipment: tripData.equipment,
     perDiem: tripData.perDiem,
     settlement: tripData.settlement,
     medical: tripData.medical,

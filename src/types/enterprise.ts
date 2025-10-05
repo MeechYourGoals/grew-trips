@@ -37,16 +37,6 @@ export interface ShowScheduleItem {
   status: 'scheduled' | 'confirmed' | 'completed' | 'cancelled';
 }
 
-export interface EquipmentItem {
-  id: string;
-  name: string;
-  category: 'audio' | 'video' | 'lighting' | 'instruments' | 'sports' | 'general';
-  quantity: number;
-  insuredValue: number;
-  status: 'packed' | 'in-transit' | 'delivered' | 'setup' | 'missing';
-  trackingNumber?: string;
-  assignedTo?: string;
-}
 
 export interface CredentialZone {
   id: string;

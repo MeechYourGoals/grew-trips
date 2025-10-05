@@ -25,7 +25,7 @@ export const kaiDruskiStream: ProTripData = {
       { name: 'Production', budgeted: 75000, spent: 25000 },
       { name: 'Accommodation', budgeted: 30000, spent: 10000 },
       { name: 'Catering', budgeted: 25000, spent: 7000 },
-      { name: 'Equipment Rental', budgeted: 20000, spent: 3000 }
+      { name: 'Production Rental', budgeted: 20000, spent: 3000 }
     ]
   },
   itinerary: [
@@ -95,18 +95,6 @@ export const kaiDruskiStream: ProTripData = {
       checkOut: '2025-08-08T14:00:00Z',
       roomType: 'suite',
       specialRequests: ['late-checkout', 'soundproofing']
-    }
-  ],
-  equipment: [
-    {
-      id: 'eq-stream1',
-      name: 'Multi-Camera Live Stream Setup',
-      category: 'video',
-      quantity: 1,
-      location: 'Main Studio',
-      status: 'setup',
-      assignedTo: '1',
-      notes: '8-camera setup with wireless streaming capabilities'
     }
   ],
   schedule: [

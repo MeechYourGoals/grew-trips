@@ -34,7 +34,7 @@ export const ohioStateNotreDame: ProTripData = {
       const playerNumber = Math.floor((i - 15) / 11) + 1;
       return { id, name: `${position} Player ${playerNumber}`, avatar: avatars[i % avatars.length], role: 'Players' };
     } else if (i < 115) {
-      const medical = ['Head Team Doctor', 'Orthopedic Surgeon', 'Athletic Trainer 1', 'Athletic Trainer 2', 'Athletic Trainer 3', 'Physical Therapist', 'Massage Therapist', 'Nutritionist', 'Mental Health Specialist', 'Team Chaplain', 'Equipment Manager', 'Assistant Equipment Manager', 'Video Coordinator', 'Technology Specialist', 'Academic Advisor'];
+      const medical = ['Head Team Doctor', 'Orthopedic Surgeon', 'Athletic Trainer 1', 'Athletic Trainer 2', 'Athletic Trainer 3', 'Physical Therapist', 'Massage Therapist', 'Nutritionist', 'Mental Health Specialist', 'Team Chaplain', 'Logistics Manager', 'Assistant Logistics Manager', 'Video Coordinator', 'Technology Specialist', 'Academic Advisor'];
       return { id, name: medical[i - 100] || `Medical Staff ${i - 99}`, avatar: avatars[i % avatars.length], role: 'Medical Staff' };
     } else if (i < 135) {
       const admin = ['Athletic Director', 'Team Manager', 'Operations Manager', 'Travel Coordinator', 'Compliance Officer', 'Sports Information Director', 'Media Relations', 'Security Chief', 'Bus Driver 1', 'Bus Driver 2', 'Team Chef', 'Logistics Coordinator', 'Administrative Assistant 1', 'Administrative Assistant 2', 'Guest Relations'];
@@ -51,7 +51,7 @@ export const ohioStateNotreDame: ProTripData = {
       { name: 'Travel', budgeted: 80000, spent: 25000 },
       { name: 'Accommodation', budgeted: 70000, spent: 20000 },
       { name: 'Meals', budgeted: 50000, spent: 15000 },
-      { name: 'Equipment', budgeted: 50000, spent: 15000 }
+      { name: 'Logistics', budgeted: 50000, spent: 15000 }
     ]
   },
   itinerary: [
@@ -122,18 +122,6 @@ export const ohioStateNotreDame: ProTripData = {
       checkOut: '2025-09-14T11:00:00Z',
       roomType: 'suite',
       specialRequests: ['late-checkout', 'quiet-floor']
-    }
-  ],
-  equipment: [
-    {
-      id: 'eq-osu1',
-      name: 'Team Football Equipment',
-      category: 'sports',
-      quantity: 85,
-      location: 'Equipment Bus',
-      status: 'packed',
-      assignedTo: '4',
-      notes: 'Helmets, pads, uniforms, medical supplies'
     }
   ],
   schedule: [

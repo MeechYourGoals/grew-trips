@@ -34,7 +34,7 @@ export const uncMensLacrosse: ProTripData = {
       const playerNumber = Math.floor((i - 6) / 12) + 1;
       return { id, name: players[playerIndex] || `Player ${i - 5}`, avatar: avatars[i % avatars.length], role: 'Players' };
     } else {
-      const staff = ['Team Manager', 'Equipment Manager', 'Athletic Trainer', 'Academic Coordinator', 'Video Coordinator', 'Strength Coach', 'Team Doctor', 'Bus Driver', 'Administrative Assistant', 'Compliance Officer'];
+      const staff = ['Team Manager', 'Logistics Manager', 'Athletic Trainer', 'Academic Coordinator', 'Video Coordinator', 'Strength Coach', 'Team Doctor', 'Bus Driver', 'Administrative Assistant', 'Compliance Officer'];
       return { id, name: staff[i - 35] || `Staff ${i - 34}`, avatar: avatars[i % avatars.length], role: 'Staff' };
     }
   }),
@@ -45,7 +45,7 @@ export const uncMensLacrosse: ProTripData = {
       { name: 'Travel', budgeted: 45000, spent: 18000 },
       { name: 'Accommodation', budgeted: 35000, spent: 15000 },
       { name: 'Meals', budgeted: 25000, spent: 8000 },
-      { name: 'Equipment', budgeted: 20000, spent: 4000 }
+      { name: 'Logistics', budgeted: 20000, spent: 4000 }
     ]
   },
   itinerary: [
@@ -258,38 +258,6 @@ export const uncMensLacrosse: ProTripData = {
       checkOut: '2025-03-21T11:00:00Z',
       roomType: 'connecting',
       specialRequests: ['team-floor']
-    }
-  ],
-  equipment: [
-    {
-      id: 'eq-unc1',
-      name: 'Team Lacrosse Sticks (Set of 30)',
-      category: 'sports',
-      quantity: 30,
-      location: 'Equipment Bus',
-      status: 'packed',
-      assignedTo: '202',
-      notes: 'Game and practice sticks for all positions'
-    },
-    {
-      id: 'eq-unc2',
-      name: 'Team Uniforms - Carolina Blue Home Set',
-      category: 'general',
-      quantity: 25,
-      location: 'Equipment Bus',
-      status: 'packed',
-      assignedTo: '204',
-      notes: 'Home Carolina Blue jerseys and shorts'
-    },
-    {
-      id: 'eq-unc3',
-      name: 'Training Equipment & Cones',
-      category: 'sports',
-      quantity: 1,
-      location: 'Equipment Bus',
-      status: 'packed',
-      assignedTo: '203',
-      notes: 'Agility cones, training balls, and practice equipment'
     }
   ],
   schedule: [

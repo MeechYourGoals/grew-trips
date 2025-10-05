@@ -93,18 +93,6 @@ export const realHousewivesAtlShoot: ProTripData = {
       specialRequests: ['luxury-amenities', 'privacy', 'late-checkout']
     }
   ],
-  equipment: [
-    {
-      id: 'eq-rh1',
-      name: 'Professional Camera Kit',
-      category: 'video',
-      quantity: 3,
-      location: 'Production Truck',
-      status: 'setup',
-      assignedTo: '29',
-      notes: '4K cameras with full lighting kit'
-    }
-  ],
   schedule: [
     {
       id: 'sched-rh1',

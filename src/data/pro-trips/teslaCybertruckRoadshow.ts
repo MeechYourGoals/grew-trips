@@ -97,18 +97,6 @@ export const teslaCybertruckRoadshow: ProTripData = {
       specialRequests: ['private-entrance', 'security-detail']
     }
   ],
-  equipment: [
-    {
-      id: 'eq-tesla1',
-      name: 'Cybertruck Display Vehicles (5)',
-      category: 'general',
-      quantity: 5,
-      location: 'Mobile Display Fleet',
-      status: 'in-transit',
-      assignedTo: '3',
-      notes: 'Production Cybertrucks for nationwide tour'
-    }
-  ],
   schedule: [
     {
       id: 'sched-tesla1',

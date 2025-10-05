@@ -28,14 +28,6 @@ const mockTemplates: MessageTemplate[] = [
     placeholders: ['time', 'location', 'additional_info']
   },
   {
-    id: '2',
-    name: 'Equipment Check',
-    content: "Don't forget to bring your {{equipment_list}} for tomorrow's {{event}}. Contact {{contact_person}} if you have questions.",
-    category: 'reminder',
-    tripType: 'sports',
-    placeholders: ['equipment_list', 'event', 'contact_person']
-  },
-  {
     id: '3',
     name: 'Sound Check',
     content: 'Sound check at {{time}} in {{venue}}. All {{role}} members must attend. {{technical_notes}}',

@@ -153,6 +153,5 @@ export interface TripContext {
   broadcasts?: any[];
   proData?: {
     category: string;
-    equipment?: string[];
   };
 }

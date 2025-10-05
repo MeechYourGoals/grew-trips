@@ -94,7 +94,6 @@ export const harrisElementaryFieldTrip: ProTripData = {
       specialRequests: ['student-supervision', 'extra-security']
     }
   ],
-  equipment: [],
   schedule: [
     {
       id: 'sched-he1',

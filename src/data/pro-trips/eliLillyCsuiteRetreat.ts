@@ -113,7 +113,6 @@ export const eliLillyCsuiteRetreat: ProTripData = {
       specialRequests: ['executive-amenities', 'late-checkout']
     }
   ],
-  equipment: [],
   schedule: [
     {
       id: 'sched-el1',
@@ -124,7 +123,7 @@ export const eliLillyCsuiteRetreat: ProTripData = {
       location: 'Executive Boardroom',
       participants: ['11'],
       priority: 'medium',
-      notes: 'Prepare materials and AV equipment'
+      notes: 'Prepare materials and AV setup'
     }
   ],
   perDiem: {
