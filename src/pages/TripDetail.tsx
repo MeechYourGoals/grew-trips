@@ -11,8 +11,11 @@ import { useMessages } from '../hooks/useMessages';
 import { TripPreferences as TripPreferencesType } from '../types/consumer';
 import { getTripById, generateTripMockData } from '../data/tripsData';
 import { useNavigate } from 'react-router-dom';
+import { useIsMobile } from '../hooks/use-mobile';
+import { MobileTripDetail } from './MobileTripDetail';
 
 const TripDetail = () => {
+  const isMobile = useIsMobile();
   const { tripId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -91,6 +94,12 @@ const TripDetail = () => {
     isPro: false
   };
 
+  // Mobile-first conditional render - Zero impact on desktop
+  if (isMobile) {
+    return <MobileTripDetail />;
+  }
+
+  // Desktop experience remains completely unchanged
   return (
     <div className="min-h-screen bg-black">
       <div className="container mx-auto px-6 py-8 max-w-7xl">
