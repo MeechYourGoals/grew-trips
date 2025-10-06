@@ -1,16 +1,14 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { MessagingFactory } from '@/services/messaging/MessagingFactory';
-import { IMessagingProvider, Message, SendMessageOptions } from '@/services/messaging/IMessagingProvider';
+import { unifiedMessagingService, Message, SendMessageOptions } from '@/services/unifiedMessagingService';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
 interface UseUnifiedMessagesOptions {
   tripId: string;
-  tripType: 'consumer' | 'pro' | 'event';
   enabled?: boolean;
 }
 
-export function useUnifiedMessages({ tripId, tripType, enabled = true }: UseUnifiedMessagesOptions) {
+export function useUnifiedMessages({ tripId, enabled = true }: UseUnifiedMessagesOptions) {
   const { toast } = useToast();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -20,7 +18,7 @@ export function useUnifiedMessages({ tripId, tripType, enabled = true }: UseUnif
     email?: string;
     user_metadata?: Record<string, unknown>;
   } | null>(null);
-  const providerRef = useRef<IMessagingProvider | null>(null);
+  const unsubscribeRef = useRef<(() => void) | null>(null);
 
   // Get current user
   useEffect(() => {
@@ -29,40 +27,32 @@ export function useUnifiedMessages({ tripId, tripType, enabled = true }: UseUnif
     });
   }, []);
 
-  // Initialize provider
+  // Initialize messaging
   useEffect(() => {
     if (!enabled || !user || !tripId) return;
 
-    const initProvider = async () => {
+    const initMessaging = async () => {
       try {
-        const provider = MessagingFactory.getProvider(tripId, tripType);
-        providerRef.current = provider;
-
-        // Connect if not already connected
-        if (!provider.isConnected()) {
-          await provider.connect({
-            tripId,
-            userId: user.id,
-            userName: user.email || 'Unknown User',
-            userAvatar: (user.user_metadata?.avatar_url as string | undefined) || undefined
-          });
-        }
-
-        // Subscribe to new messages
-        const unsubscribe = provider.onMessage((message) => {
-          setMessages(prev => [...prev, message]);
-        });
-
         // Load initial messages
-        const initialMessages = await provider.getMessages(50);
+        const initialMessages = await unifiedMessagingService.getMessages(tripId, 50);
         setMessages(initialMessages);
-        setIsLoading(false);
 
-        return () => {
-          unsubscribe();
-        };
+        // Subscribe to real-time updates
+        const unsubscribe = await unifiedMessagingService.subscribeToTrip(
+          tripId,
+          (message) => {
+            setMessages(prev => {
+              // Avoid duplicates
+              if (prev.some(m => m.id === message.id)) return prev;
+              return [...prev, message];
+            });
+          }
+        );
+
+        unsubscribeRef.current = unsubscribe;
+        setIsLoading(false);
       } catch (error) {
-        console.error('Failed to initialize messaging provider:', error);
+        console.error('Failed to initialize messaging:', error);
         toast({
           title: 'Connection Error',
           description: 'Failed to connect to messaging service',
@@ -72,22 +62,22 @@ export function useUnifiedMessages({ tripId, tripType, enabled = true }: UseUnif
       }
     };
 
-    initProvider();
+    initMessaging();
 
     // Cleanup on unmount
     return () => {
-      if (providerRef.current) {
-        MessagingFactory.releaseProvider(tripId, tripType);
+      if (unsubscribeRef.current) {
+        unsubscribeRef.current();
       }
     };
-  }, [enabled, user, tripId, tripType, toast]);
+  }, [enabled, user, tripId, toast]);
 
   // Send message
-  const sendMessage = useCallback(async (options: SendMessageOptions) => {
-    if (!providerRef.current || !providerRef.current.isConnected()) {
+  const sendMessage = useCallback(async (content: string) => {
+    if (!user) {
       toast({
-        title: 'Not Connected',
-        description: 'Please wait for connection to establish',
+        title: 'Not Authenticated',
+        description: 'Please sign in to send messages',
         variant: 'destructive'
       });
       return;
@@ -95,9 +85,13 @@ export function useUnifiedMessages({ tripId, tripType, enabled = true }: UseUnif
 
     setIsSending(true);
     try {
-      const message = await providerRef.current.sendMessage(options);
-      // Message will be added via onMessage callback for consistency
-      return message;
+      const userName = user.email?.split('@')[0] || 'Unknown User';
+      await unifiedMessagingService.sendMessage({
+        content,
+        tripId,
+        userName,
+        userId: user.id
+      });
     } catch (error) {
       console.error('Failed to send message:', error);
       toast({
@@ -109,27 +103,29 @@ export function useUnifiedMessages({ tripId, tripType, enabled = true }: UseUnif
     } finally {
       setIsSending(false);
     }
-  }, [toast]);
+  }, [user, tripId, toast]);
 
   // Load more messages
   const loadMore = useCallback(async () => {
-    if (!providerRef.current || messages.length === 0) return;
+    if (messages.length === 0) return;
 
     try {
       const oldestMessage = messages[0];
-      const olderMessages = await providerRef.current.getMessages(50, oldestMessage.timestamp);
+      const olderMessages = await unifiedMessagingService.getMessages(
+        tripId, 
+        50, 
+        new Date(oldestMessage.created_at)
+      );
       setMessages(prev => [...olderMessages, ...prev]);
     } catch (error) {
       console.error('Failed to load more messages:', error);
     }
-  }, [messages]);
+  }, [tripId, messages]);
 
   // Delete message
   const deleteMessage = useCallback(async (messageId: string) => {
-    if (!providerRef.current) return;
-
     try {
-      await providerRef.current.deleteMessage(messageId);
+      await unifiedMessagingService.deleteMessage(messageId);
       setMessages(prev => prev.filter(m => m.id !== messageId));
     } catch (error) {
       console.error('Failed to delete message:', error);
@@ -148,6 +144,6 @@ export function useUnifiedMessages({ tripId, tripType, enabled = true }: UseUnif
     sendMessage,
     loadMore,
     deleteMessage,
-    isConnected: providerRef.current?.isConnected() || false
+    isConnected: true
   };
 }

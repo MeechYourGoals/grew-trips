@@ -373,6 +373,41 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_audit_log: {
+        Row: {
+          action: string
+          actor_user_id: string | null
+          created_at: string
+          id: string
+          metadata: Json | null
+          payment_message_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          payment_message_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_user_id?: string | null
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          payment_message_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_audit_log_payment_message_id_fkey"
+            columns: ["payment_message_id"]
+            isOneToOne: false
+            referencedRelation: "trip_payment_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       payment_splits: {
         Row: {
           amount_owed: number
@@ -466,6 +501,7 @@ export type Database = {
           show_phone: boolean | null
           stripe_customer_id: string | null
           subscription_product_id: string | null
+          timezone: string | null
           updated_at: string
           user_id: string
         }
@@ -485,6 +521,7 @@ export type Database = {
           show_phone?: boolean | null
           stripe_customer_id?: string | null
           subscription_product_id?: string | null
+          timezone?: string | null
           updated_at?: string
           user_id: string
         }
@@ -504,6 +541,7 @@ export type Database = {
           show_phone?: boolean | null
           stripe_customer_id?: string | null
           subscription_product_id?: string | null
+          timezone?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -617,6 +655,38 @@ export type Database = {
         }
         Relationships: []
       }
+      task_assignments: {
+        Row: {
+          assigned_at: string
+          assigned_by: string | null
+          id: string
+          task_id: string
+          user_id: string
+        }
+        Insert: {
+          assigned_at?: string
+          assigned_by?: string | null
+          id?: string
+          task_id: string
+          user_id: string
+        }
+        Update: {
+          assigned_at?: string
+          assigned_by?: string | null
+          id?: string
+          task_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "task_assignments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "trip_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       task_status: {
         Row: {
           completed: boolean
@@ -654,48 +724,80 @@ export type Database = {
       }
       trip_chat_messages: {
         Row: {
+          attachments: Json | null
           author_name: string
           content: string
           created_at: string
+          deleted_at: string | null
+          edited_at: string | null
           id: string
+          is_deleted: boolean | null
+          is_edited: boolean | null
           link_preview: Json | null
           media_type: string | null
           media_url: string | null
           privacy_encrypted: boolean | null
           privacy_mode: string | null
+          reply_to_id: string | null
           sentiment: string | null
+          thread_id: string | null
           trip_id: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
+          attachments?: Json | null
           author_name: string
           content: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
           id?: string
+          is_deleted?: boolean | null
+          is_edited?: boolean | null
           link_preview?: Json | null
           media_type?: string | null
           media_url?: string | null
           privacy_encrypted?: boolean | null
           privacy_mode?: string | null
+          reply_to_id?: string | null
           sentiment?: string | null
+          thread_id?: string | null
           trip_id: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
+          attachments?: Json | null
           author_name?: string
           content?: string
           created_at?: string
+          deleted_at?: string | null
+          edited_at?: string | null
           id?: string
+          is_deleted?: boolean | null
+          is_edited?: boolean | null
           link_preview?: Json | null
           media_type?: string | null
           media_url?: string | null
           privacy_encrypted?: boolean | null
           privacy_mode?: string | null
+          reply_to_id?: string | null
           sentiment?: string | null
+          thread_id?: string | null
           trip_id?: string
           updated_at?: string
+          user_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "trip_chat_messages_reply_to_id_fkey"
+            columns: ["reply_to_id"]
+            isOneToOne: false
+            referencedRelation: "trip_chat_messages"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       trip_events: {
         Row: {
@@ -1424,9 +1526,38 @@ export type Database = {
         }
         Returns: string
       }
+      create_payment_with_splits_v2: {
+        Args: {
+          p_amount: number
+          p_created_by: string
+          p_currency: string
+          p_description: string
+          p_payment_methods: Json
+          p_split_count: number
+          p_split_participants: Json
+          p_trip_id: string
+        }
+        Returns: string
+      }
       ensure_trip_membership: {
         Args: { p_trip_id: string; p_user_id: string }
         Returns: boolean
+      }
+      get_events_in_user_tz: {
+        Args: { p_trip_id: string; p_user_id: string }
+        Returns: {
+          created_by: string
+          description: string
+          end_time: string
+          event_category: string
+          id: string
+          location: string
+          start_time: string
+          title: string
+          trip_id: string
+          user_local_end: string
+          user_local_start: string
+        }[]
       }
       halfvec_avg: {
         Args: { "": number[] }

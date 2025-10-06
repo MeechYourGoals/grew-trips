@@ -1,5 +1,5 @@
 import { Message, ScheduledMessage } from '../types/messaging';
-import { getStreamService } from './getStreamService';
+import { unifiedMessagingService } from './unifiedMessagingService';
 
 export interface MessageTemplate {
   id: string;
@@ -39,9 +39,13 @@ export interface DailyDigest {
 export class MessageService {
   private static baseUrl = '/api';
 
-  static async sendMessage(tripId: string, text: string): Promise<void> {
-    const channel = await getStreamService.getOrCreateTripChannel(tripId);
-    await channel.sendMessage({ text });
+  static async sendMessage(tripId: string, text: string, userName: string, userId: string): Promise<void> {
+    await unifiedMessagingService.sendMessage({
+      content: text,
+      tripId,
+      userName,
+      userId
+    });
   }
 
   static async scheduleMessage(request: ScheduledMessageRequest): Promise<{ success: boolean; id?: string; error?: string }> {

@@ -36,29 +36,25 @@ export const tripService = {
   async createTrip(tripData: CreateTripData): Promise<Trip | null> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
+      if (!user) throw new Error('No authenticated user');
 
-      const { data, error } = await supabase
-        .from('trips')
-        .insert({
-          ...tripData,
-          created_by: user.id
-        })
-        .select()
-        .single();
+      // Use edge function for server-side validation and Pro tier enforcement
+      const { data, error } = await supabase.functions.invoke('create-trip', {
+        body: {
+          name: tripData.name,
+          description: tripData.description,
+          destination: tripData.destination,
+          start_date: tripData.start_date,
+          end_date: tripData.end_date,
+          trip_type: tripData.trip_type || 'consumer',
+          cover_image_url: tripData.cover_image_url
+        }
+      });
 
       if (error) throw error;
+      if (!data?.success) throw new Error(data?.error || 'Failed to create trip');
 
-      // Create trip member entry for creator
-      await supabase
-        .from('trip_members')
-        .insert({
-          trip_id: data.id,
-          user_id: user.id,
-          role: 'admin'
-        });
-
-      return data;
+      return data.trip;
     } catch (error) {
       console.error('Error creating trip:', error);
       return null;

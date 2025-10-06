@@ -97,9 +97,9 @@ export const paymentService = {
     }
   ): Promise<string | null> {
     try {
-      // Use atomic function to create payment with splits
+      // Use enhanced v2 function with audit trail and transaction safety
       const { data: paymentId, error } = await supabase
-        .rpc('create_payment_with_splits', {
+        .rpc('create_payment_with_splits_v2', {
           p_trip_id: tripId,
           p_amount: paymentData.amount,
           p_currency: paymentData.currency,
