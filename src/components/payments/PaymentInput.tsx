@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { Checkbox } from '../ui/checkbox';
 import { Card, CardContent } from '../ui/card';
 import { usePaymentSplits } from '@/hooks/usePaymentSplits';
+import { useDemoMode } from '@/hooks/useDemoMode';
 import { PaymentMethodId } from '@/types/paymentMethods';
 
 interface PaymentInputProps {
@@ -60,11 +61,12 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
   };
 
   const amountPerPerson = perPersonAmount;
+  const { isDemoMode } = useDemoMode();
 
   if (!isVisible) return null;
 
-  // Handle empty collaborators
-  if (tripMembers.length === 0) {
+  // Only show empty state in production mode when truly empty
+  if (!isDemoMode && tripMembers.length === 0) {
     return (
       <Card className="bg-payment-background-light border-payment-border dark:bg-payment-background dark:border-payment-border">
         <CardContent className="p-6">
