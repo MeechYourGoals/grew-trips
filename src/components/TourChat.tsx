@@ -5,6 +5,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useMessages } from '../hooks/useMessages';
 import { PaymentInput } from './payments/PaymentInput';
+import { useTripMembers } from '../hooks/useTripMembers';
 
 import { useParams } from 'react-router-dom';
 import { proTripMockData } from '../data/proTripMockData';
@@ -30,6 +31,9 @@ export const TourChat = () => {
   const tourName = tourData?.title || 'Event';
 
   const tourMessages = getMessagesForTour(finalTourId);
+  
+  // Fetch actual trip members dynamically
+  const { tripMembers } = useTripMembers(finalTourId);
 
   const handleSendMessage = (isBroadcast?: boolean, isPayment?: boolean, paymentData?: any) => {
     if (!isPayment && !message.trim()) return;
@@ -239,12 +243,7 @@ export const TourChat = () => {
         <div className="mb-4">
           <PaymentInput
             onSubmit={handlePaymentSubmit}
-            tripMembers={[
-              { id: 'user1', name: 'You' },
-              { id: 'user2', name: 'Team Lead' },
-              { id: 'user3', name: 'Producer' },
-              { id: 'user4', name: 'Assistant' }
-            ]}
+            tripMembers={tripMembers}
             isVisible={isPaymentMode}
           />
         </div>

@@ -63,6 +63,21 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
 
   if (!isVisible) return null;
 
+  // Handle empty collaborators
+  if (tripMembers.length === 0) {
+    return (
+      <Card className="bg-payment-background-light border-payment-border dark:bg-payment-background dark:border-payment-border">
+        <CardContent className="p-6">
+          <div className="text-center py-8">
+            <Users className="w-12 h-12 text-gray-500 mx-auto mb-3" />
+            <h4 className="text-lg font-medium text-gray-400 mb-2">No trip collaborators yet</h4>
+            <p className="text-gray-500 text-sm">Add collaborators to this trip before creating payment splits</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="bg-payment-background-light border-payment-border dark:bg-payment-background dark:border-payment-border">
       <CardContent className="p-4">

@@ -46,33 +46,20 @@ export const useTripMembers = (tripId?: string) => {
     setLoading(true);
     
     try {
-      if (isDemoMode) {
-        // Mock members for demo mode
-        setTripMembers([
-          { id: 'mock-1', name: 'Sarah Chen', avatar: '/images/avatars/blank-01.png' },
-          { id: 'mock-2', name: 'Marcus Johnson', avatar: '/images/avatars/blank-02.png' },
-          { id: 'mock-3', name: 'Emma Williams', avatar: '/images/avatars/blank-03.png' }
-        ]);
-        setLoading(false);
-        return;
-      }
-
-      // Try to fetch from database first
+      // Always fetch from database - no demo mode mocks
       const dbMembers = await tripService.getTripMembers(tripId);
       
       if (dbMembers && dbMembers.length > 0) {
         const formattedMembers = formatTripMembers(dbMembers);
         setTripMembers(formattedMembers);
       } else {
-        // Fallback to mock data if no database members
-        const mockMembers = getMockFallbackMembers(tripId);
-        setTripMembers(mockMembers);
+        // No members found - return empty array
+        setTripMembers([]);
       }
     } catch (error) {
       console.error('Error fetching trip members:', error);
-      // Fallback to mock data on error
-      const mockMembers = getMockFallbackMembers(tripId);
-      setTripMembers(mockMembers);
+      // On error, return empty array instead of mock data
+      setTripMembers([]);
     } finally {
       setLoading(false);
     }
