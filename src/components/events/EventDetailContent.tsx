@@ -12,7 +12,7 @@ import { LiveQAPanel } from './LiveQAPanel';
 import { EnhancedNetworkingHub } from './EnhancedNetworkingHub';
 import { TripTasksTab } from '../todo/TripTasksTab';
 import { CommentsWall } from '../CommentsWall';
-import { TripPreferences as TripPreferencesType } from '../../types/consumer';
+
 import { EventData } from '../../types/events';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 
@@ -22,8 +22,6 @@ interface EventDetailContentProps {
   onShowTripsPlusModal: () => void;
   tripId: string;
   basecamp: { name: string; address: string };
-  tripPreferences: TripPreferencesType | undefined;
-  onPreferencesChange: (preferences: TripPreferencesType) => void;
   eventData: EventData;
   tripContext: any;
 }
@@ -34,8 +32,6 @@ export const EventDetailContent = ({
   onShowTripsPlusModal,
   tripId,
   basecamp,
-  tripPreferences,
-  onPreferencesChange,
   eventData,
   tripContext
 }: EventDetailContentProps) => {
@@ -124,7 +120,6 @@ export const EventDetailContent = ({
           <PerplexityChat 
             tripId={tripId}
             basecamp={basecamp}
-            preferences={tripPreferences}
           />
         );
       case 'analytics':

@@ -8,7 +8,7 @@ import { TripDetailContent } from '../components/trip/TripDetailContent';
 import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../hooks/useMessages';
-import { TripPreferences as TripPreferencesType } from '../types/consumer';
+
 import { getTripById, generateTripMockData } from '../data/tripsData';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '../hooks/use-mobile';
@@ -27,7 +27,6 @@ const TripDetail = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [showTripSettings, setShowTripSettings] = useState(false);
   const [showTripsPlusModal, setShowTripsPlusModal] = useState(false);
-  const [tripPreferences, setTripPreferences] = useState<TripPreferencesType | undefined>();
   const [tripDescription, setTripDescription] = useState<string>('');
 
   // Get trip data dynamically based on tripId
@@ -84,7 +83,6 @@ const TripDetail = () => {
     location: trip.location,
     dateRange: trip.dateRange,
     basecamp,
-    preferences: tripPreferences,
     calendar: mockItinerary,
     broadcasts: mockBroadcasts,
     links: mockLinks,
@@ -134,8 +132,6 @@ const TripDetail = () => {
           tripId={tripId || '1'}
           tripName={tripWithUpdatedDescription.title}
           basecamp={basecamp}
-          tripPreferences={tripPreferences}
-          onPreferencesChange={setTripPreferences}
         />
       </div>
 

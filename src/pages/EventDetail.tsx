@@ -10,7 +10,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../hooks/useMessages';
 import { eventsMockData } from '../data/eventsMockData';
 import { ProTripNotFound } from '../components/pro/ProTripNotFound';
-import { TripPreferences as TripPreferencesType } from '../types/consumer';
+
 
 const EventDetail = () => {
   const { eventId } = useParams<{ eventId?: string }>();
@@ -23,7 +23,6 @@ const EventDetail = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [showTripSettings, setShowTripSettings] = useState(false);
   const [showTripsPlusModal, setShowTripsPlusModal] = useState(false);
-  const [tripPreferences, setTripPreferences] = useState<TripPreferencesType | undefined>();
   const [tripDescription, setTripDescription] = useState<string>('');
 
   console.log('EventDetail - eventId from params:', eventId);
@@ -96,7 +95,6 @@ const EventDetail = () => {
     location: eventData.location,
     dateRange: eventData.dateRange,
     basecamp,
-    preferences: tripPreferences,
     calendar: eventData.itinerary,
     broadcasts: mockBroadcasts,
     links: mockLinks,
@@ -151,8 +149,6 @@ const EventDetail = () => {
             onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
             tripId={eventId}
             basecamp={basecamp}
-            tripPreferences={tripPreferences}
-            onPreferencesChange={setTripPreferences}
             eventData={eventData}
             tripContext={tripContext}
           />

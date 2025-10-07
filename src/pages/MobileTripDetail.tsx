@@ -8,7 +8,7 @@ import { useAuth } from '../hooks/useAuth';
 import { useMessages } from '../hooks/useMessages';
 import { useKeyboardHandler } from '../hooks/useKeyboardHandler';
 import { hapticService } from '../services/hapticService';
-import { TripPreferences as TripPreferencesType } from '../types/consumer';
+
 import { getTripById, generateTripMockData } from '../data/tripsData';
 
 export const MobileTripDetail = () => {
@@ -17,7 +17,6 @@ export const MobileTripDetail = () => {
   const { user } = useAuth();
   const { getMessagesForTrip } = useMessages();
   const [activeTab, setActiveTab] = useState('chat');
-  const [tripPreferences, setTripPreferences] = useState<TripPreferencesType | undefined>();
   const [tripDescription, setTripDescription] = useState<string>('');
 
   // Keyboard handling for mobile inputs
@@ -128,8 +127,6 @@ export const MobileTripDetail = () => {
         onTabChange={handleTabChange}
         tripId={tripId || '1'}
         basecamp={basecamp}
-        tripPreferences={tripPreferences}
-        onPreferencesChange={setTripPreferences}
       />
       </div>
     </MobileErrorBoundary>

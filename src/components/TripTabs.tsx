@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Users, Calendar, Camera, Radio, Link, BarChart3, FileText, ClipboardList, Lock } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Camera, Radio, Link, BarChart3, FileText, ClipboardList, Lock, MapPin, Sparkles } from 'lucide-react';
 import { TripChat } from './TripChat';
 import { GroupCalendar } from './GroupCalendar';
 import { PhotoAlbum } from './PhotoAlbum';
@@ -11,20 +11,40 @@ import { FilesTab } from './FilesTab';
 import { TripTasksTab } from './todo/TripTasksTab';
 import { UnifiedMediaHub } from './UnifiedMediaHub';
 import { EnhancedMediaAggregatedLinks } from './EnhancedMediaAggregatedLinks';
+import { PlacesSection } from './PlacesSection';
+import { PerplexityChat } from './PerplexityChat';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useFeatureToggle } from '../hooks/useFeatureToggle';
+import { TripPreferences as TripPreferencesType } from '../types/consumer';
 
 interface TripTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   tripId?: string;
+  tripName?: string;
+  basecamp?: { name: string; address: string };
+  tripPreferences?: TripPreferencesType;
+  showPlaces?: boolean;
+  showConcierge?: boolean;
+  isDemoMode?: boolean;
   tripData?: {
     enabled_features?: string[];
     trip_type?: 'consumer' | 'pro' | 'event';
   };
 }
 
-export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabChange, tripId = '1', tripData }: TripTabsProps) => {
+export const TripTabs = ({ 
+  activeTab: parentActiveTab, 
+  onTabChange: parentOnTabChange, 
+  tripId = '1', 
+  tripName,
+  basecamp,
+  tripPreferences,
+  showPlaces = false,
+  showConcierge = false,
+  isDemoMode = false,
+  tripData 
+}: TripTabsProps) => {
   const [activeTab, setActiveTab] = useState('chat');
   const { accentColors } = useTripVariant();
   const features = useFeatureToggle(tripData || {});
@@ -34,7 +54,9 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
     { id: 'calendar', label: 'Calendar', icon: Calendar, enabled: features.showCalendar },
     { id: 'tasks', label: 'Tasks', icon: ClipboardList, enabled: features.showTasks },
     { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
-    { id: 'media', label: 'Media', icon: Camera, enabled: features.showMedia }
+    { id: 'media', label: 'Media', icon: Camera, enabled: features.showMedia },
+    { id: 'places', label: 'Places', icon: MapPin, enabled: showPlaces },
+    { id: 'concierge', label: 'Concierge', icon: Sparkles, enabled: showConcierge }
   ];
 
   const handleTabChange = (tab: string, enabled: boolean) => {
@@ -55,6 +77,17 @@ export const TripTabs = ({ activeTab: parentActiveTab, onTabChange: parentOnTabC
         return <GroupCalendar />;
       case 'media':
         return <UnifiedMediaHub tripId={tripId} />;
+      case 'places':
+        return <PlacesSection tripId={tripId} tripName={tripName} />;
+      case 'concierge':
+        return (
+          <PerplexityChat 
+            tripId={tripId}
+            basecamp={basecamp}
+            preferences={tripPreferences}
+            isDemoMode={isDemoMode}
+          />
+        );
       default:
         return <TripChat />;
     }

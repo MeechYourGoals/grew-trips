@@ -11,7 +11,7 @@ import { useMessages } from '../hooks/useMessages';
 import { useDemoMode } from '../hooks/useDemoMode';
 import { proTripMockData } from '../data/proTripMockData';
 import { ProTripNotFound } from '../components/pro/ProTripNotFound';
-import { TripPreferences as TripPreferencesType } from '../types/consumer';
+
 import { ProTripCategory } from '../types/proCategories';
 
 const ProTripDetail = () => {
@@ -26,7 +26,6 @@ const ProTripDetail = () => {
   const [showAuth, setShowAuth] = useState(false);
   const [showTripSettings, setShowTripSettings] = useState(false);
   const [showTripsPlusModal, setShowTripsPlusModal] = useState(false);
-  const [tripPreferences, setTripPreferences] = useState<TripPreferencesType | undefined>();
 
   // Gate demo content
   if (!isDemoMode) {
@@ -135,8 +134,6 @@ const ProTripDetail = () => {
           onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
           tripId={proTripId}
           basecamp={basecamp}
-          tripPreferences={tripPreferences}
-          onPreferencesChange={setTripPreferences}
           tripData={tripData}
           selectedCategory={tripData.proTripCategory as ProTripCategory}
         />

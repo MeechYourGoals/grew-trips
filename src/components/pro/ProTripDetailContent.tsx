@@ -6,7 +6,7 @@ import { ProTabContent } from './ProTabContent';
 import { RoleSwitcher } from './RoleSwitcher';
 import { getVisibleTabs } from './ProTabsConfig';
 import { useAuth } from '../../hooks/useAuth';
-import { TripPreferences as TripPreferencesType } from '../../types/consumer';
+
 import { ProTripData } from '../../types/pro';
 import { ProTripCategory } from '../../types/proCategories';
 
@@ -16,8 +16,6 @@ interface ProTripDetailContentProps {
   onShowTripsPlusModal: () => void;
   tripId: string;
   basecamp: { name: string; address: string };
-  tripPreferences: TripPreferencesType | undefined;
-  onPreferencesChange: (preferences: TripPreferencesType) => void;
   tripData: ProTripData;
   selectedCategory: ProTripCategory;
   onUpdateTripData?: (updates: Partial<ProTripData>) => void;
@@ -29,8 +27,6 @@ export const ProTripDetailContent = ({
   onShowTripsPlusModal,
   tripId,
   basecamp,
-  tripPreferences,
-  onPreferencesChange,
   tripData,
   selectedCategory,
   onUpdateTripData
@@ -86,7 +82,6 @@ export const ProTripDetailContent = ({
         activeTab={activeTab}
         tripId={tripId}
         basecamp={basecamp}
-        tripPreferences={tripPreferences}
         tripData={tripData}
         category={selectedCategory}
         onUpdateRoomAssignments={handleUpdateRoomAssignments}

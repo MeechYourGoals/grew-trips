@@ -15,6 +15,7 @@ interface PerplexityChatProps {
   tripId: string;
   basecamp?: { name: string; address: string };
   preferences?: TripPreferences;
+  isDemoMode?: boolean;
 }
 
 interface ChatMessage {
@@ -35,7 +36,7 @@ interface ChatMessage {
   }>;
 }
 
-export const PerplexityChat = ({ tripId, basecamp, preferences }: PerplexityChatProps) => {
+export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = false }: PerplexityChatProps) => {
   const { isPlus } = useConsumerSubscription();
   const { basecamp: globalBasecamp } = useBasecamp();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -179,7 +180,8 @@ export const PerplexityChat = ({ tripId, basecamp, preferences }: PerplexityChat
     }
   };
 
-  if (!isPlus) {
+  // Only show paywall if not demo mode
+  if (!isPlus && !isDemoMode) {
     return <PlusUpgrade />;
   }
 

@@ -1,32 +1,31 @@
 import React, { useRef, useEffect } from 'react';
-import { MessageCircle, Calendar, ClipboardList, BarChart3, Camera } from 'lucide-react';
+import { MessageCircle, Calendar, ClipboardList, BarChart3, Camera, MapPin, Sparkles } from 'lucide-react';
 import { MobileTripChat } from './MobileTripChat';
 import { MobileGroupCalendar } from './MobileGroupCalendar';
 import { MobileTripTasks } from './MobileTripTasks';
 import { CommentsWall } from '../CommentsWall';
 import { MobileUnifiedMediaHub } from './MobileUnifiedMediaHub';
+import { PlacesSection } from '../PlacesSection';
+import { PerplexityChat } from '../PerplexityChat';
 import { hapticService } from '../../services/hapticService';
 import { useTripVariant } from '../../contexts/TripVariantContext';
-import { TripPreferences as TripPreferencesType } from '../../types/consumer';
+import { useDemoMode } from '../../hooks/useDemoMode';
 
 interface MobileTripTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   tripId: string;
   basecamp: { name: string; address: string };
-  tripPreferences: TripPreferencesType | undefined;
-  onPreferencesChange: (preferences: TripPreferencesType) => void;
 }
 
 export const MobileTripTabs = ({
   activeTab,
   onTabChange,
   tripId,
-  basecamp,
-  tripPreferences,
-  onPreferencesChange
+  basecamp
 }: MobileTripTabsProps) => {
   const { accentColors } = useTripVariant();
+  const { isDemoMode } = useDemoMode();
   const contentRef = useRef<HTMLDivElement>(null);
   const tabsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -35,7 +34,9 @@ export const MobileTripTabs = ({
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'tasks', label: 'Tasks', icon: ClipboardList },
     { id: 'polls', label: 'Polls', icon: BarChart3 },
-    { id: 'media', label: 'Media', icon: Camera }
+    { id: 'media', label: 'Media', icon: Camera },
+    { id: 'places', label: 'Places', icon: MapPin },
+    { id: 'concierge', label: 'Concierge', icon: Sparkles }
   ];
 
   // Scroll active tab into view
@@ -65,6 +66,16 @@ export const MobileTripTabs = ({
         return <CommentsWall />;
       case 'media':
         return <MobileUnifiedMediaHub tripId={tripId} />;
+      case 'places':
+        return <PlacesSection tripId={tripId} />;
+      case 'concierge':
+        return (
+          <PerplexityChat 
+            tripId={tripId}
+            basecamp={basecamp}
+            isDemoMode={isDemoMode}
+          />
+        );
       default:
         return <MobileTripChat tripId={tripId} />;
     }

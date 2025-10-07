@@ -8,7 +8,7 @@ import { PerplexityChat } from '../PerplexityChat';
 
 import { TeamTab } from './TeamTab';
 import { TripTasksTab } from '../todo/TripTasksTab';
-import { TripPreferences as TripPreferencesType } from '../../types/consumer';
+
 import { ProTripData } from '../../types/pro';
 import { ProTripCategory } from '../../types/proCategories';
 import { isReadOnlyTab, hasTabAccess } from './ProTabsConfig';
@@ -18,7 +18,6 @@ interface ProTabContentProps {
   activeTab: string;
   tripId: string;
   basecamp: { name: string; address: string };
-  tripPreferences: TripPreferencesType | undefined;
   tripData: ProTripData;
   category: ProTripCategory;
   onUpdateRoomAssignments: (assignments: any[]) => void;
@@ -29,7 +28,6 @@ export const ProTabContent = ({
   activeTab,
   tripId,
   basecamp,
-  tripPreferences,
   tripData,
   category,
   onUpdateRoomAssignments,
@@ -166,7 +164,6 @@ export const ProTabContent = ({
           <PerplexityChat 
             tripId={tripId}
             basecamp={basecamp}
-            preferences={tripPreferences}
           />
         );
       default:
