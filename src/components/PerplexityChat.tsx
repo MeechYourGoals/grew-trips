@@ -200,9 +200,11 @@ export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = fal
             </div>
           </div>
         </div>
-        <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 px-3 py-1 rounded-full">
-          <span className="text-glass-orange text-sm font-medium">PLUS</span>
-        </div>
+        {!isDemoMode && (
+          <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 px-3 py-1 rounded-full">
+            <span className="text-glass-orange text-sm font-medium">PLUS</span>
+          </div>
+        )}
       </div>
 
       {/* Empty State */}
