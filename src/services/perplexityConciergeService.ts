@@ -180,11 +180,17 @@ Always provide helpful, specific, and current information. When providing recomm
     tripContext?: TripContext,
     basecampLocation?: { name: string; address: string },
     preferences?: any,
-    chatHistory: Array<{ role: string; content: string }> = []
+    chatHistory: Array<{ role: string; content: string }> = [],
+    isDemoMode: boolean = false
   ): Promise<PerplexityResponse> {
     const systemPrompt = this.buildSystemPrompt(tripContext, basecampLocation, preferences);
 
     try {
+      // Route to Lovable AI for demo mode, Perplexity for production
+      if (isDemoMode) {
+        return await this.sendToLovableAI(message, tripContext, systemPrompt, chatHistory);
+      }
+
       const response = await PerplexityService.sendMessage(message, {
         tripContext,
         chatHistory,
@@ -198,10 +204,51 @@ Always provide helpful, specific, and current information. When providing recomm
 
       return response;
     } catch (error) {
-      console.error('Perplexity concierge error:', error);
+      console.error('Concierge error:', error);
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to get response from travel concierge'
+      };
+    }
+  }
+
+  private static async sendToLovableAI(
+    message: string,
+    tripContext: TripContext | undefined,
+    systemPrompt: string,
+    chatHistory: Array<{ role: string; content: string }>
+  ): Promise<PerplexityResponse> {
+    const { supabase } = await import('@/integrations/supabase/client');
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('lovable-concierge', {
+        body: {
+          message,
+          tripContext,
+          chatHistory,
+          config: {
+            systemPrompt,
+            model: 'google/gemini-2.5-flash',
+            temperature: 0.7,
+            maxTokens: 2048
+          }
+        }
+      });
+
+      if (error) throw error;
+
+      return {
+        success: data.success,
+        response: data.response,
+        usage: data.usage,
+        sources: data.sources || [],
+        error: data.error
+      };
+    } catch (error) {
+      console.error('Lovable AI error:', error);
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to connect to AI service'
       };
     }
   }

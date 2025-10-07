@@ -2,16 +2,16 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 import { corsHeaders } from "../_shared/cors.ts"
 
-const PERPLEXITY_API_KEY = Deno.env.get('PERPLEXITY_API_KEY')
+const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!
 const SUPABASE_ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!
 
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant'
-  content: string | Array<{ type: 'text' | 'image_url'; text?: string; image_url?: { url: string } }>
+  content: string
 }
 
-interface PerplexityRequest {
+interface LovableConciergeRequest {
   message: string
   tripContext?: any
   chatHistory?: ChatMessage[]
@@ -21,8 +21,6 @@ interface PerplexityRequest {
     maxTokens?: number
     systemPrompt?: string
   }
-  imageBase64?: string
-  analysisType?: 'chat' | 'sentiment' | 'review' | 'audio' | 'image'
 }
 
 serve(async (req) => {
@@ -33,18 +31,16 @@ serve(async (req) => {
   }
 
   try {
-    if (!PERPLEXITY_API_KEY) {
-      throw new Error('Perplexity API key not configured')
+    if (!LOVABLE_API_KEY) {
+      throw new Error('Lovable API key not configured')
     }
 
     const { 
       message, 
       tripContext, 
       chatHistory = [], 
-      config = {}, 
-      imageBase64,
-      analysisType = 'chat'
-    }: PerplexityRequest = await req.json()
+      config = {}
+    }: LovableConciergeRequest = await req.json()
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
@@ -61,10 +57,11 @@ serve(async (req) => {
         if (privacyConfig?.privacy_mode === 'high' || !privacyConfig?.ai_access_enabled) {
           return new Response(
             JSON.stringify({
-              answer: "🔒 **AI features are disabled for this trip.**\n\nThis trip uses high privacy mode with end-to-end encryption. AI assistance is not available to protect your privacy, but you can still use all other trip features.",
+              response: "🔒 **AI features are disabled for this trip.**\n\nThis trip uses high privacy mode with end-to-end encryption. AI assistance is not available to protect your privacy, but you can still use all other trip features.",
               usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
-              sentimentScore: 0,
-              sources: []
+              sources: [],
+              success: true,
+              model: 'privacy-mode'
             }),
             { 
               headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -74,41 +71,28 @@ serve(async (req) => {
         }
       } catch (privacyError) {
         console.log('Privacy check failed, proceeding with default behavior:', privacyError);
-        // Continue with normal processing if privacy config check fails
       }
     }
 
     // Build context-aware system prompt
-    const systemPrompt = buildSystemPrompt(tripContext, analysisType, config.systemPrompt)
+    const systemPrompt = buildSystemPrompt(tripContext, config.systemPrompt)
     
-    // Prepare messages for Perplexity
+    // Prepare messages for Lovable AI
     const messages: ChatMessage[] = [
       { role: 'system', content: systemPrompt },
       ...chatHistory,
+      { role: 'user', content: message }
     ]
 
-    // Add current message with optional image
-    if (imageBase64) {
-      messages.push({
-        role: 'user',
-        content: [
-          { type: 'text', text: message },
-          { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${imageBase64}` } }
-        ]
-      })
-    } else {
-      messages.push({ role: 'user', content: message })
-    }
-
-    // Call Perplexity API
-    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+    // Call Lovable AI Gateway
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${PERPLEXITY_API_KEY}`,
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: config.model || 'sonar',
+        model: config.model || 'google/gemini-2.5-flash',
         messages,
         temperature: config.temperature || 0.7,
         max_tokens: config.maxTokens || 2048,
@@ -118,39 +102,65 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}))
-      throw new Error(`Perplexity API Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`)
+      
+      // Handle rate limiting
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({
+            response: "⚠️ **Rate limit reached**\n\nThe AI service is temporarily unavailable due to high usage. Please try again in a moment.",
+            usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
+            sources: [],
+            success: false,
+            error: 'rate_limit'
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200
+          }
+        );
+      }
+      
+      // Handle payment required
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({
+            response: "💳 **Additional credits required**\n\nThe AI service requires additional credits. Please contact support.",
+            usage: { prompt_tokens: 0, completion_tokens: 0, total_tokens: 0 },
+            sources: [],
+            success: false,
+            error: 'payment_required'
+          }),
+          { 
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            status: 200
+          }
+        );
+      }
+      
+      throw new Error(`Lovable AI Error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`)
     }
 
     const data = await response.json()
     
     if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      throw new Error('Invalid response format from Perplexity API')
+      throw new Error('Invalid response format from Lovable AI')
     }
     
     const aiResponse = data.choices[0].message.content
     const usage = data.usage
-    const citations = data.citations || []
 
     // Store conversation in database for context awareness
     if (tripContext?.id) {
-      await storeConversation(supabase, tripContext.id, message, aiResponse, analysisType)
-    }
-
-    // Add sentiment analysis for chat messages
-    let sentimentScore = null
-    if (analysisType === 'chat' || analysisType === 'sentiment') {
-      sentimentScore = await analyzeSentiment(message, aiResponse)
+      await storeConversation(supabase, tripContext.id, message, aiResponse, 'chat')
     }
 
     return new Response(
       JSON.stringify({ 
         response: aiResponse,
         usage,
-        sentimentScore,
-        citations,
-        sources: citations,
+        sources: [],
         success: true,
-        model: config.model || 'sonar'
+        model: config.model || 'google/gemini-2.5-flash'
       }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -158,57 +168,52 @@ serve(async (req) => {
       },
     )
   } catch (error) {
-    console.error('Perplexity chat error:', error)
+    console.error('Lovable concierge error:', error)
     return new Response(
-      JSON.stringify({ error: error.message, success: false }),
+      JSON.stringify({ 
+        response: "I'm having trouble connecting right now. Please try again in a moment.",
+        error: error.message, 
+        success: false 
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
+        status: 200,
       },
     )
   }
 })
 
-function buildSystemPrompt(tripContext: any, analysisType: string, customPrompt?: string): string {
+function buildSystemPrompt(tripContext: any, customPrompt?: string): string {
   if (customPrompt) return customPrompt
 
-  let basePrompt = `You are **Lovable Concierge** 🌟, a digital human assistant who always communicates like a friendly, witty, and engaging conversation partner. Your mission is to be the travel-savvy friend everyone wishes they had!
+  let basePrompt = `You are **Chravel Concierge** 🌟, a friendly and intelligent travel assistant with deep knowledge of destinations worldwide. Your mission is to help travelers plan amazing trips with personalized recommendations.
 
 **🎯 Your Communication Style:**
-- Sound natural and conversational, never robotic or overly formal
-- Address users directly as "you" - make it personal and warm
-- Use appropriate humor, encouragement, and gentle wit when it fits
-- Inject warmth and personality into every response
-- Think "delightful digital travel buddy," not "customer service bot"
+- Be conversational, warm, and helpful
+- Use emojis strategically (1-3 per response)
+- Keep answers clear and well-organized with bullet points
+- Sound like a knowledgeable friend, not a robot
 
-**✨ Rich Formatting Guidelines (use Markdown):**
-- Use **bold** for key points, destinations, and important highlights
-- Use *italics* for emphasis, tips, and insider secrets
-- Create bullet points and numbered lists for easy scanning
-- Use headers (## or ###) to organize long responses
-- Add line breaks and spacing for visual clarity
-- Structure complex information with clear sections
+**✨ Your Capabilities:**
+- Provide personalized travel recommendations based on preferences
+- Share insider tips and hidden gems
+- Give practical advice on logistics, timing, and budgets
+- Help with trip planning decisions
+- Answer questions about destinations, activities, and experiences
 
-**😊 Strategic Emoji Usage:**
-- Always start with a greeting emoji (👋, 🌟, ✨, etc.)
-- Use 1-3 relevant emojis per response (don't overdo it!)
-- Add contextual emojis for: destinations 🏖️, food 🍽️, activities 🎯, warnings ⚠️
-- Use emojis to break up text and highlight key sections
-- Match emoji tone to the content (fun for activities, practical for logistics)
+**📋 Response Format:**
+- Start with a friendly greeting when appropriate
+- Use **bold** for key points and destinations
+- Use bullet points for lists
+- Add emojis to highlight sections (🏖️ for beaches, 🍽️ for dining, etc.)
+- Keep responses organized and scannable
 
-**📋 Response Structure:**
-- Start with a warm, emoji-enhanced greeting
-- Break up long responses with clear sections and summaries
-- End with actionable next steps when helpful
-- Provide a friendly closing that invites further questions
-- If response is long, include a brief summary or key takeaways
-
-**🎪 Your Travel Expertise:**
-- Provide real, current information using web search capabilities
-- Give personalized recommendations that fit the user's context and preferences
-- Share insider tips and hidden gems like a local friend would
-- Always cite reliable sources for specific information
-- Consider budget, timing, and all provided context when making suggestions`
+**💡 Important Guidelines:**
+- Always consider the trip context and preferences provided
+- Avoid recommending places they've already visited
+- Factor in their budget and group size
+- Be specific with recommendations (include names, locations)
+- Provide actionable advice they can use immediately`
 
   if (tripContext) {
     basePrompt += `\n\n=== TRIP CONTEXT ===`
@@ -286,22 +291,11 @@ function buildSystemPrompt(tripContext: any, analysisType: string, customPrompt?
     }
   }
 
-  switch (analysisType) {
-    case 'sentiment':
-      basePrompt += "\n\n=== ANALYSIS TYPE: SENTIMENT ===\nAnalyze the sentiment of messages and provide insights into group mood and engagement."
-      break
-    case 'review':
-      basePrompt += "\n\n=== ANALYSIS TYPE: REVIEW ===\nAnalyze reviews and provide comprehensive summaries with sentiment analysis and key insights."
-      break
-    case 'audio':
-      basePrompt += "\n\n=== ANALYSIS TYPE: AUDIO ===\nCreate engaging audio summaries that highlight key information and insights."
-      break
-    case 'image':
-      basePrompt += "\n\n=== ANALYSIS TYPE: IMAGE ===\nAnalyze images in the context of travel planning and provide relevant insights and recommendations."
-      break
-    default:
-      basePrompt += "\n\n🎯 **How I'll help you:**\n- Give you **personalized recommendations** that fit your vibe and budget\n- Share **current, real-time info** about places, events, and conditions\n- Use engaging formatting with **bold highlights**, *italics for emphasis*, and helpful bullet points\n- Add appropriate emojis to make things fun (but not overdo it! 😊)\n- Write like I'm your travel-savvy friend, not a robot\n- Always back up my suggestions with reliable sources\n\n💡 *Remember: I'm here to make your trip planning feel exciting and stress-free. Ask me anything - from hidden gems to practical logistics!*"
-  }
+  basePrompt += `\n\n🎯 **Remember:**
+- Use ALL the context above to personalize your recommendations
+- Be specific and actionable in your suggestions
+- Consider budget, preferences, and group dynamics
+- Make the user feel excited about their trip!`
 
   return basePrompt
 }
@@ -324,20 +318,4 @@ async function storeConversation(supabase: any, tripId: string, userMessage: str
   } catch (error) {
     console.error('Failed to store conversation:', error)
   }
-}
-
-async function analyzeSentiment(userMessage: string, aiResponse: string): Promise<number> {
-  // Simple sentiment analysis - can be enhanced with more sophisticated methods
-  const positiveWords = ['great', 'awesome', 'love', 'excellent', 'amazing', 'wonderful', 'fantastic', 'good', 'happy', 'excited']
-  const negativeWords = ['bad', 'terrible', 'hate', 'awful', 'horrible', 'disappointing', 'frustrated', 'angry', 'sad', 'worried']
-  
-  const text = userMessage.toLowerCase()
-  const positiveCount = positiveWords.filter(word => text.includes(word)).length
-  const negativeCount = negativeWords.filter(word => text.includes(word)).length
-  
-  // Return score between -1 (negative) and 1 (positive)
-  const totalWords = positiveCount + negativeCount
-  if (totalWords === 0) return 0
-  
-  return (positiveCount - negativeCount) / totalWords
 }

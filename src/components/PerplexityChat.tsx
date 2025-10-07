@@ -127,13 +127,14 @@ export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = fal
         address: basecamp.address
       } : undefined);
 
-      // Send to Perplexity
+      // Send to AI service (Lovable AI for demo, Perplexity for Plus)
       const response: PerplexityResponse = await PerplexityConciergeService.sendMessage(
         currentInput,
         tripContext,
         basecampLocation,
         preferences,
-        chatHistory
+        chatHistory,
+        isDemoMode
       );
 
       // Update AI status based on response
@@ -212,15 +213,19 @@ export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = fal
         <div className="text-center py-8 mb-6">
           <h4 className="text-white font-medium mb-3">Your AI Travel Concierge</h4>
           <div className="text-sm text-gray-300 space-y-2 max-w-md mx-auto">
-            <p>Ask me anything about your trip with real-time web search:</p>
+            <p>Ask me anything about your trip:</p>
             <div className="text-xs text-gray-400 space-y-1">
-              <p>• "What are the best restaurants open tonight?"</p>
-              <p>• "What's the current weather like?"</p>
-              <p>• "Find events happening this weekend"</p>
-              <p>• "Show me nearby attractions"</p>
+              <p>• "What are the best restaurants for our group?"</p>
+              <p>• "Suggest activities based on our preferences"</p>
+              <p>• "Help me plan our itinerary"</p>
+              <p>• "What hidden gems should we check out?"</p>
             </div>
             <div className="mt-3 text-xs text-green-400 bg-green-500/10 rounded px-3 py-2 inline-block">
-              ✨ Powered by Perplexity AI with real-time web search
+              {isDemoMode ? (
+                <>✨ Powered by Lovable AI for demo - ask me anything!</>
+              ) : (
+                <>✨ Powered by Perplexity AI with real-time web search</>
+              )}
             </div>
           </div>
         </div>
