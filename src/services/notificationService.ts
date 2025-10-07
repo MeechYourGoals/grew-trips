@@ -206,7 +206,7 @@ export class NotificationService {
   }
 
   // Utility methods
-  private urlBase64ToUint8Array(base64String: string): Uint8Array {
+  private urlBase64ToUint8Array(base64String: string): Uint8Array<ArrayBuffer> {
     const padding = '='.repeat((4 - base64String.length % 4) % 4);
     const base64 = (base64String + padding)
       .replace(/-/g, '+')
@@ -218,7 +218,7 @@ export class NotificationService {
     for (let i = 0; i < rawData.length; ++i) {
       outputArray[i] = rawData.charCodeAt(i);
     }
-    return outputArray;
+    return outputArray as Uint8Array<ArrayBuffer>;
   }
 
   isQuietHours(preferences: NotificationPreference): boolean {
