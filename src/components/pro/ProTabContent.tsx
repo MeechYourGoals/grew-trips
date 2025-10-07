@@ -4,6 +4,7 @@ import { CalendarIcon, DollarSign, Shield, FileCheck, Award } from 'lucide-react
 import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
 import { CommentsWall } from '../CommentsWall';
+import { TripChat } from '../TripChat';
 import { PerplexityChat } from '../PerplexityChat';
 import { GroupCalendar } from '../GroupCalendar';
 
@@ -57,7 +58,7 @@ export const ProTabContent = ({
   const renderTabContent = () => {
     switch (activeTab) {
       case 'chat':
-        return <CommentsWall />;
+        return <TripChat groupChatEnabled={true} showBroadcasts={true} />;
       case 'calendar':
         return <GroupCalendar />;
       case 'tasks':
