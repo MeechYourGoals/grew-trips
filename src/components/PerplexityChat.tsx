@@ -9,7 +9,6 @@ import { PerplexityConciergeService, PerplexityResponse } from '../services/perp
 import { useBasecamp } from '../contexts/BasecampContext';
 import { ChatMessages } from './chat/ChatMessages';
 import { AiChatInput } from './chat/AiChatInput';
-import { PlusUpgrade } from './chat/PlusUpgrade';
 
 interface PerplexityChatProps {
   tripId: string;
@@ -181,11 +180,6 @@ export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = fal
     }
   };
 
-  // Only show paywall if not demo mode
-  if (!isPlus && !isDemoMode) {
-    return <PlusUpgrade />;
-  }
-
   return (
     <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
       <div className="flex items-center gap-3 mb-6">
@@ -201,11 +195,6 @@ export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = fal
             </div>
           </div>
         </div>
-        {!isDemoMode && (
-          <div className="bg-gradient-to-r from-glass-orange/20 to-glass-yellow/20 px-3 py-1 rounded-full">
-            <span className="text-glass-orange text-sm font-medium">PLUS</span>
-          </div>
-        )}
       </div>
 
       {/* Empty State */}
@@ -221,11 +210,7 @@ export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = fal
               <p>• "What hidden gems should we check out?"</p>
             </div>
             <div className="mt-3 text-xs text-green-400 bg-green-500/10 rounded px-3 py-2 inline-block">
-              {isDemoMode ? (
-                <>✨ Powered by Lovable AI for demo - ask me anything!</>
-              ) : (
-                <>✨ Powered by Perplexity AI with real-time web search</>
-              )}
+              ✨ Powered by AI - ask me anything!
             </div>
           </div>
         </div>
