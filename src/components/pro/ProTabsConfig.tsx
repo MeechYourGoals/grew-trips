@@ -13,13 +13,16 @@ export interface ProTab {
 }
 
 export const proTabs: ProTab[] = [
-  { id: 'chat', label: 'Trip', icon: null },
+  { id: 'chat', label: 'Chat', icon: null },
+  { id: 'calendar', label: 'Calendar', icon: CalendarIcon },
+  { id: 'tasks', label: 'Tasks', icon: ClipboardList },
+  { id: 'polls', label: 'Polls', icon: BarChart3 },
+  { id: 'media', label: 'Media', icon: Tv },
   { id: 'places', label: 'Places', icon: null },
   { id: 'team', label: 'Team', icon: Users, proOnly: true, requiredPermissions: ['read'] },
   { id: 'finance', label: 'Finance', icon: DollarSign, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['finance'] },
   { id: 'medical', label: 'Medical', icon: Shield, proOnly: true, requiredPermissions: ['medical', 'admin'] },
   { id: 'compliance', label: 'Compliance', icon: FileCheck, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['compliance', 'admin'] },
-  { id: 'media', label: 'Media', icon: Tv, proOnly: true, requiredPermissions: ['read'] },
   { id: 'sponsors', label: 'Sponsors', icon: Award, proOnly: true, requiredPermissions: ['admin'] },
   { id: 'ai-chat', label: 'Concierge', icon: null }
 ];

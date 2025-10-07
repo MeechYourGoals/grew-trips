@@ -5,6 +5,7 @@ import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
 import { CommentsWall } from '../CommentsWall';
 import { PerplexityChat } from '../PerplexityChat';
+import { GroupCalendar } from '../GroupCalendar';
 
 import { TeamTab } from './TeamTab';
 import { TripTasksTab } from '../todo/TripTasksTab';
@@ -57,6 +58,12 @@ export const ProTabContent = ({
     switch (activeTab) {
       case 'chat':
         return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
+      case 'calendar':
+        return <GroupCalendar />;
+      case 'tasks':
+        return <TripTasksTab tripId={tripId} />;
+      case 'polls':
+        return <CommentsWall />;
       case 'places':
         return <PlacesSection />;
       case 'team':
