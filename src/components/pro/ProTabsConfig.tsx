@@ -1,5 +1,5 @@
 import React from 'react';
-import { Crown, Users, Calendar as CalendarIcon, DollarSign, Shield, Tv, Award, FileCheck, ClipboardList, BarChart3 } from 'lucide-react';
+import { Crown, Users, Calendar as CalendarIcon, DollarSign, Shield, Award, FileCheck, ClipboardList, BarChart3 } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 
@@ -17,7 +17,6 @@ export const proTabs: ProTab[] = [
   { id: 'calendar', label: 'Calendar', icon: CalendarIcon },
   { id: 'tasks', label: 'Tasks', icon: ClipboardList },
   { id: 'polls', label: 'Polls', icon: BarChart3 },
-  { id: 'media', label: 'Media', icon: Tv },
   { id: 'places', label: 'Places', icon: null },
   { id: 'team', label: 'Team', icon: Users, proOnly: true, requiredPermissions: ['read'] },
   { id: 'finance', label: 'Finance', icon: DollarSign, proOnly: true, restrictedRoles: ['talent', 'cast', 'student'], requiredPermissions: ['finance'] },

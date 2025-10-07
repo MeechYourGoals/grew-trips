@@ -29,7 +29,7 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
     name: 'Sports – Pro, Collegiate, Youth',
     description: 'Professional, collegiate, and youth sports teams, tournaments, and athletic events',
     roles: ['Player', 'Coach', 'Crew', 'VIP', 'Security', 'Medical', 'Tech'],
-    availableTabs: ['chat', 'calendar', 'tasks', 'polls', 'media', 'places', 'team', 'finance', 'medical', 'compliance', 'ai-chat'],
+    availableTabs: ['chat', 'calendar', 'tasks', 'polls', 'places', 'team', 'finance', 'medical', 'compliance', 'ai-chat'],
     requiredTabs: ['team', 'medical'],
     terminology: {
       teamLabel: 'Team Roster',
@@ -81,7 +81,7 @@ export const PRO_CATEGORY_CONFIGS: Record<ProTripCategory, ProCategoryConfig> = 
     name: 'Content',
     description: 'Television shows, film productions, creator content, and media shoots',
     roles: ['Talent', 'Crew', 'Security'],
-    availableTabs: ['chat', 'calendar', 'tasks', 'polls', 'media', 'places', 'team', 'sponsors', 'compliance', 'ai-chat'],
+    availableTabs: ['chat', 'calendar', 'tasks', 'polls', 'places', 'team', 'sponsors', 'compliance', 'ai-chat'],
     requiredTabs: ['team'],
     terminology: {
       teamLabel: 'Cast & Crew',
