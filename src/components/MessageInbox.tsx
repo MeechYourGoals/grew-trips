@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Search, MessageCircle, Clock, User } from 'lucide-react';
-import { useMessages } from '../hooks/useMessages';
 import { useNavigate } from 'react-router-dom';
 
 export const MessageInbox = () => {
   const navigate = useNavigate();
-  const { messages, searchMessages, searchQuery, markAsRead, getTotalUnreadCount } = useMessages();
   const [filter, setFilter] = useState<'all' | 'unread' | 'mentions'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  
+  // Mock data - replace with real unified messaging later
+  const messages: any[] = [];
+  const getTotalUnreadCount = () => 0;
 
   const filteredMessages = messages.filter(msg => {
     if (filter === 'unread') return !msg.isRead;
@@ -15,7 +18,6 @@ export const MessageInbox = () => {
   });
 
   const handleMessageClick = (message: any) => {
-    markAsRead(message.id);
     if (message.tripId) {
       navigate(`/trip/${message.tripId}`);
     } else if (message.tourId) {
@@ -71,7 +73,7 @@ export const MessageInbox = () => {
           type="text"
           placeholder="Search messages, people, or trips..."
           value={searchQuery}
-          onChange={(e) => searchMessages(e.target.value)}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl pl-12 pr-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:border-glass-orange"
         />
       </div>

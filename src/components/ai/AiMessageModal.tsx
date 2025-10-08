@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Send, Sparkles, Clock, Calendar, FileText, Lightbulb } from 'lucide-react';
-import { useMessages } from '../../hooks/useMessages';
 import { OpenAIService } from '../../services/OpenAIService';
 import { MessageService, MessageTemplate } from '../../services/MessageService';
 import { MessageTemplateLibrary } from '../MessageTemplateLibrary';
@@ -27,7 +26,7 @@ export const AiMessageModal = ({
   tourId, 
   tripContext 
 }: AiMessageModalProps) => {
-  const { addMessage, scheduleMessage } = useMessages();
+  // TODO: Implement message sending via unified messaging service
   const [currentView, setCurrentView] = useState<'composer' | 'templates' | 'scheduling'>('composer');
   const [prompt, setPrompt] = useState('');
   const [tone, setTone] = useState<'friendly' | 'professional' | 'urgent' | 'direct' | 'cheerful'>('professional');
@@ -135,11 +134,8 @@ export const AiMessageModal = ({
 
   const handleInsertToChat = async () => {
     if (generatedMessage) {
-      if (scheduleDate) {
-        await scheduleMessage(generatedMessage, new Date(scheduleDate), tripId, tourId);
-      } else {
-        await addMessage(generatedMessage, tripId, tourId);
-      }
+      // TODO: Implement message sending
+      console.log('Send message:', generatedMessage, 'to trip:', tripId || tourId);
       handleClose();
     }
   };

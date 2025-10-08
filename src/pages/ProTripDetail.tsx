@@ -7,7 +7,6 @@ import { ProTripDetailContent } from '../components/pro/ProTripDetailContent';
 import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { TripVariantProvider } from '../contexts/TripVariantContext';
 import { useAuth } from '../hooks/useAuth';
-import { useMessages } from '../hooks/useMessages';
 import { useDemoMode } from '../hooks/useDemoMode';
 import { proTripMockData } from '../data/proTripMockData';
 import { ProTripNotFound } from '../components/pro/ProTripNotFound';
@@ -17,7 +16,6 @@ import { ProTripCategory } from '../types/proCategories';
 const ProTripDetail = () => {
   const { proTripId } = useParams<{ proTripId?: string }>();
   const { user } = useAuth();
-  const { getMessagesForTrip } = useMessages();
   const { isDemoMode } = useDemoMode();
   const [activeTab, setActiveTab] = useState('chat');
   const [showInbox, setShowInbox] = useState(false);

@@ -115,6 +115,88 @@ export type Database = {
         }
         Relationships: []
       }
+      event_qa_questions: {
+        Row: {
+          answer: string | null
+          answered: boolean | null
+          answered_by: string | null
+          answered_by_user_id: string | null
+          created_at: string | null
+          event_id: string
+          id: string
+          question: string
+          session_id: string
+          updated_at: string | null
+          upvotes: number | null
+          user_id: string | null
+          user_name: string
+        }
+        Insert: {
+          answer?: string | null
+          answered?: boolean | null
+          answered_by?: string | null
+          answered_by_user_id?: string | null
+          created_at?: string | null
+          event_id: string
+          id?: string
+          question: string
+          session_id: string
+          updated_at?: string | null
+          upvotes?: number | null
+          user_id?: string | null
+          user_name: string
+        }
+        Update: {
+          answer?: string | null
+          answered?: boolean | null
+          answered_by?: string | null
+          answered_by_user_id?: string | null
+          created_at?: string | null
+          event_id?: string
+          id?: string
+          question?: string
+          session_id?: string
+          updated_at?: string | null
+          upvotes?: number | null
+          user_id?: string | null
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_qa_questions_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      event_qa_upvotes: {
+        Row: {
+          created_at: string | null
+          question_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          question_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          question_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "event_qa_upvotes_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "event_qa_questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invite_links: {
         Row: {
           code: string

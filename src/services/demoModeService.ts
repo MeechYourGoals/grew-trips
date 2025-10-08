@@ -306,11 +306,6 @@ class DemoModeService {
     return baseBroadcasts;
   }
 
-  disconnectUser = async () => {
-    // Placeholder for GetStream disconnect logic
-    console.log('Disconnecting user from GetStream (placeholder)');
-    return Promise.resolve();
-  };
 
   async getMockTrips(): Promise<MockTrip[]> {
     return [

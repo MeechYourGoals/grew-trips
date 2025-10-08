@@ -7,8 +7,6 @@ import { TripDetailHeader } from '../components/trip/TripDetailHeader';
 import { TripDetailContent } from '../components/trip/TripDetailContent';
 import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { useAuth } from '../hooks/useAuth';
-import { useMessages } from '../hooks/useMessages';
-
 import { getTripById, generateTripMockData } from '../data/tripsData';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '../hooks/use-mobile';
@@ -19,7 +17,6 @@ const TripDetail = () => {
   const { tripId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { getMessagesForTrip } = useMessages();
   const [activeTab, setActiveTab] = useState('chat');
   const [showInbox, setShowInbox] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -68,8 +65,8 @@ const TripDetail = () => {
   const mockData = generateTripMockData(trip);
   const basecamp = mockData.basecamp;
 
-  // Get trip messages for context
-  const tripMessages = getMessagesForTrip(tripId || '1');
+  // Messages are now handled by unified messaging service
+  const tripMessages: any[] = [];
 
   // Use generated mock data
   const mockBroadcasts = mockData.broadcasts;

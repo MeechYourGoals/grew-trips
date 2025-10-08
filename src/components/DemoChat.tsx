@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Send, MessageCircle } from 'lucide-react';
 import { currentUserAvatar } from '@/utils/mockAvatars';
 import { MessageReactionBar } from './chat/MessageReactionBar';
-import { useMessages } from '@/hooks/useMessages';
+import { useUnifiedMessages } from '@/hooks/useUnifiedMessages';
 
 interface DemoChatProps {
   tripId: string;
@@ -22,15 +22,13 @@ interface DemoMessage {
 }
 
 export const DemoChat = ({ tripId }: DemoChatProps) => {
-  const { getMessagesForTrip, addMessage } = useMessages();
+  const { messages, sendMessage } = useUnifiedMessages({ tripId, enabled: true });
   const [inputValue, setInputValue] = useState('');
   const [reactions, setReactions] = useState<Record<string, Record<string, { count: number; userReacted: boolean }>>>({});
 
-  const messages = getMessagesForTrip(tripId);
-
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
-    await addMessage(inputValue, tripId);
+    await sendMessage(inputValue);
     setInputValue('');
   };
 
@@ -97,12 +95,12 @@ export const DemoChat = ({ tripId }: DemoChatProps) => {
               <p className="text-gray-500 text-sm">No messages yet</p>
             </div>
           ) : (
-            filteredMessages.map((message) => (
+            messages.map((message) => (
               <div key={message.id} className="flex items-start gap-3">
                 {/* Avatar */}
                 <img
-                  src={message.senderAvatar || currentUserAvatar}
-                  alt={message.senderName}
+                  src={currentUserAvatar}
+                  alt={message.author_name}
                   className="w-10 h-10 rounded-full flex-shrink-0 object-cover border border-gray-600"
                 />
                 
@@ -111,10 +109,10 @@ export const DemoChat = ({ tripId }: DemoChatProps) => {
                   {/* Sender Name & Time */}
                   <div className="flex items-center gap-2 mb-1">
                     <span className="text-sm font-medium text-gray-300">
-                      {message.senderName}
+                      {message.author_name}
                     </span>
                     <span className="text-xs text-gray-500">
-                      {formatTime(message.timestamp)}
+                      {formatTime(message.created_at)}
                     </span>
                   </div>
                   

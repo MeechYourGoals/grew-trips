@@ -3,18 +3,8 @@ import { MessageSquare, ThumbsUp, Send, Check } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
-import { useAuth } from '../../hooks/useAuth';
-
-interface Question {
-  id: string;
-  user_name: string;
-  question: string;
-  upvotes: number;
-  answered: boolean;
-  answer?: string;
-  answered_by?: string;
-  created_at: string;
-}
+import { supabase } from '@/integrations/supabase/client';
+import { eventQAService, QAQuestion } from '@/services/eventQAService';
 
 interface LiveQAPanelProps {
   sessionId: string;
@@ -23,86 +13,92 @@ interface LiveQAPanelProps {
 }
 
 export const LiveQAPanel = ({ sessionId, eventId, userRole = 'attendee' }: LiveQAPanelProps) => {
-  const [questions, setQuestions] = useState<Question[]>([]);
+  const [questions, setQuestions] = useState<QAQuestion[]>([]);
   const [newQuestion, setNewQuestion] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [upvotedQuestions, setUpvotedQuestions] = useState<Set<string>>(new Set());
-  const { user } = useAuth();
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const { toast } = useToast();
 
+  // Get current user
   useEffect(() => {
-    // Mock data for now
-    setQuestions([
-      {
-        id: '1',
-        user_name: 'Alice Johnson',
-        question: 'What are the main benefits of implementing AI in customer service?',
-        upvotes: 15,
-        answered: true,
-        answer: 'AI can significantly improve response times, provide 24/7 support, and handle routine inquiries efficiently.',
-        answered_by: 'Dr. Smith',
-        created_at: new Date().toISOString()
-      },
-      {
-        id: '2',
-        user_name: 'Bob Chen',
-        question: 'How can we ensure AI systems remain ethical and unbiased?',
-        upvotes: 23,
-        answered: false,
-        created_at: new Date().toISOString()
-      },
-      {
-        id: '3',
-        user_name: 'Carol Davis',
-        question: 'What skills should developers focus on in the AI era?',
-        upvotes: 8,
-        answered: false,
-        created_at: new Date().toISOString()
-      },
-      {
-        id: '4',
-        user_name: 'David Wilson',
-        question: 'What are the best practices for implementing machine learning models in production?',
-        upvotes: 12,
-        answered: true,
-        answer: 'Focus on data quality, model monitoring, A/B testing, and gradual rollouts to ensure reliable performance.',
-        answered_by: 'Tech Lead',
-        created_at: new Date().toISOString()
-      }
-    ]);
-  }, [sessionId]);
+    supabase.auth.getUser().then(({ data }) => {
+      setCurrentUserId(data.user?.id || null);
+    });
+  }, []);
 
-  const fetchQuestions = async () => {
-    // Mock implementation - will be replaced with real Supabase call
-    console.log('Fetching questions for session:', sessionId);
-  };
+  // Fetch initial questions and set up real-time subscription
+  useEffect(() => {
+    const fetchInitialQuestions = async () => {
+      try {
+        const data = await eventQAService.getQuestions(eventId, sessionId);
+        setQuestions(data);
+
+        // If user is logged in, fetch their upvoted questions
+        if (currentUserId && data.length > 0) {
+          const upvoted = await eventQAService.getUserUpvotedQuestions(
+            currentUserId,
+            data.map(q => q.id)
+          );
+          setUpvotedQuestions(new Set(upvoted));
+        }
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+      }
+    };
+
+    fetchInitialQuestions();
+
+    // Subscribe to real-time updates
+    const unsubscribe = eventQAService.subscribeToQuestions(
+      eventId,
+      sessionId,
+      (updatedQuestion) => {
+        setQuestions(prev => {
+          const existing = prev.find(q => q.id === updatedQuestion.id);
+          if (existing) {
+            // Update existing question
+            return prev.map(q => q.id === updatedQuestion.id ? updatedQuestion : q);
+          } else {
+            // Add new question
+            return [updatedQuestion, ...prev];
+          }
+        });
+      }
+    );
+
+    return () => {
+      unsubscribe();
+    };
+  }, [eventId, sessionId, currentUserId]);
 
   const submitQuestion = async () => {
     if (!newQuestion.trim()) return;
 
-    // If user is not logged in, get name from prompt
-    let userName = user?.email?.split('@')[0] || 'Anonymous';
-    if (!user) {
-      const name = prompt('Please enter your name to ask a question:');
-      if (!name) return;
-      userName = name;
-    }
-
     setIsSubmitting(true);
     try {
-      // Mock implementation - add to local state
-      const newQ: Question = {
-        id: Date.now().toString(),
-        user_name: userName,
-        question: newQuestion.trim(),
-        upvotes: 0,
-        answered: false,
-        created_at: new Date().toISOString()
-      };
+      // Get user name
+      const { data: { user } } = await supabase.auth.getUser();
+      let userName = user?.email?.split('@')[0] || 'Anonymous';
       
-      setQuestions(prev => [newQ, ...prev]);
+      if (!user) {
+        const name = prompt('Please enter your name to ask a question:');
+        if (!name) {
+          setIsSubmitting(false);
+          return;
+        }
+        userName = name;
+      }
+
+      await eventQAService.submitQuestion(
+        eventId,
+        sessionId,
+        newQuestion,
+        user?.id,
+        userName
+      );
+      
       setNewQuestion('');
-      
       toast({
         title: "Question submitted",
         description: "Your question has been added to the Q&A queue."
@@ -120,15 +116,23 @@ export const LiveQAPanel = ({ sessionId, eventId, userRole = 'attendee' }: LiveQ
   };
 
   const upvoteQuestion = async (questionId: string) => {
-    if (upvotedQuestions.has(questionId)) return;
+    if (!currentUserId || upvotedQuestions.has(questionId)) return;
 
     try {
+      await eventQAService.upvoteQuestion(questionId, currentUserId);
+      setUpvotedQuestions(prev => new Set([...prev, questionId]));
+      
+      // Optimistically update UI
       setQuestions(prev => prev.map(q => 
         q.id === questionId ? { ...q, upvotes: q.upvotes + 1 } : q
       ));
-      setUpvotedQuestions(prev => new Set([...prev, questionId]));
     } catch (error) {
       console.error('Error upvoting question:', error);
+      toast({
+        title: "Error",
+        description: "Failed to upvote question.",
+        variant: "destructive"
+      });
     }
   };
 
@@ -136,16 +140,27 @@ export const LiveQAPanel = ({ sessionId, eventId, userRole = 'attendee' }: LiveQ
     if (userRole !== 'organizer' && userRole !== 'speaker') return;
 
     try {
-      setQuestions(prev => prev.map(q => 
-        q.id === questionId ? { 
-          ...q, 
-          answered: true, 
-          answer,
-          answered_by: user?.email?.split('@')[0] || 'Speaker'
-        } : q
-      ));
+      const { data: { user } } = await supabase.auth.getUser();
+      const answeredBy = user?.email?.split('@')[0] || 'Speaker';
+      
+      await eventQAService.answerQuestion(
+        questionId,
+        answer,
+        answeredBy,
+        user?.id
+      );
+      
+      toast({
+        title: "Question answered",
+        description: "Your answer has been posted."
+      });
     } catch (error) {
       console.error('Error marking question as answered:', error);
+      toast({
+        title: "Error",
+        description: "Failed to post answer.",
+        variant: "destructive"
+      });
     }
   };
 

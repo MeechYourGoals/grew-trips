@@ -7,7 +7,6 @@ import { EventDetailContent } from '../components/events/EventDetailContent';
 import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { TripVariantProvider } from '../contexts/TripVariantContext';
 import { useAuth } from '../hooks/useAuth';
-import { useMessages } from '../hooks/useMessages';
 import { eventsMockData } from '../data/eventsMockData';
 import { ProTripNotFound } from '../components/pro/ProTripNotFound';
 
@@ -15,7 +14,6 @@ import { ProTripNotFound } from '../components/pro/ProTripNotFound';
 const EventDetail = () => {
   const { eventId } = useParams<{ eventId?: string }>();
   const { user } = useAuth();
-  const { getMessagesForTrip } = useMessages();
   const [activeTab, setActiveTab] = useState('chat');
   const [showInbox, setShowInbox] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -73,8 +71,8 @@ const EventDetail = () => {
     address: `${eventData.location}, Main Venue`
   };
 
-  // Get event messages for context
-  const tripMessages = getMessagesForTrip(eventId);
+  // Messages are now handled by unified messaging service
+  const tripMessages: any[] = [];
 
   // Mock data for Event context - same structure as standard trips
   const mockBroadcasts = [

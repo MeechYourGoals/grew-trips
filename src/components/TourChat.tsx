@@ -3,7 +3,7 @@ import React, { useState, useRef } from 'react';
 import { Send, Radio, Users, MessageCircle, Megaphone, Share2, Image, Video, FileText, Mic, CreditCard } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useTripVariant } from '../contexts/TripVariantContext';
-import { useMessages } from '../hooks/useMessages';
+import { useUnifiedMessages } from '../hooks/useUnifiedMessages';
 import { PaymentInput } from './payments/PaymentInput';
 import { useTripMembers } from '../hooks/useTripMembers';
 
@@ -16,7 +16,10 @@ import { MessageBubble } from './chat/MessageBubble';
 export const TourChat = () => {
   const { proTripId, tourId } = useParams();
   const finalTourId = proTripId?.replace(/^pro-/, '') || tourId || '1';
-  const { getMessagesForTour, addMessage } = useMessages();
+  const { messages: tourMessages, sendMessage: sendUnifiedMessage } = useUnifiedMessages({ 
+    tripId: finalTourId, 
+    enabled: true 
+  });
   const [message, setMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showAiModal, setShowAiModal] = useState(false);
@@ -29,27 +32,25 @@ export const TourChat = () => {
   // Get tour data for context
   const tourData = proTripMockData[finalTourId];
   const tourName = tourData?.title || 'Event';
-
-  const tourMessages = getMessagesForTour(finalTourId);
   
   // Fetch actual trip members dynamically
   const { tripMembers } = useTripMembers(finalTourId);
 
-  const handleSendMessage = (isBroadcast?: boolean, isPayment?: boolean, paymentData?: any) => {
+  const handleSendMessage = async (isBroadcast?: boolean, isPayment?: boolean, paymentData?: any) => {
     if (!isPayment && !message.trim()) return;
     
     if (isPayment && paymentData) {
       // Calculate per-person amount and create payment message
       const perPersonAmount = (paymentData.amount / paymentData.splitCount).toFixed(2);
       const paymentMessage = `${paymentData.description} - ${paymentData.currency} ${paymentData.amount.toFixed(2)} (split ${paymentData.splitCount} ways) • Pay me $${perPersonAmount} via Venmo: @yourvenmo`;
-      addMessage(paymentMessage, undefined, finalTourId);
+      await sendUnifiedMessage(paymentMessage);
       
       // TODO: Save payment data to database
       console.log('Payment data:', paymentData);
       
       setIsPaymentMode(false);
     } else {
-      addMessage(message, undefined, finalTourId);
+      await sendUnifiedMessage(message);
       setMessage('');
       setIsBroadcastMode(false);
     }
@@ -139,9 +140,9 @@ export const TourChat = () => {
               key={msg.id}
               id={msg.id}
               text={msg.content}
-              senderName={msg.senderName}
-              senderAvatar={msg.senderAvatar}
-              timestamp={msg.timestamp}
+              senderName={msg.author_name}
+              senderAvatar={undefined}
+              timestamp={msg.created_at}
               isBroadcast={false}
               isPayment={msg.content.includes('split') && msg.content.includes('Pay me')}
               reactions={reactions[msg.id]}

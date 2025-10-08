@@ -35,63 +35,41 @@ Chravel is an AI-native collaborative travel and logistics platform built on:
 
 ## Messaging Architecture
 
-### Unified Messaging Abstraction
+### Unified Supabase Messaging
 
-**Location:** `src/services/messaging/`
+**Location:** `src/services/unifiedMessagingService.ts`, `src/hooks/useUnifiedMessages.ts`
 
-Chravel supports two messaging backends:
-- **Consumer Trips:** Supabase Realtime (`trip_chat_messages` table)
-- **Pro/Event Trips:** GetStream.io (channel-based messaging)
+**Complete Migration**: All messaging now runs on Supabase Realtime with PostgreSQL persistence.
 
-**Unified Interface:**
+#### Core Components
 
+**UnifiedMessagingService** - Single messaging backend
+- Supabase Realtime channels for live updates
+- `trip_chat_messages` table for message persistence
+- Real-time subscriptions with `postgres_changes` events
+- Type-safe message interface
+
+**React Hook** (`useUnifiedMessages.ts`)
 ```typescript
-// src/services/messaging/IMessagingProvider.ts
-interface IMessagingProvider {
-  connect(config: MessagingConfig): Promise<void>;
-  disconnect(): Promise<void>;
-  sendMessage(options: SendMessageOptions): Promise<Message>;
-  onMessage(callback: (message: Message) => void): () => void;
-  getMessages(limit?: number, before?: Date): Promise<Message[]>;
-  getUnreadCount(): Promise<number>;
-  markAsRead(messageIds: string[]): Promise<void>;
-  deleteMessage(messageId: string): Promise<void>;
-  isConnected(): boolean;
-}
-```
-
-**Provider Implementations:**
-- `SupabaseMessagingProvider` - For consumer trips
-- `StreamMessagingProvider` - For pro/event trips
-
-**Factory Pattern:**
-
-```typescript
-// src/services/messaging/MessagingFactory.ts
-const provider = MessagingFactory.getProvider(tripId, tripType);
-await provider.connect({ tripId, userId, userName });
-```
-
-**React Hook:**
-
-```typescript
-// src/hooks/useUnifiedMessages.ts
 const { messages, sendMessage, isLoading } = useUnifiedMessages({
   tripId: '123',
-  tripType: 'consumer'
+  enabled: true
 });
 ```
 
-### Migration Path
+**Event Q&A System** (`eventQAService.ts`)
+- Dedicated Live Q&A for event sessions
+- Tables: `event_qa_questions`, `event_qa_upvotes`
+- Real-time question submissions and upvoting
+- Moderator answer capabilities with RLS policies
 
-**Current State:** Dual implementation (Supabase + Stream)  
-**Future State:** Unified on Stream for all trip types (requires migration)
+#### Benefits of Consolidation
 
-**Benefits of Consolidation:**
-- Single codebase for messaging
-- Consistent UX across trip types
-- Reduced maintenance burden
-- Better feature parity
+✅ **Single backend** - No GetStream dependency, reduced bundle size  
+✅ **Persistent data** - All messages stored in PostgreSQL  
+✅ **Real-time updates** - Supabase Realtime for live chat  
+✅ **Cost efficient** - No external messaging service costs  
+✅ **Type safety** - Full TypeScript integration with generated types
 
 ---
 

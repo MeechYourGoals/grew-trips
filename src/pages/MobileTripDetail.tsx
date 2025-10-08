@@ -5,7 +5,6 @@ import { MobileTripTabs } from '../components/mobile/MobileTripTabs';
 import { MobileErrorBoundary } from '../components/mobile/MobileErrorBoundary';
 import { TripHeader } from '../components/TripHeader';
 import { useAuth } from '../hooks/useAuth';
-import { useMessages } from '../hooks/useMessages';
 import { useKeyboardHandler } from '../hooks/useKeyboardHandler';
 import { hapticService } from '../services/hapticService';
 
@@ -15,7 +14,6 @@ export const MobileTripDetail = () => {
   const { tripId } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { getMessagesForTrip } = useMessages();
   const [activeTab, setActiveTab] = useState('chat');
   const [tripDescription, setTripDescription] = useState<string>('');
 
@@ -62,7 +60,6 @@ export const MobileTripDetail = () => {
 
   const mockData = generateTripMockData(trip);
   const basecamp = mockData.basecamp;
-  const tripMessages = getMessagesForTrip(tripId || '1');
 
   const handleBack = () => {
     hapticService.light();
