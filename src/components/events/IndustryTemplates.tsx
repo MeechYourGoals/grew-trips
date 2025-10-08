@@ -1,20 +1,13 @@
 import React from 'react';
 import { Building, Briefcase, GraduationCap, Heart, Cpu, Music } from 'lucide-react';
 import { Button } from '../ui/button';
-
-interface Template {
-  id: string;
-  name: string;
-  description: string;
-  features: string[];
-  settings: any;
-}
+import { IndustryTemplate } from '@/types';
 
 interface IndustryTemplatesProps {
   selectedIndustry: string;
   onIndustrySelect: (industry: string) => void;
-  selectedTemplate: Template | null;
-  onTemplateSelect: (template: Template) => void;
+  selectedTemplate: IndustryTemplate | null;
+  onTemplateSelect: (template: IndustryTemplate) => void;
 }
 
 export const IndustryTemplates = ({

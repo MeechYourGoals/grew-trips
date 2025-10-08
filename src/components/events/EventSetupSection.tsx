@@ -4,12 +4,11 @@ import { Calendar, Users, Settings, ArrowRight, Upload, Download, Share2 } from 
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { EventSetupData } from '@/types';
 
 interface EventSetupSectionProps {
-  eventData?: any;
-  onEventDataChange?: (data: any) => void;
+  eventData?: EventSetupData;
+  onEventDataChange?: (data: EventSetupData) => void;
 }
 
 export const EventSetupSection = ({ eventData = {}, onEventDataChange }: EventSetupSectionProps) => {

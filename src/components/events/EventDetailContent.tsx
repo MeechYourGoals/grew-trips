@@ -13,16 +13,17 @@ import { EnhancedNetworkingHub } from './EnhancedNetworkingHub';
 import { TripTasksTab } from '../todo/TripTasksTab';
 
 import { EventData } from '../../types/events';
+import { TripContext } from '@/types';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 
 interface EventDetailContentProps {
   activeTab: string;
-  onTabChange: (tab: string) => void;
+  setActiveTab: (tab: string) => void;
   onShowTripsPlusModal: () => void;
   tripId: string;
   basecamp: { name: string; address: string };
   eventData: EventData;
-  tripContext: any;
+  tripContext: TripContext;
 }
 
 export const EventDetailContent = ({

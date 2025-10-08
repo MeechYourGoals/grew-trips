@@ -2,12 +2,11 @@ import React, { useState } from 'react';
 import { Calendar, MapPin, Upload } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Textarea } from '../ui/textarea';
+import { EventSetupData } from '@/types';
 
 interface SimpleEventSetupSectionProps {
-  eventData?: any;
-  onEventDataChange?: (data: any) => void;
+  eventData?: EventSetupData;
+  onEventDataChange?: (data: EventSetupData) => void;
 }
 
 export const SimpleEventSetupSection = ({ eventData = {}, onEventDataChange }: SimpleEventSetupSectionProps) => {

@@ -1,15 +1,14 @@
-import React, { useState } from 'react';
-import { InvitationManager } from './InvitationManager';
+import { EventSetupData, EventInvitation } from '@/types';
 
 interface EventInvitationsSectionProps {
-  eventData?: any;
-  onEventDataChange?: (data: any) => void;
+  eventData?: EventSetupData;
+  onEventDataChange?: (data: EventSetupData) => void;
 }
 
 export const EventInvitationsSection = ({ eventData = {}, onEventDataChange }: EventInvitationsSectionProps) => {
-  const [invitations, setInvitations] = useState(eventData.invitations || []);
+  const [invitations, setInvitations] = useState<EventInvitation[]>(eventData.invitations || []);
 
-  const handleInvitationsUpdate = (updatedInvitations: any[]) => {
+  const handleInvitationsUpdate = (updatedInvitations: EventInvitation[]) => {
     setInvitations(updatedInvitations);
     onEventDataChange?.({ ...eventData, invitations: updatedInvitations });
   };

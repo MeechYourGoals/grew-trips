@@ -5,6 +5,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Textarea } from '../ui/textarea';
 import { useToast } from '../../hooks/use-toast';
+import { EventSetupData, EventInvitation } from '@/types';
 
 interface Invitation {
   id: string;
@@ -12,12 +13,13 @@ interface Invitation {
   name: string;
   role: 'attendee' | 'speaker' | 'organizer' | 'exhibitor';
   status: 'pending' | 'sent' | 'accepted' | 'declined';
+  sentAt?: string;
   qrCode?: string;
 }
 
 interface InvitationManagerProps {
-  eventData: any;
-  onInvitationsUpdate: (invitations: Invitation[]) => void;
+  eventData: EventSetupData;
+  onInvitationsUpdate: (invitations: EventInvitation[]) => void;
 }
 
 export const InvitationManager = ({ eventData, onInvitationsUpdate }: InvitationManagerProps) => {

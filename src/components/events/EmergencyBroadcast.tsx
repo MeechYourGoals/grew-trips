@@ -200,7 +200,7 @@ export const EmergencyBroadcast = () => {
             {/* Urgency Level */}
             <div>
               <Label className="text-white mb-2 block">Urgency Level</Label>
-              <Select value={urgency} onValueChange={(value: any) => setUrgency(value)}>
+              <Select value={urgency} onValueChange={(value: 'low' | 'medium' | 'high' | 'critical') => setUrgency(value)}>
                 <SelectTrigger className="bg-gray-800/50 border-gray-600 text-white">
                   <SelectValue />
                 </SelectTrigger>

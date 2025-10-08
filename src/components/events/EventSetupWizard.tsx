@@ -6,11 +6,10 @@ import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import { Textarea } from '../ui/textarea';
 import { IndustryTemplates } from './IndustryTemplates';
-import { ScheduleImporter } from './ScheduleImporter';
-import { InvitationManager } from './InvitationManager';
+import { EventSetupData } from '@/types';
 
 interface EventSetupWizardProps {
-  onComplete: (eventData: any) => void;
+  onComplete: (eventData: EventSetupData) => void;
   onCancel: () => void;
 }
 

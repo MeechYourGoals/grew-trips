@@ -3,12 +3,11 @@ import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Textarea } from '../ui/textarea';
-import { useToast } from '../../hooks/use-toast';
+import { EventSetupData, EventBasicsFormData } from '@/types';
 
 interface EventBasicsSectionProps {
-  eventData?: any;
-  onEventDataChange?: (data: any) => void;
+  eventData?: EventSetupData;
+  onEventDataChange?: (data: EventSetupData) => void;
 }
 
 export const EventBasicsSection = ({ eventData = {}, onEventDataChange }: EventBasicsSectionProps) => {

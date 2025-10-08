@@ -1,46 +1,135 @@
+// Payment & Settlement Types (Extended)
+
+import { PaymentMethodId } from './paymentMethods';
+import { Receipt } from './receipts';
+
+// PaymentMethod structure used throughout the app
 export interface PaymentMethod {
   id: string;
-  type: 'venmo' | 'zelle' | 'cashapp' | 'applepay' | 'paypal' | 'cash' | 'other';
-  identifier: string; // username, email, phone, etc.
-  displayName?: string; // custom display name
+  type: PaymentMethodId | 'venmo' | 'zelle' | 'cashapp' | 'applepay' | 'paypal' | 'cash' | 'other';
+  identifier: string;
+  displayName?: string;
   isPreferred?: boolean;
-  isVisible?: boolean; // whether to show to trip members
+  isVisible?: boolean;
 }
 
+// PaymentMessage structure for trip payments
 export interface PaymentMessage {
   id: string;
   tripId: string;
-  messageId: string;
+  messageId: string | null;
   amount: number;
   currency: string;
   description: string;
   splitCount: number;
-  splitParticipants: string[]; // user IDs
-  paymentMethods: string[]; // payment method types
+  splitParticipants: string[];
+  paymentMethods: string[];
   createdBy: string;
   createdAt: string;
-  isSettled?: boolean;
+  isSettled: boolean;
+}
+
+export interface PaymentParticipant {
+  userId: string;
+  name: string;
+  avatar?: string;
+  amount: number;
+  paid: boolean;
+  paidAt?: string;
+  paymentMethod?: PaymentMethod;
 }
 
 export interface PaymentSplit {
   id: string;
-  paymentMessageId: string;
-  debtorUserId: string;
-  amountOwed: number;
-  isSettled: boolean;
-  settledAt?: string;
-  settlementMethod?: string;
-}
-
-export interface UserPaymentMethods {
-  userId: string;
-  methods: PaymentMethod[];
-}
-
-export interface PaymentSettlement {
-  from: string;
-  to: string;
+  tripId: string;
+  createdBy: string;
+  createdByName: string;
   amount: number;
+  currency: string;
   description: string;
-  paymentMethods: string[];
+  category?: string;
+  
+  // Split details
+  splitType: 'equal' | 'custom' | 'percentage';
+  participants: PaymentParticipant[];
+  totalParticipants: number;
+  
+  // Settlement
+  settled: boolean;
+  settledAt?: string;
+  
+  // Receipt
+  receiptUrl?: string;
+  receiptId?: string;
+  receipt?: Receipt;
+  
+  // Payment methods
+  preferredMethods: PaymentMethod[];
+  
+  // Metadata
+  notes?: string;
+  tags?: string[];
+  location?: string;
+  timestamp: string;
+  
+  // Audit
+  version: number;
+  lastModified: string;
+}
+
+export interface PaymentSummary {
+  tripId: string;
+  totalSpent: number;
+  totalOwed: number;
+  totalOwedToYou: number;
+  totalYouOwe: number;
+  currency: string;
+  
+  // Breakdown by user
+  balances: Array<{
+    userId: string;
+    userName: string;
+    balance: number; // positive = they owe you, negative = you owe them
+  }>;
+  
+  // Category breakdown
+  categories: Array<{
+    name: string;
+    amount: number;
+    percentage: number;
+  }>;
+}
+
+export interface PaymentRequest {
+  tripId: string;
+  amount: number;
+  currency: string;
+  description: string;
+  participants: string[]; // user IDs
+  splitType: 'equal' | 'custom' | 'percentage';
+  customAmounts?: Record<string, number>; // userId -> amount
+  preferredMethod?: PaymentMethod;
+  receiptUrl?: string;
+  category?: string;
+  notes?: string;
+}
+
+export interface SettlementSuggestion {
+  from: string;
+  fromName: string;
+  to: string;
+  toName: string;
+  amount: number;
+  currency: string;
+  method?: PaymentMethod;
+}
+
+export interface PaymentData {
+  amount: number;
+  currency: string;
+  description: string;
+  splitCount: number;
+  settled?: boolean;
+  participants?: PaymentParticipant[];
+  methods?: PaymentMethod[];
 }

@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { IndustryTemplates } from './IndustryTemplates';
-import { ScheduleImporter } from './ScheduleImporter';
+import { EventSetupData, IndustryTemplate, EventScheduleData } from '@/types';
 
 interface EventScheduleSectionProps {
-  eventData?: any;
-  onEventDataChange?: (data: any) => void;
+  eventData?: EventSetupData;
+  onEventDataChange?: (data: EventSetupData) => void;
 }
 
 export const EventScheduleSection = ({ eventData = {}, onEventDataChange }: EventScheduleSectionProps) => {
-  const [scheduleData, setScheduleData] = useState({
+  const [scheduleData, setScheduleData] = useState<EventScheduleData>({
     industry: eventData.industry || '',
     template: eventData.template || null,
     schedule: eventData.schedule || []
@@ -20,13 +19,13 @@ export const EventScheduleSection = ({ eventData = {}, onEventDataChange }: Even
     onEventDataChange?.(updated);
   };
 
-  const handleTemplateSelect = (template: any) => {
+  const handleTemplateSelect = (template: IndustryTemplate) => {
     const updated = { ...scheduleData, template };
     setScheduleData(updated);
     onEventDataChange?.(updated);
   };
 
-  const handleScheduleImport = (schedule: any[]) => {
+  const handleScheduleImport = (schedule: unknown[]) => {
     const updated = { ...scheduleData, schedule };
     setScheduleData(updated);
     onEventDataChange?.(updated);
