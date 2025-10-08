@@ -2,7 +2,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'app.lovable.20feaa0409464c68a68d0eb88cc1b9c4',
+  appId: 'com.chravel.app',
   appName: 'chravel',
   webDir: 'dist',
   server: {
