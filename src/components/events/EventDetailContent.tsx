@@ -1,9 +1,10 @@
 
 import React from 'react';
-import { Crown, Sparkles, Users, Calendar, UserCheck, Network, TrendingUp, ClipboardList, BarChart3 } from 'lucide-react';
-import { TripTabs } from '../TripTabs';
+import { Sparkles, Users, Calendar, Network, ClipboardList, MessageCircle, MapPin, MessageSquare } from 'lucide-react';
+import { TripChat } from '../TripChat';
 import { PlacesSection } from '../PlacesSection';
 import { PerplexityChat } from '../PerplexityChat';
+import { GroupCalendar } from '../GroupCalendar';
 
 import { RegistrationTab } from './RegistrationTab';
 import { AgendaBuilder } from './AgendaBuilder';
@@ -11,7 +12,6 @@ import { SpeakerDirectory } from './SpeakerDirectory';
 import { LiveQAPanel } from './LiveQAPanel';
 import { EnhancedNetworkingHub } from './EnhancedNetworkingHub';
 import { TripTasksTab } from '../todo/TripTasksTab';
-import { CommentsWall } from '../CommentsWall';
 
 import { EventData } from '../../types/events';
 import { useTripVariant } from '../../contexts/TripVariantContext';
@@ -38,27 +38,27 @@ export const EventDetailContent = ({
   const { accentColors } = useTripVariant();
 
   const tabs = [
-    { id: 'chat', label: 'Event', icon: null },
-    { id: 'registration', label: 'Registration', icon: UserCheck, eventOnly: true },
+    { id: 'chat', label: 'Chat', icon: MessageCircle },
+    { id: 'calendar', label: 'Calendar', icon: Calendar },
+    { id: 'todo', label: 'Tasks', icon: ClipboardList },
     { id: 'agenda', label: 'Agenda', icon: Calendar, eventOnly: true },
     { id: 'speakers', label: 'Speakers', icon: Users, eventOnly: true },
     { id: 'networking', label: 'Networking', icon: Network, eventOnly: true },
-    { id: 'live-qa', label: 'Live Q&A', icon: null, eventOnly: true },
-    { id: 'places', label: 'Places', icon: null },
-    { id: 'ai-chat', label: 'Concierge', icon: null },
-    { id: 'analytics', label: 'Analytics', icon: TrendingUp, eventOnly: true, organinerOnly: true }
+    { id: 'live-qa', label: 'Live Q&A', icon: MessageSquare, eventOnly: true },
+    { id: 'places', label: 'Places', icon: MapPin },
+    { id: 'ai-chat', label: 'Concierge', icon: Sparkles }
   ];
 
-  const visibleTabs = tabs.filter(tab => {
-    if (tab.organinerOnly && eventData.userRole !== 'organizer') return false;
-    if (tab.id === 'registration' && eventData.userRole !== 'organizer') return false;
-    return true;
-  });
+  const visibleTabs = tabs;
 
   const renderTabContent = () => {
     switch (activeTab) {
       case 'chat':
-        return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
+        return <TripChat groupChatEnabled={true} />;
+      case 'calendar':
+        return <GroupCalendar />;
+      case 'todo':
+        return <TripTasksTab tripId={tripId} />;
       case 'registration':
         return (
           <RegistrationTab
@@ -109,10 +109,6 @@ export const EventDetailContent = ({
             userRole={(eventData.userRole === 'exhibitor' ? 'attendee' : eventData.userRole) || 'attendee'}
           />
         );
-      case 'polls':
-        return <CommentsWall />;
-      case 'todo':
-        return <TripTasksTab tripId={tripId} />;
       case 'places':
         return <PlacesSection />;
       case 'ai-chat':
@@ -122,18 +118,8 @@ export const EventDetailContent = ({
             basecamp={basecamp}
           />
         );
-      case 'analytics':
-        return (
-          <div className="p-6">
-            <div className="text-center py-12">
-              <TrendingUp size={48} className="text-blue-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-400 mb-2">Event Analytics</h3>
-              <p className="text-gray-500 text-sm">Real-time event insights and attendee analytics coming soon</p>
-            </div>
-          </div>
-        );
       default:
-        return <TripTabs activeTab="chat" onTabChange={() => {}} tripId={tripId} />;
+        return <TripChat groupChatEnabled={true} />;
     }
   };
 
