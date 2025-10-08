@@ -1,8 +1,7 @@
 
 import React from 'react';
-import { Sparkles, Users, Calendar, Network, ClipboardList, MessageCircle, MapPin, MessageSquare } from 'lucide-react';
+import { Sparkles, Users, Calendar, Network, ClipboardList, MessageCircle, MessageSquare } from 'lucide-react';
 import { TripChat } from '../TripChat';
-import { PlacesSection } from '../PlacesSection';
 import { PerplexityChat } from '../PerplexityChat';
 import { GroupCalendar } from '../GroupCalendar';
 
@@ -45,7 +44,6 @@ export const EventDetailContent = ({
     { id: 'speakers', label: 'Speakers', icon: Users, eventOnly: true },
     { id: 'networking', label: 'Networking', icon: Network, eventOnly: true },
     { id: 'live-qa', label: 'Live Q&A', icon: MessageSquare, eventOnly: true },
-    { id: 'places', label: 'Places', icon: MapPin },
     { id: 'ai-chat', label: 'Concierge', icon: Sparkles }
   ];
 
@@ -109,8 +107,6 @@ export const EventDetailContent = ({
             userRole={(eventData.userRole === 'exhibitor' ? 'attendee' : eventData.userRole) || 'attendee'}
           />
         );
-      case 'places':
-        return <PlacesSection />;
       case 'ai-chat':
         return (
           <PerplexityChat 
