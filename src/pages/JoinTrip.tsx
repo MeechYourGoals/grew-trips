@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '../integrations/supabase/client';
 import { useAuth } from '../hooks/useAuth';
 import { toast } from 'sonner';
-import { Loader2, Users, MapPin, Calendar } from 'lucide-react';
+import { Loader2, Users, MapPin, Calendar, Clock } from 'lucide-react';
 
 interface InviteData {
   trip_id: string;
@@ -189,6 +189,15 @@ const JoinTrip = () => {
         return;
       }
 
+      // Check if approval is required
+      if (data.requires_approval) {
+        toast.success(data.message || 'Join request submitted!');
+        setJoining(false);
+        // Don't redirect - show pending approval message
+        setInviteData(prev => prev ? { ...prev, require_approval: true } as any : null);
+        return;
+      }
+
       // Success! Show message and redirect to trip
       toast.success(data.message || 'Successfully joined the trip!');
       
@@ -325,10 +334,14 @@ const JoinTrip = () => {
           </div>
         )}
 
-        {inviteData?.require_approval && (
-          <div className="mt-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
-            <p className="text-yellow-400 text-sm text-center">
-              This trip requires approval from the organizer
+        {inviteData?.require_approval && !joining && (
+          <div className="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
+            <div className="flex items-center gap-2 mb-2">
+              <Clock className="h-5 w-5 text-yellow-400" />
+              <p className="font-medium text-yellow-400">Approval Required</p>
+            </div>
+            <p className="text-yellow-400/80 text-sm">
+              This trip requires approval from the organizer. Your request will be reviewed once submitted.
             </p>
           </div>
         )}

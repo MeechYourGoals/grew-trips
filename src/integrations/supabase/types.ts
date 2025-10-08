@@ -931,6 +931,39 @@ export type Database = {
         }
         Relationships: []
       }
+      trip_join_requests: {
+        Row: {
+          id: string
+          invite_code: string
+          requested_at: string
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          trip_id: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          invite_code: string
+          requested_at?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          trip_id: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          invite_code?: string
+          requested_at?: string
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          trip_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       trip_link_index: {
         Row: {
           created_at: string | null

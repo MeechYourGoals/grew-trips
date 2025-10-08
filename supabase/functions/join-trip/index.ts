@@ -169,7 +169,63 @@ serve(async (req) => {
 
     logStep("Trip found", { tripName: trip.name, tripType: trip.trip_type });
 
-    // Add user to trip_members
+    // Check if invite requires approval
+    const requiresApproval = invite.require_approval || false;
+
+    if (requiresApproval) {
+      // Create join request instead of auto-joining
+      const { error: requestError } = await supabaseClient
+        .from("trip_join_requests")
+        .insert({
+          trip_id: invite.trip_id,
+          user_id: user.id,
+          invite_code: inviteCode,
+          status: 'pending'
+        });
+
+      if (requestError) {
+        // Check if request already exists
+        if (requestError.code === '23505') {
+          logStep("Join request already exists");
+          return new Response(
+            JSON.stringify({
+              success: true,
+              requires_approval: true,
+              trip_id: invite.trip_id,
+              trip_name: trip.name,
+              trip_type: trip.trip_type,
+              message: "Your join request is pending approval from the trip organizer."
+            }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+
+        logStep("ERROR: Failed to create join request", { error: requestError.message });
+        return new Response(
+          JSON.stringify({ 
+            success: false, 
+            message: "Failed to submit join request. Please try again." 
+          }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      logStep("Join request created successfully");
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          requires_approval: true,
+          trip_id: invite.trip_id,
+          trip_name: trip.name,
+          trip_type: trip.trip_type,
+          message: "Join request submitted! The trip organizer will review your request."
+        }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // No approval required - add user directly to trip_members
     const { error: memberError } = await supabaseClient
       .from("trip_members")
       .insert({
