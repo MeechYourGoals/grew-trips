@@ -92,7 +92,7 @@ class DemoModeService {
     await secureStorageService.setDemoMode(false, userId);
   }
 
-  async getMockMessages(tripType: string): Promise<MockMessage[]> {
+  async getMockMessages(tripType: string, excludePayments: boolean = false): Promise<MockMessage[]> {
     // Enhanced mock messages with diverse, realistic names and proper message types
     const baseMessages: MockMessage[] = [
       // Regular conversation messages
@@ -216,7 +216,14 @@ class DemoModeService {
     // Add trip-specific messages based on type
     const tripSpecificMessages = this.getTripSpecificMessages(tripType);
     
-    return [...baseMessages, ...tripSpecificMessages].sort((a, b) => 
+    let allMessages = [...baseMessages, ...tripSpecificMessages];
+    
+    // Filter out payment messages if excludePayments is true (for events)
+    if (excludePayments) {
+      allMessages = allMessages.filter(msg => !msg.tags?.includes('payment'));
+    }
+    
+    return allMessages.sort((a, b) => 
       (b.timestamp_offset_days || 0) - (a.timestamp_offset_days || 0)
     );
   }
@@ -352,7 +359,12 @@ class DemoModeService {
     ];
   }
 
-  async getMockPayments(tripId: string): Promise<MockPayment[]> {
+  async getMockPayments(tripId: string, isEvent: boolean = false): Promise<MockPayment[]> {
+    // Events don't have payments
+    if (isEvent) {
+      return [];
+    }
+    
     return [
       {
         id: 'demo-payment-1',

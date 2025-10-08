@@ -4,9 +4,10 @@ import { MessageCircle, Megaphone, CreditCard } from 'lucide-react';
 interface MessageFiltersProps {
   activeFilter: 'all' | 'broadcast' | 'payments';
   onFilterChange: (filter: 'all' | 'broadcast' | 'payments') => void;
+  hidePayments?: boolean;
 }
 
-export const MessageFilters = ({ activeFilter, onFilterChange }: MessageFiltersProps) => {
+export const MessageFilters = ({ activeFilter, onFilterChange, hidePayments = false }: MessageFiltersProps) => {
   return (
     <div className="flex justify-center gap-4">
       <button
@@ -31,17 +32,19 @@ export const MessageFilters = ({ activeFilter, onFilterChange }: MessageFiltersP
         <Megaphone size={16} />
         Broadcasts
       </button>
-      <button
-        onClick={() => onFilterChange('payments')}
-        className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-          activeFilter === 'payments' 
-            ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
-            : 'border border-green-600 text-green-400 hover:text-white hover:bg-green-600/10'
-        }`}
-      >
-        <CreditCard size={16} />
-        Payments
-      </button>
+      {!hidePayments && (
+        <button
+          onClick={() => onFilterChange('payments')}
+          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+            activeFilter === 'payments' 
+              ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
+              : 'border border-green-600 text-green-400 hover:text-white hover:bg-green-600/10'
+          }`}
+        >
+          <CreditCard size={16} />
+          Payments
+        </button>
+      )}
     </div>
   );
 };

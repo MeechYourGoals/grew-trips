@@ -14,6 +14,7 @@ interface ChatInputProps {
   apiKey: string; // Keep for backward compatibility but won't be used
   isTyping: boolean;
   tripMembers?: Array<{ id: string; name: string; avatar?: string }>;
+  hidePayments?: boolean;
 }
 
 export const ChatInput = ({ 
@@ -23,7 +24,8 @@ export const ChatInput = ({
   onKeyPress, 
   onFileUpload,
   isTyping,
-  tripMembers = []
+  tripMembers = [],
+  hidePayments = false
 }: ChatInputProps) => {
   const [isBroadcastMode, setIsBroadcastMode] = useState(false);
   const [isPaymentMode, setIsPaymentMode] = useState(false);
@@ -119,20 +121,22 @@ export const ChatInput = ({
           <Megaphone size={16} />
           Broadcast
         </button>
-        <button
-          onClick={() => {
-            setIsPaymentMode(true);
-            setIsBroadcastMode(false);
-          }}
-          className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
-            isPaymentMode 
-              ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
-              : 'border border-green-600 text-green-400 hover:text-white hover:bg-green-600/10'
-          }`}
-        >
-          <CreditCard size={16} />
-          Payments
-        </button>
+        {!hidePayments && (
+          <button
+            onClick={() => {
+              setIsPaymentMode(true);
+              setIsBroadcastMode(false);
+            }}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+              isPaymentMode 
+                ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white' 
+                : 'border border-green-600 text-green-400 hover:text-white hover:bg-green-600/10'
+            }`}
+          >
+            <CreditCard size={16} />
+            Payments
+          </button>
+        )}
         
         {/* Share Button */}
         <DropdownMenu>

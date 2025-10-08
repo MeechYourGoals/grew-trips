@@ -37,22 +37,36 @@ export const PendingJoinRequests = ({ tripId }: PendingJoinRequestsProps) => {
 
   const fetchRequests = async () => {
     try {
-      const { data, error } = await supabase
+      // Fetch requests
+      const { data: requestsData, error: requestsError } = await supabase
         .from('trip_join_requests')
-        .select(`
-          *,
-          profiles (
-            display_name,
-            email,
-            avatar_url
-          )
-        `)
+        .select('*')
         .eq('trip_id', tripId)
         .eq('status', 'pending')
         .order('requested_at', { ascending: false });
 
-      if (error) throw error;
-      setRequests((data as JoinRequest[]) || []);
+      if (requestsError) throw requestsError;
+
+      // Fetch profiles separately
+      if (requestsData && requestsData.length > 0) {
+        const userIds = requestsData.map(r => r.user_id);
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('user_id, display_name, email, avatar_url')
+          .in('user_id', userIds);
+
+        if (profilesError) throw profilesError;
+
+        // Merge data
+        const mergedData = requestsData.map(request => ({
+          ...request,
+          profiles: profilesData?.find(p => p.user_id === request.user_id) || null
+        }));
+
+        setRequests(mergedData as JoinRequest[]);
+      } else {
+        setRequests([]);
+      }
     } catch (error) {
       console.error('Error fetching join requests:', error);
       toast.error('Failed to load join requests');

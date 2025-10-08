@@ -12,9 +12,10 @@ import { hapticService } from '../../services/hapticService';
 
 interface MobileTripChatProps {
   tripId: string;
+  isEvent?: boolean;
 }
 
-export const MobileTripChat = ({ tripId }: MobileTripChatProps) => {
+export const MobileTripChat = ({ tripId, isEvent = false }: MobileTripChatProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -148,6 +149,7 @@ export const MobileTripChat = ({ tripId }: MobileTripChatProps) => {
           apiKey=""
           isTyping={false}
           tripMembers={[]}
+          hidePayments={isEvent}
         />
       </div>
     </div>

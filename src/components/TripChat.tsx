@@ -11,8 +11,9 @@ import { getMockAvatar } from '../utils/mockAvatars';
 import { useTripMembers } from '../hooks/useTripMembers';
 
 interface TripChatProps {
-  groupChatEnabled?: boolean;
+  enableGroupChat?: boolean;
   showBroadcasts?: boolean;
+  isEvent?: boolean;
 }
 
 interface MockMessage {
@@ -34,8 +35,9 @@ interface MockMessage {
 }
 
 export const TripChat = ({ 
-  groupChatEnabled = true,
-  showBroadcasts = true 
+  enableGroupChat = true,
+  showBroadcasts = true,
+  isEvent = false 
 }: TripChatProps) => {
   const [messages, setMessages] = useState<MockMessage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -55,7 +57,7 @@ export const TripChat = ({
     clearReply,
     sendMessage,
     filterMessages
-  } = useChatComposer({ tripId, demoMode: demoMode.isDemoMode });
+  } = useChatComposer({ tripId, demoMode: demoMode.isDemoMode, isEvent });
 
   const handleSendMessage = async (isBroadcast = false, isPayment = false, paymentData?: any) => {
     const message = await sendMessage({ 
@@ -92,7 +94,7 @@ export const TripChat = ({
 
   useEffect(() => {
     const loadDemoData = async () => {
-      const demoMessages = await demoModeService.getMockMessages('friends-trip');
+      const demoMessages = await demoModeService.getMockMessages('friends-trip', isEvent);
       
       const formattedMessages = demoMessages.map(msg => ({
         id: msg.id,
@@ -118,7 +120,7 @@ export const TripChat = ({
     };
 
     loadDemoData();
-  }, [demoMode.isDemoMode]);
+  }, [demoMode.isDemoMode, isEvent]);
 
   const filteredMessages = filterMessages(messages);
 
@@ -132,7 +134,8 @@ export const TripChat = ({
         <div className="p-4 border-b border-gray-700">
           <MessageFilters 
             activeFilter={messageFilter} 
-            onFilterChange={setMessageFilter} 
+            onFilterChange={setMessageFilter}
+            hidePayments={isEvent}
           />
         </div>
       )}
@@ -167,6 +170,7 @@ export const TripChat = ({
           apiKey=""
           isTyping={false}
           tripMembers={tripMembers}
+          hidePayments={isEvent}
         />
       </div>
     </div>

@@ -33,9 +33,10 @@ export interface PaymentData {
 export interface UseChatComposerOptions {
   tripId?: string;
   demoMode?: boolean;
+  isEvent?: boolean;
 }
 
-export const useChatComposer = ({ tripId, demoMode = false }: UseChatComposerOptions = {}) => {
+export const useChatComposer = ({ tripId, demoMode = false, isEvent = false }: UseChatComposerOptions = {}) => {
   const [inputMessage, setInputMessage] = useState('');
   const [replyingTo, setReplyingTo] = useState<ReplyContext | null>(null);
   const [messageFilter, setMessageFilter] = useState<'all' | 'broadcast' | 'payments'>('all');
@@ -97,6 +98,12 @@ export const useChatComposer = ({ tripId, demoMode = false }: UseChatComposerOpt
     } = {}
   ): Promise<ChatMessage | null> => {
     const { isPayment = false, paymentData } = options;
+
+    // Prevent payment creation for events
+    if (isEvent && isPayment) {
+      console.warn('Payment messages are not allowed for events');
+      return null;
+    }
 
     if (!isPayment && inputMessage.trim() === '') return null;
 
