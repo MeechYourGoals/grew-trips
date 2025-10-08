@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface UseInviteLinkProps {
   isOpen: boolean;
@@ -22,22 +23,77 @@ export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days
     }
   }, [isOpen, requireApproval, expireIn7Days, tripId, proTripId]);
 
-  const generateTripLink = () => {
+  const createInviteInDatabase = async (tripIdValue: string, inviteCode: string) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        console.error('User not authenticated');
+        return false;
+      }
+
+      const inviteData: any = {
+        trip_id: tripIdValue,
+        code: inviteCode,
+        created_by: user.id,
+        is_active: true,
+        current_uses: 0,
+      };
+
+      // Add expiration if enabled (7 days from now)
+      if (expireIn7Days) {
+        const expirationDate = new Date();
+        expirationDate.setDate(expirationDate.getDate() + 7);
+        inviteData.expires_at = expirationDate.toISOString();
+      }
+
+      const { error } = await supabase
+        .from('trip_invites')
+        .insert(inviteData);
+
+      if (error) {
+        console.error('Error creating invite:', error);
+        return false;
+      }
+
+      console.log('Invite created successfully in database');
+      return true;
+    } catch (error) {
+      console.error('Error creating invite:', error);
+      return false;
+    }
+  };
+
+  const generateTripLink = async () => {
+    setLoading(true);
     let baseUrl = 'https://chravel.app';
     let tripUrl = '';
+    let actualTripId = proTripId || tripId;
     
-    // Generate actual trip URL based on trip type
-    if (proTripId) {
-      tripUrl = `${baseUrl}/tour/pro/${proTripId}`;
-    } else if (tripId) {
-      tripUrl = `${baseUrl}/trip/${tripId}`;
-    } else {
-      // Fallback to join link if no specific trip ID
+    if (!actualTripId) {
+      // Fallback to generic join link if no trip ID
       const mockToken = crypto.randomUUID();
       tripUrl = `${baseUrl}/join/${mockToken}`;
+      setInviteLink(tripUrl);
+      setLoading(false);
+      return;
     }
+
+    // Generate unique invite code
+    const inviteCode = crypto.randomUUID();
     
-    // Add parameters for settings
+    // Create invite in database
+    const created = await createInviteInDatabase(actualTripId, inviteCode);
+    
+    if (!created) {
+      toast.error('Failed to create invite link. Please try again.');
+      setLoading(false);
+      return;
+    }
+
+    // Generate the join URL with the invite code
+    tripUrl = `${baseUrl}/join/${inviteCode}`;
+    
+    // Add parameters for display purposes (actual validation happens server-side)
     const params = new URLSearchParams();
     if (requireApproval) params.append('approval', 'true');
     if (expireIn7Days) params.append('expires', '7d');
@@ -48,12 +104,29 @@ export const useInviteLink = ({ isOpen, tripName, requireApproval, expireIn7Days
 
     setInviteLink(tripUrl);
     setLoading(false);
+    toast.success('Invite link created!');
   };
 
-  const regenerateInviteToken = () => {
+  const regenerateInviteToken = async () => {
     setLoading(true);
+    
+    // Deactivate old invite if it exists
+    if (inviteLink) {
+      try {
+        const oldCode = inviteLink.split('/join/')[1]?.split('?')[0];
+        if (oldCode) {
+          await supabase
+            .from('trip_invites')
+            .update({ is_active: false })
+            .eq('code', oldCode);
+        }
+      } catch (error) {
+        console.error('Error deactivating old invite:', error);
+      }
+    }
+    
     // Generate new trip link
-    generateTripLink();
+    await generateTripLink();
     toast.success('New invite link generated!');
   };
 

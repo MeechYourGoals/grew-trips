@@ -105,28 +105,58 @@ const JoinTrip = () => {
     if (!token) return;
 
     try {
-      // For now, treat all invites as mock since we're focusing on basecamp functionality
-      setIsMockInvite(true);
+      // Fetch real invite data from database
+      const { data: invite, error } = await supabase
+        .from('trip_invites')
+        .select('*')
+        .eq('code', token)
+        .single();
+
+      if (error || !invite) {
+        console.error('Error fetching invite:', error);
+        setError('Invalid invite link');
+        setLoading(false);
+        return;
+      }
+
+      // Check if invite is still valid
+      if (!invite.is_active) {
+        setError('This invite link has been deactivated');
+        setLoading(false);
+        return;
+      }
+
+      if (invite.expires_at && new Date(invite.expires_at) < new Date()) {
+        setError('This invite link has expired');
+        setLoading(false);
+        return;
+      }
+
+      if (invite.max_uses && invite.current_uses >= invite.max_uses) {
+        setError('This invite link has reached its maximum number of uses');
+        setLoading(false);
+        return;
+      }
+
+      setIsMockInvite(false);
       setInviteData({
-        trip_id: 'mock-trip-' + token.substring(0, 8),
+        trip_id: invite.trip_id,
         invite_token: token,
-        created_at: new Date().toISOString(),
-        require_approval: new URLSearchParams(window.location.search).has('approval'),
-        expires_at: new URLSearchParams(window.location.search).has('expires') ? 
-          new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString() : null
+        created_at: invite.created_at,
+        require_approval: false, // Not implemented yet
+        expires_at: invite.expires_at,
+        max_uses: invite.max_uses,
+        current_uses: invite.current_uses,
+        is_active: invite.is_active,
+        code: invite.code,
+        id: invite.id,
+        created_by: invite.created_by
       });
       setLoading(false);
-      return;
 
     } catch (error) {
       console.error('Error fetching invite data:', error);
-      // Fallback to mock invite
-      setIsMockInvite(true);
-      setInviteData({
-        trip_id: 'mock-trip-' + token.substring(0, 8),
-        invite_token: token,
-        created_at: new Date().toISOString()
-      });
+      setError('Failed to load invite details');
       setLoading(false);
     }
   };
@@ -141,23 +171,41 @@ const JoinTrip = () => {
 
     setJoining(true);
     try {
-      // Handle mock invites differently
-      if (isMockInvite) {
-        // Simulate joining for mock invites
-        setTimeout(() => {
-          toast.success('Demo: Successfully joined the trip!');
-          // For mock invites, redirect to home since the trip doesn't exist
-          navigate('/');
-        }, 1000);
+      // Call the join-trip edge function
+      const { data, error } = await supabase.functions.invoke('join-trip', {
+        body: { inviteCode: token }
+      });
+
+      if (error) {
+        console.error('Error joining trip:', error);
+        toast.error(error.message || 'Failed to join trip');
+        setJoining(false);
         return;
       }
 
-      // For now, all real invites are handled as mock
-      toast.success('Demo: Successfully joined the trip!');
-      navigate('/');
+      if (!data.success) {
+        toast.error(data.message || 'Failed to join trip');
+        setJoining(false);
+        return;
+      }
+
+      // Success! Show message and redirect to trip
+      toast.success(data.message || 'Successfully joined the trip!');
+      
+      // Redirect based on trip type
+      setTimeout(() => {
+        if (data.trip_type === 'pro') {
+          navigate(`/tour/pro/${data.trip_id}`);
+        } else if (data.trip_type === 'event') {
+          navigate(`/event/${data.trip_id}`);
+        } else {
+          navigate(`/trip/${data.trip_id}`);
+        }
+      }, 1000);
+
     } catch (error) {
       console.error('Error joining trip:', error);
-      toast.error('Failed to join trip');
+      toast.error('An unexpected error occurred. Please try again.');
     } finally {
       setJoining(false);
     }
@@ -207,27 +255,26 @@ const JoinTrip = () => {
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&h=200&fit=crop')] bg-cover bg-center opacity-10 rounded-2xl"></div>
           <div className="relative z-10">
             <h3 className="text-lg font-semibold text-white mb-3">
-              {isMockInvite ? 'Demo Trip Invitation' : 'Trip to Explore'}
+              Trip Invitation
             </h3>
             <div className="space-y-2 text-sm text-gray-300">
               <div className="flex items-center gap-2">
                 <MapPin size={16} className="text-yellow-400" />
-                <span>
-                  {isMockInvite ? 
-                    `Demo Trip (ID: ${inviteData?.trip_id})` : 
-                    `Trip ID: ${inviteData?.trip_id}`
-                  }
-                </span>
+                <span>Trip ID: {inviteData?.trip_id}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Calendar size={16} className="text-yellow-400" />
                 <span>Invited {inviteData?.created_at ? new Date(inviteData.created_at).toLocaleDateString() : 'Recently'}</span>
               </div>
-              {isMockInvite && (
-                <div className="mt-3 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                  <p className="text-blue-400 text-xs">
-                    This is a demo invite link. In the full app, this would connect to a real trip with full details and participant photos.
-                  </p>
+              {inviteData?.expires_at && (
+                <div className="flex items-center gap-2">
+                  <Calendar size={16} className="text-yellow-400" />
+                  <span>Expires: {new Date(inviteData.expires_at).toLocaleDateString()}</span>
+                </div>
+              )}
+              {inviteData?.max_uses && (
+                <div className="flex items-center gap-2 text-gray-400 text-xs">
+                  <span>Uses: {inviteData.current_uses || 0} / {inviteData.max_uses}</span>
                 </div>
               )}
             </div>

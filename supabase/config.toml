@@ -1,5 +1,8 @@
 project_id = "jmjiyekmxwsxkfnqwyaa"
 
+[functions.join-trip]
+verify_jwt = true
+
 [functions.google-maps-proxy]
 verify_jwt = false
 
