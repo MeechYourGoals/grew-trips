@@ -313,6 +313,44 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_billing: {
+        Row: {
+          billing_email: string
+          created_at: string
+          id: string
+          organization_id: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          billing_email: string
+          created_at?: string
+          id?: string
+          organization_id: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          billing_email?: string
+          created_at?: string
+          id?: string
+          organization_id?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_billing_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_invites: {
         Row: {
           created_at: string
@@ -406,15 +444,12 @@ export type Database = {
       }
       organizations: {
         Row: {
-          billing_email: string
           created_at: string
           display_name: string
           id: string
           name: string
           seat_limit: number
           seats_used: number
-          stripe_customer_id: string | null
-          stripe_subscription_id: string | null
           subscription_ends_at: string | null
           subscription_status: Database["public"]["Enums"]["org_status"]
           subscription_tier: Database["public"]["Enums"]["org_subscription_tier"]
@@ -422,15 +457,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
-          billing_email: string
           created_at?: string
           display_name: string
           id?: string
           name: string
           seat_limit?: number
           seats_used?: number
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
           subscription_ends_at?: string | null
           subscription_status?: Database["public"]["Enums"]["org_status"]
           subscription_tier?: Database["public"]["Enums"]["org_subscription_tier"]
@@ -438,15 +470,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
-          billing_email?: string
           created_at?: string
           display_name?: string
           id?: string
           name?: string
           seat_limit?: number
           seats_used?: number
-          stripe_customer_id?: string | null
-          stripe_subscription_id?: string | null
           subscription_ends_at?: string | null
           subscription_status?: Database["public"]["Enums"]["org_status"]
           subscription_tier?: Database["public"]["Enums"]["org_subscription_tier"]
@@ -581,8 +610,6 @@ export type Database = {
           role: string | null
           show_email: boolean | null
           show_phone: boolean | null
-          stripe_customer_id: string | null
-          subscription_product_id: string | null
           timezone: string | null
           updated_at: string
           user_id: string
@@ -601,8 +628,6 @@ export type Database = {
           role?: string | null
           show_email?: boolean | null
           show_phone?: boolean | null
-          stripe_customer_id?: string | null
-          subscription_product_id?: string | null
           timezone?: string | null
           updated_at?: string
           user_id: string
@@ -621,8 +646,6 @@ export type Database = {
           role?: string | null
           show_email?: boolean | null
           show_phone?: boolean | null
-          stripe_customer_id?: string | null
-          subscription_product_id?: string | null
           timezone?: string | null
           updated_at?: string
           user_id?: string
@@ -734,6 +757,36 @@ export type Database = {
           updated_at?: string
           user_id?: string
           value?: string
+        }
+        Relationships: []
+      }
+      security_audit_log: {
+        Row: {
+          action: string
+          created_at: string
+          id: string
+          metadata: Json | null
+          record_id: string | null
+          table_name: string
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          record_id?: string | null
+          table_name: string
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string
+          id?: string
+          metadata?: Json | null
+          record_id?: string | null
+          table_name?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -1672,6 +1725,21 @@ export type Database = {
           trip_id: string
           user_local_end: string
           user_local_start: string
+        }[]
+      }
+      get_visible_profile_fields: {
+        Args: { profile_user_id: string; requesting_user_id: string }
+        Returns: {
+          avatar_url: string
+          bio: string
+          display_name: string
+          email: string
+          first_name: string
+          last_name: string
+          phone: string
+          show_email: boolean
+          show_phone: boolean
+          user_id: string
         }[]
       }
       halfvec_avg: {
