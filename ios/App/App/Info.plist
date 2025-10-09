@@ -45,5 +45,17 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Chravel needs access to your camera to take and share photos during your trips.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Chravel needs access to your photo library to upload and share photos with your travel group.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Chravel needs permission to save photos to your library.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Chravel uses your location to show nearby places and help coordinate with your travel group.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Chravel uses your location to provide real-time location sharing with your travel companions.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Chravel uses your location to keep your travel group updated on your whereabouts.</string>
 </dict>
 </plist>
