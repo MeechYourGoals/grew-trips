@@ -18,7 +18,7 @@ import { useTripVariant } from '../../contexts/TripVariantContext';
 
 interface EventDetailContentProps {
   activeTab: string;
-  setActiveTab: (tab: string) => void;
+  onTabChange: (tab: string) => void;
   onShowTripsPlusModal: () => void;
   tripId: string;
   basecamp: { name: string; address: string };

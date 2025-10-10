@@ -10,7 +10,7 @@ export interface Organization {
   subscription_status: 'active' | 'trial' | 'cancelled' | 'expired' | 'suspended';
   seat_limit: number;
   seats_used: number;
-  billing_email: string;
+  billing_email?: string;
   trial_ends_at?: string;
   subscription_ends_at?: string;
 }

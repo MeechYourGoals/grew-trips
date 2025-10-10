@@ -9,6 +9,7 @@ import { TripVariantProvider } from '../contexts/TripVariantContext';
 import { useAuth } from '../hooks/useAuth';
 import { eventsMockData } from '../data/eventsMockData';
 import { ProTripNotFound } from '../components/pro/ProTripNotFound';
+import { TripContext } from '../types/tripContext';
 
 
 const EventDetail = () => {
@@ -81,36 +82,51 @@ const EventDetail = () => {
   ];
 
   const mockLinks = [
-    { id: 1, title: "Official Event Website", url: "https://event-official.com/info", category: "Information" },
-    { id: 2, title: "Venue Information", url: "https://venues.com/events", category: "Venue" },
-    { id: 3, title: "Networking Hub", url: "https://networking.events.com", category: "Networking" }
+    { id: '1', title: "Official Event Website", url: "https://event-official.com/info", category: "Information", votes: 0, addedBy: "System", addedAt: new Date().toISOString() },
+    { id: '2', title: "Venue Information", url: "https://venues.com/events", category: "Venue", votes: 0, addedBy: "System", addedAt: new Date().toISOString() },
+    { id: '3', title: "Networking Hub", url: "https://networking.events.com", category: "Networking", votes: 0, addedBy: "System", addedAt: new Date().toISOString() }
   ];
 
   // Enhanced trip context with event-specific features
-  const tripContext = {
-    id: eventId,
+  const tripContext: TripContext = {
+    tripId: eventId,
     title: eventData.title,
     location: eventData.location,
     dateRange: eventData.dateRange,
+    participants: trip.participants.map(p => ({
+      id: p.id.toString(),
+      name: p.name,
+      role: 'attendee'
+    })),
+    itinerary: eventData.itinerary.map((day, index) => ({
+      id: index.toString(),
+      title: `Day ${index + 1}`,
+      date: day.date,
+      events: day.events
+    })),
+    accommodation: basecamp.name,
+    currentDate: new Date().toISOString().split('T')[0],
+    upcomingEvents: eventData.itinerary
+      .flatMap(day => 
+        day.events.map(event => ({
+          id: `${day.date}-${event.title}`,
+          title: event.title,
+          date: day.date,
+          time: event.time,
+          location: event.location
+        }))
+      )
+      .slice(0, 5),
+    recentUpdates: mockBroadcasts.map(b => ({
+      id: b.id.toString(),
+      type: 'broadcast',
+      message: b.content,
+      timestamp: b.timestamp
+    })),
     basecamp,
-    calendar: eventData.itinerary,
-    broadcasts: mockBroadcasts,
-    links: mockLinks,
-    messages: tripMessages,
-    collaborators: trip.participants,
-    itinerary: eventData.itinerary,
-    budget: eventData.budget,
     isPro: false,
-    isEvent: true,
-    groupChatEnabled: eventData.groupChatEnabled,
-    // Event-specific features
-    eventFeatures: {
-      registration: true,
-      agenda: true,
-      networking: true,
-      speakers: true,
-      analytics: (eventData.userRole || 'attendee') === 'organizer'
-    }
+    broadcasts: mockBroadcasts,
+    links: mockLinks
   };
 
   return (
