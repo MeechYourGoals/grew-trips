@@ -59,6 +59,54 @@ This project is built with:
 - React
 - shadcn-ui
 - Tailwind CSS
+- Capacitor (for native iOS/Android)
+- Supabase (backend)
+
+## Mobile App Development
+
+Chravel is available as a native iOS and Android app powered by Capacitor.
+
+**Key Mobile Features:**
+- Native camera and photo integration
+- Push notifications
+- Haptic feedback
+- Geolocation services
+- Offline-first architecture
+- Background sync
+
+**Build Instructions:**
+
+For detailed iOS App Store submission guide, see: [IOS_APP_STORE_GUIDE.md](IOS_APP_STORE_GUIDE.md)
+
+For production build checklist, see: [PRODUCTION_BUILD_CHECKLIST.md](PRODUCTION_BUILD_CHECKLIST.md)
+
+For screenshot guide, see: [APP_STORE_SCREENSHOTS.md](APP_STORE_SCREENSHOTS.md)
+
+**Quick Start:**
+```bash
+# Add native platforms
+npx cap add ios
+npx cap add android
+
+# Build web assets
+npm run build
+
+# Sync to native platforms
+npx cap sync
+
+# Open in native IDEs
+npx cap open ios      # Requires Xcode (Mac only)
+npx cap open android  # Requires Android Studio
+```
+
+**Mobile Architecture:**
+- Mobile-specific routing with conditional rendering
+- Touch-optimized UI (44px+ touch targets)
+- Service Worker for offline support
+- Virtual scrolling for performance
+- Zero impact on desktop/web experience
+
+For complete mobile readiness report, see: [MOBILE_READINESS.md](MOBILE_READINESS.md)
 
 ## How can I deploy this project?
 

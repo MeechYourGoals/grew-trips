@@ -25,6 +25,40 @@ This guide will walk you through every step needed to get your Chravel app live 
 - ⏳ App icons (1024x1024px - we'll help you create these)
 - ⏳ iPhone for testing (optional but recommended)
 
+### Backend Services Verification
+
+Before building for iOS, ensure these backend services are configured:
+
+**Required Supabase Edge Functions:**
+- ✅ `create-checkout` - Stripe payment initialization
+- ✅ `check-subscription` - Verify user subscription status
+- ✅ `customer-portal` - Stripe subscription management
+- ✅ `send-organization-invite` - Email invitations for teams
+
+**Required Secrets in Supabase:**
+```bash
+STRIPE_SECRET_KEY=sk_live_xxxxx    # Stripe API key (use test key for testing)
+RESEND_API_KEY=re_xxxxx            # Resend email API key  
+APP_URL=https://chravel.app        # Production app URL for invite links
+```
+
+**Required Database Tables:**
+All tables should have RLS (Row Level Security) enabled:
+- `loyalty_airlines`, `loyalty_hotels`, `loyalty_rentals` (Travel Wallet)
+- `game_schedules`, `show_schedules` (Enterprise scheduling)
+- `saved_recommendations`, `trip_links` (Saved places)
+- `trips.is_archived` column (Archive functionality)
+
+**Verify Backend Services:**
+```bash
+# Test edge functions
+curl -X POST https://YOUR_PROJECT.supabase.co/functions/v1/check-subscription \
+  -H "Authorization: Bearer YOUR_ANON_KEY"
+
+# Check RLS policies are enabled
+# Go to Supabase Dashboard → Database → Tables → Check RLS column
+```
+
 ---
 
 ## 1. Apple Developer Account Setup
@@ -47,14 +81,48 @@ This guide will walk you through every step needed to get your Chravel app live 
 
 ---
 
-## 2. Opening Your Project in Xcode
+## 2. Preparing for Production Build
 
-### Step 2.1: Open Terminal
+### Step 2.1: Switch to Production Mode
+
+⚠️ **CRITICAL:** The development version uses a live hot-reload server. For App Store submission, you must build static assets.
+
+1. **Edit `capacitor.config.ts`:**
+   ```typescript
+   // REMOVE or COMMENT OUT the server block:
+   // server: {
+   //   url: 'https://20feaa04-0946-4c68-a68d-0eb88cc1b9c4.lovableproject.com?forceHideBadge=true',
+   //   cleartext: true
+   // },
+   ```
+
+2. **Build production assets:**
+   ```bash
+   npm run build
+   ```
+
+3. **Sync to iOS:**
+   ```bash
+   npx cap sync ios
+   ```
+
+4. **Verify static build:**
+   - Open Xcode: `npx cap open ios`
+   - Run on simulator - should work WITHOUT internet connection to lovableproject.com
+   - If app shows blank screen, check Console for errors (View → Debug Area → Show Debug Area)
+
+**⚠️ NEVER submit to App Store with the hot-reload server URL.** Apple will reject apps that rely on external dev servers.
+
+---
+
+## 3. Opening Your Project in Xcode
+
+### Step 3.1: Open Terminal
 
 1. Press `Command + Space` to open Spotlight
 2. Type "Terminal" and press Enter
 
-### Step 2.2: Navigate to Your Project
+### Step 3.2: Navigate to Your Project
 
 In Terminal, type these commands one at a time:
 
@@ -63,14 +131,14 @@ In Terminal, type these commands one at a time:
 cd /path/to/your/project
 
 # Open in Xcode (this will open the iOS project)
-npm run ios:open
+npx cap open ios
 ```
 
 **Alternative**: You can also manually navigate to your project folder in Finder, go to the `ios/App` folder, and double-click `App.xcworkspace` (NOT App.xcodeproj!)
 
 ---
 
-## 3. Configuring Your App in Xcode
+## 4. Configuring Your App in Xcode
 
 Once Xcode opens, you'll see your project. Here's what to configure:
 
@@ -111,18 +179,33 @@ This is CRITICAL and often where beginners get stuck!
    - **Team**: Same as Debug
    - If you see any errors here, they'll usually auto-resolve. If not, click the error for details.
 
-### Step 3.4: Add Required Capabilities
+### Step 4.4: Add Required Capabilities
 
-Your app needs these capabilities for its features:
+Your app uses these capabilities:
 
 1. Click **"+ Capability"** button
 2. Add these one by one:
-   - **Push Notifications** (for notifications)
-   - **Background Modes** (check "Remote notifications")
+   
+   **Push Notifications** ✅
+   - For chat messages, trip updates, payment alerts
+
+   **Background Modes** ✅
+   - ☑️ Remote notifications
+   - ☑️ Background fetch (for real-time sync)
+
+   **Associated Domains** (NEW)
+   - Click "+ Capability" → Search "Associated Domains"
+   - Add domain: `applinks:chravel.app`
+   - Purpose: Deep linking for invitation emails, payment confirmations
+
+   **App Groups** (Optional - for future extensions)
+   - Click "+ Capability" → Search "App Groups"  
+   - Add: `group.com.chravel.app`
+   - Purpose: Share data between app and widgets/extensions
 
 ---
 
-## 4. Adding App Icons
+## 5. Adding App Icons
 
 Your app needs icons in various sizes. The easiest way:
 
@@ -164,7 +247,7 @@ Use this free online tool:
 
 ---
 
-## 5. Testing on a Real Device (Optional but Recommended)
+## 6. Testing on a Real Device (Optional but Recommended)
 
 Before submitting to the App Store, test on a real iPhone:
 
@@ -189,7 +272,7 @@ The app should now launch on your iPhone! Test all features.
 
 ---
 
-## 6. Creating App Store Connect Listing
+## 7. Creating App Store Connect Listing
 
 Now we'll create your app's page in the App Store.
 
@@ -253,39 +336,178 @@ You need screenshots of your app running. Sizes needed:
 - 15-30 second video showing app features
 - Can record screen while using app
 
-**Promotional Text** (170 chars):
-"Plan group trips effortlessly with Chravel. Share itineraries, split expenses, coordinate schedules, and stay connected with your travel companions."
+**Subtitle** (30 chars):
+"Plan Trips. Coordinate Teams."
 
-**Description** (4000 chars max):
-Write a detailed description of your app's features:
+**Promotional Text** (170 chars):
+"The all-in-one platform for group travel, professional tours, and events. Plan itineraries, manage expenses, coordinate teams, and sync schedules in one powerful app."
+
+**Description** (4000 chars max) - Feature-Complete Version:
 
 ```
-Chravel makes group travel planning seamless and stress-free!
+Chravel is the all-in-one platform for collaborative travel planning, professional trip management, and large-scale event coordination. Whether you're organizing a family vacation, managing a touring band, coordinating a sports team, or planning a corporate retreat, Chravel brings everything together in one powerful app.
 
-KEY FEATURES:
-• Group Trip Planning - Create trips and invite friends/family
-• Shared Itineraries - Everyone sees the schedule in real-time
-• Expense Splitting - Track who owes what with built-in payment tools
-• Live Chat - Stay in touch with your travel group
-• Location Sharing - See where everyone is during the trip
-• Photo Sharing - Create shared albums for trip memories
-• Calendar Integration - Sync with your existing calendars
-• Smart Recommendations - AI-powered suggestions for places to visit
+🎯 CORE FEATURES
 
-PERFECT FOR:
-✈️ Family vacations
-🎒 Friend getaways
-💼 Business trips
-🎓 School trips
-👫 Group adventures
+Group Trip Planning
+• Create unlimited trips for any occasion
+• Invite friends, family, or team members instantly
+• Real-time collaboration on itineraries
+• Shared trip timelines visible to everyone
 
-No more endless group texts or confusing spreadsheets. Chravel brings everything your group needs into one beautiful app.
+Smart Itinerary Builder
+• Drag-and-drop schedule creation
+• Automatic conflict detection
+• AI-powered location suggestions
+• Route optimization for multi-stop trips
+• Timezone support for international travel
 
-Download Chravel today and make your next group trip unforgettable!
+Travel Wallet
+• Store airline, hotel, and car rental loyalty programs
+• Quick access to membership numbers at check-in
+• Secure payment methods storage
+• Auto-fill booking information
+
+Saved Recommendations
+• Save places to visit across all your trips
+• Add saved locations directly to trip itineraries
+• Build a personal travel library
+• Share favorite spots with travel companions
+
+Expense Management
+• Real-time expense tracking
+• Smart receipt OCR scanning
+• Automatic split calculations
+• Multi-currency support
+• Payment reminders via Venmo, Zelle, PayPal
+• Settlement status tracking
+
+Live Communication
+• Trip-specific group chat
+• @mentions for important updates
+• Voice notes for quick messages
+• Translation in 38 languages
+• Read receipts and typing indicators
+• Broadcast priority messages
+
+Interactive Maps
+• Custom trip maps with pins
+• Route planning and navigation
+• Location sharing during trips
+• Offline map support
+• Autocomplete location search
+
+Media Sharing
+• Shared photo/video albums
+• Auto-organized by date and location
+• No more iCloud link sharing
+• Create digital trip scrapbooks
+• File and link sharing with previews
+
+🚀 PRO FEATURES (For Teams & Businesses)
+
+Professional Trip Management
+• Unlimited team members
+• Multi-city tour planning
+• Game/show schedules with venue details
+• Equipment manifests
+• Room assignments and block booking
+• Per diem tracking
+
+Team Coordination
+• Role-based access (admin, crew, talent, etc.)
+• Department-specific channels
+• Priority broadcast system
+• Emergency contact management
+• Skills tracking and rotation schedules
+
+Financial Controls
+• Expense approval workflows
+• Budget alerts and spending limits
+• QuickBooks/SAP integration
+• Financial reporting and exports
+• Invoice management
+
+Compliance & Security
+• Contract storage
+• Permit tracking
+• Audit trails for all decisions
+• SOC-2 compliance ready
+• SSO and MFA support
+
+Organization Invitations
+• Email invites to team members
+• Custom welcome messages
+• Role assignment on signup
+
+📊 EVENT FEATURES (For Conferences & Festivals)
+
+Event Management
+• Multi-track session scheduling
+• Speaker directories
+• Attendee check-in (QR/NFC)
+• Live Q&A and polling
+• Networking matchmaking
+• Business card exchange
+
+Sponsorship Tools
+• In-app banner placements
+• Premium sponsor channels
+• Sponsor marketplaces
+• ROI analytics (impressions, clicks)
+
+✨ AI-POWERED FEATURES
+
+Chravel's AI Concierge provides:
+• Contextual trip suggestions based on your group
+• Real-time updates via web search
+• Dietary, accessibility, and budget-aware recommendations
+• Smart itinerary optimization
+• Automatic schedule conflict resolution
+
+📱 PERFECT FOR:
+
+Consumer Travel
+✈️ Family vacations • Friend getaways • Destination weddings
+🎉 Bachelor/bachelorette parties • Fan trips • Cruise groups
+
+Professional Travel
+🏈 Sports teams (pro, college, youth) • Music/comedy tours
+🎬 Film/TV production • Corporate retreats • School trips
+
+Large-Scale Events
+🎤 Conferences • Festivals • University events
+🏙️ City-wide events
+
+💎 SUBSCRIPTION TIERS:
+
+FREE: Perfect for casual travelers
+• Up to 10 participants per trip
+• Core planning features • Unlimited trips
+
+PLUS ($9.99/mo): Enhanced for power users
+• Unlimited participants • Priority support
+• Advanced budget tools • Premium AI features
+
+PRO (Starting at $49/mo): For professionals
+• Team management • Financial controls
+• Compliance tools • Integrations (Slack, QuickBooks)
+• Custom branding
+
+🔒 PRIVACY & SECURITY:
+• End-to-end encryption for sensitive data
+• GDPR and CCPA compliant
+• No selling of user data
+• Opt-in location sharing
+• Secure payment processing via Stripe
+
+Stop juggling endless group texts, shared spreadsheets, and scattered apps. Chravel brings everything your group needs into one beautiful, powerful platform.
+
+Download Chravel today and make your next trip unforgettable.
 ```
 
 **Keywords** (100 chars):
-"travel, group travel, trip planner, itinerary, vacation, share expenses, travel chat"
+"travel planner,group trips,itinerary,tour manager,sports team,expense split,travel chat,event plan"
 
 **Support URL**:
 - Your website or a simple page explaining the app
@@ -304,21 +526,76 @@ This helps reviewers test your app:
 - **Contact Information**: Your email and phone
 - **Notes**:
   ```
-  Test account credentials:
+  Test Account Credentials:
   Email: demo@chravel.com
-  Password: Demo123!
+  Password: DemoTrip2025!
 
-  Key features to test:
-  1. Create a new trip
-  2. Add trip details and itinerary
-  3. View map and location features
-  4. Test chat functionality
+  Pro Account (for Enterprise features):
+  Email: pro-demo@chravel.com
+  Password: ProDemo2025!
+  Organization: "Demo Sports Team"
+
+  Key Features to Test:
+  1. Consumer Account (demo@chravel.com):
+     - Create a new trip and add itinerary items
+     - View Travel Wallet loyalty programs (3 pre-loaded)
+     - Add expenses and test split calculator
+     - Save a recommendation and add to trip
+     - Test chat with @mentions
+     - Archive a trip and restore it
+
+  2. Pro Account (pro-demo@chravel.com):
+     - View game schedule (8 upcoming games)
+     - Access organization team management
+     - Test email invitation system
+     - View budget controls and approvals
+
+  3. Payment Testing:
+     - Use Stripe test card: 4242 4242 4242 4242
+     - Any future expiry date
+     - Any 3-digit CVC
+
+  Known Test Mode Limitations:
+  - Emails only sent to demo@chravel.com (Resend test mode)
+  - Stripe in test mode (use test card above)
+  - Location features work best on real device
   ```
 
-**Demo Account** (Important!):
-- Create a test account in your app with sample data
-- Provide credentials to reviewers
-- Make sure it has example trips/data so reviewers can see features
+**Demo Account Setup** (CRITICAL - Must have sample data):
+
+Create test accounts with this data BEFORE submitting:
+
+**Consumer Account:**
+```
+Email: demo@chravel.com
+Password: DemoTrip2025!
+
+Pre-loaded Data:
+• 3 active trips (family vacation, bachelor party, music festival)
+• 5 saved recommendations across different categories
+• 2 archived trips
+• Travel Wallet with 3 loyalty programs:
+  - United MileagePlus: #MP1234567
+  - Marriott Bonvoy: #12345678901
+  - Hertz Gold Plus: #GP123456
+• $500 in expenses with split calculations
+• 10+ chat messages with @mentions
+```
+
+**Pro Account:**
+```
+Email: pro-demo@chravel.com  
+Password: ProDemo2025!
+
+Pre-loaded Data:
+• Organization: "Demo Sports Team"
+• 10 team members with roles (Coach, Trainer, Manager, etc.)
+• Game schedule: 8 upcoming games with venues
+• Mix of home/away games with confirmed/TBD status
+• Travel Wallet with team loyalty programs
+• $5,000 budget with approval workflows
+• Department-specific channels
+```
 
 #### **6. Version Release**
 - Choose "Automatically release this version" or "Manually release"
@@ -453,8 +730,57 @@ When you want to release updates:
 
 ### App crashes immediately on device
 **Solution**:
-1. Check that the Capacitor server URL is correct in capacitor.config.ts
-2. For production, you may want to build the web assets and not use the live server URL
+1. Check Console logs in Xcode (View → Debug Area → Show Debug Area)
+2. Verify `capacitor.config.ts` has NO server URL (production build only)
+3. Run `npm run build` and `npx cap sync ios` again
+4. Check for missing Capacitor plugins
+
+### "App shows blank white screen on device"
+**Solution:** 
+1. Verify you removed `server` block from `capacitor.config.ts`
+2. Verify you ran `npm run build` before `npx cap sync ios`
+3. Check Xcode Console for errors (View → Debug Area → Activate Console)
+4. Look for CORS or network errors in logs
+5. Ensure all required assets are in `dist` folder
+
+### "Features not working on device but work in simulator"
+**Solution:**
+1. Push notifications require real device (simulator doesn't support)
+2. Camera requires real device camera access
+3. Check that all required capabilities are added in Xcode
+4. Verify RLS policies allow the test account access in Supabase
+
+### "Stripe checkout not opening"
+**Solution:**
+1. Verify `STRIPE_SECRET_KEY` is set in Supabase secrets
+2. Test `create-checkout` edge function directly with curl
+3. Check Stripe Dashboard for product/price IDs matching code
+4. Ensure app has network permissions
+5. Check Console logs for specific error messages
+
+### "Organization invites not sending"
+**Solution:**
+1. Verify `RESEND_API_KEY` is set in Supabase secrets
+2. Verify `APP_URL` is set to production domain
+3. Test `send-organization-invite` edge function directly
+4. Check Resend dashboard for email send logs and errors
+5. Ensure FROM email is verified in Resend
+
+### "Archive feature not persisting"
+**Solution:**
+1. Old version used localStorage - new version uses Supabase
+2. Verify `trips.is_archived` column exists in database
+3. Check RLS policies allow user to UPDATE trips table
+4. Clear app data and reinstall if migrating from old version
+5. Test with fresh demo account
+
+### "Game/Show schedule not loading"
+**Solution:**
+1. Verify `game_schedules` and `show_schedules` tables exist
+2. Check RLS policies allow organization members to SELECT
+3. Verify user is a member of the organization in database
+4. Check Supabase logs for query errors
+5. Test with pro-demo@chravel.com account
 
 ### "Could not find a suitable device"
 **Solution**: Make sure you're building for "Any iOS Device" not a simulator before archiving

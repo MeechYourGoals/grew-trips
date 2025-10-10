@@ -70,6 +70,15 @@
 - ✅ Native share integration
 - ✅ Location services
 
+### New Production Features (100%)
+- ✅ **Travel Wallet** - Airline, hotel, car rental loyalty programs with secure storage
+- ✅ **Game Schedule** - Sports team scheduling with SmartImport and venue management
+- ✅ **Show Schedule** - Tour/entertainment scheduling with status tracking
+- ✅ **Saved Recommendations** - Personal travel library with cross-trip usage
+- ✅ **Archive Trips** - Database-backed trip archiving with restore functionality
+- ✅ **Stripe Subscriptions** - Consumer Plus tier with customer portal integration
+- ✅ **Organization Invitations** - Email invites via Resend with role assignment
+
 ### UX Enhancements (100%)
 - ✅ Smooth 60fps animations
 - ✅ Instant feedback on all interactions
