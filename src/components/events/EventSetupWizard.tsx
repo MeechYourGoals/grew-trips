@@ -47,7 +47,18 @@ export const EventSetupWizard = ({ onComplete, onCancel }: EventSetupWizardProps
   };
 
   const handleComplete = () => {
-    onComplete(eventData);
+    const finalData: EventSetupData = {
+      name: eventData.name,
+      description: eventData.description,
+      startDate: eventData.startDate,
+      endDate: eventData.endDate,
+      location: eventData.location,
+      capacity: eventData.capacity ? parseInt(eventData.capacity) : undefined,
+      industry: eventData.industry,
+      template: eventData.template || undefined,
+      invitations: eventData.invitations || []
+    };
+    onComplete(finalData);
   };
 
   const renderStepContent = () => {
@@ -129,27 +140,25 @@ export const EventSetupWizard = ({ onComplete, onCancel }: EventSetupWizardProps
       case 2:
         return (
           <div className="space-y-6">
-            <IndustryTemplates
-              selectedIndustry={eventData.industry}
-              onIndustrySelect={(industry) => setEventData({ ...eventData, industry })}
-              selectedTemplate={eventData.template}
-              onTemplateSelect={(template) => setEventData({ ...eventData, template })}
-            />
+            <div className="bg-white/5 border border-white/10 rounded-lg p-6">
+              <h4 className="text-lg font-semibold text-white mb-4">Industry & Template</h4>
+              <p className="text-gray-300">Template selection coming soon...</p>
+            </div>
             
-            <ScheduleImporter
-              onScheduleImport={(schedule) => setEventData({ ...eventData, schedule })}
-              currentSchedule={eventData.schedule}
-            />
+            <div className="bg-white/5 border border-white/10 rounded-lg p-6">
+              <h4 className="text-lg font-semibold text-white mb-4">Schedule</h4>
+              <p className="text-gray-300">Schedule configuration coming soon...</p>
+            </div>
           </div>
         );
 
       case 3:
         return (
           <div className="space-y-6">
-            <InvitationManager
-              eventData={eventData}
-              onInvitationsUpdate={(invitations) => setEventData({ ...eventData, invitations })}
-            />
+            <div className="bg-white/5 border border-white/10 rounded-lg p-6">
+              <h4 className="text-lg font-semibold text-white mb-4">Invitations</h4>
+              <p className="text-gray-300">Invitation management coming soon...</p>
+            </div>
           </div>
         );
 

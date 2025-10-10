@@ -2,10 +2,13 @@
 
 export interface EventSetupData {
   // Basic information
+  name?: string;
   title?: string;
   description?: string;
   location?: string;
   dateRange?: string;
+  startDate?: string;
+  endDate?: string;
   category?: string;
   tags?: string[];
   
@@ -14,6 +17,10 @@ export interface EventSetupData {
   registrationStatus?: 'open' | 'closed' | 'waitlist';
   attendanceExpected?: number;
   groupChatEnabled?: boolean;
+  industry?: string;
+  timezone?: string;
+  registrationDeadline?: string;
+  eventType?: string;
   
   // Schedule
   schedule?: EventScheduleData;

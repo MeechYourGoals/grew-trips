@@ -25,7 +25,7 @@ export const IndustryTemplates = ({
     { id: 'entertainment', name: 'Entertainment', icon: Music, color: 'text-pink-400' }
   ];
 
-  const templates: Record<string, Template[]> = {
+  const templates: Record<string, IndustryTemplate[]> = {
     corporate: [
       {
         id: 'corp-retreat',

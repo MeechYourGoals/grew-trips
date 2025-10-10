@@ -53,10 +53,7 @@ export const googleIO2026Event: EventData = {
       company: 'Google',
       bio: 'CEO of Google and Alphabet, leading the company\'s technology strategy.',
       avatar: '/images/avatars/blank-13.png',
-      sessions: ['keynote-main'],
-      socialLinks: {
-        twitter: 'https://twitter.com/sundarpichai'
-      }
+      sessions: ['keynote-main']
     }
   ],
   sessions: [
@@ -68,9 +65,7 @@ export const googleIO2026Event: EventData = {
       track: 'ai-ml',
       startTime: '10:00',
       endTime: '11:00',
-      location: 'Main Stage',
-      capacity: 7500,
-      rsvpCount: 7500
+      location: 'Main Stage'
     }
   ],
   sponsors: [],

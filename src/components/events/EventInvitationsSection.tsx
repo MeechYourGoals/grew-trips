@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { EventSetupData, EventInvitation } from '@/types';
 
 interface EventInvitationsSectionProps {
@@ -20,10 +21,9 @@ export const EventInvitationsSection = ({ eventData = {}, onEventDataChange }: E
         <p className="text-gray-300">Manage event invitations and send them to your attendees.</p>
       </div>
 
-      <InvitationManager
-        eventData={eventData}
-        onInvitationsUpdate={handleInvitationsUpdate}
-      />
+      <div className="bg-white/5 border border-white/10 rounded-lg p-6">
+        <p className="text-gray-300">Invitation management coming soon...</p>
+      </div>
     </div>
   );
 };

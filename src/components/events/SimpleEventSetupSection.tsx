@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Calendar, MapPin, Upload } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 import { EventSetupData } from '@/types';
 
 interface SimpleEventSetupSectionProps {
@@ -15,14 +17,13 @@ export const SimpleEventSetupSection = ({ eventData = {}, onEventDataChange }: S
     description: eventData.description || '',
     startDate: eventData.startDate || '',
     endDate: eventData.endDate || '',
-    location: eventData.location || '',
-    host: eventData.host || ''
+    location: eventData.location || ''
   });
 
   const handleInputChange = (field: string, value: string) => {
     const newData = { ...formData, [field]: value };
     setFormData(newData);
-    onEventDataChange?.(newData);
+    onEventDataChange?.(newData as EventSetupData);
   };
 
   return (
@@ -101,16 +102,6 @@ export const SimpleEventSetupSection = ({ eventData = {}, onEventDataChange }: S
             />
           </div>
 
-          <div>
-            <Label htmlFor="host" className="text-white">Host/Organizer</Label>
-            <Input
-              id="host"
-              value={formData.host}
-              onChange={(e) => handleInputChange('host', e.target.value)}
-              className="bg-gray-800/50 border-gray-600 text-white mt-2"
-              placeholder="Who is hosting this event?"
-            />
-          </div>
         </div>
       </div>
 

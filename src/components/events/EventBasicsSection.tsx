@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
+import { Textarea } from '../ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import { useToast } from '@/hooks/use-toast';
 import { EventSetupData, EventBasicsFormData } from '@/types';
 
 interface EventBasicsSectionProps {
@@ -18,7 +20,7 @@ export const EventBasicsSection = ({ eventData = {}, onEventDataChange }: EventB
     endDate: eventData.endDate || '',
     location: eventData.location || '',
     category: eventData.category || '',
-    capacity: eventData.capacity || '',
+    capacity: eventData.capacity?.toString() || '',
     tags: eventData.tags?.join(', ') || ''
   });
   const { toast } = useToast();
@@ -27,9 +29,10 @@ export const EventBasicsSection = ({ eventData = {}, onEventDataChange }: EventB
     const updated = { ...formData, [field]: value };
     setFormData(updated);
     
-    // Convert tags back to array and update parent
-    const eventUpdate = {
+    // Convert tags back to array and capacity to number, then update parent
+    const eventUpdate: EventSetupData = {
       ...updated,
+      capacity: updated.capacity ? parseInt(updated.capacity) : undefined,
       tags: updated.tags ? updated.tags.split(',').map(tag => tag.trim()) : []
     };
     onEventDataChange?.(eventUpdate);

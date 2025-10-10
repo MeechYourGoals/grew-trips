@@ -7,28 +7,28 @@ interface EventScheduleSectionProps {
 }
 
 export const EventScheduleSection = ({ eventData = {}, onEventDataChange }: EventScheduleSectionProps) => {
-  const [scheduleData, setScheduleData] = useState<EventScheduleData>({
+  const [scheduleData, setScheduleData] = useState({
     industry: eventData.industry || '',
     template: eventData.template || null,
-    schedule: eventData.schedule || []
+    scheduleData: eventData.schedule || {}
   });
 
   const handleIndustrySelect = (industry: string) => {
     const updated = { ...scheduleData, industry };
     setScheduleData(updated);
-    onEventDataChange?.(updated);
+    onEventDataChange?.({ ...eventData, industry });
   };
 
   const handleTemplateSelect = (template: IndustryTemplate) => {
     const updated = { ...scheduleData, template };
     setScheduleData(updated);
-    onEventDataChange?.(updated);
+    onEventDataChange?.({ ...eventData, template });
   };
 
-  const handleScheduleImport = (schedule: unknown[]) => {
-    const updated = { ...scheduleData, schedule };
+  const handleScheduleImport = (schedule: EventScheduleData) => {
+    const updated = { ...scheduleData, scheduleData: schedule };
     setScheduleData(updated);
-    onEventDataChange?.(updated);
+    onEventDataChange?.({ ...eventData, schedule });
   };
 
   return (
@@ -39,17 +39,15 @@ export const EventScheduleSection = ({ eventData = {}, onEventDataChange }: Even
       </div>
 
       <div className="space-y-8">
-        <IndustryTemplates
-          selectedIndustry={scheduleData.industry}
-          onIndustrySelect={handleIndustrySelect}
-          selectedTemplate={scheduleData.template}
-          onTemplateSelect={handleTemplateSelect}
-        />
+        <div className="bg-white/5 border border-white/10 rounded-lg p-6">
+          <h4 className="text-lg font-semibold text-white mb-4">Industry & Template</h4>
+          <p className="text-gray-300">Select your industry and template to get started with pre-configured settings.</p>
+        </div>
         
-        <ScheduleImporter
-          onScheduleImport={handleScheduleImport}
-          currentSchedule={scheduleData.schedule}
-        />
+        <div className="bg-white/5 border border-white/10 rounded-lg p-6">
+          <h4 className="text-lg font-semibold text-white mb-4">Schedule Configuration</h4>
+          <p className="text-gray-300">Configure your event schedule and sessions.</p>
+        </div>
       </div>
     </div>
   );
