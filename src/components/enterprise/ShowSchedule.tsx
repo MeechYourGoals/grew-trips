@@ -1,6 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Music, MapPin, Clock, Plus, Mic, Calendar } from 'lucide-react';
+import { SmartImport } from '../SmartImport';
+import { useShowSchedule } from '../../hooks/useShowSchedule';
 
 interface Show {
   id: string;
@@ -14,31 +16,33 @@ interface Show {
   status: 'confirmed' | 'scheduled' | 'completed' | 'cancelled';
 }
 
-export const ShowSchedule = () => {
-  const [shows] = useState<Show[]>([
-    {
-      id: '1',
-      title: 'The Eras Tour - Night 1',
-      venue: 'SoFi Stadium',
-      venueAddress: '1001 Stadium Dr, Inglewood, CA',
-      showDate: '2025-02-15',
-      showTime: '20:00',
-      soundCheckTime: '17:00',
-      loadInTime: '08:00',
-      status: 'confirmed'
-    },
-    {
-      id: '2',
-      title: 'The Eras Tour - Night 2',
-      venue: 'SoFi Stadium',
-      venueAddress: '1001 Stadium Dr, Inglewood, CA',
-      showDate: '2025-02-16',
-      showTime: '20:00',
-      soundCheckTime: '17:00',
-      loadInTime: '08:00',
-      status: 'scheduled'
-    }
-  ]);
+export const ShowSchedule = ({ organizationId }: { organizationId?: string }) => {
+  const { shows, isLoading, bulkCreateShows, updateShow } = useShowSchedule(organizationId);
+
+  const parseConfig = {
+    targetType: 'schedule' as const,
+    expectedFields: ['title', 'date', 'time', 'venue', 'soundcheck_time', 'load_in_time'],
+    description: 'Import show schedule from tour calendars, PDF schedules, or CSV files. AI will automatically extract show details, venues, and timing.'
+  };
+
+  const handleSmartImport = (importedData: any[]) => {
+    const newShows = importedData.map((item) => ({
+      title: item.title || item.show_name || item.event || 'TBD',
+      venue: item.venue || item.location || item.stadium || 'TBD',
+      venue_address: item.venue_address || item.address || '',
+      show_date: item.date || item.show_date || new Date().toISOString().split('T')[0],
+      show_time: item.time || item.start_time || '20:00',
+      soundcheck_time: item.soundcheck_time || item.rehearsal_time || '17:00',
+      load_in_time: item.load_in_time || item.arrival_time || '08:00',
+      status: 'scheduled' as const
+    }));
+
+    bulkCreateShows(newShows);
+  };
+
+  const handleCancelShow = (showId: string) => {
+    updateShow({ id: showId, updates: { status: 'cancelled' } });
+  };
 
   return (
     <div className="space-y-6">
@@ -53,9 +57,22 @@ export const ShowSchedule = () => {
         </button>
       </div>
 
+      {/* Smart Import Component */}
+      <SmartImport
+        targetCollection="shows"
+        parseConfig={parseConfig}
+        onDataImported={handleSmartImport}
+        className="mb-6"
+      />
+
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <div className="space-y-4">
-          {shows.map((show) => (
+        {isLoading ? (
+          <div className="text-center text-gray-400 py-8">Loading shows...</div>
+        ) : shows.length === 0 ? (
+          <div className="text-center text-gray-400 py-8">No shows scheduled yet. Add a show or use Smart Import.</div>
+        ) : (
+          <div className="space-y-4">
+            {shows.map((show: any) => (
             <div key={show.id} className="bg-white/5 rounded-lg p-4 border border-white/10">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
@@ -69,36 +86,42 @@ export const ShowSchedule = () => {
                 </div>
                 <div className="flex gap-2">
                   <button className="text-glass-orange hover:text-glass-orange/80 text-sm">Edit</button>
-                  <button className="text-red-400 hover:text-red-300 text-sm">Cancel</button>
+                  <button 
+                    onClick={() => handleCancelShow(show.id)}
+                    className="text-red-400 hover:text-red-300 text-sm"
+                  >
+                    Cancel
+                  </button>
                 </div>
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
                 <div className="flex items-center gap-2 text-gray-400">
                   <Calendar size={14} />
-                  {show.showDate}
+                  {show.show_date}
                 </div>
                 <div className="flex items-center gap-2 text-gray-400">
                   <Clock size={14} />
-                  Show: {show.showTime}
+                  Show: {show.show_time}
                 </div>
                 <div className="flex items-center gap-2 text-gray-400">
                   <Clock size={14} />
-                  Soundcheck: {show.soundCheckTime}
+                  Soundcheck: {show.soundcheck_time}
                 </div>
                 <div className="flex items-center gap-2 text-gray-400">
                   <Clock size={14} />
-                  Load-in: {show.loadInTime}
+                  Load-in: {show.load_in_time}
                 </div>
               </div>
               
               <div className="mt-3 flex items-center gap-2 text-gray-400">
                 <MapPin size={14} />
-                <span>{show.venue} - {show.venueAddress}</span>
+                <span>{show.venue} - {show.venue_address}</span>
               </div>
             </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

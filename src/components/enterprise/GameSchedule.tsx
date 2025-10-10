@@ -1,7 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Calendar, MapPin, Clock, Plus, Trophy } from 'lucide-react';
 import { SmartImport } from '../SmartImport';
+import { useGameSchedule } from '../../hooks/useGameSchedule';
 
 interface Game {
   id: string;
@@ -15,7 +16,9 @@ interface Game {
   isHome: boolean;
 }
 
-export const GameSchedule = () => {
+export const GameSchedule = ({ organizationId }: { organizationId?: string }) => {
+  const { games, isLoading, bulkCreateGames, updateGame, deleteGame } = useGameSchedule(organizationId);
+  
   const parseConfig = {
     targetType: 'schedule' as const,
     expectedFields: ['opponent', 'date', 'time', 'venue', 'home_away', 'load_in_time'],
@@ -23,45 +26,23 @@ export const GameSchedule = () => {
   };
 
   const handleSmartImport = (importedData: any[]) => {
-    const newGames: Game[] = importedData.map((item, index) => ({
-      id: `imported-${Date.now()}-${index}`,
+    const newGames = importedData.map((item) => ({
       opponent: item.opponent || item.team || item.vs || 'TBD',
       venue: item.venue || item.location || item.stadium || 'TBD',
-      venueAddress: item.venue_address || item.address || '',
-      gameDate: item.date || item.game_date || new Date().toISOString().split('T')[0],
-      gameTime: item.time || item.start_time || '19:00',
-      loadInTime: item.load_in_time || item.arrival_time || '17:00',
+      venue_address: item.venue_address || item.address || '',
+      game_date: item.date || item.game_date || new Date().toISOString().split('T')[0],
+      game_time: item.time || item.start_time || '19:00',
+      load_in_time: item.load_in_time || item.arrival_time || '17:00',
       status: 'scheduled' as const,
-      isHome: item.home_away ? item.home_away.toLowerCase().includes('home') : true
+      is_home: item.home_away ? item.home_away.toLowerCase().includes('home') : true
     }));
 
-    setGames(prev => [...prev, ...newGames]);
+    bulkCreateGames(newGames);
   };
 
-  const [games, setGames] = useState<Game[]>([
-    {
-      id: '1',
-      opponent: 'Phoenix Suns',
-      venue: 'Crypto.com Arena',
-      venueAddress: '1111 S Figueroa St, Los Angeles, CA',
-      gameDate: '2025-01-20',
-      gameTime: '19:30',
-      loadInTime: '15:00',
-      status: 'confirmed',
-      isHome: true
-    },
-    {
-      id: '2',
-      opponent: 'Golden State Warriors',
-      venue: 'Chase Center',
-      venueAddress: '1 Warriors Way, San Francisco, CA',
-      gameDate: '2025-01-25',
-      gameTime: '20:00',
-      loadInTime: '16:00',
-      status: 'scheduled',
-      isHome: false
-    }
-  ]);
+  const handleCancelGame = (gameId: string) => {
+    updateGame({ id: gameId, updates: { status: 'cancelled' } });
+  };
 
   return (
     <div className="space-y-6">
@@ -85,50 +66,61 @@ export const GameSchedule = () => {
       />
 
       <div className="bg-white/5 border border-white/10 rounded-xl p-6">
-        <div className="space-y-4">
-          {games.map((game) => (
-            <div key={game.id} className="bg-white/5 rounded-lg p-4 border border-white/10">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className={`w-3 h-3 rounded-full ${
-                    game.status === 'confirmed' ? 'bg-green-400' :
-                    game.status === 'scheduled' ? 'bg-yellow-400' :
-                    game.status === 'completed' ? 'bg-blue-400' : 'bg-red-400'
-                  }`} />
-                  <h4 className="text-white font-medium">
-                    {game.isHome ? 'vs' : '@'} {game.opponent}
-                  </h4>
-                  <span className={`px-2 py-1 rounded text-xs font-medium ${
-                    game.isHome 
-                      ? 'bg-green-500/20 text-green-400' 
-                      : 'bg-blue-500/20 text-blue-400'
-                  }`}>
-                    {game.isHome ? 'HOME' : 'AWAY'}
-                  </span>
+        {isLoading ? (
+          <div className="text-center text-gray-400 py-8">Loading games...</div>
+        ) : games.length === 0 ? (
+          <div className="text-center text-gray-400 py-8">No games scheduled yet. Add a game or use Smart Import.</div>
+        ) : (
+          <div className="space-y-4">
+            {games.map((game: any) => (
+              <div key={game.id} className="bg-white/5 rounded-lg p-4 border border-white/10">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-3 h-3 rounded-full ${
+                      game.status === 'confirmed' ? 'bg-green-400' :
+                      game.status === 'scheduled' ? 'bg-yellow-400' :
+                      game.status === 'completed' ? 'bg-blue-400' : 'bg-red-400'
+                    }`} />
+                    <h4 className="text-white font-medium">
+                      {game.is_home ? 'vs' : '@'} {game.opponent}
+                    </h4>
+                    <span className={`px-2 py-1 rounded text-xs font-medium ${
+                      game.is_home 
+                        ? 'bg-green-500/20 text-green-400' 
+                        : 'bg-blue-500/20 text-blue-400'
+                    }`}>
+                      {game.is_home ? 'HOME' : 'AWAY'}
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button className="text-glass-orange hover:text-glass-orange/80 text-sm">Edit</button>
+                    <button 
+                      onClick={() => handleCancelGame(game.id)}
+                      className="text-red-400 hover:text-red-300 text-sm"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
-                <div className="flex gap-2">
-                  <button className="text-glass-orange hover:text-glass-orange/80 text-sm">Edit</button>
-                  <button className="text-red-400 hover:text-red-300 text-sm">Cancel</button>
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <Calendar size={14} />
+                    {game.game_date} at {game.game_time}
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <MapPin size={14} />
+                    {game.venue}
+                  </div>
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <Clock size={14} />
+                    Load-in: {game.load_in_time}
+                  </div>
                 </div>
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                <div className="flex items-center gap-2 text-gray-400">
-                  <Calendar size={14} />
-                  {game.gameDate} at {game.gameTime}
-                </div>
-                <div className="flex items-center gap-2 text-gray-400">
-                  <MapPin size={14} />
-                  {game.venue}
-                </div>
-                <div className="flex items-center gap-2 text-gray-400">
-                  <Clock size={14} />
-                  Load-in: {game.loadInTime}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

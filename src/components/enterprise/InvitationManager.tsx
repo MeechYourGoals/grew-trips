@@ -6,6 +6,8 @@ import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
 import { Switch } from '../ui/switch';
 import { RosterMember, InvitationBatch } from '../../types/enterprise';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 interface InvitationManagerProps {
   selectedMembers: string[];
@@ -29,6 +31,10 @@ export const InvitationManager = ({
     m.status === 'invited' || m.status === 'declined' || !m.invitationSent
   );
 
+  const generateInviteToken = () => {
+    return `invite_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  };
+
   const handleSendInvitations = async () => {
     setIsSending(true);
     
@@ -39,10 +45,37 @@ export const InvitationManager = ({
     };
 
     try {
+      // Send invitations via edge function
+      for (const member of canInviteMembers) {
+        const { error } = await supabase.functions.invoke('send-organization-invite', {
+          body: {
+            email: member.email,
+            phone: member.phone,
+            organization_name: 'Your Organization', // TODO: Get from org context
+            organization_id: 'org-id', // TODO: Get from org context
+            role: member.role,
+            invite_token: generateInviteToken(),
+            custom_message: batch.message,
+            priority: batch.priority
+          }
+        });
+
+        if (error) {
+          console.error(`Failed to send invite to ${member.email}:`, error);
+          toast.error(`Failed to send invite to ${member.name}`);
+        } else {
+          toast.success(`Invite sent to ${member.name}`);
+        }
+      }
+
       await onSendBatchInvitations(batch);
       setCustomMessage('');
       setIsUrgent(false);
       onClearSelection();
+      toast.success(`Successfully sent ${canInviteMembers.length} invitations`);
+    } catch (error) {
+      console.error('Batch invitation error:', error);
+      toast.error('Failed to send some invitations');
     } finally {
       setIsSending(false);
     }

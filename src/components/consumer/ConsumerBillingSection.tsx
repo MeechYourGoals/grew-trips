@@ -4,10 +4,48 @@ import { Crown } from 'lucide-react';
 import { useConsumerSubscription } from '../../hooks/useConsumerSubscription';
 import { TRIPS_PLUS_PRICE, TRIPS_PLUS_ANNUAL_PRICE } from '../../types/consumer';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
+import { supabase } from '@/integrations/supabase/client';
+import { toast } from 'sonner';
 
 export const ConsumerBillingSection = () => {
   const { subscription, isPlus, upgradeToPlus, isLoading } = useConsumerSubscription();
   const [expandedPlan, setExpandedPlan] = useState<string | null>(isPlus ? 'plus' : 'free');
+
+  const handleManageSubscription = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      } else {
+        toast.error('No portal URL received');
+      }
+    } catch (error: any) {
+      toast.error(`Failed to open customer portal: ${error.message}`);
+      console.error(error);
+    }
+  };
+
+  const handleCancelSubscription = async () => {
+    const confirmed = window.confirm(
+      'Are you sure you want to cancel your Plus subscription? You will lose access to premium features at the end of your billing period.'
+    );
+    
+    if (!confirmed) return;
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('customer-portal');
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      } else {
+        toast.error('No portal URL received');
+      }
+    } catch (error: any) {
+      toast.error(`Failed to open cancellation page: ${error.message}`);
+      console.error(error);
+    }
+  };
 
   const plans = {
     free: {
@@ -105,10 +143,16 @@ export const ConsumerBillingSection = () => {
 
         {isPlus && (
           <div className="flex gap-3">
-            <button className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg font-medium transition-colors">
+            <button 
+              onClick={handleManageSubscription}
+              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg font-medium transition-colors"
+            >
               Manage Subscription
             </button>
-            <button className="bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-2 rounded-lg font-medium transition-colors">
+            <button 
+              onClick={handleCancelSubscription}
+              className="bg-red-500/20 hover:bg-red-500/30 text-red-400 px-4 py-2 rounded-lg font-medium transition-colors"
+            >
               Cancel Subscription
             </button>
           </div>

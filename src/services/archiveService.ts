@@ -1,97 +1,77 @@
-import { Trip, tripsData } from '../data/tripsData';
-import { ProTripData } from '../types/pro';
-import { EventData } from '../types/events';
-import { proTripMockData } from '../data/proTripMockData';
-import { eventsMockData } from '../data/eventsMockData';
-import { secureStorageService } from './secureStorageService';
-import { useAuth } from '@/hooks/useAuth';
-import { removeStorageItem } from '@/platform/storage';
+import { supabase } from '@/integrations/supabase/client';
 
 type TripType = 'consumer' | 'pro' | 'event';
 
-interface ArchiveState {
-  consumer: Set<string>;
-  pro: Set<string>;
-  event: Set<string>;
-}
-
-// Get current archive state from secure storage
-const getArchiveState = async (userId?: string): Promise<ArchiveState> => {
-  try {
-    const archivedTrips = await secureStorageService.getArchivedTrips(userId);
-    return {
-      consumer: new Set(archivedTrips?.consumer || []),
-      pro: new Set(archivedTrips?.pro || []),
-      event: new Set(archivedTrips?.event || [])
-    };
-  } catch (error) {
-    console.warn('Failed to get archive state:', error);
-    return {
-      consumer: new Set(),
-      pro: new Set(),
-      event: new Set()
-    };
-  }
-};
-
-// Save archive state to secure storage
-const saveArchiveState = async (state: ArchiveState, userId?: string): Promise<void> => {
-  try {
-    const archivedTrips = {
-      consumer: Array.from(state.consumer),
-      pro: Array.from(state.pro),
-      event: Array.from(state.event)
-    };
-    await secureStorageService.saveArchivedTrips(archivedTrips, userId);
-  } catch (error) {
-    console.warn('Failed to save archive state:', error);
-  }
-};
-
 // Archive a trip
 export const archiveTrip = async (tripId: string, tripType: TripType, userId?: string): Promise<void> => {
-  const state = await getArchiveState(userId);
-  state[tripType].add(tripId);
-  await saveArchiveState(state, userId);
+  const { error } = await supabase
+    .from('trips')
+    .update({ is_archived: true })
+    .eq('id', tripId);
+
+  if (error) {
+    console.error('Failed to archive trip:', error);
+    throw error;
+  }
 };
 
 // Restore (unarchive) a trip
 export const restoreTrip = async (tripId: string, tripType: TripType, userId?: string): Promise<void> => {
-  const state = await getArchiveState(userId);
-  state[tripType].delete(tripId);
-  await saveArchiveState(state, userId);
+  const { error } = await supabase
+    .from('trips')
+    .update({ is_archived: false })
+    .eq('id', tripId);
+
+  if (error) {
+    console.error('Failed to restore trip:', error);
+    throw error;
+  }
 };
 
 // Check if a trip is archived
 export const isTripArchived = async (tripId: string, tripType: TripType, userId?: string): Promise<boolean> => {
-  const state = await getArchiveState(userId);
-  return state[tripType].has(tripId);
+  const { data, error } = await supabase
+    .from('trips')
+    .select('is_archived')
+    .eq('id', tripId)
+    .single();
+
+  if (error) {
+    console.error('Failed to check archive status:', error);
+    return false;
+  }
+
+  return data?.is_archived ?? false;
 };
 
 // Get all archived trips
 export const getArchivedTrips = async (userId?: string) => {
-  const state = await getArchiveState(userId);
-  
-  // Get archived consumer trips
-  const archivedConsumerTrips = tripsData.filter(trip => 
-    state.consumer.has(trip.id.toString())
-  );
-  
-  // Get archived pro trips
-  const archivedProTrips = Object.values(proTripMockData).filter(trip => 
-    state.pro.has(trip.id)
-  );
-  
-  // Get archived events
-  const archivedEvents = Object.values(eventsMockData).filter(event => 
-    state.event.has(event.id)
-  );
-  
+  const { data: archivedTrips, error } = await supabase
+    .from('trips')
+    .select('*')
+    .eq('is_archived', true)
+    .eq('created_by', userId || '');
+
+  if (error) {
+    console.error('Failed to get archived trips:', error);
+    return {
+      consumer: [],
+      pro: [],
+      events: [],
+      total: 0
+    };
+  }
+
+  // Separate by trip_type
+  const consumer = archivedTrips?.filter(t => t.trip_type === 'consumer') || [];
+  const pro = archivedTrips?.filter(t => t.trip_type === 'pro') || [];
+  const events = archivedTrips?.filter(t => t.trip_type === 'event') || [];
+
   return {
-    consumer: archivedConsumerTrips,
-    pro: archivedProTrips,
-    events: archivedEvents,
-    total: archivedConsumerTrips.length + archivedProTrips.length + archivedEvents.length
+    consumer,
+    pro,
+    events,
+    total: archivedTrips?.length || 0
   };
 };
 
@@ -101,8 +81,20 @@ export const filterActiveTrips = async <T extends { id: string | number }>(
   tripType: TripType,
   userId?: string
 ): Promise<T[]> => {
-  const state = await getArchiveState(userId);
-  return trips.filter(trip => !state[tripType].has(trip.id.toString()));
+  // Get all archived trip IDs from database
+  const { data: archivedTrips, error } = await supabase
+    .from('trips')
+    .select('id')
+    .eq('is_archived', true)
+    .eq('trip_type', tripType);
+
+  if (error) {
+    console.error('Failed to filter active trips:', error);
+    return trips;
+  }
+
+  const archivedIds = new Set(archivedTrips?.map(t => t.id) || []);
+  return trips.filter(trip => !archivedIds.has(trip.id.toString()));
 };
 
 // Get trip archive status for display
@@ -117,31 +109,73 @@ export const getTripArchiveStatus = async (tripId: string, tripType: TripType, u
 
 // Bulk archive operations
 export const bulkArchiveTrips = async (tripIds: string[], tripType: TripType, userId?: string): Promise<void> => {
-  const state = await getArchiveState(userId);
-  tripIds.forEach(id => state[tripType].add(id));
-  await saveArchiveState(state, userId);
+  const { error } = await supabase
+    .from('trips')
+    .update({ is_archived: true })
+    .in('id', tripIds);
+
+  if (error) {
+    console.error('Failed to bulk archive trips:', error);
+    throw error;
+  }
 };
 
 export const bulkRestoreTrips = async (tripIds: string[], tripType: TripType, userId?: string): Promise<void> => {
-  const state = await getArchiveState(userId);
-  tripIds.forEach(id => state[tripType].delete(id));
-  await saveArchiveState(state, userId);
+  const { error } = await supabase
+    .from('trips')
+    .update({ is_archived: false })
+    .in('id', tripIds);
+
+  if (error) {
+    console.error('Failed to bulk restore trips:', error);
+    throw error;
+  }
 };
 
 // Clear all archived trips (for admin/reset purposes)
 export const clearAllArchivedTrips = async (userId?: string): Promise<void> => {
-  if (userId) {
-    await secureStorageService.saveArchivedTrips({ consumer: [], pro: [], event: [] }, userId);
-  } else {
-    await removeStorageItem('trips_archive_state');
+  const { error } = await supabase
+    .from('trips')
+    .update({ is_archived: false })
+    .eq('created_by', userId || '')
+    .eq('is_archived', true);
+
+  if (error) {
+    console.error('Failed to clear archived trips:', error);
+    throw error;
   }
 };
 
 // Analytics helpers
 export const getArchiveAnalytics = async (userId?: string) => {
-  const state = await getArchiveState(userId);
   const archived = await getArchivedTrips(userId);
-  
+
+  const { data: allTrips, error } = await supabase
+    .from('trips')
+    .select('id, trip_type')
+    .eq('created_by', userId || '');
+
+  if (error) {
+    console.error('Failed to get archive analytics:', error);
+    return {
+      totalArchived: archived.total,
+      archivedByType: {
+        consumer: archived.consumer.length,
+        pro: archived.pro.length,
+        events: archived.events.length
+      },
+      archiveRate: {
+        consumer: 0,
+        pro: 0,
+        events: 0
+      }
+    };
+  }
+
+  const totalConsumer = allTrips?.filter(t => t.trip_type === 'consumer').length || 1;
+  const totalPro = allTrips?.filter(t => t.trip_type === 'pro').length || 1;
+  const totalEvents = allTrips?.filter(t => t.trip_type === 'event').length || 1;
+
   return {
     totalArchived: archived.total,
     archivedByType: {
@@ -150,9 +184,9 @@ export const getArchiveAnalytics = async (userId?: string) => {
       events: archived.events.length
     },
     archiveRate: {
-      consumer: archived.consumer.length / tripsData.length,
-      pro: archived.pro.length / Object.keys(proTripMockData).length,
-      events: archived.events.length / Object.keys(eventsMockData).length
+      consumer: archived.consumer.length / totalConsumer,
+      pro: archived.pro.length / totalPro,
+      events: archived.events.length / totalEvents
     }
   };
 };
