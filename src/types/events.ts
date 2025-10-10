@@ -14,11 +14,6 @@ export interface Speaker {
   bio: string;
   avatar: string;
   sessions: string[];
-  socialLinks?: {
-    twitter?: string;
-    linkedin?: string;
-    website?: string;
-  };
 }
 
 export interface Session {
@@ -30,13 +25,6 @@ export interface Session {
   startTime: string;
   endTime: string;
   location: string;
-  capacity: number;
-  rsvpCount: number;
-  materials?: {
-    title: string;
-    url: string;
-    type: 'slides' | 'document' | 'video';
-  }[];
 }
 
 export interface Sponsor {

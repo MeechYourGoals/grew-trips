@@ -1,8 +1,7 @@
 
-import React, { useState } from 'react';
-import { QrCode, Users, UserCheck, Clock, MapPin, TrendingUp } from 'lucide-react';
+import React from 'react';
+import { Users, UserCheck, Clock } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
-import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 
 interface RegistrationTabProps {
@@ -22,8 +21,6 @@ export const RegistrationTab = ({
   registrationStatus,
   userRole
 }: RegistrationTabProps) => {
-  const [showQRCode, setShowQRCode] = useState(false);
-
   const registrationPercentage = (registeredCount / capacity) * 100;
   const checkinPercentage = checkedInCount > 0 ? (checkedInCount / registeredCount) * 100 : 0;
 
@@ -43,7 +40,7 @@ export const RegistrationTab = ({
         <UserCheck size={24} className="text-blue-400" />
         <div>
           <h2 className="text-xl font-semibold text-white">Registration & Check-in</h2>
-          <p className="text-gray-400 text-sm">Real-time attendance tracking and badge management</p>
+          <p className="text-gray-400 text-sm">Real-time attendance tracking</p>
         </div>
       </div>
 
@@ -106,110 +103,6 @@ export const RegistrationTab = ({
           </CardContent>
         </Card>
       </div>
-
-      {/* QR Code Badge */}
-      {userRole === 'attendee' && (
-        <Card className="bg-gray-800/50 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <QrCode size={20} />
-              Your Event Badge
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-300 mb-2">
-                  Use this QR code for event check-in and networking
-                </p>
-                <Button 
-                  onClick={() => setShowQRCode(!showQRCode)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                >
-                  {showQRCode ? 'Hide Badge' : 'Show QR Badge'}
-                </Button>
-              </div>
-              {showQRCode && (
-                <div className="bg-white p-4 rounded-lg">
-                  <div className="w-32 h-32 bg-gray-900 rounded flex items-center justify-center">
-                    <QrCode size={80} className="text-white" />
-                  </div>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Real-time Check-in Feed (Organizer only) */}
-      {userRole === 'organizer' && (
-        <Card className="bg-gray-800/50 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <TrendingUp size={20} />
-              Live Check-in Feed
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {[
-                { name: 'Sarah Johnson', role: 'Speaker', time: '2 minutes ago', vip: true },
-                { name: 'Michael Chen', role: 'Attendee', time: '3 minutes ago', vip: false },
-                { name: 'Jessica Martinez', role: 'Exhibitor', time: '5 minutes ago', vip: false },
-                { name: 'Dr. Robert Kim', role: 'Keynote Speaker', time: '8 minutes ago', vip: true }
-              ].map((checkin, index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-white font-medium">{checkin.name}</span>
-                        {checkin.vip && <Badge className="bg-yellow-500 text-black text-xs">VIP</Badge>}
-                      </div>
-                      <span className="text-gray-400 text-sm">{checkin.role}</span>
-                    </div>
-                  </div>
-                  <span className="text-gray-500 text-sm">{checkin.time}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Heat Map */}
-      {userRole === 'organizer' && (
-        <Card className="bg-gray-800/50 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white flex items-center gap-2">
-              <MapPin size={20} />
-              Venue Heat Map
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-4 gap-2 h-48">
-              {[...Array(16)].map((_, i) => {
-                const density = Math.random();
-                return (
-                  <div
-                    key={i}
-                    className={`rounded ${
-                      density > 0.7 ? 'bg-red-500/60' :
-                      density > 0.4 ? 'bg-yellow-500/60' :
-                      density > 0.2 ? 'bg-green-500/60' :
-                      'bg-gray-600/60'
-                    }`}
-                  ></div>
-                );
-              })}
-            </div>
-            <div className="flex items-center justify-between mt-3 text-xs text-gray-400">
-              <span>Low Density</span>
-              <span>High Density</span>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
 };

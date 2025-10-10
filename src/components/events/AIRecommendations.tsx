@@ -68,18 +68,6 @@ export const AIRecommendations = ({
           totalScore += score;
         }
 
-        // Popularity score (based on capacity vs RSVP)
-        const popularityRatio = session.rsvpCount / session.capacity;
-        if (popularityRatio > 0.7) {
-          const score = 0.6;
-          reasons.push({
-            type: 'popular',
-            label: 'High attendance expected',
-            score
-          });
-          totalScore += score;
-        }
-
         // Speaker rating (simulated)
         if (speaker) {
           const speakerScore = 0.7; // Would be calculated from real ratings
@@ -227,11 +215,6 @@ export const AIRecommendations = ({
               </div>
 
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-sm text-gray-400">
-                  <Users size={14} />
-                  {rec.session.rsvpCount}/{rec.session.capacity} attending
-                </div>
-                
                 <div className="flex gap-2">
                   <Button variant="ghost" size="sm" className="text-gray-400 hover:text-white">
                     Learn More

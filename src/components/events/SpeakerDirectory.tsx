@@ -1,10 +1,9 @@
 
 import React, { useState } from 'react';
-import { Users, Search, ExternalLink, Download, Star } from 'lucide-react';
+import { Users, Search, Star } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
-import { Badge } from '../ui/badge';
 import { Speaker } from '../../types/events';
 
 interface SpeakerDirectoryProps {
@@ -29,7 +28,7 @@ export const SpeakerDirectory = ({ speakers, userRole }: SpeakerDirectoryProps) 
         <Users size={24} className="text-blue-400" />
         <div>
           <h2 className="text-xl font-semibold text-white">Speaker Directory</h2>
-          <p className="text-gray-400 text-sm">Meet our speakers and access their materials</p>
+          <p className="text-gray-400 text-sm">Meet our speakers</p>
         </div>
       </div>
 
@@ -66,27 +65,6 @@ export const SpeakerDirectory = ({ speakers, userRole }: SpeakerDirectoryProps) 
                 </div>
 
                 <p className="text-gray-300 text-sm mb-4 line-clamp-3">{speaker.bio}</p>
-
-                {/* Social Links */}
-                {speaker.socialLinks && (
-                  <div className="flex gap-2 mb-4">
-                    {speaker.socialLinks.linkedin && (
-                      <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 p-2">
-                        <ExternalLink size={14} />
-                      </Button>
-                    )}
-                    {speaker.socialLinks.twitter && (
-                      <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 p-2">
-                        <ExternalLink size={14} />
-                      </Button>
-                    )}
-                    {speaker.socialLinks.website && (
-                      <Button size="sm" variant="outline" className="border-gray-600 text-gray-300 p-2">
-                        <ExternalLink size={14} />
-                      </Button>
-                    )}
-                  </div>
-                )}
 
                 <Button
                   onClick={() => setSelectedSpeaker(speaker)}
@@ -146,48 +124,6 @@ export const SpeakerDirectory = ({ speakers, userRole }: SpeakerDirectoryProps) 
                   ))}
                 </div>
               </div>
-
-              {/* Materials */}
-              <div>
-                <h4 className="text-white font-semibold mb-3">Speaker Materials</h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                  {[
-                    { title: 'Presentation Slides', type: 'PDF', size: '2.3 MB' },
-                    { title: 'Speaker Bio & Headshots', type: 'ZIP', size: '5.1 MB' },
-                    { title: 'Additional Resources', type: 'PDF', size: '1.8 MB' }
-                  ].map((material, index) => (
-                    <div key={index} className="bg-gray-700/50 p-3 rounded-lg flex items-center justify-between">
-                      <div>
-                        <div className="text-white font-medium text-sm">{material.title}</div>
-                        <div className="text-gray-400 text-xs">{material.type} • {material.size}</div>
-                      </div>
-                      <Button size="sm" variant="outline" className="border-gray-600 text-gray-300">
-                        <Download size={14} />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Social Links */}
-              {selectedSpeaker.socialLinks && (
-                <div>
-                  <h4 className="text-white font-semibold mb-3">Connect</h4>
-                  <div className="flex gap-3">
-                    {Object.entries(selectedSpeaker.socialLinks).map(([platform, url]) => (
-                      <Button
-                        key={platform}
-                        size="sm"
-                        variant="outline"
-                        className="border-gray-600 text-gray-300 capitalize"
-                      >
-                        <ExternalLink size={14} className="mr-2" />
-                        {platform}
-                      </Button>
-                    ))}
-                  </div>
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>

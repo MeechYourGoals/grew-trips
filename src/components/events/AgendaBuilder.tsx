@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Calendar, Clock, Users, MapPin, FileText, Star, Sparkles, Brain } from 'lucide-react';
+import { Calendar, Clock, Users, MapPin, Star, Sparkles, Brain } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
@@ -31,64 +31,6 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
   const filteredSessions = selectedTrack === 'all' 
     ? sessions 
     : sessions.filter(session => session.track === selectedTrack);
-
-  // Mock sessions data
-  const mockSessions = [
-    {
-      id: '1',
-      title: 'Future of AI in Web Development',
-      description: 'Exploring how artificial intelligence is transforming modern web development practices.',
-      startTime: '09:00',
-      endTime: '10:00',
-      location: 'Main Auditorium',
-      track: 'tech',
-      speaker: '1',
-      capacity: 200,
-      rsvpCount: 145,
-      materials: [{ title: 'Slides', type: 'pdf' }]
-    },
-    {
-      id: '2',
-      title: 'Building Scalable React Applications',
-      description: 'Best practices for architecting large-scale React applications with performance in mind.',
-      startTime: '10:30',
-      endTime: '11:30',
-      location: 'Conference Room A',
-      track: 'tech',
-      speaker: '2',
-      capacity: 100,
-      rsvpCount: 87,
-      materials: []
-    },
-    {
-      id: '3',
-      title: 'Design Systems for Modern Apps',
-      description: 'Creating consistent and maintainable design systems for enterprise applications.',
-      startTime: '14:00',
-      endTime: '15:00',
-      location: 'Workshop Room',
-      track: 'design',
-      speaker: '3',
-      capacity: 50,
-      rsvpCount: 38,
-      materials: [{ title: 'Design Kit', type: 'figma' }]
-    },
-    {
-      id: '4',
-      title: 'Product Strategy in 2024',
-      description: 'Strategic approaches to product development in an evolving market landscape.',
-      startTime: '15:30',
-      endTime: '16:30',
-      location: 'Main Auditorium',
-      track: 'business',
-      speaker: '4',
-      capacity: 200,
-      rsvpCount: 156,
-      materials: []
-    }
-  ];
-
-  const allSessions = mockSessions.length > 0 ? mockSessions : filteredSessions;
 
   const getSpeaker = (speakerId: string) => 
     speakers.find(speaker => speaker.id === speakerId);
@@ -151,11 +93,10 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
 
           {/* Sessions Grid */}
           <div className="grid gap-4">
-            {allSessions.map(session => {
+            {filteredSessions.map(session => {
               const speaker = getSpeaker(session.speaker);
               const track = getTrack(session.track);
               const isAdded = addedSessions.has(session.id);
-              const isNearCapacity = session.rsvpCount / session.capacity > 0.8;
 
               return (
                 <Card key={session.id} className="bg-gray-800/50 border-gray-700">
@@ -169,11 +110,6 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
                           >
                             {track?.name}
                           </Badge>
-                          {isNearCapacity && (
-                            <Badge className="bg-yellow-500/20 text-yellow-400 text-xs">
-                              Nearly Full
-                            </Badge>
-                          )}
                         </div>
                         <CardTitle className="text-white text-lg">{session.title}</CardTitle>
                         <p className="text-gray-400 text-sm mt-1">{session.description}</p>
@@ -189,7 +125,7 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="flex items-center gap-2 text-gray-300">
                         <Clock size={16} />
                         <span className="text-sm">
@@ -199,12 +135,6 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
                       <div className="flex items-center gap-2 text-gray-300">
                         <MapPin size={16} />
                         <span className="text-sm">{session.location}</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-gray-300">
-                        <Users size={16} />
-                        <span className="text-sm">
-                          {session.rsvpCount}/{session.capacity} registered
-                        </span>
                       </div>
                     </div>
 
@@ -221,34 +151,12 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
                         </div>
                       </div>
                     )}
-
-                    {session.materials && session.materials.length > 0 && (
-                      <div className="mt-3">
-                        <div className="flex items-center gap-2 text-gray-300 mb-2">
-                          <FileText size={16} />
-                          <span className="text-sm font-medium">Session Materials</span>
-                        </div>
-                        <div className="flex flex-wrap gap-2">
-                          {session.materials.map((material, index) => (
-                            <Button
-                              key={index}
-                              size="sm"
-                              variant="outline"
-                              className="border-gray-600 text-gray-300 text-xs"
-                            >
-                              {material.title}
-                            </Button>
-                          ))}
-                        </div>
-                      </div>
-                    )}
                   </CardContent>
                 </Card>
               );
             })}
           </div>
         </TabsContent>
-
 
         <TabsContent value="my-schedule" className="space-y-4">
           {addedSessions.size === 0 ? (
@@ -261,7 +169,7 @@ export const AgendaBuilder = ({ tracks, sessions, speakers, userRole }: AgendaBu
             </Card>
           ) : (
             <div className="space-y-4">
-              {allSessions
+              {filteredSessions
                 .filter(session => addedSessions.has(session.id))
                 .map(session => {
                   const speaker = getSpeaker(session.speaker);

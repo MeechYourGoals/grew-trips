@@ -75,10 +75,9 @@ export interface EventInvitation {
   id: string;
   name: string;
   email: string;
-  status: 'pending' | 'accepted' | 'declined';
+  status: 'pending' | 'sent' | 'accepted' | 'declined';
   sentAt?: string;
   respondedAt?: string;
-  qrCode?: string;
 }
 
 export interface EventBasicsFormData {

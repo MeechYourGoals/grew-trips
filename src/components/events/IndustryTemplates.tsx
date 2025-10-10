@@ -32,14 +32,14 @@ export const IndustryTemplates = ({
         name: 'Corporate Retreat',
         description: 'Team building and strategic planning focused event',
         features: ['Team Activities', 'Meeting Rooms', 'Catering', 'Transportation'],
-        settings: { networking: true, qr_badges: true, broadcasts: true }
+        settings: { networking: true, broadcasts: true }
       },
       {
         id: 'board-meeting',
         name: 'Board Meeting',
         description: 'Executive level meeting with confidential sessions',
         features: ['Private Sessions', 'Document Sharing', 'Security', 'Recording'],
-        settings: { networking: false, qr_badges: true, broadcasts: false }
+        settings: { networking: false, broadcasts: false }
       }
     ],
     conference: [
@@ -48,14 +48,14 @@ export const IndustryTemplates = ({
         name: 'Technology Conference',
         description: 'Multi-track technology conference with speakers',
         features: ['Multiple Tracks', 'Speaker Directory', 'Live Q&A', 'Networking'],
-        settings: { networking: true, qr_badges: true, broadcasts: true, live_qa: true }
+        settings: { networking: true, broadcasts: true, live_qa: true }
       },
       {
         id: 'business-summit',
         name: 'Business Summit',
         description: 'Professional business networking and knowledge sharing',
         features: ['Keynotes', 'Breakout Sessions', 'Exhibitors', 'Analytics'],
-        settings: { networking: true, qr_badges: true, broadcasts: true, analytics: true }
+        settings: { networking: true, broadcasts: true, analytics: true }
       }
     ],
     education: [
@@ -64,7 +64,7 @@ export const IndustryTemplates = ({
         name: 'Academic Conference',
         description: 'Research presentation and academic networking',
         features: ['Paper Presentations', 'Poster Sessions', 'Academic Networking'],
-        settings: { networking: true, qr_badges: false, broadcasts: true }
+        settings: { networking: true, broadcasts: true }
       }
     ],
     healthcare: [
@@ -73,7 +73,7 @@ export const IndustryTemplates = ({
         name: 'Medical Symposium',
         description: 'Medical professionals continuing education',
         features: ['CME Credits', 'Medical Presentations', 'Case Studies'],
-        settings: { networking: true, qr_badges: true, broadcasts: false }
+        settings: { networking: true, broadcasts: false }
       }
     ],
     technology: [
@@ -82,7 +82,7 @@ export const IndustryTemplates = ({
         name: 'Developer Meetup',
         description: 'Technical presentations and networking for developers',
         features: ['Tech Talks', 'Code Reviews', 'Networking', 'Demos'],
-        settings: { networking: true, qr_badges: false, broadcasts: true }
+        settings: { networking: true, broadcasts: true }
       }
     ],
     entertainment: [
@@ -91,7 +91,7 @@ export const IndustryTemplates = ({
         name: 'Music Festival',
         description: 'Multi-day music and entertainment event',
         features: ['Multiple Stages', 'Artist Meet & Greet', 'Food Vendors'],
-        settings: { networking: false, qr_badges: true, broadcasts: true }
+        settings: { networking: false, broadcasts: true }
       }
     ]
   };

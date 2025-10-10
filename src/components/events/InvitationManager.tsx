@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Mail, QrCode, Download, Send, Plus, X } from 'lucide-react';
+import { Mail, Send, Plus, X } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 import { Label } from '../ui/label';
@@ -14,7 +14,6 @@ interface Invitation {
   role: 'attendee' | 'speaker' | 'organizer' | 'exhibitor';
   status: 'pending' | 'sent' | 'accepted' | 'declined';
   sentAt?: string;
-  qrCode?: string;
 }
 
 interface InvitationManagerProps {
@@ -46,8 +45,7 @@ export const InvitationManager = ({ eventData, onInvitationsUpdate }: Invitation
       email: newInvite.email,
       name: newInvite.name,
       role: newInvite.role,
-      status: 'pending',
-      qrCode: generateQRCode(newInvite.email)
+      status: 'pending'
     };
 
     const updated = [...invitations, invitation];
@@ -73,8 +71,7 @@ export const InvitationManager = ({ eventData, onInvitationsUpdate }: Invitation
           email,
           name: name.charAt(0).toUpperCase() + name.slice(1),
           role: 'attendee' as const,
-          status: 'pending' as const,
-          qrCode: generateQRCode(email)
+          status: 'pending' as const
         };
       });
 
@@ -87,11 +84,6 @@ export const InvitationManager = ({ eventData, onInvitationsUpdate }: Invitation
       title: "Bulk invitations added",
       description: `Added ${emails.length} invitations`
     });
-  };
-
-  const generateQRCode = (email: string): string => {
-    // Mock QR code generation - in real app, use QR library
-    return `qr_code_${btoa(email).slice(0, 8)}`;
   };
 
   const sendInvitations = () => {
@@ -115,14 +107,6 @@ export const InvitationManager = ({ eventData, onInvitationsUpdate }: Invitation
     const updated = invitations.filter(inv => inv.id !== id);
     setInvitations(updated);
     onInvitationsUpdate(updated);
-  };
-
-  const downloadQRCodes = () => {
-    // Mock download - in real app, generate actual QR codes
-    toast({
-      title: "QR Codes generated",
-      description: "QR codes package is being prepared for download"
-    });
   };
 
   const getStatusColor = (status: string) => {
@@ -226,10 +210,6 @@ export const InvitationManager = ({ eventData, onInvitationsUpdate }: Invitation
               Invitations ({invitations.length})
             </h4>
             <div className="flex gap-2">
-              <Button onClick={downloadQRCodes} variant="outline" size="sm">
-                <QrCode size={16} className="mr-2" />
-                Download QR Codes
-              </Button>
               <Button onClick={sendInvitations} size="sm" className="bg-glass-orange hover:bg-glass-orange/80">
                 <Send size={16} className="mr-2" />
                 Send All Pending ({invitations.filter(i => i.status === 'pending').length})
