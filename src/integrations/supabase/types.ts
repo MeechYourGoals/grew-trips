@@ -197,6 +197,72 @@ export type Database = {
           },
         ]
       }
+      game_schedules: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          game_date: string
+          game_time: string
+          id: string
+          is_home: boolean | null
+          load_in_time: string | null
+          opponent: string
+          organization_id: string
+          status: string | null
+          trip_id: string | null
+          updated_at: string | null
+          venue: string
+          venue_address: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          game_date: string
+          game_time: string
+          id?: string
+          is_home?: boolean | null
+          load_in_time?: string | null
+          opponent: string
+          organization_id: string
+          status?: string | null
+          trip_id?: string | null
+          updated_at?: string | null
+          venue: string
+          venue_address?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          game_date?: string
+          game_time?: string
+          id?: string
+          is_home?: boolean | null
+          load_in_time?: string | null
+          opponent?: string
+          organization_id?: string
+          status?: string | null
+          trip_id?: string | null
+          updated_at?: string | null
+          venue?: string
+          venue_address?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "game_schedules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "game_schedules_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invite_links: {
         Row: {
           code: string
@@ -310,6 +376,114 @@ export type Database = {
           source_id?: string | null
           trip_id?: string
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      loyalty_airlines: {
+        Row: {
+          airline: string
+          created_at: string | null
+          id: string
+          is_preferred: boolean | null
+          membership_number: string
+          program_name: string
+          tier: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          airline: string
+          created_at?: string | null
+          id?: string
+          is_preferred?: boolean | null
+          membership_number: string
+          program_name: string
+          tier?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          airline?: string
+          created_at?: string | null
+          id?: string
+          is_preferred?: boolean | null
+          membership_number?: string
+          program_name?: string
+          tier?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      loyalty_hotels: {
+        Row: {
+          created_at: string | null
+          hotel_chain: string
+          id: string
+          is_preferred: boolean | null
+          membership_number: string
+          program_name: string
+          tier: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          hotel_chain: string
+          id?: string
+          is_preferred?: boolean | null
+          membership_number: string
+          program_name: string
+          tier?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          hotel_chain?: string
+          id?: string
+          is_preferred?: boolean | null
+          membership_number?: string
+          program_name?: string
+          tier?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      loyalty_rentals: {
+        Row: {
+          company: string
+          created_at: string | null
+          id: string
+          is_preferred: boolean | null
+          membership_number: string
+          program_name: string
+          tier: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          company: string
+          created_at?: string | null
+          id?: string
+          is_preferred?: boolean | null
+          membership_number: string
+          program_name: string
+          tier?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          company?: string
+          created_at?: string | null
+          id?: string
+          is_preferred?: boolean | null
+          membership_number?: string
+          program_name?: string
+          tier?: string | null
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -789,6 +963,72 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: []
+      }
+      show_schedules: {
+        Row: {
+          created_at: string | null
+          created_by: string
+          id: string
+          load_in_time: string | null
+          organization_id: string
+          show_date: string
+          show_time: string
+          soundcheck_time: string | null
+          status: string | null
+          title: string
+          trip_id: string | null
+          updated_at: string | null
+          venue: string
+          venue_address: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          created_by: string
+          id?: string
+          load_in_time?: string | null
+          organization_id: string
+          show_date: string
+          show_time: string
+          soundcheck_time?: string | null
+          status?: string | null
+          title: string
+          trip_id?: string | null
+          updated_at?: string | null
+          venue: string
+          venue_address?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          created_by?: string
+          id?: string
+          load_in_time?: string | null
+          organization_id?: string
+          show_date?: string
+          show_time?: string
+          soundcheck_time?: string | null
+          status?: string | null
+          title?: string
+          trip_id?: string | null
+          updated_at?: string | null
+          venue?: string
+          venue_address?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "show_schedules_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "show_schedules_trip_id_fkey"
+            columns: ["trip_id"]
+            isOneToOne: false
+            referencedRelation: "trips"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       task_assignments: {
         Row: {
