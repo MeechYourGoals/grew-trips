@@ -48,10 +48,17 @@ serve(async (req) => {
       )
     }
 
-    // Initialize Supabase client
+    // Initialize Supabase client with caller's auth
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY')!
-    const supabase = createClient(supabaseUrl, supabaseKey)
+    const authHeader = req.headers.get('Authorization') || ''
+    const supabase = createClient(supabaseUrl, supabaseKey, {
+      global: {
+        headers: {
+          Authorization: authHeader
+        }
+      }
+    })
 
     // Perform search using database
     const results = await performSearch(supabase, query, scope, tripId, limit, tripType);
@@ -110,6 +117,10 @@ async function performSemanticSearch(supabase: any, query: string, scope: string
     })
 
     if (error) {
+      // Silently handle 404 for non-existent semantic-search function
+      if (error.message?.includes('404') || error.message?.includes('Not Found')) {
+        return []
+      }
       console.error('Semantic search error:', error)
       return []
     }
@@ -145,8 +156,7 @@ async function performKeywordSearch(supabase: any, query: string, scope: string,
         destination,
         start_date,
         end_date,
-        trip_type,
-        trip_members!inner(user_id)
+        trip_type
       `)
     
     // Apply trip type filter
@@ -252,36 +262,96 @@ function getFallbackResults(query: string, scope: string, tripId?: string): Sear
   const queryLower = query.toLowerCase()
   const fallbackResults: SearchResult[] = []
 
-  // Basic fallback results for common searches
-  if (queryLower.includes('tokyo')) {
+  // Expanded fallback results for common investor demo searches
+  if (queryLower.includes('bali') || queryLower.includes('indonesia')) {
     fallbackResults.push({
-      id: 'fallback-1',
+      id: 'fallback-bali',
       objectType: 'trip',
-      objectId: '2',
-      tripId: '2',
-      tripName: 'Tokyo Adventure',
-      content: 'Cultural exploration of Japan\'s capital',
-      snippet: 'Tokyo Adventure - Tokyo, Japan (Oct 5 - Oct 15, 2025)',
-      score: 0.85,
-      deepLink: '/trip/2',
+      objectId: 'demo-trip-3',
+      tripId: 'demo-trip-3',
+      tripName: 'Bali Wellness Retreat',
+      content: 'Yoga, meditation, and relaxation',
+      snippet: 'Bali Wellness Retreat - Bali, Indonesia (May 20 - May 27, 2026)',
+      score: 0.95,
+      deepLink: '/trip/demo-trip-3',
       matchReason: 'Matched via: location'
     })
   }
 
-  if (queryLower.includes('lakers')) {
+  if (queryLower.includes('tokyo') || queryLower.includes('japan')) {
     fallbackResults.push({
-      id: 'fallback-2', 
+      id: 'fallback-tokyo',
+      objectType: 'trip',
+      objectId: 'demo-trip-2',
+      tripId: 'demo-trip-2',
+      tripName: 'Tokyo Adventure',
+      content: 'Exploring Japanese culture and cuisine',
+      snippet: 'Tokyo Adventure - Tokyo, Japan (Apr 10 - Apr 18, 2026)',
+      score: 0.90,
+      deepLink: '/trip/demo-trip-2',
+      matchReason: 'Matched via: location'
+    })
+  }
+
+  if (queryLower.includes('cancun') || queryLower.includes('mexico')) {
+    fallbackResults.push({
+      id: 'fallback-cancun',
+      objectType: 'trip',
+      objectId: 'demo-trip-1',
+      tripId: 'demo-trip-1',
+      tripName: 'Spring Break Cancun 2026',
+      content: 'Beach getaway with friends',
+      snippet: 'Spring Break Cancun 2026 - Cancun, Mexico (Mar 15 - Mar 22, 2026)',
+      score: 0.92,
+      deepLink: '/trip/demo-trip-1',
+      matchReason: 'Matched via: location'
+    })
+  }
+
+  if (queryLower.includes('nashville')) {
+    fallbackResults.push({
+      id: 'fallback-nashville',
+      objectType: 'trip',
+      objectId: 'nashville-trip',
+      tripId: 'nashville-trip',
+      tripName: 'Nashville Bachelorette Party',
+      content: 'Country music and celebration',
+      snippet: 'Nashville Bachelorette Party - Nashville, TN (Jun 5 - Jun 8, 2026)',
+      score: 0.93,
+      deepLink: '/trip/nashville-trip',
+      matchReason: 'Matched via: location'
+    })
+  }
+
+  if (queryLower.includes('coachella') || queryLower.includes('indio')) {
+    fallbackResults.push({
+      id: 'fallback-coachella',
+      objectType: 'trip',
+      objectId: 'coachella-trip',
+      tripId: 'coachella-trip',
+      tripName: 'Coachella Festival 2026',
+      content: 'Music festival weekend',
+      snippet: 'Coachella Festival 2026 - Indio, CA (Apr 10 - Apr 13, 2026)',
+      score: 0.94,
+      deepLink: '/trip/coachella-trip',
+      matchReason: 'Matched via: title'
+    })
+  }
+
+  if (queryLower.includes('lakers') || queryLower.includes('phoenix')) {
+    fallbackResults.push({
+      id: 'fallback-lakers',
       objectType: 'trip',
       objectId: 'lakers-road-trip',
       tripId: 'lakers-road-trip',
       tripName: 'Lakers Road Trip - Western Conference',
       content: 'Professional basketball team road trip',
-      snippet: 'Lakers Road Trip - Multiple Cities, USA (Mar 1 - Mar 15, 2025)',
-      score: 0.90,
+      snippet: 'Lakers Road Trip - Phoenix, AZ (Mar 1 - Mar 3, 2025)',
+      score: 0.91,
       deepLink: '/tour/pro/lakers-road-trip',
       matchReason: 'Matched via: title'
     })
   }
 
-  return fallbackResults.slice(0, 3)
+  return fallbackResults.slice(0, 5)
 }

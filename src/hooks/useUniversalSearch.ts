@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useDemoMode } from '@/hooks/useDemoMode';
+import { demoModeService } from '@/services/demoModeService';
 
 interface SearchResult {
   id: string;
@@ -18,6 +20,7 @@ export const useUniversalSearch = (query: string, filters: { status: string; typ
   const [results, setResults] = useState<SearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { isDemoMode } = useDemoMode();
 
   useEffect(() => {
     const searchTrips = async () => {
@@ -29,6 +32,47 @@ export const useUniversalSearch = (query: string, filters: { status: string; typ
       setIsLoading(true);
       
       try {
+        // If Demo Mode is ON, search mock trips
+        if (isDemoMode) {
+          const mockTrips = await demoModeService.getMockTrips();
+          const queryLower = query.toLowerCase();
+          
+          const filtered = mockTrips
+            .filter(trip => {
+              const matchesSearch = 
+                trip.name.toLowerCase().includes(queryLower) ||
+                trip.destination?.toLowerCase().includes(queryLower);
+              
+              const matchesType = filters.type === 'all' || 
+                (filters.type === 'regular' && trip.trip_type === 'consumer') ||
+                (filters.type === trip.trip_type);
+              
+              const matchesStatus = filters.status === 'all' ||
+                (filters.status === 'upcoming' && !trip.is_archived) ||
+                (filters.status === 'archived' && trip.is_archived);
+              
+              return matchesSearch && matchesType && matchesStatus;
+            })
+            .map(trip => ({
+              id: trip.id,
+              type: trip.trip_type === 'consumer' ? 'regular' as const : trip.trip_type as 'pro' | 'event',
+              title: trip.name,
+              location: trip.destination || 'Unknown',
+              dateRange: trip.start_date && trip.end_date 
+                ? `${trip.start_date} - ${trip.end_date}` 
+                : '',
+              status: trip.is_archived ? 'archived' as const : 'upcoming' as const,
+              participants: 5,
+              matchScore: 0.9,
+              deepLink: `/trip/${trip.id}`
+            }));
+          
+          setResults(filtered);
+          setIsLoading(false);
+          return;
+        }
+
+        // Otherwise, search real trips via edge function
         const { data, error } = await supabase.functions.invoke('search', {
           body: {
             query: query.trim(),
@@ -88,7 +132,7 @@ export const useUniversalSearch = (query: string, filters: { status: string; typ
 
     const debounceTimer = setTimeout(searchTrips, 300);
     return () => clearTimeout(debounceTimer);
-  }, [query, filters, toast]);
+  }, [query, filters, toast, isDemoMode]);
 
   return { results, isLoading };
 };
