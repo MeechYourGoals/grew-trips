@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Search, Building2, Settings } from 'lucide-react';
+import { Home, Search, Compass, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { hapticService } from '@/services/hapticService';
 
@@ -29,11 +29,11 @@ export const MobileBottomNav = ({ className }: MobileBottomNavProps) => {
       isActive: location.pathname.includes('/search')
     },
     {
-      id: 'enterprise',
-      label: 'Enterprise',
-      icon: Building2,
-      path: '/enterprise',
-      isActive: location.pathname.includes('/enterprise') || location.pathname.includes('/organization')
+      id: 'recs',
+      label: 'Recs',
+      icon: Compass,
+      path: '/recs',
+      isActive: location.pathname.includes('/recs')
     },
     {
       id: 'settings',

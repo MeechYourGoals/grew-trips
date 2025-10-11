@@ -33,6 +33,7 @@ const OrganizationsHub = lazy(() => import("./pages/OrganizationsHub").then(modu
 const MobileEnterpriseHub = lazy(() => import("./pages/MobileEnterpriseHub").then(module => ({ default: module.MobileEnterpriseHub })));
 const MobileOrganizationPage = lazy(() => import("./pages/MobileOrganizationPage").then(module => ({ default: module.MobileOrganizationPage })));
 const AcceptOrganizationInvite = lazy(() => import("./pages/AcceptOrganizationInvite").then(module => ({ default: module.AcceptOrganizationInvite })));
+const CravelRecsPage = lazy(() => import("./pages/CravelRecsPage").then(module => ({ default: module.CravelRecsPage })));
 
 
 const queryClient = new QueryClient();
@@ -109,6 +110,11 @@ const App = () => {
                         <SearchPage />
                       </LazyRoute>
                     } />
+                    <Route path="/recs" element={
+                      <LazyRoute>
+                        <CravelRecsPage />
+                      </LazyRoute>
+                    } />
                     <Route path="/profile" element={
                       <LazyRoute>
                         <ProfilePage />
@@ -127,11 +133,6 @@ const App = () => {
                     <Route path="/admin/scheduled-messages" element={
                       <LazyRoute>
                         <AdminDashboard />
-                      </LazyRoute>
-                    } />
-                    <Route path="/enterprise" element={
-                      <LazyRoute>
-                        <MobileEnterpriseHub />
                       </LazyRoute>
                     } />
                     <Route path="/organizations" element={

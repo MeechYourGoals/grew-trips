@@ -141,6 +141,13 @@ export const SettingsMenu = ({ isOpen, onClose, initialConsumerSection }: Settin
                 Events
               </button>
             </div>
+            
+            {/* Helper text for Enterprise */}
+            {settingsType === 'enterprise' && (
+              <p className="text-xs text-gray-400 mt-2 text-center">
+                Manage your organizations, teams, and pro features here
+              </p>
+            )}
           </div>
 
           {/* Render appropriate settings based on toggle */}
