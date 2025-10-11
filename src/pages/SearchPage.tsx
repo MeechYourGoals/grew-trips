@@ -1,18 +1,14 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { Search, Filter, Archive, Calendar, MapPin, Users } from 'lucide-react';
 import { Input } from '../components/ui/input';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '../hooks/use-mobile';
-import { useDemoMode } from '../hooks/useDemoMode';
-import { tripsData } from '../data/tripsData';
-import { proTripMockData } from '../data/proTripMockData';
-import { eventsMockData } from '../data/eventsMockData';
 import { MobileModal } from '../components/mobile/MobileModal';
-import { EmptyStateWithDemo } from '../components/EmptyStateWithDemo';
+import { useUniversalSearch } from '../hooks/useUniversalSearch';
+import { Loader2 } from 'lucide-react';
 
 interface SearchResult {
   id: string;
@@ -28,8 +24,6 @@ interface SearchResult {
 
 const SearchPage = () => {
   const [query, setQuery] = useState('');
-  const [results, setResults] = useState<SearchResult[]>([]);
-  const [activeTab, setActiveTab] = useState('all');
   const [showFilters, setShowFilters] = useState(false);
   const [selectedFilters, setSelectedFilters] = useState({
     status: 'all',
@@ -39,100 +33,7 @@ const SearchPage = () => {
   
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const { isDemoMode } = useDemoMode();
-
-  const performSearch = useCallback((searchQuery: string) => {
-    if (!searchQuery.trim()) {
-      setResults([]);
-      return;
-    }
-
-    // Only search demo data if demo mode is enabled
-    if (!isDemoMode) {
-      setResults([]);
-      return;
-    }
-
-    const query = searchQuery.toLowerCase();
-    const searchResults: SearchResult[] = [];
-
-    // Search regular trips
-    tripsData.forEach(trip => {
-      let score = 0;
-      if (trip.title.toLowerCase().includes(query)) score += 3;
-      if (trip.location.toLowerCase().includes(query)) score += 2;
-      if (trip.dateRange.toLowerCase().includes(query)) score += 1;
-      
-      if (score > 0) {
-        searchResults.push({
-          id: trip.id.toString(),
-          type: 'regular',
-          title: trip.title,
-          location: trip.location,
-          dateRange: trip.dateRange,
-          status: new Date(trip.dateRange.split(' - ')[1]) < new Date() ? 'archived' : 'upcoming',
-          participants: trip.participants.length,
-          matchScore: score,
-          deepLink: `/trip/${trip.id}`
-        });
-      }
-    });
-
-    // Search pro trips - Fixed: use participants instead of teamMembers
-    Object.values(proTripMockData).forEach(trip => {
-      let score = 0;
-      if (trip.title.toLowerCase().includes(query)) score += 3;
-      if (trip.location.toLowerCase().includes(query)) score += 2;
-      if (trip.dateRange.toLowerCase().includes(query)) score += 1;
-      
-      if (score > 0) {
-        searchResults.push({
-          id: trip.id,
-          type: 'pro',
-          title: trip.title,
-          location: trip.location,
-          dateRange: trip.dateRange,
-          status: new Date(trip.dateRange.split(' - ')[1]) < new Date() ? 'archived' : 'upcoming',
-          participants: trip.participants?.length || 0,
-          matchScore: score,
-          deepLink: `/tour/pro/${trip.id}`
-        });
-      }
-    });
-
-    // Search events - Fixed: use participants instead of attendees
-    Object.values(eventsMockData).forEach(event => {
-      let score = 0;
-      if (event.title.toLowerCase().includes(query)) score += 3;
-      if (event.location.toLowerCase().includes(query)) score += 2;
-      if (event.dateRange.toLowerCase().includes(query)) score += 1;
-      
-      if (score > 0) {
-        searchResults.push({
-          id: event.id,
-          type: 'event',
-          title: event.title,
-          location: event.location,
-          dateRange: event.dateRange,
-          status: new Date(event.dateRange.split(' - ')[1]) < new Date() ? 'archived' : 'upcoming',
-          participants: event.participants?.length || 0,
-          matchScore: score,
-          deepLink: `/event/${event.id}`
-        });
-      }
-    });
-
-    // Sort by match score and apply filters
-    const filtered = searchResults
-      .filter(result => {
-        if (selectedFilters.status !== 'all' && result.status !== selectedFilters.status) return false;
-        if (selectedFilters.type !== 'all' && result.type !== selectedFilters.type) return false;
-        return true;
-      })
-      .sort((a, b) => b.matchScore - a.matchScore);
-
-    setResults(filtered);
-  }, [selectedFilters]);
+  const { results, isLoading } = useUniversalSearch(query, selectedFilters);
 
   const handleResultClick = (result: SearchResult) => {
     navigate(result.deepLink);
@@ -175,12 +76,9 @@ const SearchPage = () => {
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
         <Input
           type="text"
-          placeholder="Search by name, location, date..."
+          placeholder="Search by trip name or location..."
           value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            performSearch(e.target.value);
-          }}
+          onChange={(e) => setQuery(e.target.value)}
           className="pl-10 pr-12 bg-gray-900/80 border-gray-700 text-white placeholder-gray-400 h-12"
         />
         <Button
@@ -211,14 +109,12 @@ const SearchPage = () => {
 
       {/* Results */}
       <div className="space-y-3">
-        {!isDemoMode ? (
-          <EmptyStateWithDemo
-            icon={Search}
-            title="Search unavailable"
-            description="Turn on Demo Mode to search through sample trips"
-            showDemoPrompt={true}
-          />
-        ) : query && results.length === 0 ? (
+        {isLoading ? (
+          <div className="text-center py-8 text-gray-400 flex items-center justify-center gap-2">
+            <Loader2 className="animate-spin" size={20} />
+            Searching...
+          </div>
+        ) : query && results.length === 0 && !isLoading ? (
           <div className="text-center py-8 text-gray-400">
             No trips found for "{query}"
           </div>

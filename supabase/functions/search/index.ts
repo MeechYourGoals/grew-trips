@@ -136,72 +136,65 @@ async function performKeywordSearch(supabase: any, query: string, scope: string,
   const results = []
   
   try {
-    // Apply filters
-    let searchQuery = supabase.from('search_index').select('*')
+    // Search trips table directly by name and destination
+    let searchQuery = supabase
+      .from('trips')
+      .select(`
+        id,
+        name,
+        destination,
+        start_date,
+        end_date,
+        trip_type,
+        trip_members!inner(user_id)
+      `)
     
-    if (tripType && ['regular', 'pro', 'event'].includes(tripType)) {
-      searchQuery = searchQuery.eq('trip_type', tripType)
+    // Apply trip type filter
+    if (tripType && tripType !== 'all') {
+      const typeMap: Record<string, string> = {
+        'regular': 'consumer',
+        'pro': 'pro',
+        'event': 'event'
+      };
+      searchQuery = searchQuery.eq('trip_type', typeMap[tripType] || 'consumer');
     }
     
     if (scope === 'trip' && tripId) {
-      searchQuery = searchQuery.eq('trip_id', tripId)
+      searchQuery = searchQuery.eq('id', tripId);
     }
 
-    // 1. Exact title matches (highest score)
-    const { data: titleMatches } = await searchQuery
-      .ilike('title', `%${query}%`)
-      .limit(3)
-    
-    if (titleMatches) {
-      titleMatches.forEach(match => {
-        results.push(createSearchResult(match, 0.95, 'title'))
-      })
+    // Search by name or destination only (no dates or participants)
+    const { data: trips, error } = await searchQuery
+      .or(`name.ilike.%${query}%,destination.ilike.%${query}%`)
+      .limit(limit);
+
+    if (error) {
+      console.error('Trip search error:', error);
+      return [];
     }
 
-    // 2. Location matches
-    const { data: locationMatches } = await searchQuery
-      .or(`location.ilike.%${query}%,city.ilike.%${query}%,state.ilike.%${query}%`)
-      .limit(3)
-    
-    if (locationMatches) {
-      locationMatches.forEach(match => {
-        if (!results.find(r => r.tripId === match.trip_id)) {
-          results.push(createSearchResult(match, 0.85, 'location'))
-        }
-      })
+    if (trips) {
+      trips.forEach(trip => {
+        const score = trip.name.toLowerCase().includes(query.toLowerCase()) ? 0.95 : 0.85;
+        const matchReason = trip.name.toLowerCase().includes(query.toLowerCase()) ? 'title' : 'location';
+        
+        results.push(createSearchResult({
+          id: trip.id,
+          trip_id: trip.id,
+          title: trip.name,
+          location: trip.destination || 'Unknown',
+          date_range: `${trip.start_date} - ${trip.end_date}`,
+          trip_type: trip.trip_type,
+          description: ''
+        }, score, matchReason));
+      });
     }
 
-    // 3. Date/month matches
-    const { data: dateMatches } = await searchQuery
-      .ilike('formatted_date', `%${query}%`)
-      .limit(2)
-    
-    if (dateMatches) {
-      dateMatches.forEach(match => {
-        if (!results.find(r => r.tripId === match.trip_id)) {
-          results.push(createSearchResult(match, 0.75, 'date'))
-        }
-      })
-    }
-
-    // 4. Full text search
-    const { data: fullTextMatches } = await searchQuery
-      .textSearch('full_text', query)
-      .limit(4)
-    
-    if (fullTextMatches) {
-      fullTextMatches.forEach(match => {
-        if (!results.find(r => r.tripId === match.trip_id)) {
-          results.push(createSearchResult(match, 0.60, 'content'))
-        }
-      })
-    }
-
-    return results.slice(0, limit)
+    return results.slice(0, limit);
 
   } catch (error) {
-    console.error('Keyword search error:', error)
-    return []
+    console.error('Keyword search error:', error);
+    return [];
   }
 }
 
