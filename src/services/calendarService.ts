@@ -169,7 +169,7 @@ export const calendarService = {
       description: tripEvent.description,
       createdBy: tripEvent.created_by,
       include_in_itinerary: tripEvent.include_in_itinerary,
-      event_category: tripEvent.event_category as any,
+      event_category: tripEvent.event_category as CalendarEvent['event_category'],
       source_type: tripEvent.source_type as any,
       source_data: tripEvent.source_data
     };

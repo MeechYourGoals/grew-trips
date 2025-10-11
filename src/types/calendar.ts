@@ -7,7 +7,7 @@ export interface CalendarEvent {
   description?: string;
   createdBy: string;
   include_in_itinerary: boolean;
-  event_category: 'dining' | 'lodging' | 'activity' | 'transportation' | 'entertainment' | 'other';
+  event_category: 'dining' | 'lodging' | 'activity' | 'transportation' | 'entertainment' | 'other' | 'accommodations' | 'food' | 'fitness' | 'nightlife' | 'attractions' | 'budget';
   source_type: 'manual' | 'ai_extracted' | 'places_tab';
   source_data?: {
     confirmation_number?: string;

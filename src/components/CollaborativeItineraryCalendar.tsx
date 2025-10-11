@@ -5,6 +5,7 @@ import { CategoryEventForms } from './CategoryEventForms';
 import { useCalendarEvents } from '../hooks/useCalendarEvents';
 import { useCategoryManagement } from '@/hooks/useCategoryManagement';
 import { CalendarEvent } from '../types/calendar';
+import { mapCategoryToEventType } from '@/utils/categoryMapper';
 import { CategoryFilters } from './calendar/CategoryFilters';
 import { QuickAddButtons } from './calendar/QuickAddButtons';
 import { CategoryEventList } from './calendar/CategoryEventList';
@@ -55,7 +56,7 @@ export const CollaborativeItineraryCalendar = ({ tripMembers, assignments, tripI
       description: eventData.description,
       createdBy: '',
       include_in_itinerary: true,
-      event_category: selectedCategory as CalendarEvent['event_category'],
+      event_category: mapCategoryToEventType(selectedCategory || 'other'),
       source_type: 'manual',
       source_data: {}
     };
