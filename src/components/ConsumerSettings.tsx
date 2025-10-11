@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { User, Bell, CreditCard, Shield, Settings, Wallet, ChevronDown, Archive, Bookmark } from 'lucide-react';
+import { User, Bell, CreditCard, Shield, Settings, Wallet, ChevronDown, Archive, Bookmark, Sparkles } from 'lucide-react';
 import { getFeatureTierEmoji, getTierLegend } from '../utils/featureTiers';
 import { TravelWallet } from './TravelWallet';
 import { ConsumerProfileSection } from './consumer/ConsumerProfileSection';
@@ -11,6 +11,7 @@ import { ConsumerGeneralSettings } from './consumer/ConsumerGeneralSettings';
 import { ArchivedTripsSection } from './ArchivedTripsSection';
 import { useIsMobile } from '../hooks/use-mobile';
 import { SavedRecommendations } from './SavedRecommendations';
+import { ConsumerAIConciergeSection } from './consumer/ConsumerAIConciergeSection';
 
 interface ConsumerSettingsProps {
   currentUserId: string;
@@ -25,6 +26,7 @@ export const ConsumerSettings = ({ currentUserId, initialSection }: ConsumerSett
   const sections = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'billing', label: 'Billing & Subscription', icon: CreditCard },
+    { id: 'ai-concierge', label: 'AI Concierge & Preferences', icon: Sparkles },
     { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
     { id: 'saved-recs', label: 'Saved Recommendations', icon: Bookmark },
     { id: 'notifications', label: 'Notifications', icon: Bell },
@@ -43,6 +45,7 @@ export const ConsumerSettings = ({ currentUserId, initialSection }: ConsumerSett
     switch (activeSection) {
       case 'profile': return <ConsumerProfileSection />;
       case 'billing': return <ConsumerBillingSection />;
+      case 'ai-concierge': return <ConsumerAIConciergeSection />;
       case 'travel-wallet': return renderTravelWalletSection();
       case 'saved-recs': return <SavedRecommendations />;
       case 'notifications': return <ConsumerNotificationsSection />;

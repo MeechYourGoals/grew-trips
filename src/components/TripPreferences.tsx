@@ -9,22 +9,40 @@ import { useTripVariant } from '../contexts/TripVariantContext';
 interface TripPreferencesProps {
   tripId: string;
   onPreferencesChange: (preferences: TripPreferencesType) => void;
+  initialPreferences?: Partial<TripPreferencesType>;
 }
 
-export const TripPreferences = ({ tripId, onPreferencesChange }: TripPreferencesProps) => {
+export const TripPreferences = ({ tripId, onPreferencesChange, initialPreferences }: TripPreferencesProps) => {
   const { isPlus } = useConsumerSubscription();
   const { accentColors } = useTripVariant();
   const [preferences, setPreferences] = useState<TripPreferencesType>({
-    dietary: [],
-    vibe: [],
-    accessibility: [],
-    business: [],
-    entertainment: [],
-    lifestyle: [],
-    budgetMin: 0,
-    budgetMax: 1000,
-    timePreference: 'flexible'
+    dietary: initialPreferences?.dietary || [],
+    vibe: initialPreferences?.vibe || [],
+    accessibility: initialPreferences?.accessibility || [],
+    business: initialPreferences?.business || [],
+    entertainment: initialPreferences?.entertainment || [],
+    lifestyle: initialPreferences?.lifestyle || [],
+    budgetMin: initialPreferences?.budgetMin || 0,
+    budgetMax: initialPreferences?.budgetMax || 1000,
+    timePreference: initialPreferences?.timePreference || 'flexible'
   });
+
+  // Update local state when initialPreferences change
+  React.useEffect(() => {
+    if (initialPreferences) {
+      setPreferences({
+        dietary: initialPreferences.dietary || [],
+        vibe: initialPreferences.vibe || [],
+        accessibility: initialPreferences.accessibility || [],
+        business: initialPreferences.business || [],
+        entertainment: initialPreferences.entertainment || [],
+        lifestyle: initialPreferences.lifestyle || [],
+        budgetMin: initialPreferences.budgetMin || 0,
+        budgetMax: initialPreferences.budgetMax || 1000,
+        timePreference: initialPreferences.timePreference || 'flexible'
+      });
+    }
+  }, [initialPreferences]);
 
   const handleDietaryChange = (option: string) => {
     const newDietary = preferences.dietary.includes(option)

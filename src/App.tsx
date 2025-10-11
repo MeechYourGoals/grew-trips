@@ -26,7 +26,6 @@ const JoinTrip = lazy(() => import("./pages/JoinTrip"));
 const SearchPage = lazy(() => import("./pages/SearchPage"));
 const ProfilePage = lazy(() => import("./pages/ProfilePage"));
 const SettingsPage = lazy(() => import("./pages/SettingsPage"));
-const MorePage = lazy(() => import("./pages/MorePage"));
 const ArchivePage = lazy(() => import("./pages/ArchivePage"));
 const AdminDashboard = lazy(() => import("./pages/AdminDashboard").then(module => ({ default: module.AdminDashboard })));
 const OrganizationDashboard = lazy(() => import("./pages/OrganizationDashboard").then(module => ({ default: module.OrganizationDashboard })));
@@ -118,11 +117,6 @@ const App = () => {
                     <Route path="/settings" element={
                       <LazyRoute>
                         <SettingsPage />
-                      </LazyRoute>
-                    } />
-                    <Route path="/more" element={
-                      <LazyRoute>
-                        <MorePage />
                       </LazyRoute>
                     } />
                     <Route path="/archive" element={
