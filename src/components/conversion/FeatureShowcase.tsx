@@ -37,7 +37,8 @@ const features: Feature[] = [
     id: 'basecamp',
     title: 'Smart Basecamp',
     description: 'Get location-aware recommendations within perfect travel distance from your home base',
-    icon: <MapPin size={24} />
+    icon: <MapPin size={24} />,
+    isNew: true
   },
   {
     id: 'chat',

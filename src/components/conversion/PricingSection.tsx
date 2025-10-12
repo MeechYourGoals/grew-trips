@@ -110,7 +110,6 @@ const consumerTiers: PricingTier[] = [
       'Unlimited trips',
       'Everything in Explorer',
       'Premium AI responses',
-      'Advanced analytics',
       'VIP support',
       'Early feature access'
     ],
@@ -129,7 +128,6 @@ const consumerTiers: PricingTier[] = [
       'Everything in Unlimited',
       'Priority AI responses',
       'Auto-itinerary generation',
-      'Advanced analytics',
       'Trip insights dashboard',
       'Early access to features'
     ],
@@ -299,8 +297,8 @@ const testimonials = [
 
 const faqItems = [
   {
-    question: "Do all trip members need to pay?",
-    answer: "No! Only the trip organizer pays. All invited members join completely free and get access to all features."
+    question: "How does the free plan work?",
+    answer: "Everyone starts with 3 free trips per year. All trip invitees can join and participate for free. Upgrade to paid plans for unlimited trips and premium features like AI assistance and priority support."
   },
   {
     question: "Can I switch between plans?",
@@ -368,15 +366,12 @@ export const PricingSection = () => {
       {/* Header with Value Prop */}
       <div className="text-center space-y-6">
         <div className="space-y-4">
-          <Badge className="bg-accent/20 text-accent px-4 py-2 text-sm font-medium">
-            🚀 Trusted by 10,000+ teams and 50,000+ events worldwide
-          </Badge>
           <h2 className="text-4xl md:text-5xl font-bold text-foreground">
             Replace 8-10 travel apps with one powerful solution
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
             Save 70% of trip planning time with enterprise-grade security and consumer-friendly design. 
-            <span className="text-accent font-semibold"> Only the organizer pays — everyone else joins free.</span>
+            <span className="text-accent font-semibold"> Start with 3 free trips per year, upgrade for unlimited access and premium features.</span>
           </p>
         </div>
 

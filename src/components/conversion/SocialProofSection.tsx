@@ -22,7 +22,7 @@ interface Metric {
 
 const testimonials: Testimonial[] = [
   {
-    name: "Paul George",
+    name: "Paul George Elite AAU Team",
     role: "AAU Travel Coach",
     company: "Elite AAU team",
     avatar: "PG",
@@ -50,22 +50,12 @@ const testimonials: Testimonial[] = [
   }
 ];
 
+
 const metrics: Metric[] = [
   { value: "Instantly See", label: "Itinerary Conflicts", icon: <MapPin size={16} />, trend: "Automatically flags double-bookings before they happen" },
   { value: "Automated", label: "Payment Tracking", icon: <Clock size={16} />, trend: "See who's paid and who hasn't, all in one place" },
   { value: "Real-Time", label: "Updates", icon: <Star size={16} />, trend: "Everyone gets instant alerts when plans change" },
   { value: "Proven for", label: "Complex Travel", icon: <TrendingUp size={16} />, trend: "Successfully handles sports teams, tours, and family reunions" }
-];
-
-const organizations = [
-  "Healthcare Conferences",
-  "Live Nation", 
-  "Philadelphia 76ers",
-  "Los Angeles Chargers",
-  "University of North Carolina",
-  "nationally touring music artists",
-  "nationally touring stand-up comedians", 
-  "AAU Travel Sports"
 ];
 
 export const SocialProofSection = () => {
@@ -128,15 +118,6 @@ export const SocialProofSection = () => {
         </div>
       </div>
 
-      {/* Organizations Text List */}
-      <div className="text-center space-y-6">
-        <p className="text-sm text-muted-foreground">Anticipated by and wait list interest from teams at</p>
-        <div className="text-muted-foreground font-medium tracking-wide leading-relaxed max-w-4xl mx-auto">
-          <span className="font-inter font-medium text-base">
-            {organizations.join(" • ")}
-          </span>
-        </div>
-      </div>
     </div>
   );
 };
