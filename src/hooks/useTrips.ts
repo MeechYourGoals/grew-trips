@@ -30,9 +30,14 @@ export const useTrips = () => {
   };
 
   const createTrip = async (tripData: CreateTripData): Promise<Trip | null> => {
+    console.log('Creating trip with data:', tripData);
     const newTrip = await tripService.createTrip(tripData);
+    console.log('Trip created successfully:', newTrip);
+    
     if (newTrip) {
       setTrips(prevTrips => [newTrip, ...prevTrips]);
+    } else {
+      console.error('Trip creation returned null');
     }
     return newTrip;
   };

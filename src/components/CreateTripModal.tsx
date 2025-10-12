@@ -57,11 +57,7 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
     setIsLoading(true);
     
     try {
-      // Generate a unique trip ID
-      const tripId = `trip-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      
       const tripData = {
-        id: tripId,
         name: formData.title,
         description: formData.description || undefined,
         start_date: formData.startDate || undefined,
@@ -80,7 +76,7 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
           try {
             const { error: linkError } = await supabase.functions.invoke('link-trip-to-organization', {
               body: {
-                tripId: tripId,
+                tripId: newTrip.id,
                 organizationId: selectedOrganization
               }
             });

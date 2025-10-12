@@ -20,7 +20,7 @@ export interface Trip {
 }
 
 export interface CreateTripData {
-  id: string;
+  id?: string;
   name: string;
   description?: string;
   start_date?: string;
@@ -74,7 +74,11 @@ export const tripService = {
 
       const { data, error } = await supabase
         .from('trips')
-        .select('*')
+        .select(`
+          *,
+          trip_members!inner(user_id)
+        `)
+        .eq('trip_members.user_id', user.id)
         .eq('is_archived', false)
         .order('created_at', { ascending: false });
 
