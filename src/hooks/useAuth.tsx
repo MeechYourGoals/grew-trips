@@ -95,10 +95,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Helper function to transform Supabase user to app User
   const transformUser = async (supabaseUser: SupabaseUser, profile?: UserProfile | null): Promise<User> => {
+    // CRITICAL: Validate that we have a valid user ID before proceeding
+    if (!supabaseUser || !supabaseUser.id) {
+      console.error('[transformUser] Invalid Supabase user - missing ID', { supabaseUser });
+      throw new Error('Invalid Supabase user - missing ID');
+    }
+    
     const userProfile = profile || await fetchUserProfile(supabaseUser.id);
     
     return {
-      id: supabaseUser.id,
+      id: supabaseUser.id, // Guaranteed to be defined
       email: supabaseUser.email,
       phone: supabaseUser.phone,
       displayName: userProfile?.display_name || supabaseUser.email || 'User',

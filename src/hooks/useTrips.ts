@@ -30,14 +30,20 @@ export const useTrips = () => {
   };
 
   const createTrip = async (tripData: CreateTripData): Promise<Trip | null> => {
-    console.log('Creating trip with data:', tripData);
+    // CRITICAL: Validate user authentication state
+    if (!user || !user.id) {
+      console.error('[useTrips] Cannot create trip: No authenticated user or missing user ID', { user });
+      return null;
+    }
+    
+    console.log('[useTrips] Creating trip with data:', tripData, 'User ID:', user.id);
     const newTrip = await tripService.createTrip(tripData);
-    console.log('Trip created successfully:', newTrip);
     
     if (newTrip) {
+      console.log('[useTrips] Trip created successfully:', newTrip);
       setTrips(prevTrips => [newTrip, ...prevTrips]);
     } else {
-      console.error('Trip creation returned null');
+      console.error('[useTrips] Trip creation returned null');
     }
     return newTrip;
   };

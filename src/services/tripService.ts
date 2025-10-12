@@ -36,7 +36,19 @@ export const tripService = {
   async createTrip(tripData: CreateTripData): Promise<Trip | null> {
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('No authenticated user');
+      
+      // Enhanced validation with detailed error logging
+      if (!user) {
+        console.error('[tripService] No authenticated user found');
+        throw new Error('No authenticated user');
+      }
+      
+      if (!user.id) {
+        console.error('[tripService] Authenticated user missing ID', { user });
+        throw new Error('Invalid user state - missing ID');
+      }
+      
+      console.log('[tripService] Creating trip for user:', user.id, 'Trip data:', tripData);
 
       // Use edge function for server-side validation and Pro tier enforcement
       const { data, error } = await supabase.functions.invoke('create-trip', {
@@ -51,12 +63,20 @@ export const tripService = {
         }
       });
 
-      if (error) throw error;
-      if (!data?.success) throw new Error(data?.error || 'Failed to create trip');
+      if (error) {
+        console.error('[tripService] Edge function error:', error);
+        throw error;
+      }
+      
+      if (!data?.success) {
+        console.error('[tripService] Edge function returned failure:', data);
+        throw new Error(data?.error || 'Failed to create trip');
+      }
 
+      console.log('[tripService] Trip created successfully:', data.trip);
       return data.trip;
     } catch (error) {
-      console.error('Error creating trip:', error);
+      console.error('[tripService] Error creating trip:', error);
       return null;
     }
   },

@@ -42,11 +42,20 @@ export const useOrganization = () => {
     try {
       setLoading(true);
       
+      // CRITICAL: Validate user ID exists before querying
+      if (!user || !user.id) {
+        console.warn('[useOrganization] No user ID available, skipping org fetch');
+        setOrganizations([]);
+        setCurrentOrg(null);
+        setLoading(false);
+        return;
+      }
+      
       // Fetch user's organization memberships
       const { data: memberships, error: membershipsError } = await supabase
         .from('organization_members')
         .select('organization_id')
-        .eq('user_id', user?.id)
+        .eq('user_id', user.id) // Now guaranteed to be defined
         .eq('status', 'active');
 
       if (membershipsError) throw membershipsError;
