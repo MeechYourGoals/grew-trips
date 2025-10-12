@@ -249,13 +249,14 @@ const Index = () => {
 
       </div>
 
-      {/* Persistent CTA Bar */}
-      <PersistentCTABar
-        viewMode={viewMode}
-        onPlanTrip={handleCreateTrip}
-        onScheduleDemo={handleScheduleDemo}
-        onSeePricing={handleSeePricing}
-      />
+      {/* Persistent CTA Bar - Only for Pro/Events views */}
+      {(viewMode === 'tripsPro' || viewMode === 'events') && (
+        <PersistentCTABar
+          viewMode={viewMode}
+          onScheduleDemo={handleScheduleDemo}
+          onSeePricing={handleSeePricing}
+        />
+      )}
 
       {/* Modals */}
       <CreateTripModal 

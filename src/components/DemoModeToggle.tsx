@@ -49,7 +49,7 @@ export const DemoModeToggle = () => {
               onClick={handleToggle}
               variant="outline"
               size="sm"
-              className={`flex items-center gap-2 transition-all duration-200 ${
+              className={`w-full flex items-center justify-center gap-2 transition-all duration-200 ${
                 isDemoMode 
                   ? 'bg-primary/20 border-primary/40 text-primary hover:bg-primary/30 shadow-lg shadow-primary/20' 
                   : 'bg-muted/50 border-muted-foreground/20 text-muted-foreground hover:bg-muted/70'

@@ -5,52 +5,38 @@ import { Button } from '../ui/button';
 
 interface PersistentCTABarProps {
   viewMode?: string;
-  onPlanTrip?: () => void;
   onScheduleDemo?: () => void;
   onSeePricing?: () => void;
 }
 
 export const PersistentCTABar = ({ 
-  viewMode = 'consumer', 
-  onPlanTrip, 
+  viewMode = 'tripsPro', 
   onScheduleDemo, 
   onSeePricing 
 }: PersistentCTABarProps) => {
-  const { user } = useAuth();
-
   const getCTAButton = () => {
-    switch (viewMode) {
-      case 'tripsPro':
-        return (
-          <Button 
-            onClick={() => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo'}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2 shadow-lg"
-          >
-            <Phone size={16} />
-            Schedule a Demo
-          </Button>
-        );
-      case 'events':
-        return (
-          <Button 
-            onClick={() => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo'}
-            className="bg-secondary hover:bg-secondary/90 text-secondary-foreground flex items-center gap-2 shadow-lg"
-          >
-            <Phone size={16} />
-            Schedule a Demo
-          </Button>
-        );
-      default:
-        return (
-          <Button 
-            onClick={onPlanTrip}
-            className="bg-accent hover:bg-accent/90 text-accent-foreground flex items-center gap-2 shadow-lg"
-          >
-            <Calendar size={16} />
-            Plan Your Trip
-          </Button>
-        );
+    if (viewMode === 'events') {
+      return (
+        <Button 
+          onClick={() => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo'}
+          className="bg-secondary hover:bg-secondary/90 text-secondary-foreground flex items-center gap-2 shadow-lg"
+        >
+          <Phone size={16} />
+          Schedule a Demo
+        </Button>
+      );
     }
+    
+    // Default to tripsPro
+    return (
+      <Button 
+        onClick={() => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo'}
+        className="bg-primary hover:bg-primary/90 text-primary-foreground flex items-center gap-2 shadow-lg"
+      >
+        <Phone size={16} />
+        Schedule a Demo
+      </Button>
+    );
   };
 
   return (
