@@ -71,6 +71,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Phase 4: Prefetch trips as soon as session is available
+  const prefetchedTripsRef = useState<{ data: any[] | null; loading: boolean }>({ 
+    data: null, 
+    loading: false 
+  })[0];
 
   // Helper function to fetch user profile
   const fetchUserProfile = async (userId: string): Promise<UserProfile | null> => {
@@ -131,6 +137,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     let mounted = true;
 
+    // Phase 4: Helper to prefetch trips immediately when session is available
+    const prefetchTrips = async () => {
+      if (prefetchedTripsRef.loading || prefetchedTripsRef.data !== null) return;
+      
+      prefetchedTripsRef.loading = true;
+      try {
+        const { tripService } = await import('@/services/tripService');
+        const trips = await tripService.getUserTrips();
+        if (mounted) {
+          prefetchedTripsRef.data = trips;
+        }
+      } catch (error) {
+        console.error('Error prefetching trips:', error);
+      } finally {
+        prefetchedTripsRef.loading = false;
+      }
+    };
+
     // Set up auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
@@ -139,6 +163,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setSession(session);
         
         if (session?.user) {
+          // Phase 4: Start prefetching trips immediately
+          prefetchTrips();
+          
           setTimeout(async () => {
             if (!mounted) return;
             const transformedUser = await transformUser(session.user);
@@ -158,6 +185,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       
       setSession(session);
       if (session?.user) {
+        // Phase 4: Start prefetching trips immediately
+        prefetchTrips();
+        
         transformUser(session.user).then(transformedUser => {
           if (mounted) {
             setUser(transformedUser);

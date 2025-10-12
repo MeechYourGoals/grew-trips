@@ -81,24 +81,23 @@ export const tripService = {
     }
   },
 
-  async getUserTrips(): Promise<Trip[]> {
+  async getUserTrips(isDemoMode?: boolean): Promise<Trip[]> {
     try {
-      // Check if demo mode is enabled
-      const isDemoMode = await demoModeService.isDemoModeEnabled();
-      if (isDemoMode) {
+      // Phase 3: Accept isDemoMode as parameter to avoid repeated checks
+      const demoEnabled = isDemoMode ?? await demoModeService.isDemoModeEnabled();
+      if (demoEnabled) {
         return mockConsumerTrips;
       }
 
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return [];
 
+      // Phase 2: Optimized query - direct lookup without JOIN
+      // Uses indexed created_by column and RLS policies for access control
       const { data, error } = await supabase
         .from('trips')
-        .select(`
-          *,
-          trip_members!inner(user_id)
-        `)
-        .eq('trip_members.user_id', user.id)
+        .select('*')
+        .eq('created_by', user.id)
         .eq('is_archived', false)
         .order('created_at', { ascending: false });
 

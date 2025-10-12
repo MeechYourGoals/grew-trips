@@ -1,13 +1,37 @@
 import { useState, useEffect } from 'react';
 import { tripService, Trip, CreateTripData } from '@/services/tripService';
 import { useAuth } from './useAuth';
+import { useDemoMode } from './useDemoMode';
+
+const TRIPS_CACHE_KEY = 'chravel_trips_cache';
+const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 export const useTrips = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Phase 1: Start optimistic
+  const [initializing, setInitializing] = useState(true);
   const { user } = useAuth();
+  const { isDemoMode } = useDemoMode();
 
+  // Phase 6: Load cached trips immediately
   useEffect(() => {
+    const loadCachedTrips = () => {
+      try {
+        const cached = localStorage.getItem(TRIPS_CACHE_KEY);
+        if (cached) {
+          const { data, timestamp } = JSON.parse(cached);
+          const isExpired = Date.now() - timestamp > CACHE_DURATION;
+          if (!isExpired && Array.isArray(data)) {
+            setTrips(data);
+            setInitializing(false);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading cached trips:', error);
+      }
+    };
+
+    loadCachedTrips();
     loadTrips();
   }, [user]);
 
@@ -15,17 +39,29 @@ export const useTrips = () => {
     if (!user) {
       setTrips([]);
       setLoading(false);
+      setInitializing(false);
       return;
     }
 
-    setLoading(true);
     try {
-      const userTrips = await tripService.getUserTrips();
+      // Phase 3: Pass cached isDemoMode to avoid repeated checks
+      const userTrips = await tripService.getUserTrips(isDemoMode);
       setTrips(userTrips);
+      
+      // Phase 6: Cache trips to localStorage
+      try {
+        localStorage.setItem(TRIPS_CACHE_KEY, JSON.stringify({
+          data: userTrips,
+          timestamp: Date.now()
+        }));
+      } catch (error) {
+        console.error('Error caching trips:', error);
+      }
     } catch (error) {
       console.error('Error loading trips:', error);
     } finally {
       setLoading(false);
+      setInitializing(false);
     }
   };
 
@@ -71,6 +107,7 @@ export const useTrips = () => {
   return {
     trips,
     loading,
+    initializing,
     createTrip,
     updateTrip,
     archiveTrip,
