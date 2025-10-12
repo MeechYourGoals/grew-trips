@@ -109,20 +109,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     
     const userProfile = profile || await fetchUserProfile(supabaseUser.id);
     
+    // Query user_roles table for actual roles (security fix - never trust client-side role assignment)
+    const { data: userRoles } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', supabaseUser.id);
+    
+    const roles = userRoles?.map(r => r.role) || [];
+    const isPro = roles.includes('pro' as any);
+    const isSystemAdmin = roles.includes('admin' as any);
+    
+    // Map roles to permissions - only grant what user actually has
+    const permissions: string[] = ['read'];
+    if (isPro || isSystemAdmin) {
+      permissions.push('write');
+    }
+    if (isSystemAdmin) {
+      permissions.push('admin', 'finance', 'compliance');
+    }
+    
+    // Get organization membership for proRole
+    const { data: orgMember } = await supabase
+      .from('organization_members')
+      .select('organization_id, role')
+      .eq('user_id', supabaseUser.id)
+      .eq('status', 'active')
+      .order('joined_at', { ascending: true })
+      .limit(1)
+      .single();
+    
+    // Map org member role to proRole type (owner/admin maps to admin, otherwise undefined)
+    let proRole: User['proRole'] = undefined;
+    if (orgMember?.role === 'owner' || orgMember?.role === 'admin') {
+      proRole = 'admin';
+    }
+    
     return {
-      id: supabaseUser.id, // Guaranteed to be defined
+      id: supabaseUser.id,
       email: supabaseUser.email,
       phone: supabaseUser.phone,
       displayName: userProfile?.display_name || supabaseUser.email || 'User',
       firstName: userProfile?.first_name || '',
       lastName: userProfile?.last_name || '',
       avatar: userProfile?.avatar_url || '',
-      isPro: false, // Default to false, can be updated based on subscription
+      isPro,
       showEmail: userProfile?.show_email || false,
       showPhone: userProfile?.show_phone || false,
-      proRole: 'admin', // Default role
-      organizationId: 'org-1',
-      permissions: ['read', 'write', 'admin'],
+      proRole,
+      organizationId: orgMember?.organization_id || undefined,
+      permissions,
       notificationSettings: {
         messages: true,
         broadcasts: true,

@@ -43,10 +43,10 @@ verify_jwt = true
 verify_jwt = true
 
 [functions.perplexity-chat]
-verify_jwt = false
+verify_jwt = true
 
 [functions.lovable-concierge]
-verify_jwt = false
+verify_jwt = true
 
 [functions.send-organization-invite]
 verify_jwt = true
