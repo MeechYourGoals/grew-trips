@@ -11,7 +11,7 @@ export interface MediaItem {
   id: string;
   media_url: string;
   filename: string;
-  media_type: 'image' | 'video' | 'audio' | 'document';
+  media_type: 'image' | 'video' | 'document';
   metadata: any;
   created_at: string;
   source: 'chat' | 'upload';
@@ -30,7 +30,7 @@ export interface LinkItem {
   tags?: string[];
 }
 
-export type MediaType = 'all' | 'photos' | 'videos' | 'audio' | 'files' | 'links';
+export type MediaType = 'all' | 'photos' | 'videos' | 'files' | 'links';
 
 export const useMediaManagement = (tripId: string) => {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
@@ -53,7 +53,6 @@ export const useMediaManagement = (tripId: string) => {
           items = [
             ...(proData.photos || []).map(item => ({ ...item, media_type: 'image' as const })),
             ...(proData.videos || []).map(item => ({ ...item, media_type: 'video' as const })),
-            ...(proData.audio || []).map(item => ({ ...item, media_type: 'audio' as const })),
             ...(proData.files || []).map(item => ({ ...item, media_type: 'document' as const }))
           ];
         } else if (tripTier === 'event' && eventsMockData[tripId]) {
@@ -61,7 +60,6 @@ export const useMediaManagement = (tripId: string) => {
           items = [
             ...(eventData.photos || []).map(item => ({ ...item, media_type: 'image' as const })),
             ...(eventData.videos || []).map(item => ({ ...item, media_type: 'video' as const })),
-            ...(eventData.audio || []).map(item => ({ ...item, media_type: 'audio' as const })),
             ...(eventData.files || []).map(item => ({ ...item, media_type: 'document' as const }))
           ];
         } else {
@@ -196,7 +194,6 @@ export const useMediaManagement = (tripId: string) => {
     if (type === 'all') return [...mediaItems, ...linkItems];
     if (type === 'photos') return mediaItems.filter(item => item.media_type === 'image');
     if (type === 'videos') return mediaItems.filter(item => item.media_type === 'video');
-    if (type === 'audio') return mediaItems.filter(item => item.media_type === 'audio');
     if (type === 'files') return mediaItems.filter(item => item.media_type === 'document');
     if (type === 'links') return linkItems;
     return mediaItems;

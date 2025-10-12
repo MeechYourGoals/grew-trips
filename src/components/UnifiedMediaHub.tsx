@@ -24,7 +24,6 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
     if (type === 'all') return [...mediaItems, ...linkItems];
     if (type === 'photos') return mediaItems.filter(item => item.media_type === 'image');
     if (type === 'videos') return mediaItems.filter(item => item.media_type === 'video');
-    if (type === 'audio') return mediaItems.filter(item => item.media_type === 'audio');
     if (type === 'files') return mediaItems.filter(item => item.media_type === 'document');
     if (type === 'links') return linkItems;
     return mediaItems;
@@ -74,11 +73,10 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
   return (
     <div className="space-y-6">
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-6 bg-white/5 backdrop-blur-sm">
+        <TabsList className="grid w-full grid-cols-5 bg-white/5 backdrop-blur-sm">
           <TabsTrigger value="all" className="text-xs">All</TabsTrigger>
           <TabsTrigger value="photos" className="text-xs">Photos</TabsTrigger>
           <TabsTrigger value="videos" className="text-xs">Videos</TabsTrigger>
-          <TabsTrigger value="audio" className="text-xs">Audio</TabsTrigger>
           <TabsTrigger value="files" className="text-xs">Files</TabsTrigger>
           <TabsTrigger value="links" className="text-xs">Links</TabsTrigger>
         </TabsList>
@@ -93,10 +91,6 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
         
         <TabsContent value="videos" className="mt-6">
           <MediaSubTabs items={mediaItems.filter(item => item.media_type === 'video')} type="videos" />
-        </TabsContent>
-        
-        <TabsContent value="audio" className="mt-6">
-          <MediaSubTabs items={mediaItems.filter(item => item.media_type === 'audio')} type="audio" />
         </TabsContent>
         
         <TabsContent value="files" className="mt-6">

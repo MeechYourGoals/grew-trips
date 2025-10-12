@@ -4,7 +4,7 @@ interface TripSpecificMediaItem {
   id: string;
   media_url: string;
   filename: string;
-  media_type: 'image' | 'video' | 'audio' | 'document';
+  media_type: 'image' | 'video' | 'document';
   metadata: any;
   created_at: string;
   source: 'chat' | 'upload';
@@ -31,7 +31,6 @@ interface TripMockData {
   location: string;
   photos: TripSpecificMediaItem[];
   videos: TripSpecificMediaItem[];
-  audio: TripSpecificMediaItem[];
   files: TripSpecificMediaItem[];
   links: TripSpecificLinkItem[];
 }
@@ -88,17 +87,6 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
       source: 'chat',
       file_size: 12456000,
       mime_type: 'video/mp4'
-    }],
-    audio: [{
-      id: 'cancun-audio-1',
-      media_url: '/mock/audio/cancun-meetup.mp3',
-      filename: 'Voice Note - Meet at tiki bar 8pm!.mp3',
-      media_type: 'audio',
-      metadata: { duration: 6.2 },
-      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-      source: 'chat',
-      file_size: 156780,
-      mime_type: 'audio/mp3'
     }],
     files: [
       {
@@ -232,17 +220,6 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
       file_size: 15678000,
       mime_type: 'video/mp4'
     }],
-    audio: [{
-      id: 'tokyo-audio-1',
-      media_url: '/mock/audio/tokyo-tsukiji.mp3',
-      filename: 'Voice Note - Tsukiji Market 6am meeting.mp3',
-      media_type: 'audio',
-      metadata: { duration: 8.5 },
-      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-      source: 'chat',
-      file_size: 234567,
-      mime_type: 'audio/mp3'
-    }],
     files: [
       {
         id: 'tokyo-file-1',
@@ -363,17 +340,6 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
       file_size: 25678000,
       mime_type: 'video/mp4'
     }],
-    audio: [{
-      id: 'bali-audio-1',
-      media_url: '/mock/audio/bali-rehearsal.mp3',
-      filename: 'Voice Note - Rehearsal dinner reminder.mp3',
-      media_type: 'audio',
-      metadata: { duration: 5.8 },
-      created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-      source: 'chat',
-      file_size: 145600,
-      mime_type: 'audio/mp3'
-    }],
     files: [
       {
         id: 'bali-file-1',
@@ -469,17 +435,6 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
       source: 'chat',
       file_size: 13456000,
       mime_type: 'video/mp4'
-    }],
-    audio: [{
-      id: 'nashville-audio-1',
-      media_url: '/mock/audio/nashville-meetup.mp3',
-      filename: 'Voice Note - Meeting at Tootsies 9pm.mp3',
-      media_type: 'audio',
-      metadata: { duration: 5.2 },
-      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-      source: 'chat',
-      file_size: 145600,
-      mime_type: 'audio/mp3'
     }],
     files: [
       {
@@ -579,17 +534,6 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
       file_size: 16789000,
       mime_type: 'video/mp4'
     }],
-    audio: [{
-      id: 'aspen-audio-1',
-      media_url: '/mock/audio/aspen-meetup.mp3',
-      filename: 'Voice Note - Breakfast at 8am lodge lobby.mp3',
-      media_type: 'audio',
-      metadata: { duration: 6.1 },
-      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-      source: 'chat',
-      file_size: 167890,
-      mime_type: 'audio/mp3'
-    }],
     files: [
       {
         id: 'aspen-file-1',
@@ -659,17 +603,6 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
       source: 'chat',
       file_size: 9876000,
       mime_type: 'video/mp4'
-    }],
-    audio: [{
-      id: 'phoenix-audio-1',
-      media_url: '/mock/audio/phoenix-tee-time.mp3',
-      filename: 'Voice Note - Tee time moved to 7am.mp3',
-      media_type: 'audio',
-      metadata: { duration: 4.9 },
-      created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-      source: 'chat',
-      file_size: 134500,
-      mime_type: 'audio/mp3'
     }],
     files: [
       {
@@ -840,52 +773,6 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
         source: 'chat',
         file_size: 5632000,
         mime_type: 'video/mp4'
-      }
-    ],
-    audio: [
-      {
-        id: 'coachella-audio-1',
-        media_url: '/mock/audio/coachella-meetup.mp3',
-        filename: 'Voice Note - Meet at Sahara tent 3pm.mp3',
-        media_type: 'audio',
-        metadata: { duration: 4.7 },
-        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-        source: 'chat',
-        file_size: 123456,
-        mime_type: 'audio/mp3'
-      },
-      {
-        id: 'coachella-audio-2',
-        media_url: '/mock/audio/pool-party-plans.mp3',
-        filename: 'Pool party at house after headliner.mp3',
-        media_type: 'audio',
-        metadata: { duration: 8.2 },
-        created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-        source: 'chat',
-        file_size: 215432,
-        mime_type: 'audio/mp3'
-      },
-      {
-        id: 'coachella-audio-3',
-        media_url: '/mock/audio/food-recommendations.mp3',
-        filename: 'Best food trucks to hit tomorrow.mp3',
-        media_type: 'audio',
-        metadata: { duration: 12.4 },
-        created_at: new Date(Date.now() - 86400000 * 3).toISOString(),
-        source: 'chat',
-        file_size: 324567,
-        mime_type: 'audio/mp3'
-      },
-      {
-        id: 'coachella-audio-4',
-        media_url: '/mock/audio/morning-meetup.mp3',
-        filename: 'Coffee meetup before gates open.mp3',
-        media_type: 'audio',
-        metadata: { duration: 6.8 },
-        created_at: new Date(Date.now() - 86400000 * 4).toISOString(),
-        source: 'chat',
-        file_size: 178234,
-        mime_type: 'audio/mp3'
       }
     ],
     files: [
@@ -1073,19 +960,6 @@ const TRIP_MOCK_DATA: Record<number, TripMockData> = {
         mime_type: 'video/mp4'
       }
     ],
-    audio: [
-      {
-        id: 'cancun-audio-1',
-        media_url: '/mock/audio/dinner-plans.mp3',
-        filename: 'Voice Note - Dinner reservations confirmed.mp3',
-        media_type: 'audio' as const,
-        metadata: { duration: 7.2 },
-        created_at: new Date(Date.now() - 86400000 * 1).toISOString(),
-        source: 'chat' as const,
-        file_size: 189432,
-        mime_type: 'audio/mp3'
-      }
-    ],
     files: [
       {
         id: 'cancun-file-1',
@@ -1186,8 +1060,7 @@ class TripSpecificMockDataService {
     
     return [
       ...tripData.photos,
-      ...tripData.videos, 
-      ...tripData.audio,
+      ...tripData.videos,
       ...tripData.files
     ];
   }
@@ -1199,7 +1072,7 @@ class TripSpecificMockDataService {
     return tripData.links;
   }
 
-  static getMockMediaByType(tripId: string | number, type: 'photos' | 'videos' | 'audio' | 'files'): TripSpecificMediaItem[] {
+  static getMockMediaByType(tripId: string | number, type: 'photos' | 'videos' | 'files'): TripSpecificMediaItem[] {
     const tripData = this.getTripMockData(tripId);
     if (!tripData) return [];
     

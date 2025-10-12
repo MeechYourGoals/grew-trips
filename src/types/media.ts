@@ -21,7 +21,7 @@ export interface MediaMetadata {
 export interface MediaItem {
   id: string;
   url: string;
-  type: 'image' | 'video' | 'audio' | 'file';
+  type: 'image' | 'video' | 'file';
   filename: string;
   metadata: MediaMetadata;
   thumbnail?: string;
@@ -42,7 +42,7 @@ export interface MediaUploadOptions {
 
 export interface MediaGridProps {
   items: MediaItem[];
-  type?: 'image' | 'video' | 'audio' | 'file' | 'all';
+  type: 'image' | 'video' | 'file' | 'all';
   onItemClick?: (item: MediaItem) => void;
   onItemSelect?: (item: MediaItem) => void;
   selectable?: boolean;

@@ -5,7 +5,7 @@ interface MediaItemData {
   id: string;
   media_url: string;
   filename: string;
-  media_type: 'image' | 'video' | 'audio' | 'document';
+  media_type: 'image' | 'video' | 'document';
   metadata: any;
   created_at: string;
   source: 'chat' | 'upload';

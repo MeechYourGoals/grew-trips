@@ -4,7 +4,7 @@ interface MediaItem {
   id: string;
   media_url: string;
   filename: string;
-  media_type: 'image' | 'video' | 'audio' | 'document';
+  media_type: 'image' | 'video' | 'document';
   metadata: any;
   created_at: string;
   source: 'chat' | 'upload';
@@ -95,31 +95,6 @@ export class UniversalMockDataService {
       source: 'upload',
       file_size: 45875200,
       mime_type: 'video/mp4'
-    }
-  ];
-
-  private static fallbackAudio: MediaItem[] = [
-    {
-      id: 'fallback-audio-1',
-      media_url: '/mock/audio/voice-note-1.mp3',
-      filename: 'Voice Note - Planning Discussion.mp3',
-      media_type: 'audio',
-      metadata: { duration: 35 },
-      created_at: new Date(Date.now() - 3600000).toISOString(),
-      source: 'chat',
-      file_size: 560000,
-      mime_type: 'audio/mpeg'
-    },
-    {
-      id: 'fallback-audio-2',
-      media_url: '/mock/audio/voice-note-2.mp3',
-      filename: 'Voice Note - Logistics Update.mp3',
-      media_type: 'audio',
-      metadata: { duration: 28 },
-      created_at: new Date(Date.now() - 7200000).toISOString(),
-      source: 'chat',
-      file_size: 448000,
-      mime_type: 'audio/mpeg'
     }
   ];
 
@@ -233,7 +208,6 @@ export class UniversalMockDataService {
   public static getUniversalMockData(tripId: string): {
     photos: MediaItem[];
     videos: MediaItem[];
-    audio: MediaItem[];
     files: MediaItem[];
     links: LinkItem[];
   } {
@@ -248,11 +222,6 @@ export class UniversalMockDataService {
     const videoData = this.fallbackVideos.map((item, index) => ({
       ...item,
       id: `${tripId}-video-${index + 1}`
-    }));
-
-    const audioData = this.fallbackAudio.map((item, index) => ({
-      ...item,
-      id: `${tripId}-audio-${index + 1}`
     }));
 
     const fileData = this.fallbackFiles.map((item, index) => ({
@@ -299,7 +268,6 @@ export class UniversalMockDataService {
     return {
       photos: photoData,
       videos: videoData,
-      audio: audioData,
       files: fileData,
       links: linkData
     };
@@ -307,7 +275,7 @@ export class UniversalMockDataService {
 
   public static getCombinedMediaItems(tripId: string): MediaItem[] {
     const data = this.getUniversalMockData(tripId);
-    return [...data.photos, ...data.videos, ...data.audio, ...data.files];
+    return [...data.photos, ...data.videos, ...data.files];
   }
 
   public static getLinkItems(tripId: string): LinkItem[] {

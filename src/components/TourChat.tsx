@@ -69,19 +69,18 @@ export const TourChat = () => {
     }
   };
 
-  const handleFileUpload = (files: FileList, type: 'image' | 'video' | 'document' | 'audio') => {
+  const handleFileUpload = (files: FileList, type: 'image' | 'video' | 'document') => {
     // Implementation for file upload would go here
     console.log('File upload:', files, type);
   };
 
-  const handleFileUploadByType = (type: 'image' | 'video' | 'document' | 'audio') => {
+  const handleFileUploadByType = (type: 'image' | 'video' | 'document') => {
     if (!fileInputRef.current) return;
     
     const accept = {
       image: 'image/*',
       video: 'video/*',
-      document: '.pdf,.doc,.docx,.txt,.xlsx,.pptx',
-      audio: 'audio/*'
+      document: '.pdf,.doc,.docx,.txt,.xlsx,.pptx'
     };
     
     fileInputRef.current.accept = accept[type];
@@ -230,10 +229,6 @@ export const TourChat = () => {
             <DropdownMenuItem onClick={() => handleFileUploadByType('document')}>
               <FileText className="w-4 h-4 mr-2" />
               Document
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleFileUploadByType('audio')}>
-              <Mic className="w-4 h-4 mr-2" />
-              Audio/Voice
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

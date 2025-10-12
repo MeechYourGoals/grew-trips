@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Camera, Video, Music, FileText, Link, Play, Download, MessageCircle, ExternalLink, Receipt, DollarSign, Users } from 'lucide-react';
+import { Camera, Video, FileText, Link, Play, Download, MessageCircle, ExternalLink, Receipt, DollarSign, Users } from 'lucide-react';
 import { Badge } from './ui/badge';
 import { Button } from './ui/button';
 import { PaymentMethodIcon } from './receipts/PaymentMethodIcon';
@@ -10,7 +10,7 @@ interface MediaItem {
   id: string;
   media_url: string;
   filename: string;
-  media_type: 'image' | 'video' | 'audio' | 'document';
+  media_type: 'image' | 'video' | 'document';
   metadata: any;
   created_at: string;
   source: 'chat' | 'upload';
@@ -33,7 +33,7 @@ interface LinkItem {
 
 interface MediaSubTabsProps {
   items: MediaItem[] | LinkItem[];
-  type: 'photos' | 'videos' | 'audio' | 'files' | 'links';
+  type: 'photos' | 'videos' | 'files' | 'links';
 }
 
 export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
@@ -445,75 +445,8 @@ export const MediaSubTabs = ({ items, type }: MediaSubTabsProps) => {
             </div>
             ))}
           </div>
-        )}
-      </div>
-    );
-  }
-
-  // List layout for audio
-  return (
-    <div className="space-y-4">
-      {/* Header with Add Button */}
-      <div className="flex justify-between items-center">
-        <h3 className="text-lg font-semibold text-foreground">
-          Audio ({mediaItems.length})
-        </h3>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => {
-            alert('Add Audio functionality - would open file picker for audio files, voice notes');
-          }}
-          className="text-xs"
-        >
-          <Music className="w-4 h-4 mr-1" />
-          + Add Audio
-        </Button>
-      </div>
-      
-      {mediaItems.length === 0 ? (
-        <div className="text-center py-8">
-          <Music className="mx-auto h-8 w-8 text-muted-foreground mb-2" />
-          <p className="text-muted-foreground text-sm">
-            Audio files and voice notes shared in chat will appear here
-          </p>
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {mediaItems.map((item) => (
-          <div key={item.id} className="bg-card border rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3 flex-1 min-w-0">
-                <div className="flex-shrink-0">
-                  <Music className="text-purple-400" size={20} />
-                </div>
-                
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-foreground font-medium truncate">{item.filename}</p>
-                  </div>
-                  
-                  <div className="flex items-center gap-4 text-xs text-muted-foreground mb-1">
-                    <span>{formatFileSize(item.file_size)}</span>
-                    <span>{item.source === 'chat' ? 'From chat' : 'Uploaded'}</span>
-                    <span>{formatDate(item.created_at)}</span>
-                    {item.metadata?.duration && (
-                      <span>{item.metadata.duration}s</span>
-                    )}
-                  </div>
-                </div>
-              </div>
-              
-              <div className="flex items-center gap-2">
-                <audio controls className="h-8">
-                  <source src={item.media_url} type={item.mime_type} />
-                </audio>
-              </div>
-            </div>
-          </div>
-          ))}
-        </div>
       )}
     </div>
   );
+};
 };

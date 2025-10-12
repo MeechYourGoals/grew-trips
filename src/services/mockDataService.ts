@@ -4,7 +4,7 @@ interface MockMediaItem {
   id: string;
   media_url: string;
   filename: string;
-  media_type: 'image' | 'video' | 'audio' | 'document';
+  media_type: 'image' | 'video' | 'document';
   metadata: any;
   created_at: string;
   source: 'chat' | 'upload';
@@ -163,29 +163,6 @@ class MockDataService {
         source: 'upload',
         file_size: 2048000,
         mime_type: 'video/mp4'
-      },
-      // Audio - Local working voice note samples
-      {
-        id: 'mock-media-7',
-        media_url: '/mock/audio/voice-note-1.mp3',
-        filename: 'Voice Note - Meeting Point.mp3',
-        media_type: 'audio',
-        metadata: { duration: 4.2 },
-        created_at: new Date(Date.now() - 86400000 * 7).toISOString(),
-        source: 'chat',
-        file_size: 89012,
-        mime_type: 'audio/mp3'
-      },
-      {
-        id: 'mock-media-15',
-        media_url: '/mock/audio/voice-note-2.mp3',
-        filename: 'Voice Note - Departure Time.mp3',
-        media_type: 'audio',
-        metadata: { duration: 6.8 },
-        created_at: new Date(Date.now() - 86400000 * 8).toISOString(),
-        source: 'upload',
-        file_size: 156000,
-        mime_type: 'audio/mp3'
       },
       // Files - Rich document items
       {

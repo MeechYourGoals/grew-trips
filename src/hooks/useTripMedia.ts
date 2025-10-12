@@ -17,7 +17,7 @@ interface TripMedia {
 
 interface UploadMediaRequest {
   file: File;
-  media_type: 'photo' | 'video' | 'document' | 'audio';
+  media_type: 'photo' | 'video' | 'document';
 }
 
 export const useTripMedia = (tripId: string) => {

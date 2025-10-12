@@ -10,7 +10,7 @@ interface ChatInputProps {
   onInputChange: (message: string) => void;
   onSendMessage: (isBroadcast?: boolean, isPayment?: boolean, paymentData?: any) => void;
   onKeyPress: (e: React.KeyboardEvent) => void;
-  onFileUpload?: (files: FileList, type: 'image' | 'video' | 'document' | 'audio') => void;
+  onFileUpload?: (files: FileList, type: 'image' | 'video' | 'document') => void;
   apiKey: string; // Keep for backward compatibility but won't be used
   isTyping: boolean;
   tripMembers?: Array<{ id: string; name: string; avatar?: string }>;
@@ -51,14 +51,13 @@ export const ChatInput = ({
     }
   };
 
-  const handleFileUpload = (type: 'image' | 'video' | 'document' | 'audio') => {
+  const handleFileUpload = (type: 'image' | 'video' | 'document') => {
     if (!onFileUpload || !fileInputRef.current) return;
     
     const accept = {
       image: 'image/*',
       video: 'video/*',
-      document: '.pdf,.doc,.docx,.txt,.xlsx,.pptx',
-      audio: 'audio/*'
+      document: '.pdf,.doc,.docx,.txt,.xlsx,.pptx'
     };
     
     fileInputRef.current.accept = accept[type];
@@ -79,8 +78,7 @@ export const ChatInput = ({
       const file = files[0];
       const isImage = file.type.startsWith('image/');
       const isVideo = file.type.startsWith('video/');
-      const isAudio = file.type.startsWith('audio/');
-      const type = isImage ? 'image' : isVideo ? 'video' : isAudio ? 'audio' : 'document';
+      const type = isImage ? 'image' : isVideo ? 'video' : 'document';
       onFileUpload(files, type);
     }
   };
@@ -161,10 +159,6 @@ export const ChatInput = ({
             <DropdownMenuItem onClick={() => handleFileUpload('document')}>
               <FileText className="w-4 h-4 mr-2" />
               Document
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleFileUpload('audio')}>
-              <Mic className="w-4 h-4 mr-2" />
-              Audio/Voice
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

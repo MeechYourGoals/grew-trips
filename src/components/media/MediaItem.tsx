@@ -1,11 +1,11 @@
 import React from 'react';
-import { Video, Music, FileText } from 'lucide-react';
+import { Video, FileText } from 'lucide-react';
 
 interface MediaItemData {
   id: string;
   media_url: string;
   filename: string;
-  media_type: 'image' | 'video' | 'audio' | 'document';
+  media_type: 'image' | 'video' | 'document';
   metadata: any;
   created_at: string;
   source: 'chat' | 'upload';
@@ -46,15 +46,11 @@ export const MediaItem = ({ item }: MediaItemProps) => {
     );
   }
 
-  // Audio or Document
+  // Document
   return (
     <div className="group relative aspect-square rounded-lg overflow-hidden bg-muted">
       <div className="w-full h-full bg-white/10 flex flex-col items-center justify-center p-4">
-        {item.media_type === 'audio' ? (
-          <Music className="w-8 h-8 text-purple-400" />
-        ) : (
-          <FileText className="w-8 h-8 text-blue-400" />
-        )}
+        <FileText className="w-8 h-8 text-blue-400" />
         <span className="text-xs text-center mt-2 truncate w-full">{item.filename}</span>
       </div>
     </div>
