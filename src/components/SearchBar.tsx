@@ -34,7 +34,7 @@ export const SearchBar = ({
           placeholder={placeholder}
           value={query}
           onChange={(e) => handleSearch(e.target.value)}
-          className="pl-10 pr-10 bg-gray-900/80 border-gray-700 text-white placeholder-gray-400 focus:border-yellow-500 focus:ring-yellow-500/20"
+          className="pl-10 pr-10 bg-gray-900/80 border-gray-700 text-white placeholder-gray-400 focus:border-yellow-500 focus:ring-yellow-500/20 w-full min-w-0"
         />
         {isLoading && (
           <Loader className="absolute right-3 top-1/2 transform -translate-y-1/2 text-yellow-500 animate-spin" size={18} />

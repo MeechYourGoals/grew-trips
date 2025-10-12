@@ -55,7 +55,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
       {/* Main Header Container - 600px to match toggle group */}
       <div className="mb-6">
         {/* Grid Layout: Brand (280px) | Search (280px) | Actions (auto) */}
-        <div className="grid grid-cols-[280px_280px_auto] gap-4 items-center mb-5">
+        <div className="grid grid-cols-[280px_280px_150px] gap-0 items-center mb-5">
           {/* Column 1: Brand - spans width of My Trips + Travel Pro buttons */}
           <div className="flex flex-col">
             <h1 className="text-3xl font-semibold text-foreground tracking-tight" aria-label="Chravel Home">
@@ -67,7 +67,7 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
           </div>
 
           {/* Column 2: Search Bar - spans width of Events + Travel Recs buttons */}
-          <div className="flex items-center">
+          <div className="flex items-center min-w-0">
             <SearchBar
               placeholder="Search for and plan your perfect trip."
               onSearch={handleSearchClick}
@@ -78,19 +78,10 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
           {/* Column 3: Action Buttons - aligned to right */}
           <div className="flex items-center gap-3 justify-end">
             {/* Schedule Demo buttons for Pro/Events views */}
-            {viewMode === 'tripsPro' && (
+            {(viewMode === 'tripsPro' || viewMode === 'events') && (
               <button
                 onClick={() => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo'}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-4 py-2 h-12 rounded-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm"
-              >
-                <Crown size={18} />
-                Schedule Demo
-              </button>
-            )}
-            {viewMode === 'events' && (
-              <button
-                onClick={() => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo'}
-                className="bg-secondary hover:bg-secondary/90 text-secondary-foreground px-4 py-2 h-12 rounded-2xl flex items-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm"
+                className={`${viewMode === 'events' ? 'bg-secondary hover:bg-secondary/90 text-secondary-foreground' : 'bg-primary hover:bg-primary/90 text-primary-foreground'} w-[150px] h-12 rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm`}
               >
                 <Crown size={18} />
                 Schedule Demo

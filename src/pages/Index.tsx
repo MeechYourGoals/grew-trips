@@ -175,7 +175,7 @@ const Index = () => {
         />
 
         {/* Shared Alignment Container for SearchBar and Toggle */}
-        <div className="w-[600px] mx-auto p-0 m-0">
+        <div className="w-[710px] mx-auto p-0 m-0">
           {/* Desktop Header */}
           {!isMobile && (
             <DesktopHeader
