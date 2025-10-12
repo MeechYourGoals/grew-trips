@@ -93,7 +93,7 @@ export class PerplexityService {
         systemPrompt?: string;
       };
       imageBase64?: string;
-      analysisType?: 'chat' | 'sentiment' | 'review' | 'audio' | 'image';
+      analysisType?: 'chat' | 'sentiment' | 'review' | 'image';
     } = {}
   ): Promise<PerplexityResponse> {
     try {

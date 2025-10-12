@@ -1,6 +1,6 @@
 import React from 'react';
 
-type MediaFilterType = 'all' | 'photos' | 'videos' | 'audio' | 'files' | 'links';
+type MediaFilterType = 'all' | 'photos' | 'videos' | 'files' | 'links';
 
 interface MediaFiltersProps {
   activeFilter: MediaFilterType;
@@ -12,7 +12,6 @@ export const MediaFilters = ({ activeFilter, onFilterChange }: MediaFiltersProps
     { value: 'all', label: 'All' },
     { value: 'photos', label: 'Photos' },
     { value: 'videos', label: 'Videos' },
-    { value: 'audio', label: 'Audio' },
     { value: 'files', label: 'Files' },
     { value: 'links', label: 'Links' },
   ];

@@ -2,7 +2,7 @@
 
 export interface MessageAttachment {
   id: string;
-  type: 'image' | 'video' | 'audio' | 'file' | 'link';
+  type: 'image' | 'video' | 'file' | 'link';
   url: string;
   filename?: string;
   size?: number;

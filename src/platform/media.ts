@@ -5,7 +5,7 @@
  */
 
 export interface MediaPickerOptions {
-  mediaType?: 'photo' | 'video' | 'document' | 'audio' | 'all';
+  mediaType?: 'photo' | 'video' | 'document' | 'all';
   multiple?: boolean;
   maxSize?: number; // in bytes
   quality?: number; // 0-1 for image compression
@@ -33,7 +33,6 @@ class WebMediaPicker implements MediaService {
       photo: 'image/*',
       video: 'video/*',
       document: '.pdf,.doc,.docx,.txt',
-      audio: 'audio/*',
       all: '*/*'
     };
     
