@@ -52,21 +52,21 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
         </div>
       </div>
 
-      {/* Main Header Container - 600px to match toggle group */}
+      {/* Main Header Container - 710px to match toggle group */}
       <div className="mb-6">
-        {/* Grid Layout: Brand (280px) | Search (280px) | Actions (auto) */}
-        <div className="grid grid-cols-[280px_280px_150px] gap-0 items-center mb-5">
-          {/* Column 1: Brand - spans width of My Trips + Travel Pro buttons */}
+        {/* Grid Layout: Brand (140px) | Search (420px) | Actions (150px) */}
+        <div className="grid grid-cols-[140px_420px_150px] gap-0 items-center mb-5">
+          {/* Column 1: Brand - stacked on My Trips button */}
           <div className="flex flex-col">
-            <h1 className="text-3xl font-semibold text-foreground tracking-tight" aria-label="Chravel Home">
+            <h1 className="text-2xl font-semibold text-foreground tracking-tight" aria-label="Chravel Home">
               Chravel
             </h1>
             <div className="mt-1">
-              <p className="text-sm text-muted-foreground font-medium">The Group Chat for Group Travel</p>
+              <p className="text-xs text-muted-foreground font-medium leading-tight">The Group Chat for Group Travel</p>
             </div>
           </div>
 
-          {/* Column 2: Search Bar - spans width of Events + Travel Recs buttons */}
+          {/* Column 2: Search Bar - spans Chravel Pro + Events + Chravel Recs buttons */}
           <div className="flex items-center min-w-0">
             <SearchBar
               placeholder="Search for and plan your perfect trip."
