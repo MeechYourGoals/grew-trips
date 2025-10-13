@@ -77,17 +77,6 @@ export const DesktopHeader = ({ viewMode, onCreateTrip, onUpgrade, onSettings }:
 
           {/* Column 3: Action Buttons - aligned to right */}
           <div className="flex items-center gap-3 justify-end">
-            {/* Schedule Demo buttons for Pro/Events views */}
-            {(viewMode === 'tripsPro' || viewMode === 'events') && (
-              <button
-                onClick={() => window.location.href = 'mailto:christian@chravelapp.com?subject=Requesting%20a%20Chravel%20Demo'}
-                className={`${viewMode === 'events' ? 'bg-secondary hover:bg-secondary/90 text-secondary-foreground' : 'bg-primary hover:bg-primary/90 text-primary-foreground'} w-[150px] h-12 rounded-2xl flex items-center justify-center gap-2 transition-all duration-300 hover:scale-105 shadow-lg font-medium text-sm`}
-              >
-                <Crown size={18} />
-                Schedule Demo
-              </button>
-            )}
-            
             {/* Action button group - compact and aligned */}
             <button
               onClick={onCreateTrip}
