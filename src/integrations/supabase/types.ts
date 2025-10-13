@@ -308,7 +308,6 @@ export type Database = {
           content: string | null
           created_at: string | null
           doc_id: string | null
-          embedding: string | null
           id: string
           modality: string | null
         }
@@ -317,7 +316,6 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           doc_id?: string | null
-          embedding?: string | null
           id?: string
           modality?: string | null
         }
@@ -326,7 +324,6 @@ export type Database = {
           content?: string | null
           created_at?: string | null
           doc_id?: string | null
-          embedding?: string | null
           id?: string
           modality?: string | null
         }
@@ -1905,10 +1902,6 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      binary_quantize: {
-        Args: { "": string } | { "": unknown }
-        Returns: unknown
-      }
       create_event_with_conflict_check: {
         Args: {
           p_created_by: string
@@ -1982,44 +1975,12 @@ export type Database = {
           user_id: string
         }[]
       }
-      halfvec_avg: {
-        Args: { "": number[] }
-        Returns: unknown
-      }
-      halfvec_out: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      halfvec_send: {
-        Args: { "": unknown }
-        Returns: string
-      }
-      halfvec_typmod_in: {
-        Args: { "": unknown[] }
-        Returns: number
-      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
         Returns: boolean
-      }
-      hnsw_bit_support: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      hnsw_halfvec_support: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      hnsw_sparsevec_support: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      hnswhandler: {
-        Args: { "": unknown }
-        Returns: unknown
       }
       is_org_admin: {
         Args: { _org_id: string; _user_id: string }
@@ -2029,54 +1990,6 @@ export type Database = {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
-      ivfflat_bit_support: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      ivfflat_halfvec_support: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      ivfflathandler: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      l2_norm: {
-        Args: { "": unknown } | { "": unknown }
-        Returns: number
-      }
-      l2_normalize: {
-        Args: { "": string } | { "": unknown } | { "": unknown }
-        Returns: string
-      }
-      match_kb_chunks: {
-        Args: {
-          filter_trip?: string
-          match_count?: number
-          query_embedding: string
-        }
-        Returns: {
-          content: string
-          doc_id: string
-          id: string
-          metadata: Json
-          similarity: number
-          source: string
-          trip_id: string
-        }[]
-      }
-      sparsevec_out: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      sparsevec_send: {
-        Args: { "": unknown }
-        Returns: string
-      }
-      sparsevec_typmod_in: {
-        Args: { "": unknown[] }
-        Returns: number
-      }
       toggle_task_status: {
         Args: {
           p_completed: boolean
@@ -2085,30 +1998,6 @@ export type Database = {
           p_user_id: string
         }
         Returns: boolean
-      }
-      vector_avg: {
-        Args: { "": number[] }
-        Returns: string
-      }
-      vector_dims: {
-        Args: { "": string } | { "": unknown }
-        Returns: number
-      }
-      vector_norm: {
-        Args: { "": string }
-        Returns: number
-      }
-      vector_out: {
-        Args: { "": string }
-        Returns: unknown
-      }
-      vector_send: {
-        Args: { "": string }
-        Returns: string
-      }
-      vector_typmod_in: {
-        Args: { "": unknown[] }
-        Returns: number
       }
       vote_on_poll: {
         Args: {
