@@ -5,6 +5,7 @@ import { useMediaManagement } from '@/hooks/useMediaManagement';
 import { MediaSubTabs } from './MediaSubTabs';
 import { MediaGrid } from './media/MediaGrid';
 import { LinksList } from './media/LinksList';
+import { StorageQuotaBar } from './StorageQuotaBar';
 
 interface UnifiedMediaHubProps {
   tripId: string;
@@ -72,6 +73,9 @@ export const UnifiedMediaHub = ({ tripId }: UnifiedMediaHubProps) => {
 
   return (
     <div className="space-y-6">
+      {/* Storage Quota */}
+      <StorageQuotaBar tripId={tripId} showDetails={true} />
+
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-5 bg-white/5 backdrop-blur-sm">
           <TabsTrigger value="all" className="text-xs">All</TabsTrigger>

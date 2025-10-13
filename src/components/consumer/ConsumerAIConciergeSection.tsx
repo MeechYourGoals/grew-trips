@@ -30,12 +30,13 @@ export const ConsumerAIConciergeSection = () => {
         timePreference: 'early-riser'
       });
       setIsLoading(false);
-    } else if (user && isPlus) {
+    } else if (user) {
+      // AI Concierge is FREE - load preferences for all users
       loadPreferences();
     } else {
       setIsLoading(false);
     }
-  }, [user, isPlus, isDemoMode]);
+  }, [user, isDemoMode]);
 
   const loadPreferences = async () => {
     if (!user) return;
@@ -72,43 +73,7 @@ export const ConsumerAIConciergeSection = () => {
     }
   };
 
-  if (!isPlus && !isDemoMode) {
-    return (
-      <div className="space-y-6">
-        {/* Plus Upgrade Prompt */}
-        <div className="bg-gradient-to-br from-yellow-500/20 to-orange-500/20 border border-yellow-500/30 rounded-2xl p-8 text-center">
-          <Crown size={48} className="text-yellow-400 mx-auto mb-4" />
-          <h3 className="text-2xl font-bold text-white mb-2">AI Concierge</h3>
-          <p className="text-gray-300 mb-6 max-w-2xl mx-auto">
-            Set your preferences once and get personalized AI recommendations across all your trips. 
-            Filter by dietary needs, accessibility requirements, vibe, budget, and more.
-          </p>
-          <button 
-            onClick={upgradeToPlus}
-            className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-8 py-3 rounded-xl font-bold hover:scale-105 transition-transform"
-          >
-            Upgrade to Plus - $9.99/mo
-          </button>
-          
-          {/* Feature Preview */}
-          <div className="mt-8 grid md:grid-cols-3 gap-4 text-left">
-            <div className="bg-white/5 p-4 rounded-xl">
-              <h4 className="text-white font-semibold mb-2">Smart Filtering</h4>
-              <p className="text-gray-400 text-sm">AI automatically filters restaurants, activities, and hotels based on your dietary needs (vegan, gluten-free, etc.)</p>
-            </div>
-            <div className="bg-white/5 p-4 rounded-xl">
-              <h4 className="text-white font-semibold mb-2">Accessibility</h4>
-              <p className="text-gray-400 text-sm">Find EV charging, wheelchair access, pet-friendly places - your needs are remembered</p>
-            </div>
-            <div className="bg-white/5 p-4 rounded-xl">
-              <h4 className="text-white font-semibold mb-2">Budget Control</h4>
-              <p className="text-gray-400 text-sm">Set min/max budget ranges and AI won't suggest places outside your comfort zone</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // AI Concierge is now FREE for all users - removed paywall
 
   if (isLoading) {
     return (
@@ -131,9 +96,9 @@ export const ConsumerAIConciergeSection = () => {
             Configure your preferences once - AI uses them across all trips for personalized recommendations
           </p>
         </div>
-        <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 px-4 py-2 rounded-full">
-          <span className="text-yellow-400 font-semibold text-sm">
-            {isDemoMode ? 'DEMO MODE' : 'PLUS'}
+        <div className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 px-4 py-2 rounded-full">
+          <span className="text-green-400 font-semibold text-sm">
+            {isDemoMode ? 'DEMO MODE' : 'FREE'}
           </span>
         </div>
       </div>

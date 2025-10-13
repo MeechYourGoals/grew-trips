@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Camera, Upload, Image as ImageIcon, Film } from 'lucide-react';
 import { usePullToRefresh } from '../../hooks/usePullToRefresh';
-import { useLongPress } from '../../hooks/useLongPress';
 import { PullToRefreshIndicator } from './PullToRefreshIndicator';
 import { MediaSkeleton } from './SkeletonLoader';
-import { OptimizedImage } from './OptimizedImage';
 import { hapticService } from '../../services/hapticService';
 import { capacitorIntegration } from '../../services/capacitorIntegration';
+import { StorageQuotaBar } from '../StorageQuotaBar';
+import { useMediaManagement } from '../../hooks/useMediaManagement';
+import { useDemoMode } from '../../hooks/useDemoMode';
+import { MediaGridItem } from './MediaGridItem';
 
 interface MediaItem {
   id: string;
@@ -22,36 +24,33 @@ interface MobileUnifiedMediaHubProps {
 }
 
 export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) => {
-  const [mediaItems] = useState<MediaItem[]>([
-    {
-      id: '1',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0',
-      uploadedBy: 'Sarah',
-      uploadedAt: new Date()
-    },
-    {
-      id: '2',
-      type: 'image',
-      url: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e',
-      uploadedBy: 'Mike',
-      uploadedAt: new Date()
-    }
-  ]);
+  const { isDemoMode } = useDemoMode();
+  const { mediaItems: realMediaItems, loading, refetch } = useMediaManagement(tripId);
   const [selectedTab, setSelectedTab] = useState<'all' | 'photos' | 'videos'>('all');
-  const [isLoading, setIsLoading] = useState(true);
 
   const { isPulling, isRefreshing, pullDistance } = usePullToRefresh({
     onRefresh: async () => {
-      setIsLoading(true);
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setIsLoading(false);
+      await refetch();
     }
   });
 
-  useEffect(() => {
-    setTimeout(() => setIsLoading(false), 500);
-  }, []);
+  // Convert media items to unified format
+  const mediaItems: MediaItem[] = realMediaItems
+    .filter(item => item.media_type === 'image' || item.media_type === 'video')
+    .map(item => ({
+      id: item.id,
+      type: item.media_type === 'video' ? 'video' : 'image',
+      url: item.media_url,
+      uploadedBy: 'User',
+      uploadedAt: new Date(item.created_at)
+    }));
+
+  const filteredMedia = mediaItems.filter(item => {
+    if (selectedTab === 'all') return true;
+    if (selectedTab === 'photos') return item.type === 'image';
+    if (selectedTab === 'videos') return item.type === 'video';
+    return true;
+  });
 
   const handleTakePicture = async () => {
     await hapticService.medium();
@@ -78,13 +77,6 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
       console.error('Error selecting image:', error);
     }
   };
-
-  const filteredMedia = mediaItems.filter(item => {
-    if (selectedTab === 'all') return true;
-    if (selectedTab === 'photos') return item.type === 'image';
-    if (selectedTab === 'videos') return item.type === 'video';
-    return true;
-  });
 
   return (
     <div className="flex flex-col h-full bg-black relative">
@@ -114,6 +106,11 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
         </div>
       </div>
 
+      {/* Storage Quota Bar */}
+      <div className="px-4 py-3 border-b border-white/10">
+        <StorageQuotaBar tripId={tripId} showDetails={true} />
+      </div>
+
       {/* Filter Tabs */}
       <div className="flex gap-2 px-4 py-3 border-b border-white/10">
         {(['all', 'photos', 'videos'] as const).map((tab) => (
@@ -139,8 +136,8 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
       </div>
 
       {/* Media Grid */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
-        {isLoading ? (
+      <div className="flex-1 overflow-y-auto px-4 py-4" style={{ WebkitOverflowScrolling: 'touch' }}>
+        {loading ? (
           <MediaSkeleton />
         ) : filteredMedia.length === 0 ? (
           <div className="text-center py-12">
@@ -149,40 +146,19 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
             <p className="text-sm text-gray-500">Tap the camera button to add photos</p>
           </div>
         ) : (
-          <div className="grid grid-cols-3 gap-2">
-            {filteredMedia.map((item) => {
-              const longPressHandlers = useLongPress({
-                onLongPress: () => {
-                  console.log('Long press on media item:', item.id);
-                  // Could show options menu (delete, share, etc.)
-                },
-              });
-
-              return (
-                <button
-                  key={item.id}
-                  {...longPressHandlers}
-                  onClick={async () => {
-                    await hapticService.light();
-                    // Open full screen viewer
-                  }}
-                  className="aspect-square rounded-lg overflow-hidden bg-white/10 active:opacity-80 transition-opacity relative"
-                >
-                  <OptimizedImage
-                    src={item.url}
-                    alt="Trip media"
-                    className="w-full h-full object-cover"
-                    width={300}
-                    loading="lazy"
-                  />
-                  {item.type === 'video' && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-                      <Film size={24} className="text-white" />
-                    </div>
-                  )}
-                </button>
-              );
-            })}
+          <div className="grid grid-cols-3 gap-1">
+            {filteredMedia.map((item) => (
+              <MediaGridItem
+                key={item.id}
+                item={item}
+                onPress={() => {
+                  console.log('Open fullscreen viewer for:', item.id);
+                }}
+                onLongPress={() => {
+                  console.log('Show options menu for:', item.id);
+                }}
+              />
+            ))}
           </div>
         )}
       </div>

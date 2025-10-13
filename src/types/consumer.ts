@@ -6,6 +6,16 @@ export interface ConsumerSubscription {
   subscriptionEndsAt?: string;
   stripeCustomerId?: string;
   stripeSubscriptionId?: string;
+  storageUsedMB?: number;
+  storageQuotaMB?: number;
+}
+
+export interface StorageQuota {
+  usedMB: number;
+  quotaMB: number;
+  percentUsed: number;
+  isNearLimit: boolean; // 80%+
+  isOverLimit: boolean;
 }
 
 export interface TripPreferences {
@@ -65,3 +75,16 @@ export const LIFESTYLE_OPTIONS = [
 
 export const TRIPS_PLUS_PRICE = 9.99;
 export const TRIPS_PLUS_ANNUAL_PRICE = 99.99;
+
+// Storage quotas (in MB)
+export const FREE_STORAGE_QUOTA_MB = 500;
+export const PLUS_STORAGE_QUOTA_MB = 50000; // 50GB
+
+// Feature availability
+export const FEATURE_ACCESS = {
+  AI_CONCIERGE: 'free', // Now free for all users
+  UNLIMITED_STORAGE: 'plus',
+  ADVANCED_ANALYTICS: 'plus',
+  PRIORITY_SUPPORT: 'plus',
+  TEAM_MANAGEMENT: 'plus'
+} as const;
