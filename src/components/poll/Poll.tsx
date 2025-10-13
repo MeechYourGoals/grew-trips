@@ -6,16 +6,27 @@ import { PollOption } from './PollOption';
 interface PollProps {
   poll: PollType;
   onVote: (pollId: string, optionId: string) => void;
+  disabled?: boolean;
+  isVoting?: boolean;
 }
 
-export const Poll = ({ poll, onVote }: PollProps) => {
+export const Poll = ({ poll, onVote, disabled = false, isVoting = false }: PollProps) => {
   const handleVote = (optionId: string) => {
-    onVote(poll.id, optionId);
+    if (!disabled && !isVoting) {
+      onVote(poll.id, optionId);
+    }
   };
 
   return (
     <div className="bg-glass-slate-card border border-glass-slate-border rounded-2xl p-6 shadow-enterprise-lg">
-      <h3 className="text-lg font-semibold text-white mb-4">{poll.question}</h3>
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <h3 className="text-lg font-semibold text-white flex-1">{poll.question}</h3>
+        {poll.status === 'closed' && (
+          <span className="text-xs font-semibold px-2 py-1 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">
+            Closed
+          </span>
+        )}
+      </div>
       <div className="space-y-3">
         {poll.options.map((option) => (
           <PollOption
@@ -24,14 +35,13 @@ export const Poll = ({ poll, onVote }: PollProps) => {
             totalVotes={poll.totalVotes}
             userVote={poll.userVote}
             onVote={handleVote}
+            disabled={disabled}
           />
         ))}
       </div>
-      {poll.userVote && (
-        <p className="text-sm text-gray-400 mt-4 text-center">
-          {poll.totalVotes} total votes
-        </p>
-      )}
+      <p className="text-sm text-gray-400 mt-4 text-center">
+        {poll.totalVotes} total votes
+      </p>
     </div>
   );
 };

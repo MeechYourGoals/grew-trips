@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { demoModeService } from '../services/demoModeService';
 import { useDemoMode } from '../hooks/useDemoMode';
@@ -9,11 +9,14 @@ import { MessageFilters } from './chat/MessageFilters';
 import { InlineReplyComponent } from './chat/InlineReplyComponent';
 import { getMockAvatar } from '../utils/mockAvatars';
 import { useTripMembers } from '../hooks/useTripMembers';
+import { useTripChat } from '@/hooks/useTripChat';
+import { useAuth } from '@/hooks/useAuth';
 
 interface TripChatProps {
   enableGroupChat?: boolean;
   showBroadcasts?: boolean;
   isEvent?: boolean;
+  tripId?: string;
 }
 
 interface MockMessage {
@@ -34,19 +37,30 @@ interface MockMessage {
   tags?: string[];
 }
 
-export const TripChat = ({ 
+export const TripChat = ({
   enableGroupChat = true,
   showBroadcasts = true,
-  isEvent = false 
+  isEvent = false,
+  tripId: tripIdProp
 }: TripChatProps) => {
-  const [messages, setMessages] = useState<MockMessage[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [demoMessages, setDemoMessages] = useState<MockMessage[]>([]);
+  const [demoLoading, setDemoLoading] = useState(true);
   const [reactions, setReactions] = useState<{ [messageId: string]: { [reaction: string]: { count: number; userReacted: boolean } } }>({});
 
-  const { tripId } = useParams();
+  const params = useParams<{ tripId?: string; proTripId?: string; eventId?: string }>();
+  const resolvedTripId = useMemo(() => {
+    return tripIdProp || params.tripId || params.proTripId || params.eventId || '';
+  }, [tripIdProp, params.tripId, params.proTripId, params.eventId]);
   const demoMode = useDemoMode();
-  const { tripMembers } = useTripMembers(tripId);
-  
+  const { tripMembers } = useTripMembers(resolvedTripId);
+  const { user } = useAuth();
+  const {
+    messages: liveMessages,
+    isLoading: liveLoading,
+    sendMessageAsync: sendTripMessage,
+    isCreating: isSendingMessage
+  } = useTripChat(resolvedTripId);
+
   const {
     inputMessage,
     setInputMessage,
@@ -57,17 +71,48 @@ export const TripChat = ({
     clearReply,
     sendMessage,
     filterMessages
-  } = useChatComposer({ tripId, demoMode: demoMode.isDemoMode, isEvent });
+  } = useChatComposer({ tripId: resolvedTripId, demoMode: demoMode.isDemoMode, isEvent });
+
+  const shouldUseDemoData = demoMode.isDemoMode || !resolvedTripId;
+
+  const liveFormattedMessages = useMemo(() => {
+    if (shouldUseDemoData) return [];
+    return liveMessages.map(message => ({
+      id: message.id,
+      text: message.content,
+      sender: {
+        id: message.author_name || 'unknown',
+        name: message.author_name || 'Unknown',
+        avatar: getMockAvatar(message.author_name || 'Unknown')
+      },
+      createdAt: message.created_at,
+      isBroadcast: message.privacy_mode === 'broadcast',
+      isPayment: false,
+      tags: [] as string[]
+    }));
+  }, [liveMessages, shouldUseDemoData]);
 
   const handleSendMessage = async (isBroadcast = false, isPayment = false, paymentData?: any) => {
-    const message = await sendMessage({ 
+    const message = await sendMessage({
       isBroadcast, 
       isPayment, 
       paymentData 
     });
     
-    if (message) {
-      setMessages(prev => [...prev, message as MockMessage]);
+    if (!message) {
+      return;
+    }
+
+    if (shouldUseDemoData) {
+      setDemoMessages(prev => [...prev, message as MockMessage]);
+      return;
+    }
+
+    const authorName = user?.displayName || user?.email?.split('@')[0] || 'You';
+    try {
+      await sendTripMessage(message.text, authorName);
+    } catch (error) {
+      console.error('Failed to send chat message:', error);
     }
   };
 
@@ -93,20 +138,27 @@ export const TripChat = ({
   };
 
   useEffect(() => {
+    if (!shouldUseDemoData) {
+      setDemoMessages([]);
+      setDemoLoading(false);
+      return;
+    }
+
     const loadDemoData = async () => {
-      const demoMessages = await demoModeService.getMockMessages('friends-trip', isEvent);
-      
-      const formattedMessages = demoMessages.map(msg => ({
+      setDemoLoading(true);
+      const demoMessagesData = await demoModeService.getMockMessages('friends-trip', isEvent);
+
+      const formattedMessages = demoMessagesData.map(msg => ({
         id: msg.id,
         text: msg.message_content || '',
-        sender: { 
-          id: msg.id, 
+        sender: {
+          id: msg.id,
           name: msg.sender_name || 'Unknown',
           avatar: getMockAvatar(msg.sender_name || 'Unknown')
         },
         createdAt: new Date(Date.now() - (msg.timestamp_offset_days || 0) * 86400000).toISOString(),
         isBroadcast: msg.tags?.includes('broadcast') || msg.tags?.includes('logistics') || msg.tags?.includes('urgent') || false,
-        
+
         trip_type: msg.trip_type,
         sender_name: msg.sender_name,
         message_content: msg.message_content,
@@ -114,26 +166,28 @@ export const TripChat = ({
         timestamp_offset_days: msg.timestamp_offset_days,
         tags: msg.tags
       }));
-      
-      setMessages(formattedMessages);
-      setLoading(false);
+
+      setDemoMessages(formattedMessages);
+      setDemoLoading(false);
     };
 
     loadDemoData();
-  }, [demoMode.isDemoMode, isEvent]);
+  }, [shouldUseDemoData, isEvent]);
 
-  const filteredMessages = filterMessages(messages);
+  const filteredMessages = filterMessages(shouldUseDemoData ? demoMessages : liveFormattedMessages);
 
-  if (loading) {
+  const isLoading = shouldUseDemoData ? demoLoading : liveLoading;
+
+  if (isLoading) {
     return <div>Loading messages...</div>;
   }
 
   return (
     <div className="flex flex-col h-full">
-      {messages.length > 0 && (
+      {filteredMessages.length > 0 && (
         <div className="p-4 border-b border-gray-700">
-          <MessageFilters 
-            activeFilter={messageFilter} 
+          <MessageFilters
+            activeFilter={messageFilter}
             onFilterChange={setMessageFilter}
             hidePayments={isEvent}
           />
@@ -146,6 +200,8 @@ export const TripChat = ({
             messages={filteredMessages}
             reactions={reactions}
             onReaction={handleReaction}
+            emptyStateTitle={shouldUseDemoData ? undefined : 'No messages yet'}
+            emptyStateDescription={shouldUseDemoData ? undefined : 'Start the conversation with your team'}
           />
         </div>
       </div>
@@ -168,7 +224,7 @@ export const TripChat = ({
           onSendMessage={handleSendMessage}
           onKeyPress={handleKeyPress}
           apiKey=""
-          isTyping={false}
+          isTyping={isSendingMessage}
           tripMembers={tripMembers}
           hidePayments={isEvent}
         />

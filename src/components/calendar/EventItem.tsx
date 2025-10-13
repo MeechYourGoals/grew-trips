@@ -6,9 +6,10 @@ import { Clock, MapPin, Trash2 } from 'lucide-react';
 interface EventItemProps {
   event: CalendarEvent;
   onDelete: (eventId: string) => void;
+  isDeleting?: boolean;
 }
 
-export const EventItem = ({ event, onDelete }: EventItemProps) => {
+export const EventItem = ({ event, onDelete, isDeleting = false }: EventItemProps) => {
   const categoryEmojis: Record<string, string> = {
     dining: '🍽️',
     lodging: '🏨',
@@ -51,8 +52,15 @@ export const EventItem = ({ event, onDelete }: EventItemProps) => {
           size="icon"
           onClick={() => onDelete(event.id)}
           className="text-destructive hover:text-destructive hover:bg-destructive/10"
+          disabled={isDeleting}
         >
-          <Trash2 className="h-4 w-4" />
+          {isDeleting ? (
+            <span className="h-4 w-4 inline-flex items-center justify-center">
+              <span className="animate-spin h-4 w-4 border-2 border-current border-t-transparent rounded-full" />
+            </span>
+          ) : (
+            <Trash2 className="h-4 w-4" />
+          )}
         </Button>
       </div>
     </div>

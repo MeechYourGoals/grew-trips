@@ -167,7 +167,9 @@ export const useTripPolls = (tripId: string) => {
     polls,
     isLoading,
     createPoll: createPollMutation.mutate,
+    createPollAsync: createPollMutation.mutateAsync,
     votePoll: votePollMutation.mutate,
+    votePollAsync: votePollMutation.mutateAsync,
     isCreatingPoll: createPollMutation.isPending,
     isVoting: votePollMutation.isPending
   };

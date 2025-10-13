@@ -6,9 +6,10 @@ interface EventListProps {
   events: CalendarEvent[];
   onDelete: (eventId: string) => void;
   emptyMessage?: string;
+  isDeleting?: boolean;
 }
 
-export const EventList = ({ events, onDelete, emptyMessage = "No events for this date" }: EventListProps) => {
+export const EventList = ({ events, onDelete, emptyMessage = "No events for this date", isDeleting = false }: EventListProps) => {
   if (events.length === 0) {
     return (
       <div className="text-center py-8">
@@ -20,7 +21,7 @@ export const EventList = ({ events, onDelete, emptyMessage = "No events for this
   return (
     <div className="space-y-3">
       {events.map(event => (
-        <EventItem key={event.id} event={event} onDelete={onDelete} />
+        <EventItem key={event.id} event={event} onDelete={onDelete} isDeleting={isDeleting} />
       ))}
     </div>
   );

@@ -7,6 +7,7 @@ import { TaskCreateModal } from './TaskCreateModal';
 import { useTripTasks } from '../../hooks/useTripTasks';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 import { useTaskFilters } from '../../hooks/useTaskFilters';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 interface TripTasksTabProps {
   tripId: string;
@@ -17,6 +18,7 @@ export const TripTasksTab = ({ tripId }: TripTasksTabProps) => {
   const [showCompleted, setShowCompleted] = useState(false);
   const { accentColors } = useTripVariant();
   const { data: tasks, isLoading } = useTripTasks(tripId);
+  const { isDemoMode } = useDemoMode();
   
   const {
     status,
@@ -72,7 +74,7 @@ export const TripTasksTab = ({ tripId }: TripTasksTabProps) => {
   ];
 
   // Use mock tasks if no real tasks are available
-  const displayTasks = tasks && tasks.length > 0 ? tasks : mockTasks;
+  const displayTasks = tasks && tasks.length > 0 ? tasks : (isDemoMode ? mockTasks : []);
   
   // Apply filters
   const filteredTasks = applyFilters(displayTasks);

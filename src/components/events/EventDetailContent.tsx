@@ -53,9 +53,9 @@ export const EventDetailContent = ({
   const renderTabContent = () => {
     switch (activeTab) {
       case 'chat':
-        return <TripChat enableGroupChat={true} showBroadcasts={true} isEvent={true} />;
+        return <TripChat enableGroupChat={true} showBroadcasts={true} isEvent={true} tripId={tripId} />;
       case 'calendar':
-        return <GroupCalendar />;
+        return <GroupCalendar tripId={tripId} />;
       case 'todo':
         return <TripTasksTab tripId={tripId} />;
       case 'registration':
@@ -116,7 +116,7 @@ export const EventDetailContent = ({
           />
         );
       default:
-        return <TripChat enableGroupChat={true} showBroadcasts={true} isEvent={true} />;
+        return <TripChat enableGroupChat={true} showBroadcasts={true} isEvent={true} tripId={tripId} />;
     }
   };
 

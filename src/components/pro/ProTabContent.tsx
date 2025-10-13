@@ -58,13 +58,13 @@ export const ProTabContent = ({
   const renderTabContent = () => {
     switch (activeTab) {
       case 'chat':
-        return <TripChat enableGroupChat={true} showBroadcasts={true} />;
+        return <TripChat enableGroupChat={true} showBroadcasts={true} tripId={tripId} />;
       case 'calendar':
-        return <GroupCalendar />;
+        return <GroupCalendar tripId={tripId} />;
       case 'tasks':
         return <TripTasksTab tripId={tripId} />;
       case 'polls':
-        return <CommentsWall />;
+        return <CommentsWall tripId={tripId} />;
       case 'places':
         return <PlacesSection />;
       case 'team':

@@ -68,13 +68,13 @@ export const TripTabs = ({
   const renderTabContent = () => {
     switch (activeTab) {
       case 'chat':
-        return <TripChat />;
+        return <TripChat tripId={tripId} />;
       case 'polls':
-        return <CommentsWall />;
+        return <CommentsWall tripId={tripId} />;
       case 'tasks':
         return <TripTasksTab tripId={tripId} />;
       case 'calendar':
-        return <GroupCalendar />;
+        return <GroupCalendar tripId={tripId} />;
       case 'media':
         return <UnifiedMediaHub tripId={tripId} />;
       case 'places':
@@ -89,7 +89,7 @@ export const TripTabs = ({
           />
         );
       default:
-        return <TripChat />;
+        return <TripChat tripId={tripId} />;
     }
   };
 

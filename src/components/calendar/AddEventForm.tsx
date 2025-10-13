@@ -11,9 +11,10 @@ interface AddEventFormProps {
   onUpdateField: <K extends keyof AddToCalendarData>(field: K, value: AddToCalendarData[K]) => void;
   onSubmit: () => void;
   onCancel: () => void;
+  isSubmitting?: boolean;
 }
 
-export const AddEventForm = ({ newEvent, onUpdateField, onSubmit, onCancel }: AddEventFormProps) => {
+export const AddEventForm = ({ newEvent, onUpdateField, onSubmit, onCancel, isSubmitting = false }: AddEventFormProps) => {
   return (
     <div className="space-y-4">
       <div>
@@ -74,8 +75,10 @@ export const AddEventForm = ({ newEvent, onUpdateField, onSubmit, onCancel }: Ad
       </div>
 
       <div className="flex gap-2">
-        <Button onClick={onSubmit} disabled={!newEvent.title}>Add Event</Button>
-        <Button variant="outline" onClick={onCancel}>Cancel</Button>
+        <Button onClick={onSubmit} disabled={!newEvent.title || isSubmitting}>
+          {isSubmitting ? 'Saving...' : 'Add Event'}
+        </Button>
+        <Button variant="outline" onClick={onCancel} disabled={isSubmitting}>Cancel</Button>
       </div>
     </div>
   );
