@@ -3,6 +3,7 @@ export interface PollOption {
   id: string;
   text: string;
   votes: number;
+  voters?: string[];
 }
 
 export interface Poll {
@@ -11,4 +12,6 @@ export interface Poll {
   options: PollOption[];
   totalVotes: number;
   userVote?: string;
+  status?: 'active' | 'closed';
+  createdAt?: string;
 }

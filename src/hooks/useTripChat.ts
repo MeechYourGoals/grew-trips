@@ -162,11 +162,21 @@ export const useTripChat = (tripId: string) => {
     });
   };
 
+  const sendMessageAsync = (content: string, authorName: string, mediaType?: string, mediaUrl?: string) => {
+    return createMessageMutation.mutateAsync({
+      content,
+      author_name: authorName,
+      media_type: mediaType,
+      media_url: mediaUrl
+    });
+  };
+
   return {
     messages,
     isLoading,
     error,
     sendMessage,
+    sendMessageAsync,
     isCreating: createMessageMutation.isPending
   };
 };

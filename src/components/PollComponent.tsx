@@ -1,62 +1,69 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { BarChart3 } from 'lucide-react';
 import { Button } from './ui/button';
 import { Poll as PollType } from './poll/types';
 import { Poll } from './poll/Poll';
 import { CreatePollForm } from './poll/CreatePollForm';
+import { useTripPolls } from '@/hooks/useTripPolls';
+import { useAuth } from '@/hooks/useAuth';
 
-export const PollComponent = () => {
+interface PollComponentProps {
+  tripId: string;
+}
+
+export const PollComponent = ({ tripId }: PollComponentProps) => {
   const [showCreatePoll, setShowCreatePoll] = useState(false);
-  const [polls, setPolls] = useState<PollType[]>([
-    {
-      id: '1',
-      question: 'Which restaurant should we visit first?',
-      options: [
-        { id: 'a', text: "L'Ami Jean", votes: 8 },
-        { id: 'b', text: 'Breizh Café', votes: 5 },
-        { id: 'c', text: 'Le Comptoir du Relais', votes: 12 }
-      ],
-      totalVotes: 25
-    },
-    {
-      id: '2',
-      question: 'What amount is everybody going to spend tonight on a table at a club?',
-      options: [
-        { id: 'a', text: '$300 each', votes: 3 },
-        { id: 'b', text: '$600 each', votes: 7 },
-        { id: 'c', text: '$900 each', votes: 2 }
-      ],
-      totalVotes: 12
-    }
-  ]);
+  const { user } = useAuth();
+  const {
+    polls,
+    isLoading,
+    createPollAsync,
+    votePollAsync,
+    isCreatingPoll,
+    isVoting
+  } = useTripPolls(tripId);
 
-  const handleVote = (pollId: string, optionId: string) => {
-    setPolls(polls.map(poll => {
-      if (poll.id === pollId && !poll.userVote) {
-        const updatedOptions = poll.options.map(option => 
-          option.id === optionId 
-            ? { ...option, votes: option.votes + 1 }
-            : option
-        );
-        return {
-          ...poll,
-          options: updatedOptions,
-          totalVotes: poll.totalVotes + 1,
-          userVote: optionId
-        };
-      }
-      return poll;
-    }));
+  const userId = user?.id;
+
+  const formattedPolls: PollType[] = useMemo(() => {
+    return polls.map(poll => {
+      const userVoteOption = poll.options.find(option => option.voters?.includes(userId || ''));
+      return {
+        id: poll.id,
+        question: poll.question,
+        options: poll.options.map(option => ({
+          id: option.id,
+          text: option.text,
+          votes: option.votes,
+          voters: option.voters
+        })),
+        totalVotes: poll.total_votes,
+        userVote: userVoteOption?.id,
+        status: poll.status,
+        createdAt: poll.created_at
+      };
+    });
+  }, [polls, userId]);
+
+  const handleVote = async (pollId: string, optionId: string) => {
+    try {
+      await votePollAsync({ pollId, optionId });
+    } catch (error) {
+      console.error('Failed to vote on poll:', error);
+    }
   };
 
-  const handleCreatePoll = (newPoll: PollType) => {
-    setPolls([newPoll, ...polls]);
-    setShowCreatePoll(false);
+  const handleCreatePoll = async (question: string, options: string[]) => {
+    try {
+      await createPollAsync({ question, options });
+      setShowCreatePoll(false);
+    } catch (error) {
+      console.error('Failed to create poll:', error);
+    }
   };
 
   return (
     <div className="space-y-6">
-      {/* Create Poll Button */}
       {!showCreatePoll && (
         <Button
           onClick={() => setShowCreatePoll(true)}
@@ -67,22 +74,33 @@ export const PollComponent = () => {
         </Button>
       )}
 
-      {/* Create Poll Form */}
       {showCreatePoll && (
         <CreatePollForm
           onCreatePoll={handleCreatePoll}
           onCancel={() => setShowCreatePoll(false)}
+          isSubmitting={isCreatingPoll}
         />
       )}
 
-      {/* Existing Polls */}
-      {polls.map((poll) => (
-        <Poll
-          key={poll.id}
-          poll={poll}
-          onVote={handleVote}
-        />
-      ))}
+      {isLoading ? (
+        <div className="flex justify-center py-10">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+        </div>
+      ) : formattedPolls.length === 0 ? (
+        <div className="text-center py-10 text-muted-foreground text-sm">
+          No polls have been created yet.
+        </div>
+      ) : (
+        formattedPolls.map(poll => (
+          <Poll
+            key={poll.id}
+            poll={poll}
+            onVote={handleVote}
+            disabled={poll.status === 'closed' || !userId}
+            isVoting={isVoting}
+          />
+        ))
+      )}
     </div>
   );
 };

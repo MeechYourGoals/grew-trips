@@ -15,7 +15,11 @@ interface Comment {
   linkTitle?: string;
 }
 
-export const CommentsWall = () => {
+interface CommentsWallProps {
+  tripId: string;
+}
+
+export const CommentsWall = ({ tripId }: CommentsWallProps) => {
   const [comments, setComments] = useState<Comment[]>([
     {
       id: '1',
@@ -81,7 +85,7 @@ export const CommentsWall = () => {
           <MessageCircle size={20} className="text-glass-enterprise-blue" />
           Group Polls
         </h3>
-        <PollComponent />
+        <PollComponent tripId={tripId} />
       </div>
 
       {/* Comments Section */}

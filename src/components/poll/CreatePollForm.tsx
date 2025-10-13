@@ -2,15 +2,15 @@
 import React from 'react';
 import { Plus, X } from 'lucide-react';
 import { Button } from '../ui/button';
-import { Poll } from './types';
 import { usePollManager } from '@/hooks/usePollManager';
 
 interface CreatePollFormProps {
-  onCreatePoll: (poll: Poll) => void;
+  onCreatePoll: (question: string, options: string[]) => Promise<void> | void;
   onCancel: () => void;
+  isSubmitting?: boolean;
 }
 
-export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) => {
+export const CreatePollForm = ({ onCreatePoll, onCancel, isSubmitting = false }: CreatePollFormProps) => {
   const {
     question,
     options,
@@ -18,25 +18,21 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
     addOption,
     updateOption,
     removeOption,
-    getPollData
+    getPollData,
+    resetForm
   } = usePollManager();
 
-  const handleCreatePoll = () => {
+  const handleCancel = () => {
+    resetForm();
+    onCancel();
+  };
+
+  const handleCreatePoll = async () => {
     const pollData = getPollData();
     if (!pollData) return;
 
-    const newPoll: Poll = {
-      id: Date.now().toString(),
-      question: pollData.question,
-      options: pollData.options.map((opt, index) => ({
-        id: String.fromCharCode(97 + index),
-        text: opt,
-        votes: 0
-      })),
-      totalVotes: 0
-    };
-
-    onCreatePoll(newPoll);
+    await onCreatePoll(pollData.question, pollData.options);
+    resetForm();
   };
 
   return (
@@ -44,7 +40,7 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-white">Create New Poll</h3>
         <button
-          onClick={onCancel}
+          onClick={handleCancel}
           className="w-8 h-8 rounded-full bg-glass-slate-bg hover:bg-glass-slate-border flex items-center justify-center transition-colors"
         >
           <X size={16} className="text-gray-400" />
@@ -102,19 +98,19 @@ export const CreatePollForm = ({ onCreatePoll, onCancel }: CreatePollFormProps) 
         </div>
 
         <div className="flex gap-3 pt-2">
-          <Button
-            onClick={onCancel}
-            variant="outline"
-            className="flex-1 h-10 rounded-lg border border-glass-slate-border hover:border-gray-500 font-semibold bg-glass-slate-bg text-white hover:bg-glass-slate-border"
-          >
-            Cancel
-          </Button>
+        <Button
+          onClick={handleCancel}
+          variant="outline"
+          className="flex-1 h-10 rounded-lg border border-glass-slate-border hover:border-gray-500 font-semibold bg-glass-slate-bg text-white hover:bg-glass-slate-border"
+        >
+          Cancel
+        </Button>
           <Button
             onClick={handleCreatePoll}
-            disabled={!question.trim() || options.filter(opt => opt.text.trim()).length < 2}
+            disabled={isSubmitting || !question.trim() || options.filter(opt => opt.text.trim()).length < 2}
             className="flex-1 h-10 rounded-lg bg-gradient-to-r from-glass-enterprise-blue to-glass-enterprise-blue-light hover:from-glass-enterprise-blue-light hover:to-glass-enterprise-blue font-semibold text-white border border-glass-enterprise-blue/50"
           >
-            Create Poll
+            {isSubmitting ? 'Creating...' : 'Create Poll'}
           </Button>
         </div>
       </div>
