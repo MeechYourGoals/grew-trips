@@ -5,6 +5,7 @@ import { TripPreferences as TripPreferencesType, DIETARY_OPTIONS, VIBE_OPTIONS, 
 import { Input } from './ui/input';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { useTripVariant } from '../contexts/TripVariantContext';
+import { useDemoMode } from '../hooks/useDemoMode';
 
 interface TripPreferencesProps {
   tripId: string;
@@ -14,6 +15,7 @@ interface TripPreferencesProps {
 
 export const TripPreferences = ({ tripId, onPreferencesChange, initialPreferences }: TripPreferencesProps) => {
   const { isPlus } = useConsumerSubscription();
+  const { isDemoMode } = useDemoMode();
   const { accentColors } = useTripVariant();
   const [preferences, setPreferences] = useState<TripPreferencesType>({
     dietary: initialPreferences?.dietary || [],
@@ -90,7 +92,7 @@ export const TripPreferences = ({ tripId, onPreferencesChange, initialPreference
     onPreferencesChange(newPreferences);
   };
 
-  if (!isPlus) {
+  if (!isPlus && !isDemoMode) {
     return (
       <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 relative">
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm rounded-2xl flex items-center justify-center z-10">
@@ -138,7 +140,9 @@ export const TripPreferences = ({ tripId, onPreferencesChange, initialPreference
         </div>
         <div className="ml-auto">
           <div className={`bg-gradient-to-r from-${accentColors.primary}/20 to-${accentColors.secondary}/20 px-3 py-1 rounded-full`}>
-            <span className={`text-${accentColors.primary} text-sm font-medium`}>PLUS</span>
+            <span className={`text-${accentColors.primary} text-sm font-medium`}>
+              {isDemoMode ? 'DEMO MODE' : 'PLUS'}
+            </span>
           </div>
         </div>
       </div>
