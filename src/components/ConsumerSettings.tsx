@@ -26,7 +26,7 @@ export const ConsumerSettings = ({ currentUserId, initialSection }: ConsumerSett
   const sections = [
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'billing', label: 'Billing & Subscription', icon: CreditCard },
-    { id: 'ai-concierge', label: 'AI Concierge & Preferences', icon: Sparkles },
+    { id: 'ai-concierge', label: 'AI Concierge', icon: Sparkles },
     { id: 'travel-wallet', label: 'Travel Wallet', icon: Wallet },
     { id: 'saved-recs', label: 'Saved Recommendations', icon: Bookmark },
     { id: 'notifications', label: 'Notifications', icon: Bell },

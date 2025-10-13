@@ -6,20 +6,36 @@ import { useConsumerSubscription } from '../../hooks/useConsumerSubscription';
 import { useAuth } from '../../hooks/useAuth';
 import { userPreferencesService } from '../../services/userPreferencesService';
 import { toast } from 'sonner';
+import { useDemoMode } from '../../hooks/useDemoMode';
 
 export const ConsumerAIConciergeSection = () => {
   const { isPlus, upgradeToPlus } = useConsumerSubscription();
   const { user } = useAuth();
+  const { isDemoMode } = useDemoMode();
   const [preferences, setPreferences] = useState<TripPreferencesType | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (user && isPlus) {
+    if (isDemoMode) {
+      // Set mock preferences for demo mode
+      setPreferences({
+        dietary: ['Vegan', 'Gluten-Free'],
+        vibe: ['Adventure', 'Cultural'],
+        accessibility: ['Wheelchair Access', 'EV Charging'],
+        business: [],
+        entertainment: ['Live Music'],
+        lifestyle: ['Eco-Friendly'],
+        budgetMin: 50,
+        budgetMax: 200,
+        timePreference: 'early-riser'
+      });
+      setIsLoading(false);
+    } else if (user && isPlus) {
       loadPreferences();
     } else {
       setIsLoading(false);
     }
-  }, [user, isPlus]);
+  }, [user, isPlus, isDemoMode]);
 
   const loadPreferences = async () => {
     if (!user) return;
@@ -34,9 +50,14 @@ export const ConsumerAIConciergeSection = () => {
   };
 
   const handlePreferencesChange = async (newPrefs: TripPreferencesType) => {
-    if (!user) return;
-    
     setPreferences(newPrefs);
+    
+    if (isDemoMode) {
+      toast.success('Demo: Preferences preview updated');
+      return;
+    }
+    
+    if (!user) return;
     
     try {
       const success = await userPreferencesService.setAIPreferences(user.id, newPrefs);
@@ -51,7 +72,7 @@ export const ConsumerAIConciergeSection = () => {
     }
   };
 
-  if (!isPlus) {
+  if (!isPlus && !isDemoMode) {
     return (
       <div className="space-y-6">
         {/* Plus Upgrade Prompt */}
@@ -111,7 +132,9 @@ export const ConsumerAIConciergeSection = () => {
           </p>
         </div>
         <div className="bg-gradient-to-r from-yellow-500/20 to-orange-500/20 px-4 py-2 rounded-full">
-          <span className="text-yellow-400 font-semibold text-sm">PLUS</span>
+          <span className="text-yellow-400 font-semibold text-sm">
+            {isDemoMode ? 'DEMO MODE' : 'PLUS'}
+          </span>
         </div>
       </div>
 
