@@ -108,7 +108,11 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
       }
     } catch (error) {
       console.error('Error creating trip:', error);
-      toast.error('Failed to create trip. Please try again.');
+      if (error instanceof Error && error.message === 'AUTHENTICATION_REQUIRED') {
+        toast.error('Please sign in to create a trip');
+      } else {
+        toast.error('Failed to create trip. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }

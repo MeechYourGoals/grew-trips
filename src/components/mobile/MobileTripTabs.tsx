@@ -63,7 +63,7 @@ export const MobileTripTabs = ({
       case 'tasks':
         return <MobileTripTasks tripId={tripId} />;
       case 'polls':
-        return <CommentsWall />;
+        return <CommentsWall tripId={tripId} />;
       case 'media':
         return <MobileUnifiedMediaHub tripId={tripId} />;
       case 'places':

@@ -69,7 +69,7 @@ export const useTrips = () => {
     // CRITICAL: Validate user authentication state
     if (!user || !user.id) {
       console.error('[useTrips] Cannot create trip: No authenticated user or missing user ID', { user });
-      return null;
+      throw new Error('AUTHENTICATION_REQUIRED');
     }
     
     console.log('[useTrips] Creating trip with data:', tripData, 'User ID:', user.id);
