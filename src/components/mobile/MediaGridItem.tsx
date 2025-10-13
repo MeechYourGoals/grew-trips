@@ -29,7 +29,11 @@ export const MediaGridItem: React.FC<MediaGridItemProps> = ({ item, onPress, onL
         await hapticService.light();
         onPress();
       }}
-      className="aspect-square rounded-lg overflow-hidden bg-white/10 active:opacity-80 transition-opacity relative"
+      className="media-grid-item rounded-md bg-white/5"
+      style={{ 
+        WebkitTapHighlightColor: 'transparent',
+        WebkitTouchCallout: 'none' 
+      }}
     >
       <OptimizedImage
         src={item.url}
@@ -39,8 +43,10 @@ export const MediaGridItem: React.FC<MediaGridItemProps> = ({ item, onPress, onL
         loading="lazy"
       />
       {item.type === 'video' && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-          <Film size={24} className="text-white" />
+        <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-[1px]">
+          <div className="bg-white/20 backdrop-blur-sm rounded-full p-2">
+            <Film size={20} className="text-white drop-shadow-lg" />
+          </div>
         </div>
       )}
     </button>

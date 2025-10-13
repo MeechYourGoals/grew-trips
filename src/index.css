@@ -348,3 +348,99 @@
   }
 }
 
+/* Native App Feel Optimizations */
+@layer utilities {
+  /* Momentum scrolling for iOS */
+  .native-scroll {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+  }
+  
+  /* Instagram-like media grid */
+  .media-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px; /* Tight gaps like Instagram */
+  }
+  
+  /* Media grid item with native touch feel */
+  .media-grid-item {
+    aspect-ratio: 1;
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform;
+    transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .media-grid-item:active {
+    transform: scale(0.97);
+  }
+  
+  /* Button with native iOS feel */
+  .native-button {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+    will-change: transform;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  .native-button:active {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+  
+  /* Smooth tab transitions */
+  .native-tab {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, background-color;
+  }
+  
+  .native-tab:active {
+    transform: scale(0.95);
+  }
+  
+  /* Loading skeleton with shimmer */
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+  
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite;
+  }
+  
+  /* Pull-to-refresh indicator */
+  .pull-to-refresh {
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  
+  /* Safe area aware containers */
+  .safe-container {
+    padding-left: max(1rem, env(safe-area-inset-left));
+    padding-right: max(1rem, env(safe-area-inset-right));
+  }
+  
+  .safe-container-top {
+    padding-top: max(1rem, env(safe-area-inset-top));
+  }
+  
+  .safe-container-bottom {
+    padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  }
+}
+
