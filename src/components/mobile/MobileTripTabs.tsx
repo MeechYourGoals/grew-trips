@@ -6,7 +6,7 @@ import { MobileTripTasks } from './MobileTripTasks';
 import { CommentsWall } from '../CommentsWall';
 import { MobileUnifiedMediaHub } from './MobileUnifiedMediaHub';
 import { PlacesSection } from '../PlacesSection';
-import { PerplexityChat } from '../PerplexityChat';
+import { AIConciergeChat } from '../AIConciergeChat';
 import { hapticService } from '../../services/hapticService';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 import { useDemoMode } from '../../hooks/useDemoMode';
@@ -70,7 +70,7 @@ export const MobileTripTabs = ({
         return <PlacesSection tripId={tripId} />;
       case 'concierge':
         return (
-          <PerplexityChat 
+          <AIConciergeChat 
             tripId={tripId}
             basecamp={basecamp}
             isDemoMode={isDemoMode}

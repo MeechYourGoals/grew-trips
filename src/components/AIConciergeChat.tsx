@@ -1,16 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import { Sparkles, WifiOff, Wifi, AlertCircle, CheckCircle, Activity, Search } from 'lucide-react';
+import { Sparkles, CheckCircle, Search } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
 import { TripContextService } from '../services/tripContextService';
 import { EnhancedTripContextService } from '../services/enhancedTripContextService';
-import { PerplexityConciergeService, PerplexityResponse } from '../services/perplexityConciergeService';
 import { useBasecamp } from '../contexts/BasecampContext';
 import { ChatMessages } from './chat/ChatMessages';
 import { AiChatInput } from './chat/AiChatInput';
+import { supabase } from '@/integrations/supabase/client';
 
-interface PerplexityChatProps {
+interface AIConciergeChatProps {
   tripId: string;
   basecamp?: { name: string; address: string };
   preferences?: TripPreferences;
@@ -22,7 +22,6 @@ interface ChatMessage {
   type: 'user' | 'assistant';
   content: string;
   timestamp: string;
-  isFromPerplexity?: boolean;
   usage?: {
     prompt_tokens: number;
     completion_tokens: number;
@@ -35,37 +34,13 @@ interface ChatMessage {
   }>;
 }
 
-export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = false }: PerplexityChatProps) => {
+export const AIConciergeChat = ({ tripId, basecamp, preferences, isDemoMode = false }: AIConciergeChatProps) => {
   const { isPlus } = useConsumerSubscription();
   const { basecamp: globalBasecamp } = useBasecamp();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [aiStatus, setAiStatus] = useState<'checking' | 'connected' | 'limited' | 'error' | 'thinking'>('checking');
-  const [healthStatus, setHealthStatus] = useState<{ healthy: boolean; model?: string; latency?: number; error?: string } | null>(null);
-
-  // Health check on component mount and periodically
-  useEffect(() => {
-    const checkHealth = async () => {
-      try {
-        const health = await PerplexityConciergeService.healthCheck();
-        setHealthStatus(health);
-        setAiStatus(health.healthy ? 'connected' : 'limited');
-      } catch (error) {
-        console.error('❌ Health check failed:', error);
-        setAiStatus('error');
-      }
-    };
-
-    checkHealth();
-    const healthInterval = setInterval(() => {
-      if (aiStatus !== 'connected') {
-        checkHealth();
-      }
-    }, 30000);
-
-    return () => clearInterval(healthInterval);
-  }, [aiStatus]);
+  const [aiStatus, setAiStatus] = useState<'checking' | 'connected' | 'limited' | 'error' | 'thinking'>('connected');
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isTyping) return;
@@ -87,7 +62,6 @@ export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = fal
       // Get full trip context with enhanced contextual data
       let tripContext;
       try {
-        // Try enhanced context service first for better contextual awareness
         tripContext = await EnhancedTripContextService.getEnhancedTripContext(tripId, false);
       } catch (error) {
         console.warn('Enhanced context failed, falling back to basic context:', error);
@@ -117,7 +91,7 @@ export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = fal
         content: msg.content
       }));
 
-      // Prepare basecamp location for the service call - ensure name is always present
+      // Prepare basecamp location
       const basecampLocation = globalBasecamp ? {
         name: globalBasecamp.name || 'Basecamp',
         address: globalBasecamp.address
@@ -126,45 +100,42 @@ export const PerplexityChat = ({ tripId, basecamp, preferences, isDemoMode = fal
         address: basecamp.address
       } : undefined);
 
-      // Send to AI service (Lovable AI for demo, Perplexity for Plus)
-      const response: PerplexityResponse = await PerplexityConciergeService.sendMessage(
-        currentInput,
-        tripContext,
-        basecampLocation,
-        preferences,
-        chatHistory,
-        isDemoMode
-      );
+      // Send to Lovable AI Concierge
+      const { data, error } = await supabase.functions.invoke('lovable-concierge', {
+        body: {
+          message: currentInput,
+          tripContext,
+          basecampLocation,
+          preferences,
+          chatHistory,
+          isDemoMode
+        }
+      });
 
-      // Update AI status based on response
-      if (response.success) {
-        setAiStatus('connected');
-      } else {
-        setAiStatus('limited');
-      }
+      if (error) throw error;
+
+      setAiStatus('connected');
 
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: response.response || `Sorry, I encountered an error: ${response.error}`,
+        content: data.response || 'Sorry, I encountered an error processing your request.',
         timestamp: new Date().toISOString(),
-        isFromPerplexity: response.success,
-        usage: response.usage,
-        sources: response.sources || response.citations
+        usage: data.usage,
+        sources: data.sources || data.citations
       };
       
       setMessages(prev => [...prev, assistantMessage]);
 
     } catch (error) {
-      console.error('❌ Perplexity Chat error:', error);
+      console.error('❌ AI Concierge error:', error);
       setAiStatus('error');
       
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
         content: `I'm having trouble connecting to my AI services right now. Please try again in a moment.`,
-        timestamp: new Date().toISOString(),
-        isFromPerplexity: false
+        timestamp: new Date().toISOString()
       };
       
       setMessages(prev => [...prev, errorMessage]);

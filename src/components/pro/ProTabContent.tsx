@@ -5,7 +5,7 @@ import { TripTabs } from '../TripTabs';
 import { PlacesSection } from '../PlacesSection';
 import { CommentsWall } from '../CommentsWall';
 import { TripChat } from '../TripChat';
-import { PerplexityChat } from '../PerplexityChat';
+import { AIConciergeChat } from '../AIConciergeChat';
 import { GroupCalendar } from '../GroupCalendar';
 
 import { TeamTab } from './TeamTab';
@@ -151,7 +151,7 @@ export const ProTabContent = ({
         );
       case 'ai-chat':
         return (
-          <PerplexityChat 
+          <AIConciergeChat 
             tripId={tripId}
             basecamp={basecamp}
           />

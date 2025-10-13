@@ -1,15 +1,13 @@
 
 import React from 'react';
-import { Sparkles, Users, Calendar, Network, ClipboardList, MessageCircle, MessageSquare } from 'lucide-react';
+import { Sparkles, Users, Calendar, ClipboardList, MessageCircle, MessageSquare } from 'lucide-react';
 import { TripChat } from '../TripChat';
-import { PerplexityChat } from '../PerplexityChat';
+import { AIConciergeChat } from '../AIConciergeChat';
 import { GroupCalendar } from '../GroupCalendar';
 
-import { RegistrationTab } from './RegistrationTab';
 import { AgendaBuilder } from './AgendaBuilder';
 import { SpeakerDirectory } from './SpeakerDirectory';
 import { LiveQAPanel } from './LiveQAPanel';
-import { EnhancedNetworkingHub } from './EnhancedNetworkingHub';
 import { TripTasksTab } from '../todo/TripTasksTab';
 
 import { EventData } from '../../types/events';
@@ -43,7 +41,6 @@ export const EventDetailContent = ({
     { id: 'todo', label: 'Tasks', icon: ClipboardList },
     { id: 'agenda', label: 'Agenda', icon: Calendar, eventOnly: true },
     { id: 'speakers', label: 'Speakers', icon: Users, eventOnly: true },
-    { id: 'networking', label: 'Networking', icon: Network, eventOnly: true },
     { id: 'live-qa', label: 'Live Q&A', icon: MessageSquare, eventOnly: true },
     { id: 'ai-chat', label: 'Concierge', icon: Sparkles }
   ];
@@ -58,17 +55,6 @@ export const EventDetailContent = ({
         return <GroupCalendar tripId={tripId} />;
       case 'todo':
         return <TripTasksTab tripId={tripId} />;
-      case 'registration':
-        return (
-          <RegistrationTab
-            eventId={tripId}
-            capacity={eventData.capacity || eventData.attendanceExpected}
-            registeredCount={eventData.attendanceExpected}
-            checkedInCount={eventData.checkedInCount || Math.floor(eventData.attendanceExpected * 0.3)}
-            registrationStatus={eventData.registrationStatus || 'open'}
-            userRole={eventData.userRole || 'attendee'}
-          />
-        );
       case 'agenda':
         return (
           <AgendaBuilder
@@ -85,21 +71,6 @@ export const EventDetailContent = ({
             userRole={eventData.userRole || 'attendee'}
           />
         );
-      case 'networking':
-        return (
-          <EnhancedNetworkingHub
-            eventId={tripId}
-            attendees={eventData.participants.map(p => ({
-              id: p.id.toString(),
-              name: p.name,
-              avatar: p.avatar,
-              role: p.role,
-              company: 'Sample Company',
-              bio: 'Passionate about innovation and networking.',
-              interests: ['technology', 'innovation', 'startups']
-            }))}
-          />
-        );
       case 'live-qa':
         return (
           <LiveQAPanel
@@ -110,7 +81,7 @@ export const EventDetailContent = ({
         );
       case 'ai-chat':
         return (
-          <PerplexityChat 
+          <AIConciergeChat 
             tripId={tripId}
             basecamp={basecamp}
           />

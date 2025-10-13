@@ -12,7 +12,7 @@ import { TripTasksTab } from './todo/TripTasksTab';
 import { UnifiedMediaHub } from './UnifiedMediaHub';
 import { EnhancedMediaAggregatedLinks } from './EnhancedMediaAggregatedLinks';
 import { PlacesSection } from './PlacesSection';
-import { PerplexityChat } from './PerplexityChat';
+import { AIConciergeChat } from './AIConciergeChat';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useFeatureToggle } from '../hooks/useFeatureToggle';
 import { TripPreferences as TripPreferencesType } from '../types/consumer';
@@ -81,7 +81,7 @@ export const TripTabs = ({
         return <PlacesSection tripId={tripId} tripName={tripName} />;
       case 'concierge':
         return (
-          <PerplexityChat 
+          <AIConciergeChat 
             tripId={tripId}
             basecamp={basecamp}
             preferences={tripPreferences}
