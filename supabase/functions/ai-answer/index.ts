@@ -1,6 +1,13 @@
 import { serve } from "https://deno.land/std@0.224.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { createSecureResponse, createErrorResponse, createOptionsResponse } from "../_shared/securityHeaders.ts";
+import { AIAnswerSchema, validateInput } from "../_shared/validation.ts";
+import { sanitizeErrorForClient, logError } from "../_shared/errorHandling.ts";
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+}
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -14,7 +21,7 @@ serve(async (req) => {
     const openaiApiKey = Deno.env.get('OPENAI_API_KEY')!;
 
     if (!openaiApiKey) {
-      return createErrorResponse('OpenAI API key not configured', 500);
+      return createErrorResponse('Service configuration error', 500);
     }
 
     // Create Supabase client
@@ -28,7 +35,7 @@ serve(async (req) => {
     // Get user from request
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      return createErrorResponse('No authorization header', 401);
+      return createErrorResponse('Authentication required', 401);
     }
 
     const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
@@ -36,14 +43,16 @@ serve(async (req) => {
       return createErrorResponse('Unauthorized', 401);
     }
 
-    const { query, tripId, chatHistory = [] } = await req.json();
-
-    if (!query || !tripId) {
-      return new Response(
-        JSON.stringify({ error: 'Query and tripId are required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      );
+    // Validate and sanitize input
+    const requestBody = await req.json();
+    const validation = validateInput(AIAnswerSchema, requestBody);
+    
+    if (!validation.success) {
+      logError('AI_ANSWER_VALIDATION', validation.error, { userId: user.id });
+      return createErrorResponse(validation.error, 400);
     }
+
+    const { query, tripId, chatHistory = [] } = validation.data;
 
     // Check if user is member of trip
     const { data: membership } = await supabase
@@ -170,7 +179,10 @@ Instructions:
     );
 
   } catch (error) {
-    console.error('Error in ai-answer function:', error);
-    return createErrorResponse('Internal server error', 500);
+    logError('AI_ANSWER', error);
+    return new Response(
+      JSON.stringify({ error: sanitizeErrorForClient(error) }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
 });

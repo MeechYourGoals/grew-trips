@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { corsHeaders } from "../_shared/cors.ts";
+import { CreateTripSchema, validateInput } from "../_shared/validation.ts";
+import { sanitizeErrorForClient, logError } from "../_shared/errorHandling.ts";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -10,7 +12,10 @@ serve(async (req) => {
   try {
     const authHeader = req.headers.get('authorization');
     if (!authHeader) {
-      throw new Error('Authorization header required');
+      return new Response(
+        JSON.stringify({ error: 'Authentication required' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -20,21 +25,25 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(authHeader.replace('Bearer ', ''));
     
     if (authError || !user) {
-      throw new Error('Invalid authentication token');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    const { name, description, destination, start_date, end_date, trip_type, cover_image_url } = await req.json();
+    // Validate and sanitize input
+    const requestBody = await req.json();
+    const validation = validateInput(CreateTripSchema, requestBody);
+    
+    if (!validation.success) {
+      logError('CREATE_TRIP_VALIDATION', validation.error, { userId: user.id });
+      return new Response(
+        JSON.stringify({ error: validation.error }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
-    // Validation
-    if (!name || name.trim().length === 0) {
-      throw new Error('Trip name is required');
-    }
-    if (name.length > 100) {
-      throw new Error('Trip name must be less than 100 characters');
-    }
-    if (trip_type && !['consumer', 'pro', 'event'].includes(trip_type)) {
-      throw new Error('Invalid trip type');
-    }
+    const { name, description, destination, start_date, end_date, trip_type, cover_image_url } = validation.data;
 
     // Check Pro tier access for pro/event trips
     if (trip_type === 'pro' || trip_type === 'event') {
@@ -87,10 +96,10 @@ serve(async (req) => {
     );
 
   } catch (error) {
-    console.error('Error creating trip:', error);
+    logError('CREATE_TRIP', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      JSON.stringify({ error: sanitizeErrorForClient(error) }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });

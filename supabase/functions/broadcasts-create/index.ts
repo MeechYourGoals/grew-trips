@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.3';
 import { createSecureResponse, createErrorResponse, createOptionsResponse } from "../_shared/securityHeaders.ts";
+import { BroadcastCreateSchema, validateInput } from "../_shared/validation.ts";
+import { sanitizeErrorForClient, logError } from "../_shared/errorHandling.ts";
 
 serve(async (req) => {
   // Handle CORS preflight requests
@@ -15,7 +17,7 @@ serve(async (req) => {
 
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
-      throw new Error('Missing authorization header');
+      return createErrorResponse('Authentication required', 401);
     }
 
     // Get user from auth token
@@ -23,14 +25,19 @@ serve(async (req) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
     
     if (authError || !user) {
-      throw new Error('Invalid authentication token');
+      return createErrorResponse('Unauthorized', 401);
     }
 
-    const { trip_id, content, location, tag, scheduled_time } = await req.json();
-
-    if (!trip_id || !content) {
-      throw new Error('Missing required fields: trip_id, content');
+    // Validate and sanitize input
+    const requestBody = await req.json();
+    const validation = validateInput(BroadcastCreateSchema, requestBody);
+    
+    if (!validation.success) {
+      logError('BROADCAST_CREATE_VALIDATION', validation.error, { userId: user.id });
+      return createErrorResponse(validation.error, 400);
     }
+
+    const { trip_id, content, location, tag, scheduled_time } = validation.data;
 
     // Verify user is a member of the trip
     const { data: membership, error: membershipError } = await supabase
@@ -82,7 +89,7 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error('Error in broadcasts-create function:', error);
-    return createErrorResponse(error instanceof Error ? error.message : 'Internal server error', 500);
+    logError('BROADCAST_CREATE', error);
+    return createErrorResponse(sanitizeErrorForClient(error), 500);
   }
 });

@@ -1,23 +1,12 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { AIFeaturesSchema, validateInput } from "../_shared/validation.ts";
+import { sanitizeErrorForClient, logError } from "../_shared/errorHandling.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
-
-interface RequestBody {
-  feature: 'review-analysis' | 'message-template' | 'priority-classify' | 'send-time-suggest';
-  url?: string;
-  venue_name?: string;
-  place_id?: string;
-  address?: string;
-  content?: string;
-  template_id?: string;
-  context?: Record<string, any>;
-  userId?: string;
-  tripId?: string;
 }
 
 serve(async (req) => {
@@ -37,41 +26,19 @@ serve(async (req) => {
 
     const { data: { user } } = await supabase.auth.getUser(jwt)
     if (!user) {
-      return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
-        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+      return createErrorResponse('Unauthorized', 401)
     }
 
-    // Parse request body
-    const { feature, url, venue_name, place_id, address, content, template_id, context, userId, tripId }: RequestBody = await req.json()
-
-    // Validate input based on feature type
-    if (!feature) {
-      return new Response(
-        JSON.stringify({ error: 'Missing feature parameter' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
+    // Validate and sanitize input
+    const requestBody = await req.json()
+    const validation = validateInput(AIFeaturesSchema, requestBody)
+    
+    if (!validation.success) {
+      logError('AI_FEATURES_VALIDATION', validation.error, { userId: user.id })
+      return createErrorResponse(validation.error, 400)
     }
 
-    // Validation for review analysis - need either URL or venue name
-    if (feature === 'review-analysis' && !url && !venue_name) {
-      return new Response(
-        JSON.stringify({ error: 'Missing URL or venue name parameter' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-      )
-    }
-
-    if (feature === 'review-analysis' && url) {
-      try {
-        new URL(url)
-      } catch {
-        return new Response(
-          JSON.stringify({ error: 'Invalid URL format' }),
-          { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        )
-      }
-    }
+    const { feature, url, venue_name, place_id, address, content, template_id, context, userId, tripId } = validation.data
 
     let result;
 
@@ -96,9 +63,9 @@ serve(async (req) => {
     )
 
   } catch (error) {
-    console.error('AI Features Error:', error)
+    logError('AI_FEATURES', error)
     return new Response(
-      JSON.stringify({ error: 'Internal server error' }),
+      JSON.stringify({ error: sanitizeErrorForClient(error) }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
