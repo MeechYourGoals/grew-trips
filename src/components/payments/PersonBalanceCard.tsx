@@ -139,15 +139,23 @@ export const PersonBalanceCard = ({ balance, tripId }: PersonBalanceCardProps) =
           {/* Details Section */}
           {showDetails && (
             <div className="mt-4 pt-4 border-t border-border space-y-2">
-              <h5 className="font-medium text-sm text-muted-foreground mb-2">Payment Details</h5>
-              {balance.unsettledPayments.map((payment, idx) => (
-                <div key={idx} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{payment.description}</span>
-                  <span className={payment.amount < 0 ? 'text-orange-600' : 'text-green-600'}>
-                    {formatCurrency(Math.abs(payment.amount))}
-                  </span>
-                </div>
-              ))}
+              <h5 className="font-medium text-sm text-muted-foreground mb-2">
+                Individual Payments
+              </h5>
+              {balance.unsettledPayments.length > 0 ? (
+                balance.unsettledPayments.map((payment, idx) => (
+                  <div key={idx} className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">{payment.description}</span>
+                    <span className={payment.amount < 0 ? 'text-orange-600' : 'text-green-600'}>
+                      {formatCurrency(Math.abs(payment.amount))}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground italic">
+                  No itemized breakdown available
+                </p>
+              )}
             </div>
           )}
         </CardContent>

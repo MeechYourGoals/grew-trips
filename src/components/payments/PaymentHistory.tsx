@@ -125,6 +125,9 @@ export const PaymentHistory = ({ tripId }: PaymentHistoryProps) => {
     <Card>
       <CardHeader>
         <CardTitle>Payment History</CardTitle>
+        <p className="text-sm text-muted-foreground mt-1">
+          All payment requests created for this trip
+        </p>
       </CardHeader>
       <CardContent>
         {payments.length > 0 ? (
@@ -134,7 +137,7 @@ export const PaymentHistory = ({ tripId }: PaymentHistoryProps) => {
                 <div className="flex-1">
                   <p className="font-medium text-foreground">{payment.description}</p>
                   <p className="text-sm text-muted-foreground">
-                    By {payment.createdByName || 'Unknown'} • Split {payment.splitCount} ways • {format(new Date(payment.createdAt), 'MMM d, yyyy')}
+                    {payment.createdByName || 'Trip member'} requested • Split among {payment.splitCount} people • {format(new Date(payment.createdAt), 'MMM d, yyyy')}
                   </p>
                 </div>
                 <div className="text-right">
