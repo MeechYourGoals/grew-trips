@@ -209,7 +209,7 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
                   />
                   <label 
                     htmlFor={`payment-${method.id}`}
-                    className="text-sm cursor-pointer flex items-center gap-1 !text-white"
+                    className="text-sm cursor-pointer flex items-center gap-1 !text-black"
                   >
                     {method.label}
                   </label>
