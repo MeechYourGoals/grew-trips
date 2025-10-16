@@ -33,7 +33,7 @@ export const ReceiptUploadModal = ({
   const [isUploading, setIsUploading] = useState(false);
   const [parsedResult, setParsedResult] = useState<any | null>(null);
 
-  const paymentMethods: PaymentMethod[] = ['venmo', 'splitwise', 'cashapp', 'zelle'];
+  const paymentMethods: PaymentMethod[] = ['venmo', 'cashapp', 'zelle', 'paypal', 'applecash'];
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

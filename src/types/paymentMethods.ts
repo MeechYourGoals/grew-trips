@@ -1,4 +1,4 @@
-export type PaymentMethodId = 'venmo' | 'splitwise' | 'cashapp' | 'zelle';
+export type PaymentMethodId = 'venmo' | 'cashapp' | 'zelle' | 'paypal' | 'applecash';
 
 export interface PaymentMethodOption {
   id: PaymentMethodId;

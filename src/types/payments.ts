@@ -6,7 +6,7 @@ import { Receipt } from './receipts';
 // PaymentMethod structure used throughout the app
 export interface PaymentMethod {
   id: string;
-  type: PaymentMethodId | 'venmo' | 'zelle' | 'cashapp' | 'applepay' | 'paypal' | 'cash' | 'other';
+  type: PaymentMethodId | 'venmo' | 'zelle' | 'cashapp' | 'applepay' | 'paypal' | 'applecash' | 'cash' | 'other';
   identifier: string;
   displayName?: string;
   isPreferred?: boolean;

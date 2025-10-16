@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { MessageCircle, Users, Calendar, Camera, Radio, Link, BarChart3, FileText, ClipboardList, Lock, MapPin, Sparkles } from 'lucide-react';
+import { MessageCircle, Users, Calendar, Camera, Radio, Link, BarChart3, FileText, ClipboardList, Lock, MapPin, Sparkles, DollarSign } from 'lucide-react';
 import { TripChat } from './TripChat';
 import { GroupCalendar } from './GroupCalendar';
 import { PhotoAlbum } from './PhotoAlbum';
@@ -13,6 +13,7 @@ import { UnifiedMediaHub } from './UnifiedMediaHub';
 import { EnhancedMediaAggregatedLinks } from './EnhancedMediaAggregatedLinks';
 import { PlacesSection } from './PlacesSection';
 import { AIConciergeChat } from './AIConciergeChat';
+import { PaymentsTab } from './payments/PaymentsTab';
 import { useTripVariant } from '../contexts/TripVariantContext';
 import { useFeatureToggle } from '../hooks/useFeatureToggle';
 import { TripPreferences as TripPreferencesType } from '../types/consumer';
@@ -55,6 +56,7 @@ export const TripTabs = ({
     { id: 'tasks', label: 'Tasks', icon: ClipboardList, enabled: features.showTasks },
     { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
     { id: 'media', label: 'Media', icon: Camera, enabled: features.showMedia },
+    { id: 'payments', label: 'Payments', icon: DollarSign, enabled: true },
     { id: 'places', label: 'Places', icon: MapPin, enabled: showPlaces },
     { id: 'concierge', label: 'Concierge', icon: Sparkles, enabled: showConcierge }
   ];
@@ -77,6 +79,8 @@ export const TripTabs = ({
         return <GroupCalendar tripId={tripId} />;
       case 'media':
         return <UnifiedMediaHub tripId={tripId} />;
+      case 'payments':
+        return <PaymentsTab tripId={tripId} />;
       case 'places':
         return <PlacesSection tripId={tripId} tripName={tripName} />;
       case 'concierge':

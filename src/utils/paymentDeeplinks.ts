@@ -21,9 +21,13 @@ export const generatePaymentDeeplink = (
       // Zelle doesn't have direct deeplinks, redirect to banking apps or web
       return `https://www.zellepay.com/send-money`;
     
-    case 'splitwise':
-      // Splitwise web app
-      return `https://secure.splitwise.com/`;
+    case 'paypal':
+      // PayPal.Me deeplink format
+      return `https://paypal.me/${encodeURIComponent(recipientName)}/${formattedAmount}`;
+    
+    case 'applecash':
+      // Apple Cash is handled through iMessage, no direct web link
+      return null;
     
     default:
       return null;
@@ -34,12 +38,14 @@ export const getPaymentMethodDisplayName = (method: PaymentMethod): string => {
   switch (method) {
     case 'venmo':
       return 'Venmo';
-    case 'splitwise':
-      return 'Splitwise';
     case 'cashapp':
       return 'Cash App';
     case 'zelle':
       return 'Zelle';
+    case 'paypal':
+      return 'PayPal';
+    case 'applecash':
+      return 'Apple Cash';
     default:
       return method;
   }

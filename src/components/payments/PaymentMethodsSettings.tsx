@@ -48,6 +48,7 @@ export const PaymentMethodsSettings = ({ userId }: PaymentMethodsSettingsProps) 
     { value: 'cashapp', label: 'Cash App', icon: DollarSign, placeholder: '$cashtag' },
     { value: 'applepay', label: 'Apple Pay', icon: Phone, placeholder: 'phone number' },
     { value: 'paypal', label: 'PayPal', icon: Mail, placeholder: 'email@example.com' },
+    { value: 'applecash', label: 'Apple Cash', icon: Phone, placeholder: 'phone number' },
     { value: 'cash', label: 'Cash', icon: DollarSign, placeholder: 'Prefer cash payments' },
     { value: 'other', label: 'Other', icon: CreditCard, placeholder: 'Custom payment method' }
   ];

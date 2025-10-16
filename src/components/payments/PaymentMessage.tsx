@@ -35,10 +35,17 @@ export const PaymentMessage = ({
       cashapp: 'Cash App', 
       applepay: 'Apple Pay',
       paypal: 'PayPal',
+      applecash: 'Apple Cash',
       cash: 'Cash',
       other: 'Other'
     };
     return names[method] || method;
+  };
+
+  const getPrimaryPaymentMethod = (methods: string[]): string => {
+    // Order of preference: venmo, cashapp, zelle, paypal, applecash
+    const priority = ['venmo', 'cashapp', 'zelle', 'paypal', 'applecash'];
+    return methods.find(m => priority.includes(m.split(':')[0])) || methods[0] || 'venmo';
   };
 
   const getPaymentIdentifier = (method: string, payerName: string) => {
@@ -69,7 +76,7 @@ export const PaymentMessage = ({
     });
   };
 
-  const primaryPaymentMethod = payment.paymentMethods[0] || 'venmo';
+  const primaryPaymentMethod = getPrimaryPaymentMethod(payment.paymentMethods);
   const perPersonAmount = amountPerPerson.toFixed(2);
 
   return (

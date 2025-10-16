@@ -46,9 +46,10 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
 
   const paymentMethodOptions: Array<{ id: PaymentMethodId; label: string }> = [
     { id: 'venmo', label: 'Venmo' },
-    { id: 'splitwise', label: 'Splitwise' },
     { id: 'cashapp', label: 'Cash App' },
-    { id: 'zelle', label: 'Zelle' }
+    { id: 'zelle', label: 'Zelle' },
+    { id: 'paypal', label: 'PayPal' },
+    { id: 'applecash', label: 'Apple Cash' }
   ];
 
   const handleSubmit = (e: React.FormEvent) => {

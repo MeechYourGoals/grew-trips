@@ -8,7 +8,7 @@ export interface Receipt {
   totalAmount: number | null;
   currency: string | null;
   parsedData?: any;
-  preferredMethod: 'venmo' | 'splitwise' | 'cashapp' | 'zelle';
+  preferredMethod: 'venmo' | 'cashapp' | 'zelle' | 'paypal' | 'applecash';
   splitCount?: number;
   perPersonAmount?: number;
   createdAt: string;
@@ -18,8 +18,8 @@ export interface ReceiptUpload {
   file: File;
   totalAmount: number;
   currency: string;
-  preferredMethod: 'venmo' | 'splitwise' | 'cashapp' | 'zelle';
+  preferredMethod: 'venmo' | 'cashapp' | 'zelle' | 'paypal' | 'applecash';
   splitCount?: number;
 }
 
-export type PaymentMethod = 'venmo' | 'splitwise' | 'cashapp' | 'zelle';
+export type PaymentMethod = 'venmo' | 'cashapp' | 'zelle' | 'paypal' | 'applecash';

@@ -6,7 +6,7 @@ export interface TripMember {
   avatar?: string;
 }
 
-export type PaymentMethodType = 'venmo' | 'splitwise' | 'cashapp' | 'zelle';
+export type PaymentMethodType = 'venmo' | 'cashapp' | 'zelle' | 'paypal' | 'applecash';
 
 export interface PaymentSplitData {
   amount: number;
@@ -17,7 +17,7 @@ export interface PaymentSplitData {
   paymentMethods: PaymentMethodType[];
 }
 
-export const SUPPORTED_PAYMENT_METHODS: PaymentMethodType[] = ['venmo', 'splitwise', 'cashapp', 'zelle'];
+export const SUPPORTED_PAYMENT_METHODS: PaymentMethodType[] = ['venmo', 'cashapp', 'zelle', 'paypal', 'applecash'];
 
 export const usePaymentSplits = (tripMembers: TripMember[] = []) => {
   const [amount, setAmount] = useState<number>(0);
