@@ -73,7 +73,23 @@ export interface MockMember {
   created_at: string;
 }
 
+export interface SessionPayment {
+  id: string;
+  trip_id: string;
+  amount: number;
+  currency: string;
+  description: string;
+  split_count: number;
+  split_participants: string[];
+  payment_methods: string[];
+  created_by: string;
+  createdByName: string;
+  created_at: string;
+  is_settled: boolean;
+}
+
 class DemoModeService {
+  private sessionPayments: Map<string, SessionPayment[]> = new Map();
   getTripType(trip: any): string {
     if (!trip) return 'demo';
     if (trip.category === 'pro') return 'pro-trip';
@@ -485,6 +501,54 @@ class DemoModeService {
         created_at: new Date().toISOString()
       }
     ];
+  }
+
+  // Add payment to session store
+  addSessionPayment(tripId: string, paymentData: {
+    amount: number;
+    currency: string;
+    description: string;
+    splitCount: number;
+    splitParticipants: string[];
+    paymentMethods: string[];
+  }): string {
+    const paymentId = `session-payment-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    const payment: SessionPayment = {
+      id: paymentId,
+      trip_id: tripId,
+      amount: paymentData.amount,
+      currency: paymentData.currency,
+      description: paymentData.description,
+      split_count: paymentData.splitCount,
+      split_participants: paymentData.splitParticipants,
+      payment_methods: paymentData.paymentMethods,
+      created_by: 'demo-user',
+      createdByName: 'Demo User',
+      created_at: new Date().toISOString(),
+      is_settled: false
+    };
+
+    const tripPayments = this.sessionPayments.get(tripId) || [];
+    tripPayments.push(payment);
+    this.sessionPayments.set(tripId, tripPayments);
+
+    console.log('✅ Demo payment created (session-only):', payment);
+    return paymentId;
+  }
+
+  // Get session payments for a trip
+  getSessionPayments(tripId: string): SessionPayment[] {
+    return this.sessionPayments.get(tripId) || [];
+  }
+
+  // Clear session payments (called when demo mode is toggled off)
+  clearSessionPayments(tripId?: string) {
+    if (tripId) {
+      this.sessionPayments.delete(tripId);
+    } else {
+      this.sessionPayments.clear();
+    }
   }
 }
 

@@ -218,13 +218,13 @@ export const PaymentInput = ({ onSubmit, tripMembers, isVisible }: PaymentInputP
             </div>
           </div>
 
-          <Button 
-            type="submit" 
-            className="w-full bg-payment-primary hover:bg-payment-primary/90 text-payment-primary-foreground"
-            disabled={!amount || !description || selectedParticipants.length === 0}
-          >
-            Add Payment Request
-          </Button>
+        <Button 
+          type="submit" 
+          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+          disabled={!amount || !description || selectedParticipants.length === 0}
+        >
+          Add Payment Request
+        </Button>
         </form>
       </CardContent>
     </Card>

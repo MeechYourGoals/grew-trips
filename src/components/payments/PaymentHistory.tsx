@@ -52,16 +52,48 @@ export const PaymentHistory = ({ tripId }: PaymentHistoryProps) => {
           }));
         }
 
-        // Fetch author names separately (no join)
-        const authorIds = [...new Set(paymentMessages.map(p => p.createdBy))];
-        const { data: profiles } = await supabase
-          .from('profiles')
-          .select('user_id, display_name')
-          .in('user_id', authorIds);
+        // Add session payments (demo mode only)
+        const sessionPayments = demoModeService.getSessionPayments(tripId);
+        if (sessionPayments.length > 0) {
+          const sessionMessages = sessionPayments.map((p: any) => ({
+            id: p.id,
+            tripId: p.trip_id,
+            messageId: null,
+            amount: p.amount,
+            currency: p.currency,
+            description: p.description,
+            splitCount: p.split_count,
+            splitParticipants: p.split_participants,
+            paymentMethods: p.payment_methods,
+            createdBy: p.created_by,
+            createdAt: p.created_at,
+            isSettled: p.is_settled
+          }));
+          paymentMessages = [...paymentMessages, ...sessionMessages];
+        }
 
-        const profileMap = new Map(
-          (profiles || []).map(p => [p.user_id, p.display_name || 'Unknown'])
+        // Sort by created date (newest first)
+        paymentMessages.sort((a, b) => 
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
+
+        // Fetch author names separately (no join), skip demo-user
+        const authorIds = [...new Set(paymentMessages
+          .filter(p => p.createdBy !== 'demo-user')
+          .map(p => p.createdBy))];
+        
+        const profileMap = new Map<string, string>();
+        
+        if (authorIds.length > 0) {
+          const { data: profiles } = await supabase
+            .from('profiles')
+            .select('user_id, display_name')
+            .in('user_id', authorIds);
+
+          (profiles || []).forEach(p => {
+            profileMap.set(p.user_id, p.display_name || 'Trip member');
+          });
+        }
 
         const formattedPayments = paymentMessages.map(payment => ({
           id: payment.id,
@@ -71,7 +103,9 @@ export const PaymentHistory = ({ tripId }: PaymentHistoryProps) => {
           splitCount: payment.splitCount,
           createdBy: payment.createdBy,
           createdAt: payment.createdAt,
-          createdByName: profileMap.get(payment.createdBy) || 'Unknown'
+          createdByName: payment.createdBy === 'demo-user' 
+            ? 'Demo User' 
+            : profileMap.get(payment.createdBy) || 'Trip member'
         }));
 
         setPayments(formattedPayments);

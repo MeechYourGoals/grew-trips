@@ -149,6 +149,44 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
     splitParticipants: string[];
     paymentMethods: string[];
   }) => {
+    // Demo mode: use session storage
+    if (isDemoMode) {
+      const paymentId = demoModeService.addSessionPayment(tripId, paymentData);
+      
+      if (paymentId) {
+        toast({
+          title: "Payment request created (Demo)",
+          description: `${paymentData.description} - $${paymentData.amount}`,
+        });
+        
+        // Refresh balances with session payments included
+        const mockPayments = await demoModeService.getMockPayments(tripId, false);
+        const sessionPayments = demoModeService.getSessionPayments(tripId);
+        const allPayments = [...mockPayments, ...sessionPayments];
+        
+        // Recompute balance summary
+        const mockMembers = await demoModeService.getMockMembers(tripId);
+        const totalAmount = allPayments.reduce((sum, p) => sum + p.amount, 0);
+        const avgPerPerson = totalAmount / Math.max(mockMembers.length, 1);
+        
+        setBalanceSummary({
+          totalOwed: avgPerPerson * 0.6,
+          totalOwedToYou: avgPerPerson * 0.4,
+          netBalance: avgPerPerson * 0.2,
+          balances: mockMembers.slice(0, 3).map((m, i) => ({
+            userId: m.user_id,
+            userName: m.display_name,
+            avatar: m.avatar_url,
+            amountOwed: (i === 0 ? avgPerPerson * 0.5 : avgPerPerson * 0.3) * (i % 2 === 0 ? 1 : -1),
+            preferredPaymentMethod: null,
+            unsettledPayments: []
+          }))
+        });
+      }
+      return;
+    }
+
+    // Production mode: use database
     const paymentId = await createPaymentMessage(paymentData);
     
     if (paymentId) {
