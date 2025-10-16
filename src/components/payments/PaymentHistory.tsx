@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { supabase } from '../../integrations/supabase/client';
+import { paymentService } from '../../services/paymentService';
+import { demoModeService } from '../../services/demoModeService';
 import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
 
@@ -26,31 +28,77 @@ export const PaymentHistory = ({ tripId }: PaymentHistoryProps) => {
   useEffect(() => {
     const loadPayments = async () => {
       setLoading(true);
-      
-      const { data, error } = await supabase
-        .from('trip_payment_messages')
-        .select(`
-          *,
-          profiles!trip_payment_messages_created_by_fkey(display_name)
-        `)
-        .eq('trip_id', tripId)
-        .order('created_at', { ascending: false })
-        .limit(20);
+      try {
+        // Use paymentService to get payments
+        let paymentMessages = await paymentService.getTripPaymentMessages(tripId);
 
-      if (!error && data) {
-        setPayments(data.map(p => ({
-          id: p.id,
-          description: p.description,
-          amount: p.amount,
-          currency: p.currency,
-          splitCount: p.split_count,
-          createdBy: p.created_by,
-          createdAt: p.created_at,
-          createdByName: (p.profiles as any)?.display_name
-        })));
+        // If empty and consumer trip (1-12), fallback to demo data
+        const tripIdNum = parseInt(tripId);
+        if (paymentMessages.length === 0 && tripIdNum >= 1 && tripIdNum <= 12) {
+          const mockPayments = await demoModeService.getMockPayments(tripId, false);
+          paymentMessages = mockPayments.map((p: any) => ({
+            id: p.id,
+            tripId: p.trip_id,
+            messageId: null,
+            amount: p.amount,
+            currency: p.currency,
+            description: p.description,
+            splitCount: p.split_count,
+            splitParticipants: p.split_participants,
+            paymentMethods: p.payment_methods,
+            createdBy: p.created_by,
+            createdAt: p.created_at,
+            isSettled: p.is_settled
+          }));
+        }
+
+        // Fetch author names separately (no join)
+        const authorIds = [...new Set(paymentMessages.map(p => p.createdBy))];
+        const { data: profiles } = await supabase
+          .from('profiles')
+          .select('user_id, display_name')
+          .in('user_id', authorIds);
+
+        const profileMap = new Map(
+          (profiles || []).map(p => [p.user_id, p.display_name || 'Unknown'])
+        );
+
+        const formattedPayments = paymentMessages.map(payment => ({
+          id: payment.id,
+          description: payment.description,
+          amount: payment.amount,
+          currency: payment.currency,
+          splitCount: payment.splitCount,
+          createdBy: payment.createdBy,
+          createdAt: payment.createdAt,
+          createdByName: profileMap.get(payment.createdBy) || 'Unknown'
+        }));
+
+        setPayments(formattedPayments);
+      } catch (error) {
+        console.error('Error loading payment history:', error);
+        
+        // Final fallback for consumer trips
+        const tripIdNum = parseInt(tripId);
+        if (tripIdNum >= 1 && tripIdNum <= 12) {
+          const mockPayments = await demoModeService.getMockPayments(tripId, false);
+          const fallbackPayments = mockPayments.map((p: any) => ({
+            id: p.id,
+            description: p.description,
+            amount: p.amount,
+            currency: p.currency,
+            splitCount: p.split_count,
+            createdBy: p.created_by,
+            createdAt: p.created_at,
+            createdByName: 'Demo User'
+          }));
+          setPayments(fallbackPayments);
+        } else {
+          setPayments([]);
+        }
+      } finally {
+        setLoading(false);
       }
-
-      setLoading(false);
     };
 
     loadPayments();

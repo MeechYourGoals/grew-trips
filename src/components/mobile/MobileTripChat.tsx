@@ -149,7 +149,7 @@ export const MobileTripChat = ({ tripId, isEvent = false }: MobileTripChatProps)
           apiKey=""
           isTyping={false}
           tripMembers={[]}
-          hidePayments={isEvent}
+          hidePayments={true}
         />
       </div>
     </div>

@@ -138,44 +138,86 @@ export const TripChat = ({
   };
 
   useEffect(() => {
-    if (!shouldUseDemoData) {
-      setDemoMessages([]);
-      setDemoLoading(false);
-      return;
-    }
-
     const loadDemoData = async () => {
-      setDemoLoading(true);
-      // Exclude payment messages from chat
-      const demoMessagesData = await demoModeService.getMockMessages('friends-trip', true);
+      if (shouldUseDemoData) {
+        setDemoLoading(true);
+        // Exclude payment messages from chat
+        const demoMessagesData = await demoModeService.getMockMessages('friends-trip', true);
 
-      const formattedMessages = demoMessagesData.map(msg => ({
-        id: msg.id,
-        text: msg.message_content || '',
-        sender: {
+        const formattedMessages = demoMessagesData.map(msg => ({
           id: msg.id,
-          name: msg.sender_name || 'Unknown',
-          avatar: getMockAvatar(msg.sender_name || 'Unknown')
-        },
-        createdAt: new Date(Date.now() - (msg.timestamp_offset_days || 0) * 86400000).toISOString(),
-        isBroadcast: msg.tags?.includes('broadcast') || msg.tags?.includes('logistics') || msg.tags?.includes('urgent') || false,
+          text: msg.message_content || '',
+          sender: {
+            id: msg.id,
+            name: msg.sender_name || 'Unknown',
+            avatar: getMockAvatar(msg.sender_name || 'Unknown')
+          },
+          createdAt: new Date(Date.now() - (msg.timestamp_offset_days || 0) * 86400000).toISOString(),
+          isBroadcast: msg.tags?.includes('broadcast') || msg.tags?.includes('logistics') || msg.tags?.includes('urgent') || false,
 
-        trip_type: msg.trip_type,
-        sender_name: msg.sender_name,
-        message_content: msg.message_content,
-        delay_seconds: msg.delay_seconds,
-        timestamp_offset_days: msg.timestamp_offset_days,
-        tags: msg.tags
-      }));
+          trip_type: msg.trip_type,
+          sender_name: msg.sender_name,
+          message_content: msg.message_content,
+          delay_seconds: msg.delay_seconds,
+          timestamp_offset_days: msg.timestamp_offset_days,
+          tags: msg.tags
+        }));
 
-      setDemoMessages(formattedMessages);
-      setDemoLoading(false);
+        setDemoMessages(formattedMessages);
+        setDemoLoading(false);
+      } else {
+        // Clear demo messages when not in demo mode
+        setDemoMessages([]);
+        
+        // BUT if we're on a consumer trip (1-12) and have no live messages, load demo
+        const tripIdNum = parseInt(resolvedTripId);
+        if (tripIdNum >= 1 && tripIdNum <= 12 && liveFormattedMessages.length === 0) {
+          setDemoLoading(true);
+          const demoMessagesData = await demoModeService.getMockMessages('friends-trip', true);
+
+          const formattedMessages = demoMessagesData.map(msg => ({
+            id: msg.id,
+            text: msg.message_content || '',
+            sender: {
+              id: msg.id,
+              name: msg.sender_name || 'Unknown',
+              avatar: getMockAvatar(msg.sender_name || 'Unknown')
+            },
+            createdAt: new Date(Date.now() - (msg.timestamp_offset_days || 0) * 86400000).toISOString(),
+            isBroadcast: msg.tags?.includes('broadcast') || msg.tags?.includes('logistics') || msg.tags?.includes('urgent') || false,
+
+            trip_type: msg.trip_type,
+            sender_name: msg.sender_name,
+            message_content: msg.message_content,
+            delay_seconds: msg.delay_seconds,
+            timestamp_offset_days: msg.timestamp_offset_days,
+            tags: msg.tags
+          }));
+
+          setDemoMessages(formattedMessages);
+          setDemoLoading(false);
+        } else {
+          setDemoLoading(false);
+        }
+      }
     };
 
     loadDemoData();
-  }, [shouldUseDemoData, isEvent]);
+  }, [shouldUseDemoData, isEvent, resolvedTripId, liveFormattedMessages.length]);
 
-  const filteredMessages = filterMessages(shouldUseDemoData ? demoMessages : liveFormattedMessages);
+  // Determine which messages to show:
+  // 1. Demo mode OR no tripId: show demo messages
+  // 2. Consumer trip (1-12) with no live messages: show demo messages as fallback
+  // 3. Otherwise: show live messages
+  const tripIdNum = parseInt(resolvedTripId);
+  const isConsumerTripWithNoMessages = 
+    tripIdNum >= 1 && tripIdNum <= 12 && liveFormattedMessages.length === 0 && !shouldUseDemoData;
+  
+  const messagesToShow = (shouldUseDemoData || isConsumerTripWithNoMessages) 
+    ? demoMessages 
+    : liveFormattedMessages;
+  
+  const filteredMessages = filterMessages(messagesToShow);
 
   const isLoading = shouldUseDemoData ? demoLoading : liveLoading;
 
@@ -227,7 +269,7 @@ export const TripChat = ({
           apiKey=""
           isTyping={isSendingMessage}
           tripMembers={tripMembers}
-          hidePayments={isEvent}
+          hidePayments={true}
         />
       </div>
     </div>
