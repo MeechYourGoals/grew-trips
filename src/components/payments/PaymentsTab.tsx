@@ -17,7 +17,16 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
 
   useEffect(() => {
     const loadBalances = async () => {
-      if (!user?.id) return;
+      if (!user?.id) {
+        setBalanceSummary({
+          totalOwed: 0,
+          totalOwedToYou: 0,
+          netBalance: 0,
+          balances: []
+        });
+        setLoading(false);
+        return;
+      }
       
       setLoading(true);
       const summary = await paymentBalanceService.getBalanceSummary(tripId, user.id);

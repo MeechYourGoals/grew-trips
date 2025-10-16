@@ -37,6 +37,16 @@ export const paymentBalanceService = {
 
       if (messagesError) throw messagesError;
 
+      // Early return if no payments
+      if (!paymentMessages || paymentMessages.length === 0) {
+        return {
+          totalOwed: 0,
+          totalOwedToYou: 0,
+          netBalance: 0,
+          balances: []
+        };
+      }
+
       // Fetch all payment splits for these payments
       const { data: paymentSplits, error: splitsError } = await supabase
         .from('payment_splits')
@@ -57,14 +67,32 @@ export const paymentBalanceService = {
 
       if (profilesError) throw profilesError;
 
-      // Fetch preferred payment methods for all users
+      // Fetch all payment methods for all users
       const { data: paymentMethods, error: methodsError } = await supabase
         .from('user_payment_methods')
         .select('*')
-        .in('user_id', Array.from(allUserIds))
-        .eq('is_preferred', true);
+        .in('user_id', Array.from(allUserIds));
 
       if (methodsError) throw methodsError;
+
+      // Helper to get primary payment method
+      const getPrimaryMethod = (methods: any[]) => {
+        if (!methods || methods.length === 0) return null;
+        
+        // First check for preferred
+        const preferred = methods.find(m => m.is_preferred);
+        if (preferred) return preferred;
+        
+        // Then by priority order
+        const priority = ['venmo', 'cashapp', 'zelle', 'paypal', 'applecash', 'cash', 'other'];
+        const sorted = [...methods].sort((a, b) => {
+          const aIdx = priority.indexOf(a.method_type);
+          const bIdx = priority.indexOf(b.method_type);
+          return (aIdx === -1 ? 999 : aIdx) - (bIdx === -1 ? 999 : bIdx);
+        });
+        
+        return sorted[0];
+      };
 
       // Build ledger: Map<userId, netAmount>
       const ledger = new Map<string, {
@@ -132,19 +160,20 @@ export const paymentBalanceService = {
         if (personUserId === userId) return; // Skip self
 
         const profile = profiles?.find(p => p.user_id === personUserId);
-        const preferredMethod = paymentMethods?.find(m => m.user_id === personUserId);
+        const userMethods = paymentMethods?.filter(m => m.user_id === personUserId) || [];
+        const primaryMethod = getPrimaryMethod(userMethods);
 
         balances.push({
           userId: personUserId,
           userName: profile?.display_name || 'Unknown User',
           avatar: profile?.avatar_url,
           amountOwed: entry.netAmount,
-          preferredPaymentMethod: preferredMethod ? {
-            id: preferredMethod.id,
-            type: preferredMethod.method_type as any,
-            identifier: preferredMethod.identifier,
-            displayName: preferredMethod.display_name || undefined,
-            isPreferred: true
+          preferredPaymentMethod: primaryMethod ? {
+            id: primaryMethod.id,
+            type: primaryMethod.method_type as any,
+            identifier: primaryMethod.identifier,
+            displayName: primaryMethod.display_name || undefined,
+            isPreferred: primaryMethod.is_preferred || false
           } : null,
           unsettledPayments: entry.payments
         });

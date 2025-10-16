@@ -146,7 +146,8 @@ export const TripChat = ({
 
     const loadDemoData = async () => {
       setDemoLoading(true);
-      const demoMessagesData = await demoModeService.getMockMessages('friends-trip', isEvent);
+      // Exclude payment messages from chat
+      const demoMessagesData = await demoModeService.getMockMessages('friends-trip', true);
 
       const formattedMessages = demoMessagesData.map(msg => ({
         id: msg.id,
@@ -189,7 +190,7 @@ export const TripChat = ({
           <MessageFilters
             activeFilter={messageFilter}
             onFilterChange={setMessageFilter}
-            hidePayments={isEvent}
+            hidePayments={true}
           />
         </div>
       )}
