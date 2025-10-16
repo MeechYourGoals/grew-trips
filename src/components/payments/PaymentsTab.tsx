@@ -7,11 +7,13 @@ import { paymentBalanceService, BalanceSummary as BalanceSummaryType } from '../
 import { useAuth } from '../../hooks/useAuth';
 import { usePayments } from '../../hooks/usePayments';
 import { useToast } from '../../hooks/use-toast';
+import { useDemoMode } from '../../hooks/useDemoMode';
 import { supabase } from '../../integrations/supabase/client';
 import { getTripById } from '../../data/tripsData';
-import { Loader2 } from 'lucide-react';
+import { demoModeService } from '../../services/demoModeService';
+import { AuthModal } from '../AuthModal';
+import { Loader2, LogIn } from 'lucide-react';
 import { Button } from '../ui/button';
-import { LogIn } from 'lucide-react';
 
 interface PaymentsTabProps {
   tripId: string;
@@ -21,9 +23,11 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
   const { user } = useAuth();
   const { createPaymentMessage } = usePayments(tripId);
   const { toast } = useToast();
+  const { isDemoMode } = useDemoMode();
   const [balanceSummary, setBalanceSummary] = useState<BalanceSummaryType | null>(null);
   const [loading, setLoading] = useState(true);
   const [tripMembers, setTripMembers] = useState<Array<{ id: string; name: string; avatar?: string }>>([]);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Load trip members - use tripsData for consumer trips (1-12), DB for others
   useEffect(() => {
@@ -91,6 +95,32 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
   // Load balances
   useEffect(() => {
     const loadBalances = async () => {
+      // Demo mode: use mock data
+      if (isDemoMode) {
+        const mockPayments = await demoModeService.getMockPayments(tripId, false);
+        const mockMembers = await demoModeService.getMockMembers(tripId);
+        
+        // Compute simple demo balance summary
+        const totalAmount = mockPayments.reduce((sum, p) => sum + p.amount, 0);
+        const avgPerPerson = totalAmount / Math.max(mockMembers.length, 1);
+        
+        setBalanceSummary({
+          totalOwed: avgPerPerson * 0.6,
+          totalOwedToYou: avgPerPerson * 0.4,
+          netBalance: avgPerPerson * 0.2,
+          balances: mockMembers.slice(0, 3).map((m, i) => ({
+            userId: m.user_id,
+            userName: m.display_name,
+            avatar: m.avatar_url,
+            amountOwed: (i === 0 ? avgPerPerson * 0.5 : avgPerPerson * 0.3) * (i % 2 === 0 ? 1 : -1),
+            preferredPaymentMethod: null,
+            unsettledPayments: []
+          }))
+        });
+        setLoading(false);
+        return;
+      }
+      
       if (!user?.id) {
         setBalanceSummary({
           totalOwed: 0,
@@ -109,7 +139,7 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
     };
 
     loadBalances();
-  }, [tripId, user?.id]);
+  }, [tripId, user?.id, isDemoMode]);
 
   const handlePaymentSubmit = async (paymentData: {
     amount: number;
@@ -160,14 +190,14 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
   return (
     <div className="space-y-6">
       {/* Payment Creation */}
-      {!user ? (
+      {!user && !isDemoMode ? (
         <div className="bg-card rounded-lg border border-border p-6 text-center">
           <LogIn className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-lg font-semibold mb-2">Sign in to create payment requests</h3>
           <p className="text-muted-foreground mb-4">
             You need to be signed in to create and manage payments for this trip.
           </p>
-          <Button variant="default" onClick={() => window.location.href = '/auth'}>
+          <Button variant="default" onClick={() => setShowAuthModal(true)}>
             Sign In
           </Button>
         </div>
@@ -204,6 +234,12 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
 
       {/* Payment History */}
       <PaymentHistory tripId={tripId} />
+
+      {/* Auth Modal */}
+      <AuthModal 
+        isOpen={showAuthModal} 
+        onClose={() => setShowAuthModal(false)} 
+      />
     </div>
   );
 };
