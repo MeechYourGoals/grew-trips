@@ -11,6 +11,7 @@ import { AddToCalendarData } from '../types/calendar';
 import { useFeatureToggle, DEFAULT_FEATURES } from '../hooks/useFeatureToggle';
 import { usePlacesLinkSync } from '../hooks/usePlacesLinkSync';
 import { Home } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 import { useBasecamp } from '@/contexts/BasecampContext';
 
@@ -22,6 +23,7 @@ interface PlacesSectionProps {
 
 export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSectionProps) => {
   const { variant } = useTripVariant();
+  const { user } = useAuth();
   const { isFeatureEnabled } = useFeatureToggle({ 
     trip_type: variant === 'consumer' ? 'consumer' : 'pro',
     enabled_features: [...DEFAULT_FEATURES] 
@@ -60,7 +62,7 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
               };
 
               // Update the corresponding link
-              updateLinkByPlaceId(place.id, updatedPlace);
+              await updateLinkByPlaceId(place.id, updatedPlace, tripId, user?.id);
               return updatedPlace;
             } catch (error) {
               console.warn(`Failed to calculate distance for place ${place.id}:`, error);
@@ -100,7 +102,7 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
           };
 
           // Update the corresponding link
-          updateLinkByPlaceId(place.id, updatedPlace);
+          await updateLinkByPlaceId(place.id, updatedPlace, tripId, user?.id);
           return updatedPlace;
         })
       );
@@ -130,12 +132,12 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
     setPlaces([...places, newPlace]);
     
     // Create corresponding link
-    createLinkFromPlace(newPlace);
+    await createLinkFromPlace(newPlace, 'You', tripId, user?.id);
   };
 
-  const handlePlaceRemoved = (placeId: string) => {
+  const handlePlaceRemoved = async (placeId: string) => {
     setPlaces(prev => prev.filter(place => place.id !== placeId));
-    removeLinkByPlaceId(placeId);
+    await removeLinkByPlaceId(placeId, tripId, user?.id);
   };
 
   const handleEventAdded = (eventData: AddToCalendarData) => {

@@ -1,26 +1,11 @@
 
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { PlaceWithDistance } from '../types/basecamp';
-
-interface LinkPost {
-  id: string;
-  title: string;
-  url: string;
-  description: string;
-  category: 'housing' | 'eats' | 'day-activities' | 'nightlife' | 'fitness' | 'reservations' | 'transportation' | 'essentials' | 'other';
-  imageUrl?: string;
-  postedBy: string;
-  postedAt: string;
-  upvotes: number;
-  comments: number;
-  originatedFromPlace?: boolean;
-  placeId?: string;
-}
+import { supabase } from '@/integrations/supabase/client';
 
 export const usePlacesLinkSync = () => {
-  const [links, setLinks] = useState<LinkPost[]>([]);
 
-  const mapPlaceCategoryToLink = (placeCategory: string): LinkPost['category'] => {
+  const mapPlaceCategoryToLink = (placeCategory: string): string => {
     switch (placeCategory) {
       case 'restaurant':
         return 'eats';
@@ -49,45 +34,129 @@ export const usePlacesLinkSync = () => {
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(place.name)}`;
   };
 
-  const createLinkFromPlace = useCallback((place: PlaceWithDistance, userName: string = 'You') => {
-    const newLink: LinkPost = {
-      id: `link-${place.id}`,
-      title: place.name,
-      url: generateMapsUrl(place),
-      description: `Saved from Places${place.address ? `: ${place.address}` : ''}`,
-      category: mapPlaceCategoryToLink(place.category || 'other'),
-      postedBy: userName,
-      postedAt: 'just now',
-      upvotes: 0,
-      comments: 0,
-      originatedFromPlace: true,
-      placeId: place.id
-    };
+  const createLinkFromPlace = useCallback(async (place: PlaceWithDistance, userName: string = 'You', tripId: string, userId?: string) => {
+    try {
+      // Demo mode fallback - store in localStorage
+      if (!userId) {
+        console.warn('Demo mode: Link not persisted to database');
+        const demoLinks = JSON.parse(localStorage.getItem(`demo_trip_links_${tripId}`) || '[]');
+        demoLinks.push({ 
+          place_id: place.id,
+          name: place.name,
+          url: generateMapsUrl(place),
+          timestamp: Date.now() 
+        });
+        localStorage.setItem(`demo_trip_links_${tripId}`, JSON.stringify(demoLinks));
+        return;
+      }
 
-    setLinks(prev => [...prev, newLink]);
-    return newLink;
+      // Prepare link data for database
+      const url = generateMapsUrl(place);
+      const linkData = {
+        trip_id: tripId,
+        url: url,
+        og_title: place.name,
+        og_description: `Saved from Places${place.address ? `: ${place.address}` : ''} | place_id:${place.id}`,
+        domain: new URL(url).hostname,
+        og_image_url: null,
+        favicon_url: null
+      };
+
+      // Insert into trip_link_index table
+      const { data, error } = await supabase
+        .from('trip_link_index')
+        .insert(linkData)
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating link from place:', error);
+        throw error;
+      }
+
+      console.log('✅ Link created in database:', data);
+      return data;
+    } catch (error) {
+      console.error('Failed to save link to database:', error);
+      throw error;
+    }
   }, []);
 
-  const removeLinkByPlaceId = useCallback((placeId: string) => {
-    setLinks(prev => prev.filter(link => link.placeId !== placeId));
+  const removeLinkByPlaceId = useCallback(async (placeId: string, tripId: string, userId?: string) => {
+    try {
+      // Demo mode fallback
+      if (!userId) {
+        const demoLinks = JSON.parse(localStorage.getItem(`demo_trip_links_${tripId}`) || '[]');
+        const filtered = demoLinks.filter((link: any) => link.place_id !== placeId);
+        localStorage.setItem(`demo_trip_links_${tripId}`, JSON.stringify(filtered));
+        return;
+      }
+
+      // Find links with this place ID in og_description metadata
+      const { data: existingLinks } = await supabase
+        .from('trip_link_index')
+        .select('id, og_description')
+        .eq('trip_id', tripId);
+
+      // Filter links that mention this place
+      const linkToDelete = existingLinks?.find(link => 
+        link.og_description?.includes(`place_id:${placeId}`)
+      );
+
+      if (linkToDelete) {
+        await supabase
+          .from('trip_link_index')
+          .delete()
+          .eq('id', linkToDelete.id);
+        
+        console.log('✅ Link removed from database');
+      }
+    } catch (error) {
+      console.error('Failed to remove link:', error);
+    }
   }, []);
 
-  const updateLinkByPlaceId = useCallback((placeId: string, updatedPlace: PlaceWithDistance) => {
-    setLinks(prev => prev.map(link => 
-      link.placeId === placeId 
-        ? {
-            ...link,
-            title: updatedPlace.name,
+  const updateLinkByPlaceId = useCallback(async (placeId: string, updatedPlace: PlaceWithDistance, tripId: string, userId?: string) => {
+    try {
+      // Demo mode fallback
+      if (!userId) {
+        const demoLinks = JSON.parse(localStorage.getItem(`demo_trip_links_${tripId}`) || '[]');
+        const updated = demoLinks.map((link: any) => 
+          link.place_id === placeId 
+            ? { ...link, name: updatedPlace.name, url: generateMapsUrl(updatedPlace) }
+            : link
+        );
+        localStorage.setItem(`demo_trip_links_${tripId}`, JSON.stringify(updated));
+        return;
+      }
+
+      const { data: existingLinks } = await supabase
+        .from('trip_link_index')
+        .select('id, og_description')
+        .eq('trip_id', tripId);
+
+      const linkToUpdate = existingLinks?.find(link => 
+        link.og_description?.includes(`place_id:${placeId}`)
+      );
+
+      if (linkToUpdate) {
+        await supabase
+          .from('trip_link_index')
+          .update({
+            og_title: updatedPlace.name,
             url: generateMapsUrl(updatedPlace),
-            description: `Saved from Places${updatedPlace.address ? `: ${updatedPlace.address}` : ''}`,
-            category: mapPlaceCategoryToLink(updatedPlace.category || 'other')
-          }
-        : link
-    ));
+            og_description: `Saved from Places${updatedPlace.address ? `: ${updatedPlace.address}` : ''} | place_id:${placeId}`
+          })
+          .eq('id', linkToUpdate.id);
+        
+        console.log('✅ Link updated in database');
+      }
+    } catch (error) {
+      console.error('Failed to update link:', error);
+    }
   }, []);
 
   return {
-    links,
     createLinkFromPlace,
     removeLinkByPlaceId,
     updateLinkByPlaceId
