@@ -92,16 +92,6 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, onTripUpd
               </div>
             </div>
             
-            {/* Cover Photo Upload - Top right */}
-            <div className="absolute top-4 right-4 z-10">
-              <TripCoverPhotoUpload
-                tripId={trip.id.toString()}
-                currentPhoto={coverPhoto}
-                onPhotoUploaded={updateCoverPhoto}
-                className="w-auto"
-              />
-            </div>
-
             {/* Edit Trip Button - Bottom right */}
             <div className="absolute bottom-6 right-6 z-10">
               <button
@@ -114,16 +104,7 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, onTripUpd
             </div>
           </div>
         </div>
-      ) : (
-        <div className="mb-8">
-          <TripCoverPhotoUpload
-            tripId={trip.id.toString()}
-            currentPhoto={coverPhoto}
-            onPhotoUploaded={updateCoverPhoto}
-            className="h-32 mb-6"
-          />
-        </div>
-      )}
+      ) : null}
 
       {/* Main Trip Info Section */}
       <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 mb-8">
