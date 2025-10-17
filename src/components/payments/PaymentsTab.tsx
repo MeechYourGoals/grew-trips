@@ -23,7 +23,7 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
   const { user } = useAuth();
   const { createPaymentMessage } = usePayments(tripId);
   const { toast } = useToast();
-  const { isDemoMode } = useDemoMode();
+  const { isDemoMode, isLoading: demoLoading } = useDemoMode();
   const [balanceSummary, setBalanceSummary] = useState<BalanceSummaryType | null>(null);
   const [loading, setLoading] = useState(true);
   const [tripMembers, setTripMembers] = useState<Array<{ id: string; name: string; avatar?: string }>>([]);
@@ -31,6 +31,8 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
 
   // Load trip members - use tripsData for consumer trips (1-12), DB for others
   useEffect(() => {
+    if (demoLoading) return; // Wait for demo mode to initialize
+    
     const loadMembers = async () => {
       const tripIdNum = parseInt(tripId);
       
@@ -90,10 +92,12 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
     };
 
     loadMembers();
-  }, [tripId]);
+  }, [tripId, demoLoading]);
 
   // Load balances
   useEffect(() => {
+    if (demoLoading) return; // Wait for demo mode to initialize
+    
     const loadBalances = async () => {
       // Demo mode: use mock data
       if (isDemoMode) {
@@ -139,7 +143,7 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
     };
 
     loadBalances();
-  }, [tripId, user?.id, isDemoMode]);
+  }, [tripId, user?.id, isDemoMode, demoLoading]);
 
   const handlePaymentSubmit = async (paymentData: {
     amount: number;
@@ -228,7 +232,11 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
   return (
     <div className="space-y-6">
       {/* Payment Creation */}
-      {!user && !isDemoMode ? (
+      {demoLoading ? (
+        <div className="flex items-center justify-center py-8 opacity-80">
+          <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+        </div>
+      ) : !user && !isDemoMode ? (
         <div className="bg-card rounded-lg border border-border p-6 text-center">
           <LogIn className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-lg font-semibold mb-2">Sign in to create payment requests</h3>
