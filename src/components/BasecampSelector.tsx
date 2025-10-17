@@ -20,70 +20,98 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
-  const [hasSelectedFromAutocomplete, setHasSelectedFromAutocomplete] = useState(!!currentBasecamp);
   const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
+  const [selectedCoords, setSelectedCoords] = useState<{ lat: number; lng: number } | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Enhanced address input with Google Places autocomplete
+  // Enhanced address input with dual-source autocomplete (Google + OSM fallback)
   const handleAddressChange = async (value: string) => {
     setAddress(value);
     setSelectedSuggestionIndex(-1);
-    setHasSelectedFromAutocomplete(false);
     setSelectedPlaceId(null);
+    setSelectedCoords(null);
+    
+    // Debounce the API calls
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
     
     if (value.length > 2) {
       setIsLoadingSuggestions(true);
-      try {
-        // Prioritize establishments (hotels, venues, landmarks) and then general geocoding
-        const result = await GoogleMapsService.getPlaceAutocomplete(value, ['establishment', 'lodging', 'tourist_attraction', 'geocode']);
-        if (result.predictions && result.predictions.length > 0) {
-          setSuggestions(result.predictions.slice(0, 8));
-          setShowSuggestions(true);
-        } else {
-          setSuggestions([]);
-          setShowSuggestions(false);
+      setShowSuggestions(true);
+      
+      debounceTimerRef.current = setTimeout(async () => {
+        try {
+          // Try Google first
+          const response = await GoogleMapsService.getPlaceAutocomplete(value);
+          
+          if (response && response.predictions && response.predictions.length > 0) {
+            setSuggestions(response.predictions);
+          } else {
+            // Fallback to OpenStreetMap Nominatim
+            console.log('Google returned no predictions, trying OSM fallback...');
+            const osmSuggestions = await GoogleMapsService.fallbackSuggestNominatim(value);
+            setSuggestions(osmSuggestions);
+          }
+        } catch (error) {
+          console.error('Error fetching Google autocomplete, trying OSM fallback:', error);
+          // On error, try OSM fallback
+          try {
+            const osmSuggestions = await GoogleMapsService.fallbackSuggestNominatim(value);
+            setSuggestions(osmSuggestions);
+          } catch (osmError) {
+            console.error('OSM fallback also failed:', osmError);
+            setSuggestions([]);
+          }
+        } finally {
+          setIsLoadingSuggestions(false);
         }
-      } catch (error) {
-        console.error('Error getting suggestions:', error);
-        setSuggestions([]);
-        setShowSuggestions(false);
-      } finally {
-        setIsLoadingSuggestions(false);
-      }
+      }, 300);
     } else {
-      setSuggestions([]);
       setShowSuggestions(false);
+      setSuggestions([]);
+      setIsLoadingSuggestions(false);
     }
   };
 
   const handleSuggestionClick = async (suggestion: any) => {
     setAddress(suggestion.description);
-    setHasSelectedFromAutocomplete(true);
-    setSelectedPlaceId(suggestion.place_id);
     setShowSuggestions(false);
     setSuggestions([]);
     
-    // If it's a place with a place_id, try to get more details
-    if (suggestion.place_id) {
+    // Check if this is an OSM suggestion or Google suggestion
+    if (suggestion.source === 'osm') {
+      // OSM suggestion - store coordinates directly
+      setSelectedCoords({ lat: suggestion.osm_lat, lng: suggestion.osm_lng });
+      setSelectedPlaceId(null);
+      console.log('Selected OSM suggestion with coords:', { lat: suggestion.osm_lat, lng: suggestion.osm_lng });
+    } else {
+      // Google suggestion - store place_id for later detail fetch
+      setSelectedPlaceId(suggestion.place_id);
+      setSelectedCoords(null);
+      
+      // Try to get place details to populate name field
       try {
-        const placeDetails = await GoogleMapsService.getPlaceDetailsById(suggestion.place_id);
-        if (placeDetails && placeDetails.result) {
-          const place = placeDetails.result;
-          // Auto-fill name if not already set
-          if (!name && place.name) {
-            setName(place.name);
-          }
-          // Auto-detect type based on place types
-          if (!type && place.types && place.types.length > 0) {
-            const placeType = place.types.includes('lodging') ? 'hotel' :
-                            place.types.includes('tourist_attraction') ? 'other' :
-                            place.types.includes('restaurant') ? 'other' : type;
-            setType(placeType);
+        const details = await GoogleMapsService.getPlaceDetails(suggestion.place_id);
+        if (details?.result?.name && !name) {
+          setName(details.result.name);
+        }
+        
+        // Set type based on place types if not already set
+        if (details?.result?.types && !type) {
+          const placeTypes = details.result.types;
+          if (placeTypes.includes('lodging') || placeTypes.includes('hotel')) {
+            setType('hotel');
+          } else if (placeTypes.includes('airport')) {
+            setType('other');
+          } else if (placeTypes.includes('point_of_interest') || placeTypes.includes('establishment')) {
+            setType('other');
           }
         }
       } catch (error) {
-        console.error('Error getting place details:', error);
+        console.error('Error fetching place details:', error);
       }
     }
   };
@@ -126,34 +154,83 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
       return;
     }
     
-    if (!hasSelectedFromAutocomplete || !selectedPlaceId) {
-      alert('Please select an address from the dropdown suggestions to ensure accurate location mapping.');
-      return;
-    }
-    
     setIsLoading(true);
     setShowSuggestions(false);
     
     try {
-      const placeDetails = await GoogleMapsService.getPlaceDetailsById(selectedPlaceId);
+      let coordinates: { lat: number; lng: number } | null = null;
+      let inferredName = name.trim();
       
-      if (placeDetails?.result?.geometry?.location) {
-        const coordinates = {
-          lat: placeDetails.result.geometry.location.lat,
-          lng: placeDetails.result.geometry.location.lng
-        };
-        
+      // Cascade 1: If we have a Google place_id from suggestion
+      if (selectedPlaceId && !selectedPlaceId.startsWith('osm:')) {
+        console.log('Attempting Google Place Details...');
+        try {
+          const placeDetails = await GoogleMapsService.getPlaceDetailsById(selectedPlaceId);
+          if (placeDetails?.result?.geometry?.location) {
+            coordinates = {
+              lat: placeDetails.result.geometry.location.lat,
+              lng: placeDetails.result.geometry.location.lng
+            };
+            if (!inferredName && placeDetails.result.name) {
+              inferredName = placeDetails.result.name;
+            }
+            console.log('✓ Got coords from Google Place Details');
+          }
+        } catch (error) {
+          console.error('Google Place Details failed:', error);
+        }
+      }
+      
+      // Cascade 2: If we have OSM coordinates from suggestion
+      if (!coordinates && selectedCoords) {
+        console.log('Using OSM suggestion coordinates...');
+        coordinates = selectedCoords;
+        console.log('✓ Got coords from OSM suggestion');
+      }
+      
+      // Cascade 3: Try Google geocoding
+      if (!coordinates) {
+        console.log('Attempting Google geocoding...');
+        try {
+          coordinates = await GoogleMapsService.geocodeAddress(address);
+          if (coordinates) {
+            console.log('✓ Got coords from Google geocoding');
+          }
+        } catch (error) {
+          console.error('Google geocoding failed:', error);
+        }
+      }
+      
+      // Cascade 4: Try OSM Nominatim geocoding
+      if (!coordinates) {
+        console.log('Attempting OSM Nominatim fallback geocoding...');
+        try {
+          const osmResult = await GoogleMapsService.fallbackGeocodeNominatim(address);
+          if (osmResult) {
+            coordinates = { lat: osmResult.lat, lng: osmResult.lng };
+            if (!inferredName) {
+              inferredName = osmResult.displayName.split(',')[0];
+            }
+            console.log('✓ Got coords from OSM Nominatim');
+          }
+        } catch (error) {
+          console.error('OSM Nominatim geocoding failed:', error);
+        }
+      }
+      
+      // Final check
+      if (coordinates) {
         const basecamp: BasecampLocation = {
           address: address.trim(),
           coordinates,
-          name: name.trim() || placeDetails.result.name || undefined,
+          name: inferredName || undefined,
           type
         };
         
         onBasecampSet(basecamp);
         onClose();
       } else {
-        alert('Could not retrieve location details. Please try selecting a different address from the suggestions.');
+        alert('We couldn\'t find that location. Please try:\n• Adding more detail (e.g., "Sao Paulo, Brazil")\n• Selecting from the suggestions if available\n• Using a more specific address');
       }
     } catch (error) {
       console.error('Error setting basecamp:', error);
@@ -223,11 +300,6 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
                 autoComplete="off"
               />
               
-              {!hasSelectedFromAutocomplete && address.trim().length > 0 && !showSuggestions && (
-                <div className="absolute -bottom-6 left-0 text-xs text-yellow-500 flex items-center gap-1">
-                  <span>⚠️</span> Please select from dropdown
-                </div>
-              )}
               
               {/* Autocomplete Suggestions */}
               {(showSuggestions || isLoadingSuggestions) && (
@@ -319,7 +391,7 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
 
           <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
             <p className="text-sm text-green-300">
-              💡 <strong>Select from the dropdown</strong> as you type to ensure your basecamp location is recognized by Google Maps for directions and distance calculations.
+              💡 <strong>Tip:</strong> Selecting from the dropdown improves accuracy, but you can also type any location (city, region, or address) and press Set.
             </p>
           </div>
 
@@ -334,7 +406,7 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !address.trim() || !hasSelectedFromAutocomplete}
+              disabled={isLoading || !address.trim()}
               className="flex-1 h-12 rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 font-semibold shadow-lg shadow-green-500/25 border border-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Setting...' : (currentBasecamp ? 'Update' : 'Set Basecamp')}
