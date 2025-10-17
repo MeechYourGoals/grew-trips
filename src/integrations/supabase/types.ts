@@ -115,6 +115,47 @@ export type Database = {
         }
         Relationships: []
       }
+      category_assignments: {
+        Row: {
+          assigned_user_ids: Json
+          category_id: string
+          created_at: string
+          id: string
+          lead_user_id: string | null
+          task_id: string | null
+          trip_id: string
+          updated_at: string
+        }
+        Insert: {
+          assigned_user_ids?: Json
+          category_id: string
+          created_at?: string
+          id?: string
+          lead_user_id?: string | null
+          task_id?: string | null
+          trip_id: string
+          updated_at?: string
+        }
+        Update: {
+          assigned_user_ids?: Json
+          category_id?: string
+          created_at?: string
+          id?: string
+          lead_user_id?: string | null
+          task_id?: string | null
+          trip_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "category_assignments_task_id_fkey"
+            columns: ["task_id"]
+            isOneToOne: false
+            referencedRelation: "trip_tasks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       event_qa_questions: {
         Row: {
           answer: string | null

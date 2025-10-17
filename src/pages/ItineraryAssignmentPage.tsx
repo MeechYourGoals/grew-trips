@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, Calendar } from 'lucide-react';
 import { CategoryAssignments } from '../components/CategoryAssignments';
 import { CollaborativeItineraryCalendar } from '../components/CollaborativeItineraryCalendar';
+import { useCategoryAssignments } from '../hooks/useCategoryAssignments';
 
 export interface TripMember {
   id: string;
@@ -12,6 +13,7 @@ export interface TripMember {
   email: string;
 }
 
+// Legacy format for calendar component
 export interface CategoryAssignment {
   categoryId: string;
   assignedUsers: TripMember[];
@@ -21,8 +23,8 @@ export interface CategoryAssignment {
 const ItineraryAssignmentPage = () => {
   const { tripId } = useParams();
   const navigate = useNavigate();
-  const [assignments, setAssignments] = useState<CategoryAssignment[]>([]);
   const [activeView, setActiveView] = useState<'assignments' | 'calendar'>('assignments');
+  const { assignments } = useCategoryAssignments(tripId || '');
 
   // Mock trip members
   const tripMembers: TripMember[] = [
@@ -33,9 +35,12 @@ const ItineraryAssignmentPage = () => {
     { id: '5', name: 'Tara', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=40&h=40&fit=crop&crop=face', email: 'tara@example.com' }
   ];
 
-  const handleAssignmentChange = (newAssignments: CategoryAssignment[]) => {
-    setAssignments(newAssignments);
-  };
+  // Build legacy format for calendar component
+  const legacyAssignments = assignments.map(a => ({
+    categoryId: a.category_id,
+    assignedUsers: tripMembers.filter(m => a.assigned_user_ids.includes(m.id)),
+    leadUserId: a.lead_user_id
+  }));
 
   return (
     <div className="min-h-screen bg-black">
@@ -88,13 +93,12 @@ const ItineraryAssignmentPage = () => {
         {activeView === 'assignments' ? (
           <CategoryAssignments 
             tripMembers={tripMembers}
-            assignments={assignments}
-            onAssignmentChange={handleAssignmentChange}
+            tripId={tripId || ''}
           />
         ) : (
           <CollaborativeItineraryCalendar 
             tripMembers={tripMembers}
-            assignments={assignments}
+            assignments={legacyAssignments}
             tripId={tripId || ''}
           />
         )}

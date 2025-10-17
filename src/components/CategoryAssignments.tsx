@@ -1,88 +1,94 @@
 
-import React, { useState } from 'react';
-import { Plus, Crown, User, Check } from 'lucide-react';
-import { TripMember, CategoryAssignment } from '../pages/ItineraryAssignmentPage';
-
-interface Category {
-  id: string;
-  name: string;
-  icon: string;
-  description: string;
-  color: string;
-}
-
-const categories: Category[] = [
-  { id: 'accommodations', name: 'Accommodations', icon: '🏨', description: 'Hotels, rentals, and lodging', color: 'bg-blue-500' },
-  { id: 'food', name: 'Food & Dining', icon: '🍽️', description: 'Restaurants, cafes, and meals', color: 'bg-red-500' },
-  { id: 'transportation', name: 'Transportation', icon: '🚗', description: 'Flights, cars, and local transport', color: 'bg-green-500' },
-  { id: 'fitness', name: 'Fitness & Activities', icon: '💪', description: 'Sports, hiking, and wellness', color: 'bg-purple-500' },
-  { id: 'nightlife', name: 'Nightlife & Entertainment', icon: '🌙', description: 'Bars, clubs, and evening fun', color: 'bg-indigo-500' },
-  { id: 'attractions', name: 'Attractions & Sightseeing', icon: '🎯', description: 'Museums, landmarks, and tours', color: 'bg-yellow-500' },
-  { id: 'budget', name: 'Budget & Expenses', icon: '💰', description: 'Costs, payments, and financial planning', color: 'bg-emerald-500' }
-];
+import React, { useState, useEffect } from 'react';
+import { Plus, Crown, User, Check, ListTodo } from 'lucide-react';
+import { TripMember } from '../pages/ItineraryAssignmentPage';
+import { CATEGORIES } from '../types/categoryAssignments';
+import { useCategoryTasks } from '../hooks/useCategoryTasks';
+import { useCategoryAssignments } from '../hooks/useCategoryAssignments';
 
 interface CategoryAssignmentsProps {
   tripMembers: TripMember[];
-  assignments: CategoryAssignment[];
-  onAssignmentChange: (assignments: CategoryAssignment[]) => void;
+  tripId: string;
 }
 
-export const CategoryAssignments = ({ tripMembers, assignments, onAssignmentChange }: CategoryAssignmentsProps) => {
+export const CategoryAssignments = ({ tripMembers, tripId }: CategoryAssignmentsProps) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [localAssignments, setLocalAssignments] = useState<Record<string, { userIds: string[], leadId?: string }>>({});
+  
+  const { createOrUpdateCategoryTask } = useCategoryTasks(tripId);
+  const { assignments } = useCategoryAssignments(tripId);
 
-  const getAssignmentForCategory = (categoryId: string): CategoryAssignment | undefined => {
-    return assignments.find(a => a.categoryId === categoryId);
+  // Build local state from persistent assignments
+  useEffect(() => {
+    const mappedAssignments: Record<string, { userIds: string[], leadId?: string }> = {};
+    assignments.forEach(assignment => {
+      mappedAssignments[assignment.category_id] = {
+        userIds: assignment.assigned_user_ids,
+        leadId: assignment.lead_user_id
+      };
+    });
+    setLocalAssignments(mappedAssignments);
+  }, [assignments]);
+
+  const getAssignedUsers = (categoryId: string) => {
+    const assignment = localAssignments[categoryId];
+    if (!assignment) return [];
+    return tripMembers.filter(m => assignment.userIds.includes(m.id));
   };
 
-  const handleAssignUser = (categoryId: string, userId: string, isLead: boolean = false) => {
-    const newAssignments = [...assignments];
-    const existingIndex = newAssignments.findIndex(a => a.categoryId === categoryId);
-    
-    if (existingIndex >= 0) {
-      const existing = newAssignments[existingIndex];
-      const user = tripMembers.find(m => m.id === userId);
-      if (!user) return;
+  const getLeadUserId = (categoryId: string) => {
+    return localAssignments[categoryId]?.leadId;
+  };
 
-      const userExists = existing.assignedUsers.some(u => u.id === userId);
-      if (!userExists) {
-        existing.assignedUsers.push(user);
-      }
-      if (isLead) {
-        existing.leadUserId = userId;
-      }
+  const handleAssignUser = async (categoryId: string, userId: string, isLead: boolean = false) => {
+    const current = localAssignments[categoryId] || { userIds: [], leadId: undefined };
+    
+    const userExists = current.userIds.includes(userId);
+    let updatedUserIds = current.userIds;
+    let updatedLeadId = current.leadId;
+
+    if (!userExists) {
+      updatedUserIds = [...current.userIds, userId];
+    }
+    if (isLead) {
+      updatedLeadId = userId;
+    }
+
+    // Update local state immediately
+    setLocalAssignments(prev => ({
+      ...prev,
+      [categoryId]: { userIds: updatedUserIds, leadId: updatedLeadId }
+    }));
+
+    // Persist to database and create task
+    await createOrUpdateCategoryTask(categoryId, updatedUserIds, updatedLeadId);
+  };
+
+  const handleRemoveUser = async (categoryId: string, userId: string) => {
+    const current = localAssignments[categoryId];
+    if (!current) return;
+
+    const updatedUserIds = current.userIds.filter(id => id !== userId);
+    let updatedLeadId = current.leadId;
+
+    if (updatedLeadId === userId) {
+      updatedLeadId = updatedUserIds[0];
+    }
+
+    // Update local state immediately
+    if (updatedUserIds.length === 0) {
+      const { [categoryId]: _, ...rest } = localAssignments;
+      setLocalAssignments(rest);
     } else {
-      const user = tripMembers.find(m => m.id === userId);
-      if (!user) return;
-
-      newAssignments.push({
-        categoryId,
-        assignedUsers: [user],
-        leadUserId: isLead ? userId : undefined
-      });
+      setLocalAssignments(prev => ({
+        ...prev,
+        [categoryId]: { userIds: updatedUserIds, leadId: updatedLeadId }
+      }));
     }
-    
-    onAssignmentChange(newAssignments);
-  };
 
-  const handleRemoveUser = (categoryId: string, userId: string) => {
-    const newAssignments = [...assignments];
-    const existingIndex = newAssignments.findIndex(a => a.categoryId === categoryId);
-    
-    if (existingIndex >= 0) {
-      const existing = newAssignments[existingIndex];
-      existing.assignedUsers = existing.assignedUsers.filter(u => u.id !== userId);
-      
-      if (existing.leadUserId === userId) {
-        existing.leadUserId = existing.assignedUsers[0]?.id;
-      }
-      
-      if (existing.assignedUsers.length === 0) {
-        newAssignments.splice(existingIndex, 1);
-      }
-    }
-    
-    onAssignmentChange(newAssignments);
+    // Persist to database
+    await createOrUpdateCategoryTask(categoryId, updatedUserIds, updatedLeadId);
   };
 
   return (
@@ -98,9 +104,10 @@ export const CategoryAssignments = ({ tripMembers, assignments, onAssignmentChan
 
       {/* Categories Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {categories.map((category) => {
-          const assignment = getAssignmentForCategory(category.id);
-          const assignedCount = assignment?.assignedUsers.length || 0;
+        {CATEGORIES.map((category) => {
+          const assignedUsers = getAssignedUsers(category.id);
+          const leadUserId = getLeadUserId(category.id);
+          const assignedCount = assignedUsers.length;
           
           return (
             <div 
@@ -119,9 +126,15 @@ export const CategoryAssignments = ({ tripMembers, assignments, onAssignmentChan
               {/* Assignment Status */}
               <div className="mb-4">
                 {assignedCount > 0 ? (
-                  <div className="flex items-center gap-2 text-green-400 text-sm">
-                    <Check size={16} />
-                    <span>{assignedCount} {assignedCount === 1 ? 'person' : 'people'} assigned</span>
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2 text-green-400 text-sm">
+                      <Check size={16} />
+                      <span>{assignedCount} {assignedCount === 1 ? 'person' : 'people'} assigned</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-blue-400 text-xs">
+                      <ListTodo size={14} />
+                      <span>Task created in Tasks tab</span>
+                    </div>
                   </div>
                 ) : (
                   <div className="text-gray-400 text-sm">No one assigned yet</div>
@@ -129,9 +142,9 @@ export const CategoryAssignments = ({ tripMembers, assignments, onAssignmentChan
               </div>
 
               {/* Assigned Users */}
-              {assignment && assignment.assignedUsers.length > 0 && (
+              {assignedUsers.length > 0 && (
                 <div className="space-y-2 mb-4">
-                  {assignment.assignedUsers.map((user) => (
+                  {assignedUsers.map((user) => (
                     <div key={user.id} className="flex items-center justify-between bg-white/5 rounded-lg p-2">
                       <div className="flex items-center gap-2">
                         <img 
@@ -140,7 +153,7 @@ export const CategoryAssignments = ({ tripMembers, assignments, onAssignmentChan
                           className="w-6 h-6 rounded-full"
                         />
                         <span className="text-white text-sm">{user.name}</span>
-                        {assignment.leadUserId === user.id && (
+                        {leadUserId === user.id && (
                           <Crown size={14} className="text-yellow-500" />
                         )}
                       </div>
@@ -176,14 +189,15 @@ export const CategoryAssignments = ({ tripMembers, assignments, onAssignmentChan
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-gray-900 border border-gray-700 rounded-2xl p-6 w-full max-w-md">
             <h3 className="text-xl font-semibold text-white mb-4">
-              Assign to {categories.find(c => c.id === selectedCategory)?.name}
+              Assign to {CATEGORIES.find(c => c.id === selectedCategory)?.name}
             </h3>
             
             <div className="space-y-3 mb-6">
               {tripMembers.map((member) => {
-                const assignment = getAssignmentForCategory(selectedCategory);
-                const isAssigned = assignment?.assignedUsers.some(u => u.id === member.id);
-                const isLead = assignment?.leadUserId === member.id;
+                const assignedUsers = getAssignedUsers(selectedCategory);
+                const leadUserId = getLeadUserId(selectedCategory);
+                const isAssigned = assignedUsers.some(u => u.id === member.id);
+                const isLead = leadUserId === member.id;
                 
                 return (
                   <div key={member.id} className="flex items-center justify-between bg-gray-800 rounded-lg p-3">
