@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin } from 'lucide-react';
 import { GoogleMapsService } from '@/services/googleMapsService';
+import { useBasecamp } from '@/contexts/BasecampContext';
 
 interface GoogleMapsEmbedProps {
   className?: string;
 }
 
 export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
+  const { basecamp, isBasecampSet } = useBasecamp();
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -28,13 +30,38 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
   };
 
   useEffect(() => {
-    loadEmbedUrl();
-  }, []);
+    const initMap = async () => {
+      if (isBasecampSet && basecamp?.coordinates) {
+        // Initialize centered on Base Camp
+        const url = `https://www.google.com/maps?q=${encodeURIComponent(basecamp.address)}&center=${basecamp.coordinates.lat},${basecamp.coordinates.lng}&zoom=15&output=embed`;
+        setEmbedUrl(url);
+        setIsLoading(false);
+      } else {
+        // Default fallback
+        await loadEmbedUrl('New York City');
+      }
+    };
+    
+    initMap();
+  }, [isBasecampSet, basecamp]);
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    const query = searchQuery.trim() || 'New York City';
-    loadEmbedUrl(query);
+    const destination = searchQuery.trim() || 'New York City';
+    
+    if (isBasecampSet && basecamp?.coordinates) {
+      // Context-aware search from Base Camp
+      const { embedUrl: searchUrl } = GoogleMapsService.searchWithOrigin(
+        destination,
+        basecamp.coordinates,
+        basecamp.address
+      );
+      setEmbedUrl(searchUrl);
+      setIsLoading(false);
+    } else {
+      // Fallback: generic search
+      await loadEmbedUrl(destination);
+    }
   };
 
   const handleIframeLoad = () => {

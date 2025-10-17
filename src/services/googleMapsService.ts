@@ -109,4 +109,36 @@ export class GoogleMapsService {
     const encodedDestination = encodeURIComponent(destination);
     return `https://www.google.com/maps/embed/v1/directions?origin=${originCoords.lat},${originCoords.lng}&destination=${encodedDestination}&mode=driving`;
   }
+
+  /**
+   * Search with origin context - generates both embed and directions URLs
+   */
+  static searchWithOrigin(
+    destinationQuery: string,
+    originCoords: { lat: number; lng: number },
+    originAddress: string
+  ): { embedUrl: string; directionsUrl: string } {
+    const encodedOrigin = encodeURIComponent(originAddress);
+    const encodedDestination = encodeURIComponent(destinationQuery);
+    
+    // For iframe embed (directions mode) - no API key in URL params, handled by proxy
+    const embedUrl = this.generateDirectionsEmbedUrlWithCoords(originCoords, destinationQuery);
+    
+    // For external link (opens in new tab)
+    const directionsUrl = `https://www.google.com/maps/dir/${encodedOrigin}/${encodedDestination}`;
+    
+    return { embedUrl, directionsUrl };
+  }
+
+  /**
+   * Generate search URL with location bias near Base Camp
+   */
+  static searchPlacesWithLocationBias(
+    query: string,
+    originCoords: { lat: number; lng: number }
+  ): string {
+    // Use search endpoint with center parameter for proximity bias
+    const encodedQuery = encodeURIComponent(query);
+    return `https://www.google.com/maps?q=${encodedQuery}&center=${originCoords.lat},${originCoords.lng}&zoom=14&output=embed`;
+  }
 }

@@ -10,6 +10,7 @@ import { useTripVariant } from '../contexts/TripVariantContext';
 import { AddToCalendarData } from '../types/calendar';
 import { useFeatureToggle, DEFAULT_FEATURES } from '../hooks/useFeatureToggle';
 import { usePlacesLinkSync } from '../hooks/usePlacesLinkSync';
+import { Home } from 'lucide-react';
 
 import { useBasecamp } from '@/contexts/BasecampContext';
 
@@ -149,11 +150,23 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
       </div>
 
       {/* Hero Map Section - Full Width */}
-      <div className="mb-8">
+      <div className="mb-4">
         <div className="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl shadow-black/50 h-96">
           <WorkingGoogleMaps className="w-full h-full" />
         </div>
       </div>
+      
+      {/* Base Camp Context Indicator */}
+      {isBasecampSet && contextBasecamp && (
+        <div className="mb-8 bg-green-500/10 border border-green-500/30 rounded-xl p-4">
+          <div className="flex items-center gap-2">
+            <Home size={16} className="text-green-400 flex-shrink-0" />
+            <span className="text-sm text-green-300">
+              All searches use <strong>{contextBasecamp.name || contextBasecamp.address}</strong> as your starting point
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* Basecamp and Trip Pins Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
