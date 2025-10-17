@@ -150,7 +150,7 @@ export const PlacesSection = ({ tripId = '1', tripName = 'Your Trip' }: PlacesSe
       </div>
 
       {/* Hero Map Section - Full Width */}
-      <div className="mb-4">
+      <div className="mb-4 hero-map-section">
         <div className="bg-gray-900 border border-gray-800 rounded-3xl overflow-hidden shadow-2xl shadow-black/50 h-96">
           <WorkingGoogleMaps className="w-full h-full" />
         </div>

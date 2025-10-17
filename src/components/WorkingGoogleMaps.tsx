@@ -3,13 +3,14 @@ import { MapPin, Edit2 } from 'lucide-react';
 import { GoogleMapsService } from '@/services/googleMapsService';
 import { useBasecamp } from '@/contexts/BasecampContext';
 import { BasecampSelector } from './BasecampSelector';
+import { BasecampLocation } from '@/types/basecamp';
 
 interface WorkingGoogleMapsProps {
   className?: string;
 }
 
 export const WorkingGoogleMaps = ({ className = '' }: WorkingGoogleMapsProps) => {
-  const { basecamp, isBasecampSet } = useBasecamp();
+  const { basecamp, isBasecampSet, setBasecamp } = useBasecamp();
   const [embedUrl, setEmbedUrl] = useState('');
   const [isBasecampSelectorOpen, setIsBasecampSelectorOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,7 +64,8 @@ export const WorkingGoogleMaps = ({ className = '' }: WorkingGoogleMapsProps) =>
     setIsBasecampSelectorOpen(true);
   };
 
-  const handleBasecampSet = () => {
+  const handleBasecampSet = (newBasecamp: BasecampLocation) => {
+    setBasecamp(newBasecamp);
     setIsBasecampSelectorOpen(false);
   };
 

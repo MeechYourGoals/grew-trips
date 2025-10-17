@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Home, MapPin, Edit3, Clock, Navigation } from 'lucide-react';
+import { Home, MapPin, Edit3, Clock, Navigation, Copy, Check, Share2 } from 'lucide-react';
 import { BasecampSelector } from './BasecampSelector';
 import { BasecampLocation } from '../types/basecamp';
 import { useBasecamp } from '@/contexts/BasecampContext';
+import { useToast } from '@/hooks/use-toast';
 
 interface SetBasecampSquareProps {
   // Optional props for backward compatibility
@@ -12,6 +13,7 @@ interface SetBasecampSquareProps {
 
 export const SetBasecampSquare = ({ basecamp: propBasecamp, onBasecampSet: propOnBasecampSet }: SetBasecampSquareProps) => {
   const { basecamp: contextBasecamp, setBasecamp: setContextBasecamp, isBasecampSet } = useBasecamp();
+  const { toast } = useToast();
   
   // Use context basecamp if available, otherwise fall back to props
   const basecamp = contextBasecamp || propBasecamp;
@@ -23,6 +25,34 @@ export const SetBasecampSquare = ({ basecamp: propBasecamp, onBasecampSet: propO
     propOnBasecampSet?.(newBasecamp);
   };
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCopying, setIsCopying] = useState(false);
+  const [showCoordinates, setShowCoordinates] = useState(false);
+
+  const handleCopyAddress = async () => {
+    if (!basecamp) return;
+    try {
+      await navigator.clipboard.writeText(basecamp.address);
+      setIsCopying(true);
+      toast({ title: 'Address copied to clipboard!' });
+      setTimeout(() => setIsCopying(false), 2000);
+    } catch (error) {
+      toast({ title: 'Failed to copy address', variant: 'destructive' });
+    }
+  };
+
+  const handleShareLocation = async () => {
+    if (!basecamp) return;
+    const text = `📍 ${basecamp.name || 'Our Basecamp'}\n${basecamp.address}`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: 'Trip Basecamp', text });
+      } catch (error) {
+        // User cancelled
+      }
+    } else {
+      handleCopyAddress();
+    }
+  };
 
   const formatAddress = (address: string) => {
     const parts = address.split(',');
@@ -64,19 +94,44 @@ export const SetBasecampSquare = ({ basecamp: propBasecamp, onBasecampSet: propO
         <div className="flex-1 space-y-6">
           {/* Main Info Card */}
           <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
-                <Home size={16} className="text-green-400" />
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex items-start gap-3 flex-1">
+                <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                  <Home size={16} className="text-green-400" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h4 className="text-white font-semibold">
+                      {basecamp.name || 'Your Home Base'}
+                    </h4>
+                    <span className="text-xs bg-green-500/20 text-green-300 px-2 py-0.5 rounded-full">
+                      Current
+                    </span>
+                  </div>
+                  <p className="text-green-300 text-sm leading-relaxed mb-2">
+                    {formatAddress(basecamp.address)}
+                  </p>
+                  {showCoordinates && (
+                    <p className="text-green-400/60 text-xs font-mono">
+                      {basecamp.coordinates.lat.toFixed(6)}, {basecamp.coordinates.lng.toFixed(6)}
+                    </p>
+                  )}
+                </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="text-white font-semibold mb-1">
-                  {basecamp.name || 'Your Home Base'}
-                </h4>
-                <p className="text-green-300 text-sm leading-relaxed">
-                  {formatAddress(basecamp.address)}
-                </p>
-              </div>
+              <button
+                onClick={handleCopyAddress}
+                className="text-green-400 hover:text-green-300 transition-colors flex-shrink-0"
+                title="Copy address"
+              >
+                {isCopying ? <Check size={18} /> : <Copy size={18} />}
+              </button>
             </div>
+            <button
+              onClick={() => setShowCoordinates(!showCoordinates)}
+              className="text-xs text-green-400/60 hover:text-green-400 mt-2"
+            >
+              {showCoordinates ? 'Hide' : 'Show'} coordinates
+            </button>
           </div>
 
           {/* Basecamp Features */}
@@ -122,10 +177,40 @@ export const SetBasecampSquare = ({ basecamp: propBasecamp, onBasecampSet: propO
             </button>
             
             <div className="grid grid-cols-2 gap-3">
-              <button className="bg-gray-800/50 hover:bg-gray-800 text-gray-300 py-2 px-3 rounded-lg transition-colors border border-gray-700 text-xs">
+              <button
+                onClick={handleCopyAddress}
+                className="bg-gray-800/50 hover:bg-gray-800 text-gray-300 py-2 px-3 rounded-lg transition-colors border border-gray-700 text-xs flex items-center justify-center gap-2"
+              >
+                <Copy size={14} />
+                Copy Address
+              </button>
+              <button
+                onClick={handleShareLocation}
+                className="bg-gray-800/50 hover:bg-gray-800 text-gray-300 py-2 px-3 rounded-lg transition-colors border border-gray-700 text-xs flex items-center justify-center gap-2"
+              >
+                <Share2 size={14} />
+                Share
+              </button>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={() => {
+                  document.querySelector('.hero-map-section')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="bg-gray-800/50 hover:bg-gray-800 text-gray-300 py-2 px-3 rounded-lg transition-colors border border-gray-700 text-xs flex items-center justify-center gap-2"
+              >
+                <MapPin size={14} />
                 View on Map
               </button>
-              <button className="bg-gray-800/50 hover:bg-gray-800 text-gray-300 py-2 px-3 rounded-lg transition-colors border border-gray-700 text-xs">
+              <button
+                onClick={() => {
+                  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(basecamp.address)}`;
+                  window.open(mapsUrl, '_blank');
+                }}
+                className="bg-gray-800/50 hover:bg-gray-800 text-gray-300 py-2 px-3 rounded-lg transition-colors border border-gray-700 text-xs flex items-center justify-center gap-2"
+              >
+                <Navigation size={14} />
                 Get Directions
               </button>
             </div>
