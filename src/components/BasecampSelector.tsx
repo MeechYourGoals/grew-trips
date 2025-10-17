@@ -20,6 +20,8 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(-1);
   const [isLoadingSuggestions, setIsLoadingSuggestions] = useState(false);
+  const [hasSelectedFromAutocomplete, setHasSelectedFromAutocomplete] = useState(!!currentBasecamp);
+  const [selectedPlaceId, setSelectedPlaceId] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
@@ -27,6 +29,8 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
   const handleAddressChange = async (value: string) => {
     setAddress(value);
     setSelectedSuggestionIndex(-1);
+    setHasSelectedFromAutocomplete(false);
+    setSelectedPlaceId(null);
     
     if (value.length > 2) {
       setIsLoadingSuggestions(true);
@@ -55,6 +59,8 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
 
   const handleSuggestionClick = async (suggestion: any) => {
     setAddress(suggestion.description);
+    setHasSelectedFromAutocomplete(true);
+    setSelectedPlaceId(suggestion.place_id);
     setShowSuggestions(false);
     setSuggestions([]);
     
@@ -114,26 +120,40 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!address.trim()) return;
+    
+    if (!address.trim()) {
+      alert('Please enter an address.');
+      return;
+    }
+    
+    if (!hasSelectedFromAutocomplete || !selectedPlaceId) {
+      alert('Please select an address from the dropdown suggestions to ensure accurate location mapping.');
+      return;
+    }
     
     setIsLoading(true);
     setShowSuggestions(false);
     
     try {
-      const coordinates = await GoogleMapsService.geocodeAddress(address);
+      const placeDetails = await GoogleMapsService.getPlaceDetailsById(selectedPlaceId);
       
-      if (coordinates) {
+      if (placeDetails?.result?.geometry?.location) {
+        const coordinates = {
+          lat: placeDetails.result.geometry.location.lat,
+          lng: placeDetails.result.geometry.location.lng
+        };
+        
         const basecamp: BasecampLocation = {
           address: address.trim(),
           coordinates,
-          name: name.trim() || undefined,
+          name: name.trim() || placeDetails.result.name || undefined,
           type
         };
         
         onBasecampSet(basecamp);
         onClose();
       } else {
-        alert('Could not find that address. Please try selecting from the suggestions or enter a different location.');
+        alert('Could not retrieve location details. Please try selecting a different address from the suggestions.');
       }
     } catch (error) {
       console.error('Error setting basecamp:', error);
@@ -202,6 +222,12 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
                 className="w-full bg-gray-800 border border-gray-700 rounded-xl pl-12 pr-4 py-4 text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all"
                 autoComplete="off"
               />
+              
+              {!hasSelectedFromAutocomplete && address.trim().length > 0 && !showSuggestions && (
+                <div className="absolute -bottom-6 left-0 text-xs text-yellow-500 flex items-center gap-1">
+                  <span>⚠️</span> Please select from dropdown
+                </div>
+              )}
               
               {/* Autocomplete Suggestions */}
               {(showSuggestions || isLoadingSuggestions) && (
@@ -293,7 +319,7 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
 
           <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
             <p className="text-sm text-green-300">
-              💡 Your basecamp will be used as the starting point for directions and calculating distances to places.
+              💡 <strong>Select from the dropdown</strong> as you type to ensure your basecamp location is recognized by Google Maps for directions and distance calculations.
             </p>
           </div>
 
@@ -308,8 +334,8 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
             </Button>
             <Button
               type="submit"
-              disabled={isLoading || !address.trim()}
-              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 font-semibold shadow-lg shadow-green-500/25 border border-green-500/50"
+              disabled={isLoading || !address.trim() || !hasSelectedFromAutocomplete}
+              className="flex-1 h-12 rounded-xl bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 font-semibold shadow-lg shadow-green-500/25 border border-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? 'Setting...' : (currentBasecamp ? 'Update' : 'Set Basecamp')}
             </Button>
