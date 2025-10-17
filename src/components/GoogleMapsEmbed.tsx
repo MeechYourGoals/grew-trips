@@ -18,16 +18,13 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
   useEffect(() => {
     setIsLoading(true);
     
-    if (isBasecampSet && basecamp?.address && basecamp?.coordinates) {
-      // Initialize with Base Camp context
-      const url = GoogleMapsService.generateNativeEmbedUrl(
-        basecamp.address,
-        basecamp.coordinates
-      );
+    if (isBasecampSet && basecamp?.address) {
+      // Initialize with Base Camp
+      const url = GoogleMapsService.buildEmbeddableUrl(basecamp.address, basecamp.coordinates);
       setEmbedUrl(url);
     } else {
       // Default fallback
-      const url = GoogleMapsService.generateNativeEmbedUrl();
+      const url = GoogleMapsService.buildEmbeddableUrl();
       setEmbedUrl(url);
     }
     
@@ -38,17 +35,13 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
     e.preventDefault();
     const destination = searchQuery.trim();
     
-    if (destination && isBasecampSet && basecamp?.address && basecamp?.coordinates) {
+    if (destination && isBasecampSet && basecamp?.address) {
       // Show directions from Base Camp to destination
-      const url = GoogleMapsService.generateNativeEmbedUrl(
-        basecamp.address,
-        basecamp.coordinates,
-        destination
-      );
+      const url = GoogleMapsService.buildEmbeddableUrl(basecamp.address, basecamp.coordinates, destination);
       setEmbedUrl(url);
     } else if (destination) {
       // Search for destination without Base Camp
-      const url = `https://www.google.com/maps/search/${encodeURIComponent(destination)}`;
+      const url = `https://maps.google.com/maps?output=embed&q=${encodeURIComponent(destination)}`;
       setEmbedUrl(url);
     }
   };
@@ -100,7 +93,7 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
               onClick={() => {
                 setHasError(false);
                 setIsLoading(true);
-                const url = GoogleMapsService.generateNativeEmbedUrl();
+                const url = GoogleMapsService.buildEmbeddableUrl();
                 setEmbedUrl(url);
               }}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"

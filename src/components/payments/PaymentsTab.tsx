@@ -29,6 +29,10 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
   const [tripMembers, setTripMembers] = useState<Array<{ id: string; name: string; avatar?: string }>>([]);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
+  // Consumer trips (1-12) are ALWAYS in demo mode for testing/investors
+  const tripIdNum = parseInt(tripId);
+  const demoActive = isDemoMode || (tripIdNum >= 1 && tripIdNum <= 12);
+
   // Load trip members - use tripsData for consumer trips (1-12), DB for others
   useEffect(() => {
     if (demoLoading) return; // Wait for demo mode to initialize
@@ -100,7 +104,7 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
     
     const loadBalances = async () => {
       // Demo mode: use mock data
-      if (isDemoMode) {
+      if (demoActive) {
         const mockPayments = await demoModeService.getMockPayments(tripId, false);
         const mockMembers = await demoModeService.getMockMembers(tripId);
         
@@ -143,7 +147,7 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
     };
 
     loadBalances();
-  }, [tripId, user?.id, isDemoMode, demoLoading]);
+  }, [tripId, user?.id, demoActive, demoLoading]);
 
   const handlePaymentSubmit = async (paymentData: {
     amount: number;
@@ -154,7 +158,7 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
     paymentMethods: string[];
   }) => {
     // Demo mode: use session storage
-    if (isDemoMode) {
+    if (demoActive) {
       const paymentId = demoModeService.addSessionPayment(tripId, paymentData);
       
       if (paymentId) {
@@ -236,7 +240,7 @@ export const PaymentsTab = ({ tripId }: PaymentsTabProps) => {
         <div className="flex items-center justify-center py-8 opacity-80">
           <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
         </div>
-      ) : !user && !isDemoMode ? (
+      ) : !user && !demoActive ? (
         <div className="bg-card rounded-lg border border-border p-6 text-center">
           <LogIn className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
           <h3 className="text-lg font-semibold mb-2">Sign in to create payment requests</h3>

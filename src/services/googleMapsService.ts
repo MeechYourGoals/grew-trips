@@ -97,28 +97,33 @@ export class GoogleMapsService {
   }
 
   /**
-   * Generate native Google Maps embed URL with Base Camp context
-   * This creates a clean native Maps interface without CSP issues
+   * Build classic embeddable Google Maps URL (output=embed format)
+   * This format works reliably in iframes without CSP/API key issues
    */
-  static generateNativeEmbedUrl(
+  static buildEmbeddableUrl(
     basecampAddress?: string,
-    basecampCoords?: { lat: number; lng: number },
-    destinationQuery?: string
+    coords?: { lat: number; lng: number },
+    destination?: string
   ): string {
-    if (destinationQuery && basecampAddress && basecampCoords) {
+    if (destination && basecampAddress) {
       // Directions from Base Camp to destination
-      const origin = encodeURIComponent(basecampAddress);
-      const dest = encodeURIComponent(destinationQuery);
-      return `https://www.google.com/maps/dir/${origin}/${dest}`;
+      const s = encodeURIComponent(basecampAddress);
+      const d = encodeURIComponent(destination);
+      return `https://maps.google.com/maps?output=embed&saddr=${s}&daddr=${d}`;
     }
     
-    if (basecampAddress && basecampCoords) {
-      // Show Base Camp location in native Google Maps
-      const query = encodeURIComponent(basecampAddress);
-      return `https://www.google.com/maps/place/${query}/@${basecampCoords.lat},${basecampCoords.lng},15z`;
+    if (basecampAddress) {
+      // Show Base Camp location
+      const q = encodeURIComponent(basecampAddress);
+      return `https://maps.google.com/maps?output=embed&q=${q}`;
     }
     
-    // Fallback: Show approximate location (NYC default)
-    return `https://www.google.com/maps/@40.7580,-73.9855,12z`;
+    if (coords) {
+      // Show specific coordinates
+      return `https://maps.google.com/maps?output=embed&ll=${coords.lat},${coords.lng}&z=12`;
+    }
+    
+    // Fallback: NYC default
+    return `https://maps.google.com/maps?output=embed&ll=40.7580,-73.9855&z=12`;
   }
 }

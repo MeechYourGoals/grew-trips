@@ -14,24 +14,47 @@ export const WorkingGoogleMaps = ({ className = '' }: WorkingGoogleMapsProps) =>
   const [isBasecampSelectorOpen, setIsBasecampSelectorOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Generate embed URL based on Base Camp
+  // Generate embed URL based on Base Camp or geolocation
   useEffect(() => {
     setIsLoading(true);
     
-    try {
-      if (isBasecampSet && basecamp?.address && basecamp?.coordinates) {
-        // Generate native embed URL (no API call needed)
-        const url = GoogleMapsService.generateNativeEmbedUrl(
-          basecamp.address,
-          basecamp.coordinates
-        );
-        setEmbedUrl(url);
-      } else {
-        // No Base Camp: Show approximate location
-        const url = GoogleMapsService.generateNativeEmbedUrl();
-        setEmbedUrl(url);
-      }
-    } finally {
+    const setSrc = (url: string) => {
+      setEmbedUrl(url);
+      console.info('[WorkingGoogleMaps] Setting iframe src:', url);
+    };
+
+    if (isBasecampSet && basecamp?.address) {
+      // Base Camp set: use it directly
+      setSrc(GoogleMapsService.buildEmbeddableUrl(basecamp.address, basecamp.coordinates));
+      setIsLoading(false);
+      return;
+    }
+
+    // No Base Camp: try geolocation
+    const timeout = setTimeout(() => {
+      console.warn('[WorkingGoogleMaps] Geolocation timeout, using NYC fallback');
+      setSrc(GoogleMapsService.buildEmbeddableUrl());
+      setIsLoading(false);
+    }, 4000);
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          clearTimeout(timeout);
+          const { latitude, longitude } = pos.coords;
+          setSrc(GoogleMapsService.buildEmbeddableUrl(undefined, { lat: latitude, lng: longitude }));
+          setIsLoading(false);
+        },
+        () => {
+          clearTimeout(timeout);
+          setSrc(GoogleMapsService.buildEmbeddableUrl());
+          setIsLoading(false);
+        },
+        { maximumAge: 300000, timeout: 3500, enableHighAccuracy: false }
+      );
+    } else {
+      clearTimeout(timeout);
+      setSrc(GoogleMapsService.buildEmbeddableUrl());
       setIsLoading(false);
     }
   }, [basecamp, isBasecampSet]);
@@ -81,13 +104,19 @@ export const WorkingGoogleMaps = ({ className = '' }: WorkingGoogleMapsProps) =>
         </div>
       )}
 
-      {/* Google Maps Iframe - Native UI */}
+      {/* Google Maps Iframe - Classic Embeddable UI */}
       <iframe
         src={embedUrl}
         className="w-full h-full border-0"
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
         onLoad={handleIframeLoad}
+        onError={() => {
+          console.error('[WorkingGoogleMaps] Iframe error for URL:', embedUrl);
+          const fallback = 'https://maps.google.com/maps?output=embed&q=' + encodeURIComponent('near me');
+          console.info('[WorkingGoogleMaps] Applying fallback URL:', fallback);
+          setEmbedUrl(fallback);
+        }}
         title="Google Maps"
         allow="geolocation"
       />
