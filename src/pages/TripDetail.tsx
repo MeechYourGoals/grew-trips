@@ -25,6 +25,11 @@ const TripDetail = () => {
   const [showTripSettings, setShowTripSettings] = useState(false);
   const [showTripsPlusModal, setShowTripsPlusModal] = useState(false);
   const [tripDescription, setTripDescription] = useState<string>('');
+  const [tripData, setTripData] = useState<{
+    title?: string;
+    location?: string;
+    dateRange?: string;
+  }>({});
 
   // Get trip data dynamically based on tripId
   const tripIdNum = tripId ? parseInt(tripId, 10) : null;
@@ -36,15 +41,27 @@ const TripDetail = () => {
       setTripDescription(trip.description);
     }
   }, [trip, tripDescription]);
+
+  // Handle trip updates from edit modal
+  const handleTripUpdate = (updates: any) => {
+    setTripData(prev => ({ ...prev, ...updates }));
+    
+    // Update specific states for backward compatibility
+    if (updates.name) setTripData(prev => ({ ...prev, title: updates.name }));
+    if (updates.description) setTripDescription(updates.description);
+  };
   
-  // Create trip object with updated description
-  const tripWithUpdatedDescription = trip ? {
+  // Create trip object with all updates
+  const tripWithUpdatedData = trip ? {
     ...trip,
+    title: tripData.title || trip.title,
+    location: tripData.location || trip.location,
+    dateRange: tripData.dateRange || trip.dateRange,
     description: tripDescription || trip.description
   } : null;
   
   // Handle missing trip
-  if (!tripWithUpdatedDescription) {
+  if (!tripWithUpdatedData) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
@@ -117,8 +134,9 @@ const TripDetail = () => {
 
         {/* Trip Header with Cover Photo Upload */}
         <TripHeader 
-          trip={tripWithUpdatedDescription} 
+          trip={tripWithUpdatedData} 
           onDescriptionUpdate={setTripDescription}
+          onTripUpdate={handleTripUpdate}
         />
 
         {/* Main Content */}
@@ -127,7 +145,7 @@ const TripDetail = () => {
           onTabChange={setActiveTab}
           onShowTripsPlusModal={() => setShowTripsPlusModal(true)}
           tripId={tripId || '1'}
-          tripName={tripWithUpdatedDescription.title}
+          tripName={tripWithUpdatedData.title}
           basecamp={basecamp}
         />
       </div>
@@ -144,7 +162,7 @@ const TripDetail = () => {
         onCloseTripSettings={() => setShowTripSettings(false)}
         showTripsPlusModal={showTripsPlusModal}
         onCloseTripsPlusModal={() => setShowTripsPlusModal(false)}
-        tripName={tripWithUpdatedDescription.title}
+        tripName={tripWithUpdatedData.title}
         tripId={tripId || '1'}
         userId={user?.id}
       />

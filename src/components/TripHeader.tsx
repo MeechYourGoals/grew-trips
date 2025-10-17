@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Calendar, MapPin, Users, Plus, Settings } from 'lucide-react';
+import { Calendar, MapPin, Users, Plus, Settings, Edit } from 'lucide-react';
 import { InviteModal } from './InviteModal';
 import { TripCoverPhotoUpload } from './TripCoverPhotoUpload';
 import { EditableDescription } from './EditableDescription';
@@ -12,6 +12,9 @@ import { CategoryTags } from './pro/CategoryTags';
 import { ProTripCategory } from '../types/proCategories';
 import { CollaboratorsGrid } from './trip/CollaboratorsGrid';
 import { CollaboratorsModal } from './trip/CollaboratorsModal';
+import { EditTripModal } from './EditTripModal';
+import { Trip } from '@/services/tripService';
+import { formatDateRange } from '@/utils/dateFormatters';
 
 interface TripHeaderProps {
   trip: {
@@ -30,19 +33,38 @@ interface TripHeaderProps {
   };
   onManageUsers?: () => void;
   onDescriptionUpdate?: (description: string) => void;
+  onTripUpdate?: (updates: Partial<Trip>) => void;
   // Pro-specific props
   category?: ProTripCategory;
   tags?: string[];
   onCategoryChange?: (category: ProTripCategory) => void;
 }
 
-export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, category, tags = [], onCategoryChange }: TripHeaderProps) => {
+export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, onTripUpdate, category, tags = [], onCategoryChange }: TripHeaderProps) => {
   const { user } = useAuth();
   const [showInvite, setShowInvite] = useState(false);
   const [showAllCollaborators, setShowAllCollaborators] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const { variant, accentColors } = useTripVariant();
   const { coverPhoto, updateCoverPhoto } = useTripCoverPhoto(trip);
   const isPro = variant === 'pro';
+
+  // Handle trip updates from modal
+  const handleTripUpdate = (updates: Partial<Trip>) => {
+    if (onTripUpdate) {
+      // Format dateRange if dates are updated
+      if (updates.start_date && updates.end_date) {
+        const dateRange = formatDateRange(updates.start_date, updates.end_date);
+        onTripUpdate({
+          ...updates,
+          name: updates.name || trip.title,
+          destination: updates.destination || trip.location
+        });
+      } else {
+        onTripUpdate(updates);
+      }
+    }
+  };
 
   return (
     <>
@@ -55,7 +77,18 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, category,
           >
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
             <div className="absolute bottom-6 left-8 right-8">
-              <h1 className="text-4xl font-bold text-white mb-2">{trip.title}</h1>
+              <div className="flex items-center gap-3 mb-2">
+                <h1 className="text-4xl font-bold text-white">{trip.title}</h1>
+                {user && (
+                  <button
+                    onClick={() => setShowEditModal(true)}
+                    className="p-2 bg-black/30 hover:bg-black/50 backdrop-blur-sm border border-white/20 rounded-lg transition-all text-white/70 hover:text-white"
+                    title="Edit trip details"
+                  >
+                    <Edit size={18} />
+                  </button>
+                )}
+              </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 <div className="flex items-center gap-2 text-white/90">
                   <MapPin size={18} />
@@ -96,7 +129,18 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, category,
           {/* Trip Info */}
           <div className="flex-1">
             {!coverPhoto && (
-              <h1 className="text-4xl font-bold text-white mb-4">{trip.title}</h1>
+              <div className="flex items-center gap-3 mb-4">
+                <h1 className="text-4xl font-bold text-white">{trip.title}</h1>
+                {user && (
+                  <button
+                    onClick={() => setShowEditModal(true)}
+                    className="p-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-all text-gray-400 hover:text-white"
+                    title="Edit trip details"
+                  >
+                    <Edit size={18} />
+                  </button>
+                )}
+              </div>
             )}
             
             {/* Category Tags for Pro trips */}
@@ -188,6 +232,13 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, category,
         open={showAllCollaborators}
         onOpenChange={setShowAllCollaborators}
         participants={trip.participants}
+      />
+
+      <EditTripModal
+        isOpen={showEditModal}
+        onClose={() => setShowEditModal(false)}
+        trip={trip}
+        onUpdate={handleTripUpdate}
       />
     </>
   );
