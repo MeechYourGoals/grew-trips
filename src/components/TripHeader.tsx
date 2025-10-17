@@ -79,15 +79,6 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, onTripUpd
             <div className="absolute bottom-6 left-8 right-8">
               <div className="flex items-center gap-3 mb-2">
                 <h1 className="text-4xl font-bold text-white">{trip.title}</h1>
-                {user && (
-                  <button
-                    onClick={() => setShowEditModal(true)}
-                    className="p-2 bg-black/30 hover:bg-black/50 backdrop-blur-sm border border-white/20 rounded-lg transition-all text-white/70 hover:text-white"
-                    title="Edit trip details"
-                  >
-                    <Edit size={18} />
-                  </button>
-                )}
               </div>
               <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                 <div className="flex items-center gap-2 text-white/90">
@@ -100,16 +91,27 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, onTripUpd
                 </div>
               </div>
             </div>
-            {user && (
-              <div className="absolute top-4 right-4">
-                <TripCoverPhotoUpload
-                  tripId={trip.id.toString()}
-                  currentPhoto={coverPhoto}
-                  onPhotoUploaded={updateCoverPhoto}
-                  className="w-auto"
-                />
-              </div>
-            )}
+            
+            {/* Cover Photo Upload - Top right */}
+            <div className="absolute top-4 right-4 z-10">
+              <TripCoverPhotoUpload
+                tripId={trip.id.toString()}
+                currentPhoto={coverPhoto}
+                onPhotoUploaded={updateCoverPhoto}
+                className="w-auto"
+              />
+            </div>
+
+            {/* Edit Trip Button - Bottom right */}
+            <div className="absolute bottom-6 right-6 z-10">
+              <button
+                onClick={() => setShowEditModal(true)}
+                className="p-3 bg-black/30 hover:bg-black/50 backdrop-blur-sm border border-white/20 rounded-xl transition-all text-white/70 hover:text-white shadow-lg"
+                title="Edit trip details"
+              >
+                <Edit size={20} />
+              </button>
+            </div>
           </div>
         </div>
       ) : (
@@ -124,22 +126,13 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, onTripUpd
       )}
 
       {/* Main Trip Info Section */}
-      <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 mb-8">
+      <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-3xl p-8 mb-8">
         <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-6">
           {/* Trip Info */}
           <div className="flex-1">
             {!coverPhoto && (
               <div className="flex items-center gap-3 mb-4">
                 <h1 className="text-4xl font-bold text-white">{trip.title}</h1>
-                {user && (
-                  <button
-                    onClick={() => setShowEditModal(true)}
-                    className="p-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg transition-all text-gray-400 hover:text-white"
-                    title="Edit trip details"
-                  >
-                    <Edit size={18} />
-                  </button>
-                )}
               </div>
             )}
             
@@ -219,9 +212,22 @@ export const TripHeader = ({ trip, onManageUsers, onDescriptionUpdate, onTripUpd
               </button>
           </div>
         </div>
+
+        {/* Edit Trip Button - Bottom right for non-cover version */}
+        {!coverPhoto && (
+          <div className="absolute bottom-6 right-6">
+            <button
+              onClick={() => setShowEditModal(true)}
+              className="p-3 bg-white/10 hover:bg-white/20 border border-white/20 rounded-xl transition-all text-gray-400 hover:text-white shadow-lg backdrop-blur-sm"
+              title="Edit trip details"
+            >
+              <Edit size={20} />
+            </button>
+          </div>
+        )}
       </div>
 
-      <InviteModal 
+      <InviteModal
         isOpen={showInvite} 
         onClose={() => setShowInvite(false)}
         tripName={trip.title}

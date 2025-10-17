@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { X, Loader2, MapPin, Calendar, Type } from 'lucide-react';
+import { X, Loader2, MapPin, Calendar as CalendarIcon, Type, Image as ImageIcon } from 'lucide-react';
 import { parseDateRange, formatDateRange } from '@/utils/dateFormatters';
 import { tripService, Trip } from '@/services/tripService';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from '@/hooks/use-toast';
+import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { TripCoverPhotoUpload } from './TripCoverPhotoUpload';
+import { format } from 'date-fns';
+import { cn } from '@/lib/utils';
 
 interface EditTripModalProps {
   isOpen: boolean;
@@ -13,6 +18,7 @@ interface EditTripModalProps {
     title: string;
     location: string;
     dateRange: string;
+    coverPhoto?: string;
   };
   onUpdate?: (updates: Partial<Trip>) => void;
 }
@@ -20,6 +26,7 @@ interface EditTripModalProps {
 export const EditTripModal = ({ isOpen, onClose, trip, onUpdate }: EditTripModalProps) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [coverPhoto, setCoverPhoto] = useState<string | undefined>(trip.coverPhoto);
   const [formData, setFormData] = useState({
     name: '',
     destination: '',
@@ -37,6 +44,7 @@ export const EditTripModal = ({ isOpen, onClose, trip, onUpdate }: EditTripModal
         start_date: dates.start,
         end_date: dates.end
       });
+      setCoverPhoto(trip.coverPhoto);
     }
   }, [isOpen, trip]);
 
@@ -135,6 +143,20 @@ export const EditTripModal = ({ isOpen, onClose, trip, onUpdate }: EditTripModal
 
         {/* Form */}
         <div className="space-y-4">
+          {/* Cover Photo */}
+          <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
+              <ImageIcon size={16} />
+              Cover Photo
+            </label>
+            <TripCoverPhotoUpload
+              tripId={trip.id.toString()}
+              currentPhoto={coverPhoto}
+              onPhotoUploaded={(url) => setCoverPhoto(url)}
+              className="h-48 w-full"
+            />
+          </div>
+
           {/* Trip Name */}
           <div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
@@ -173,36 +195,68 @@ export const EditTripModal = ({ isOpen, onClose, trip, onUpdate }: EditTripModal
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
-                <Calendar size={16} />
+                <CalendarIcon size={16} />
                 Start Date
               </label>
-              <input
-                type="date"
-                value={formData.start_date}
-                onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
-                disabled={loading}
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    disabled={loading}
+                    className={cn(
+                      "w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-left flex items-center justify-between",
+                      !formData.start_date && "text-gray-500"
+                    )}
+                  >
+                    {formData.start_date ? format(new Date(formData.start_date), 'MMM d, yyyy') : 'Pick a date'}
+                    <CalendarIcon size={16} className="opacity-50" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-gray-900 border-white/10" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.start_date ? new Date(formData.start_date) : undefined}
+                    onSelect={(date) => date && setFormData({ ...formData, start_date: format(date, 'yyyy-MM-dd') })}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
             <div>
               <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
-                <Calendar size={16} />
+                <CalendarIcon size={16} />
                 End Date
               </label>
-              <input
-                type="date"
-                value={formData.end_date}
-                onChange={(e) => setFormData({ ...formData, end_date: e.target.value })}
-                className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
-                disabled={loading}
-              />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <button
+                    disabled={loading}
+                    className={cn(
+                      "w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all text-left flex items-center justify-between",
+                      !formData.end_date && "text-gray-500"
+                    )}
+                  >
+                    {formData.end_date ? format(new Date(formData.end_date), 'MMM d, yyyy') : 'Pick a date'}
+                    <CalendarIcon size={16} className="opacity-50" />
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0 bg-gray-900 border-white/10" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={formData.end_date ? new Date(formData.end_date) : undefined}
+                    onSelect={(date) => date && setFormData({ ...formData, end_date: format(date, 'yyyy-MM-dd') })}
+                    initialFocus
+                    className="pointer-events-auto"
+                  />
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
 
           {/* Info Message */}
           <div className="bg-blue-500/10 border border-blue-500/20 rounded-xl p-4">
             <p className="text-sm text-blue-300">
-              ℹ️ All trip members can see these changes immediately
+              {user ? "ℹ️ All trip members can see these changes immediately" : "ℹ️ Changes save instantly in demo mode and sync when you log in"}
             </p>
           </div>
         </div>
