@@ -3,12 +3,14 @@ import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
   appId: 'com.chravel.app',
-  appName: 'chravel',
+  appName: 'Chravel',
   webDir: 'dist',
-  server: {
-    url: 'https://20feaa04-0946-4c68-a68d-0eb88cc1b9c4.lovableproject.com?forceHideBadge=true',
-    cleartext: true
-  },
+  // PRODUCTION MODE: App bundles static assets
+  // For development with hot reload, uncomment the server block:
+  // server: {
+  //   url: 'https://20feaa04-0946-4c68-a68d-0eb88cc1b9c4.lovableproject.com?forceHideBadge=true',
+  //   cleartext: true
+  // },
   plugins: {
     PushNotifications: {
       presentationOptions: ["badge", "sound", "alert"]
