@@ -9,9 +9,10 @@ interface TripViewToggleProps {
   onViewModeChange: (value: string) => void;
   onUpgrade?: () => void;
   style?: React.CSSProperties;
+  showRecsTab?: boolean;
 }
 
-export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade, style }: TripViewToggleProps) => {
+export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade, style, showRecsTab = false }: TripViewToggleProps) => {
   const isMobile = useIsMobile();
 
   return (
@@ -45,13 +46,15 @@ export const TripViewToggle = ({ viewMode, onViewModeChange, onUpgrade, style }:
           <Calendar size={isMobile ? 16 : 18} />
           <span className={isMobile ? 'text-sm' : ''}>Events</span>
         </ToggleGroupItem>
-        <ToggleGroupItem 
-          value="travelRecs" 
-          className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-glass-accent-orange data-[state=on]:to-glass-accent-orange-light data-[state=on]:text-white transition-all font-medium flex items-center gap-2 ${isMobile ? 'text-sm' : ''} ${!isMobile ? 'w-[140px]' : ''}`}
-        >
-          <Compass size={isMobile ? 16 : 18} />
-          <span className={isMobile ? 'text-sm' : ''}>Chravel Recs</span>
-        </ToggleGroupItem>
+        {showRecsTab && (
+          <ToggleGroupItem 
+            value="travelRecs" 
+            className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-white data-[state=on]:bg-gradient-to-r data-[state=on]:from-glass-accent-orange data-[state=on]:to-glass-accent-orange-light data-[state=on]:text-white transition-all font-medium flex items-center gap-2 ${isMobile ? 'text-sm' : ''} ${!isMobile ? 'w-[140px]' : ''}`}
+          >
+            <Compass size={isMobile ? 16 : 18} />
+            <span className={isMobile ? 'text-sm' : ''}>Chravel Recs</span>
+          </ToggleGroupItem>
+        )}
         <ToggleGroupItem 
           value="upgrade" 
           className={`px-3 sm:px-6 py-3 sm:py-4 rounded-xl text-black bg-gradient-to-r from-[hsl(45,95%,58%)] to-[hsl(45,90%,65%)] hover:from-[hsl(45,90%,55%)] hover:to-[hsl(45,85%,62%)] transition-all font-medium flex items-center gap-2 ${isMobile ? 'text-sm' : ''} ${!isMobile ? 'w-[150px]' : ''}`}

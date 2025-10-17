@@ -44,6 +44,9 @@ const Index = () => {
   const location = useLocation();
   const { isDemoMode } = useDemoMode();
 
+  // Determine if marketing content should be shown (only for unauthenticated users in demo mode)
+  const showMarketingContent = !user && isDemoMode;
+
   // Use centralized trip data - only show if demo mode is enabled
   const trips = isDemoMode ? tripsData : [];
 
@@ -145,6 +148,13 @@ const Index = () => {
 
   
 
+  // Auto-switch away from travelRecs if user logs in or demo mode is disabled
+  useEffect(() => {
+    if ((user || !isDemoMode) && viewMode === 'travelRecs') {
+      setViewMode('myTrips');
+    }
+  }, [user, isDemoMode, viewMode]);
+
   // Open settings to saved recs if requested via query params
   useEffect(() => {
     const sp = new URLSearchParams(location.search);
@@ -192,6 +202,7 @@ const Index = () => {
             viewMode={viewMode} 
             onViewModeChange={handleViewModeChange}
             onUpgrade={() => setIsUpgradeModalOpen(true)}
+            showRecsTab={showMarketingContent}
           />
           </div>
         </div>
@@ -232,25 +243,30 @@ const Index = () => {
           />
         </div>
 
-        {/* Social Proof Section */}
-        <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.3s' }}>
-          <SocialProofSection />
-        </div>
+        {/* Marketing Content - Only show to unauthenticated users in demo mode */}
+        {showMarketingContent && (
+          <>
+            {/* Social Proof Section */}
+            <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.3s' }}>
+              <SocialProofSection />
+            </div>
 
-        {/* Feature Showcase */}
-        <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-          <FeatureShowcase />
-        </div>
+            {/* Feature Showcase */}
+            <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.4s' }}>
+              <FeatureShowcase />
+            </div>
 
-        {/* Pricing Section */}
-        <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.5s' }}>
-          <PricingSection />
-        </div>
+            {/* Pricing Section */}
+            <div className="mb-12 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+              <PricingSection />
+            </div>
+          </>
+        )}
 
       </div>
 
-      {/* Persistent CTA Bar - Only for Pro/Events views */}
-      {(viewMode === 'tripsPro' || viewMode === 'events') && (
+      {/* Persistent CTA Bar - Only for Pro/Events views AND unauthenticated users */}
+      {showMarketingContent && (viewMode === 'tripsPro' || viewMode === 'events') && (
         <PersistentCTABar
           viewMode={viewMode}
           onScheduleDemo={handleScheduleDemo}
