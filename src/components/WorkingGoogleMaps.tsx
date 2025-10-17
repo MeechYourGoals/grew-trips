@@ -78,7 +78,7 @@ export const WorkingGoogleMaps = ({ className = '' }: WorkingGoogleMapsProps) =>
       {/* Floating Base Camp Button */}
       <button
         onClick={handleEditBasecamp}
-        className="absolute top-4 left-4 z-20 flex items-center gap-2 px-4 py-2 bg-background/95 backdrop-blur-sm border border-border rounded-xl shadow-lg hover:bg-accent transition-colors text-sm font-medium"
+        className="absolute top-4 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 px-4 py-2 bg-background/95 backdrop-blur-sm border border-border rounded-xl shadow-lg hover:bg-accent transition-colors text-sm font-medium"
       >
         {isBasecampSet ? (
           <>
