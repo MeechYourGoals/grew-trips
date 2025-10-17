@@ -96,49 +96,30 @@ export class GoogleMapsService {
     return await this.callProxy('place-details', { placeId });
   }
 
-  static generateDirectionsEmbedUrl(origin: string, destination: string): string {
-    const encodedOrigin = encodeURIComponent(origin);
-    const encodedDestination = encodeURIComponent(destination);
-    return `https://www.google.com/maps/embed/v1/directions?origin=${encodedOrigin}&destination=${encodedDestination}&mode=driving`;
-  }
-
-  static generateDirectionsEmbedUrlWithCoords(
-    originCoords: { lat: number; lng: number },
-    destination: string
+  /**
+   * Generate native Google Maps embed URL with Base Camp context
+   * This creates a clean native Maps interface without CSP issues
+   */
+  static generateNativeEmbedUrl(
+    basecampAddress?: string,
+    basecampCoords?: { lat: number; lng: number }
   ): string {
-    const encodedDestination = encodeURIComponent(destination);
-    return `https://www.google.com/maps/embed/v1/directions?origin=${originCoords.lat},${originCoords.lng}&destination=${encodedDestination}&mode=driving`;
+    if (basecampAddress && basecampCoords) {
+      // Show Base Camp location in native Google Maps
+      const query = encodeURIComponent(basecampAddress);
+      return `https://www.google.com/maps/place/${query}/@${basecampCoords.lat},${basecampCoords.lng},15z`;
+    }
+    
+    // Fallback: Show approximate location (NYC default)
+    return `https://www.google.com/maps/@40.7580,-73.9855,12z`;
   }
 
   /**
-   * Search with origin context - generates both embed and directions URLs
+   * Generate embed URL with origin pre-filled for directions
+   * Uses Edge Function to inject API key securely
    */
-  static searchWithOrigin(
-    destinationQuery: string,
-    originCoords: { lat: number; lng: number },
-    originAddress: string
-  ): { embedUrl: string; directionsUrl: string } {
-    const encodedOrigin = encodeURIComponent(originAddress);
-    const encodedDestination = encodeURIComponent(destinationQuery);
-    
-    // For iframe embed (directions mode) - no API key in URL params, handled by proxy
-    const embedUrl = this.generateDirectionsEmbedUrlWithCoords(originCoords, destinationQuery);
-    
-    // For external link (opens in new tab)
-    const directionsUrl = `https://www.google.com/maps/dir/${encodedOrigin}/${encodedDestination}`;
-    
-    return { embedUrl, directionsUrl };
-  }
-
-  /**
-   * Generate search URL with location bias near Base Camp
-   */
-  static searchPlacesWithLocationBias(
-    query: string,
-    originCoords: { lat: number; lng: number }
-  ): string {
-    // Use search endpoint with center parameter for proximity bias
-    const encodedQuery = encodeURIComponent(query);
-    return `https://www.google.com/maps?q=${encodedQuery}&center=${originCoords.lat},${originCoords.lng}&zoom=14&output=embed`;
+  static async getEmbedUrlWithOrigin(originAddress: string): Promise<string> {
+    const result = await this.callProxy('embed-with-origin', { origin: originAddress });
+    return result.embedUrl;
   }
 }

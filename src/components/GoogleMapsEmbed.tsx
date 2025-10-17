@@ -31,9 +31,12 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
 
   useEffect(() => {
     const initMap = async () => {
-      if (isBasecampSet && basecamp?.coordinates) {
-        // Initialize centered on Base Camp
-        const url = `https://www.google.com/maps?q=${encodeURIComponent(basecamp.address)}&center=${basecamp.coordinates.lat},${basecamp.coordinates.lng}&zoom=15&output=embed`;
+      if (isBasecampSet && basecamp?.address && basecamp?.coordinates) {
+        // Initialize with Base Camp context
+        const url = GoogleMapsService.generateNativeEmbedUrl(
+          basecamp.address,
+          basecamp.coordinates
+        );
         setEmbedUrl(url);
         setIsLoading(false);
       } else {
@@ -49,14 +52,13 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
     e.preventDefault();
     const destination = searchQuery.trim() || 'New York City';
     
-    if (isBasecampSet && basecamp?.coordinates) {
-      // Context-aware search from Base Camp
-      const { embedUrl: searchUrl } = GoogleMapsService.searchWithOrigin(
-        destination,
-        basecamp.coordinates,
-        basecamp.address
+    if (isBasecampSet && basecamp?.address && basecamp?.coordinates) {
+      // Show native Google Maps with Base Camp context
+      const url = GoogleMapsService.generateNativeEmbedUrl(
+        basecamp.address,
+        basecamp.coordinates
       );
-      setEmbedUrl(searchUrl);
+      setEmbedUrl(url);
       setIsLoading(false);
     } else {
       // Fallback: generic search

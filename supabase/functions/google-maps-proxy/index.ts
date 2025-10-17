@@ -210,6 +210,29 @@ serve(async (req) => {
         return addSecurityHeaders(result);
       }
 
+      case 'embed-with-origin': {
+        const validation = validateAndSanitizeInput(data);
+        
+        if (!validation.isValid) {
+          throw new Error(validation.error || 'Invalid input');
+        }
+        
+        const { origin } = validation.sanitized!;
+        if (!origin) {
+          throw new Error('Origin parameter is required');
+        }
+
+        // Generate embed URL with origin pre-filled for directions
+        const embedUrl = `https://www.google.com/maps/embed/v1/directions?key=${apiKey}&origin=${encodeURIComponent(origin)}&destination=&mode=driving`;
+        
+        const result = new Response(
+          JSON.stringify({ embedUrl }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+        
+        return addSecurityHeaders(result);
+      }
+
       default:
         throw new Error(`Invalid endpoint: ${endpoint}`);
     }
