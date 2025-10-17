@@ -9,6 +9,11 @@ export const useLocationFilteredRecommendations = (
 ) => {
   const { basecamp } = useBasecamp();
 
+  const extractCityFromAddress = (address: string) => {
+    const parts = address.split(',');
+    return parts[parts.length - 2]?.trim() || address;
+  };
+
   const recommendations = useMemo(() => {
     return getRecommendationsByType(activeFilter);
   }, [activeFilter]);
@@ -41,11 +46,6 @@ export const useLocationFilteredRecommendations = (
 
     return filtered;
   }, [recommendations, manualLocation, basecamp]);
-
-  const extractCityFromAddress = (address: string) => {
-    const parts = address.split(',');
-    return parts[parts.length - 2]?.trim() || address;
-  };
 
   const activeLocation = manualLocation || (basecamp ? extractCityFromAddress(basecamp.address) : '');
   const isBasecampLocation = !manualLocation && !!basecamp;
