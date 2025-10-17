@@ -15,54 +15,41 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
   const [hasError, setHasError] = useState(false);
   const [embedUrl, setEmbedUrl] = useState('');
   
-  const loadEmbedUrl = async (query: string = 'New York City') => {
-    try {
-      setIsLoading(true);
-      setHasError(false);
-      const url = await GoogleMapsService.getEmbedUrl(query);
-      setEmbedUrl(url);
-    } catch (error) {
-      console.error('Error loading embed URL:', error);
-      setHasError(true);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    const initMap = async () => {
-      if (isBasecampSet && basecamp?.address && basecamp?.coordinates) {
-        // Initialize with Base Camp context
-        const url = GoogleMapsService.generateNativeEmbedUrl(
-          basecamp.address,
-          basecamp.coordinates
-        );
-        setEmbedUrl(url);
-        setIsLoading(false);
-      } else {
-        // Default fallback
-        await loadEmbedUrl('New York City');
-      }
-    };
-    
-    initMap();
-  }, [isBasecampSet, basecamp]);
-
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const destination = searchQuery.trim() || 'New York City';
+    setIsLoading(true);
     
     if (isBasecampSet && basecamp?.address && basecamp?.coordinates) {
-      // Show native Google Maps with Base Camp context
+      // Initialize with Base Camp context
       const url = GoogleMapsService.generateNativeEmbedUrl(
         basecamp.address,
         basecamp.coordinates
       );
       setEmbedUrl(url);
-      setIsLoading(false);
     } else {
-      // Fallback: generic search
-      await loadEmbedUrl(destination);
+      // Default fallback
+      const url = GoogleMapsService.generateNativeEmbedUrl();
+      setEmbedUrl(url);
+    }
+    
+    setIsLoading(false);
+  }, [isBasecampSet, basecamp]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const destination = searchQuery.trim();
+    
+    if (destination && isBasecampSet && basecamp?.address && basecamp?.coordinates) {
+      // Show directions from Base Camp to destination
+      const url = GoogleMapsService.generateNativeEmbedUrl(
+        basecamp.address,
+        basecamp.coordinates,
+        destination
+      );
+      setEmbedUrl(url);
+    } else if (destination) {
+      // Search for destination without Base Camp
+      const url = `https://www.google.com/maps/search/${encodeURIComponent(destination)}`;
+      setEmbedUrl(url);
     }
   };
 
@@ -110,7 +97,12 @@ export const GoogleMapsEmbed = ({ className }: GoogleMapsEmbedProps) => {
             <h3 className="text-lg font-medium text-gray-300 mb-2">Map unavailable</h3>
             <p className="text-gray-500 text-sm mb-4">Unable to load Google Maps</p>
             <button 
-              onClick={() => loadEmbedUrl(searchQuery.trim() || 'New York City')}
+              onClick={() => {
+                setHasError(false);
+                setIsLoading(true);
+                const url = GoogleMapsService.generateNativeEmbedUrl();
+                setEmbedUrl(url);
+              }}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm transition-colors"
             >
               Retry

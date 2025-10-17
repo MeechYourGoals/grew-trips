@@ -16,34 +16,24 @@ export const WorkingGoogleMaps = ({ className = '' }: WorkingGoogleMapsProps) =>
 
   // Generate embed URL based on Base Camp
   useEffect(() => {
-    const loadMap = async () => {
-      setIsLoading(true);
-      
-      try {
-        if (isBasecampSet && basecamp?.address && basecamp?.coordinates) {
-          // Try to get embed with origin pre-filled
-          try {
-            const url = await GoogleMapsService.getEmbedUrlWithOrigin(basecamp.address);
-            setEmbedUrl(url);
-          } catch (error) {
-            // Fallback to native place URL
-            const url = GoogleMapsService.generateNativeEmbedUrl(
-              basecamp.address,
-              basecamp.coordinates
-            );
-            setEmbedUrl(url);
-          }
-        } else {
-          // No Base Camp: Show approximate location
-          const url = GoogleMapsService.generateNativeEmbedUrl();
-          setEmbedUrl(url);
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    setIsLoading(true);
     
-    loadMap();
+    try {
+      if (isBasecampSet && basecamp?.address && basecamp?.coordinates) {
+        // Generate native embed URL (no API call needed)
+        const url = GoogleMapsService.generateNativeEmbedUrl(
+          basecamp.address,
+          basecamp.coordinates
+        );
+        setEmbedUrl(url);
+      } else {
+        // No Base Camp: Show approximate location
+        const url = GoogleMapsService.generateNativeEmbedUrl();
+        setEmbedUrl(url);
+      }
+    } finally {
+      setIsLoading(false);
+    }
   }, [basecamp, isBasecampSet]);
 
   const handleEditBasecamp = () => {

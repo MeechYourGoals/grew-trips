@@ -102,8 +102,16 @@ export class GoogleMapsService {
    */
   static generateNativeEmbedUrl(
     basecampAddress?: string,
-    basecampCoords?: { lat: number; lng: number }
+    basecampCoords?: { lat: number; lng: number },
+    destinationQuery?: string
   ): string {
+    if (destinationQuery && basecampAddress && basecampCoords) {
+      // Directions from Base Camp to destination
+      const origin = encodeURIComponent(basecampAddress);
+      const dest = encodeURIComponent(destinationQuery);
+      return `https://www.google.com/maps/dir/${origin}/${dest}`;
+    }
+    
     if (basecampAddress && basecampCoords) {
       // Show Base Camp location in native Google Maps
       const query = encodeURIComponent(basecampAddress);
@@ -112,14 +120,5 @@ export class GoogleMapsService {
     
     // Fallback: Show approximate location (NYC default)
     return `https://www.google.com/maps/@40.7580,-73.9855,12z`;
-  }
-
-  /**
-   * Generate embed URL with origin pre-filled for directions
-   * Uses Edge Function to inject API key securely
-   */
-  static async getEmbedUrlWithOrigin(originAddress: string): Promise<string> {
-    const result = await this.callProxy('embed-with-origin', { origin: originAddress });
-    return result.embedUrl;
   }
 }
