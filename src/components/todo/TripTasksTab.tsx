@@ -6,7 +6,6 @@ import { TaskFilters } from './TaskFilters';
 import { TaskCreateModal } from './TaskCreateModal';
 import { useTripTasks } from '../../hooks/useTripTasks';
 import { useTripVariant } from '../../contexts/TripVariantContext';
-import { useTaskFilters } from '../../hooks/useTaskFilters';
 import { useDemoMode } from '@/hooks/useDemoMode';
 
 interface TripTasksTabProps {
@@ -17,18 +16,9 @@ export const TripTasksTab = ({ tripId }: TripTasksTabProps) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showCompleted, setShowCompleted] = useState(false);
   const { accentColors } = useTripVariant();
-  const { data: tasks, isLoading } = useTripTasks(tripId);
+  const { tasks, isLoading, applyFilters, status, setStatus, assignee, setAssignee, dateRange, setDateRange, sortBy, setSortBy, hasActiveFilters, clearFilters } = useTripTasks(tripId);
   const { isDemoMode } = useDemoMode();
   
-  const {
-    status,
-    sortBy,
-    setStatus,
-    setSortBy,
-    applyFilters,
-    hasActiveFilters,
-    clearFilters
-  } = useTaskFilters();
 
   // Mock task items for demo
   const mockTasks = [

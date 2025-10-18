@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Send, Sparkles, Clock, Calendar, FileText, Lightbulb } from 'lucide-react';
-import { OpenAIService } from '../../services/OpenAIService';
-import { MessageService, MessageTemplate } from '../../services/MessageService';
+import { supabase } from '../../integrations/supabase/client';
+import { unifiedMessagingService, MessageTemplate } from '../../services/unifiedMessagingService';
 import { MessageTemplateLibrary } from '../MessageTemplateLibrary';
 import {
   Dialog,
@@ -109,15 +109,27 @@ export const AiMessageModal = ({
       
       if (selectedTemplate) {
         // Fill template with context
-        finalContent = MessageService.fillTemplate(selectedTemplate.content, templateContext);
+        finalContent = unifiedMessagingService.fillTemplate(selectedTemplate.content, templateContext);
         if (prompt.includes('Fill template:')) {
           // Let AI enhance the filled template
           const contextualPrompt = buildContextualPrompt(prompt, finalContent);
-          finalContent = await OpenAIService.generateMessageWithTone(contextualPrompt, tone);
+          const { data } = await supabase.functions.invoke('lovable-concierge', {
+            body: {
+              message: contextualPrompt,
+              config: { tone }
+            }
+          });
+          finalContent = data.response;
         }
       } else {
         const contextualPrompt = buildContextualPrompt(prompt);
-        finalContent = await OpenAIService.generateMessageWithTone(contextualPrompt, tone);
+        const { data } = await supabase.functions.invoke('lovable-concierge', {
+          body: {
+            message: contextualPrompt,
+            config: { tone }
+          }
+        });
+        finalContent = data.response;
       }
       
       setGeneratedMessage(finalContent);

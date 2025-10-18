@@ -37,6 +37,28 @@ export interface SendMessageOptions {
   attachments?: Array<{ type: string; url: string; name?: string }>;
 }
 
+export interface MessageTemplate {
+  id: string;
+  name: string;
+  content: string;
+  category: string;
+  tripType: string;
+  placeholders: string[];
+}
+
+export interface ScheduledMessageRequest {
+  content: string;
+  sendAt: Date;
+  tripId?: string;
+  tourId?: string;
+  userId: string;
+  priority?: 'urgent' | 'reminder' | 'fyi';
+  isRecurring?: boolean;
+  recurrenceType?: 'daily' | 'weekly' | 'monthly';
+  recurrenceEnd?: Date;
+  templateId?: string;
+}
+
 class UnifiedMessagingService {
   private channels: Map<string, RealtimeChannel> = new Map();
   private messageCallbacks: Map<string, Set<(message: Message) => void>> = new Map();
@@ -184,6 +206,69 @@ class UnifiedMessagingService {
 
     if (error) throw error;
     return count || 0;
+  }
+
+  /**
+   * Schedule a message for later delivery
+   */
+  async scheduleMessage(request: ScheduledMessageRequest): Promise<{ success: boolean; id?: string; error?: string }> {
+    try {
+      const { data, error } = await supabase.functions.invoke('schedule-message', {
+        body: {
+          content: request.content,
+          send_at: request.sendAt.toISOString(),
+          trip_id: request.tripId,
+          tour_id: request.tourId,
+          user_id: request.userId,
+          priority: request.priority || 'fyi',
+          is_recurring: request.isRecurring || false,
+          recurrence_type: request.recurrenceType,
+          recurrence_end: request.recurrenceEnd?.toISOString(),
+          template_id: request.templateId,
+        }
+      });
+
+      if (error) throw error;
+      return { success: true, id: data.id };
+    } catch (error) {
+      console.error('Failed to schedule message:', error);
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Unknown error' 
+      };
+    }
+  }
+
+  /**
+   * Get message templates
+   */
+  async getMessageTemplates(tripType?: string, category?: string): Promise<MessageTemplate[]> {
+    try {
+      const { data, error } = await supabase.functions.invoke('get-message-templates', {
+        body: { tripType, category }
+      });
+
+      if (error) throw error;
+      return data.templates || [];
+    } catch (error) {
+      console.error('Failed to fetch message templates:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Fill template with context
+   */
+  fillTemplate(template: string, context: Record<string, string>): string {
+    let filledTemplate = template;
+    
+    // Replace placeholders like {{placeholder}} with context values
+    Object.entries(context).forEach(([key, value]) => {
+      const placeholder = new RegExp(`\\{\\{${key}\\}\\}`, 'g');
+      filledTemplate = filledTemplate.replace(placeholder, value || `[${key}]`);
+    });
+    
+    return filledTemplate;
   }
 
   /**

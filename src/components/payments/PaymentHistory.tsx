@@ -6,6 +6,22 @@ import { demoModeService } from '../../services/demoModeService';
 import { format } from 'date-fns';
 import { Loader2 } from 'lucide-react';
 
+interface MockPayment {
+  id: string;
+  trip_id: string;
+  amount: number;
+  currency: string;
+  description: string;
+  split_count: number;
+  split_participants: string[];
+  payment_methods: string[];
+  created_by: string;
+  is_settled: boolean;
+  created_at: string;
+  updated_at: string;
+  version: number;
+}
+
 interface PaymentHistoryProps {
   tripId: string;
 }
@@ -36,7 +52,7 @@ export const PaymentHistory = ({ tripId }: PaymentHistoryProps) => {
         const tripIdNum = parseInt(tripId);
         if (paymentMessages.length === 0 && tripIdNum >= 1 && tripIdNum <= 12) {
           const mockPayments = await demoModeService.getMockPayments(tripId, false);
-          paymentMessages = mockPayments.map((p: any) => ({
+          paymentMessages = mockPayments.map((p: MockPayment) => ({
             id: p.id,
             tripId: p.trip_id,
             messageId: null,
@@ -55,7 +71,7 @@ export const PaymentHistory = ({ tripId }: PaymentHistoryProps) => {
         // Add session payments (demo mode only)
         const sessionPayments = demoModeService.getSessionPayments(tripId);
         if (sessionPayments.length > 0) {
-          const sessionMessages = sessionPayments.map((p: any) => ({
+          const sessionMessages = sessionPayments.map((p: MockPayment) => ({
             id: p.id,
             tripId: p.trip_id,
             messageId: null,
@@ -116,7 +132,7 @@ export const PaymentHistory = ({ tripId }: PaymentHistoryProps) => {
         const tripIdNum = parseInt(tripId);
         if (tripIdNum >= 1 && tripIdNum <= 12) {
           const mockPayments = await demoModeService.getMockPayments(tripId, false);
-          const fallbackPayments = mockPayments.map((p: any) => ({
+          const fallbackPayments = mockPayments.map((p: MockPayment) => ({
             id: p.id,
             description: p.description,
             amount: p.amount,

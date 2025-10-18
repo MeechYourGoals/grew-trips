@@ -128,7 +128,7 @@ environment variables:
 - `OPENAI_API_KEY` – required for generating summaries and chat responses.
 - `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` – allow the functions to
   read and write data in your Supabase project.
-- `ELEVENLABS_API_KEY` – optional, enables speech generation in the
+- `GOOGLE_GEMINI_API_KEY` – required for AI features powered by Google Gemini
   `generate-audio-summary` function.
 - `STREAM_API_KEY` and `STREAM_API_SECRET` – credentials for the GetStream
   chat service used by `/functions/getstream-token`.

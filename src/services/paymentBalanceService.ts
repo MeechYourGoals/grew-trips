@@ -76,7 +76,7 @@ export const paymentBalanceService = {
       if (methodsError) throw methodsError;
 
       // Helper to get primary payment method
-      const getPrimaryMethod = (methods: any[]) => {
+      const getPrimaryMethod = (methods: PaymentMethod[]) => {
         if (!methods || methods.length === 0) return null;
         
         // First check for preferred
@@ -170,7 +170,7 @@ export const paymentBalanceService = {
           amountOwed: entry.netAmount,
           preferredPaymentMethod: primaryMethod ? {
             id: primaryMethod.id,
-            type: primaryMethod.method_type as any,
+            type: primaryMethod.method_type,
             identifier: primaryMethod.identifier,
             displayName: primaryMethod.display_name || undefined,
             isPreferred: primaryMethod.is_preferred || false

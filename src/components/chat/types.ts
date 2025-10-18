@@ -6,7 +6,7 @@ export interface ChatMessage {
   timestamp: string;
 }
 
-export interface OpenAIAPIConfig {
+export interface GeminiAPIConfig {
   temperature: number;
   topK: number;
   topP: number;

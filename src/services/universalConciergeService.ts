@@ -1,5 +1,4 @@
 import { supabase } from '../integrations/supabase/client';
-import { OpenAIService } from './OpenAIService';
 import { TripContext } from '../types/tripContext';
 import { MockKnowledgeService } from './mockKnowledgeService';
 import { demoModeService } from './demoModeService';
@@ -173,11 +172,11 @@ export class UniversalConciergeService {
         };
       }
 
-      // For non-search queries, use the new AI answer service with RAG
-      const { data, error } = await supabase.functions.invoke('ai-answer', {
+      // For non-search queries, use the Google Gemini-powered concierge service
+      const { data, error } = await supabase.functions.invoke('lovable-concierge', {
         body: {
-          query: message,
-          tripId: tripContext.tripId,
+          message: message,
+          tripContext: tripContext,
           chatHistory: [] // TODO: Pass actual chat history if available
         }
       });
@@ -185,7 +184,7 @@ export class UniversalConciergeService {
       if (error) throw error;
 
       return {
-        content: data.answer || "I'm having trouble processing your request right now.",
+        content: data.response || "I'm having trouble processing your request right now.",
         searchResults: data.citations || [],
         isFromFallback: false
       };

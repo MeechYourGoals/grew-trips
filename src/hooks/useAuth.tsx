@@ -1,6 +1,7 @@
-import { useState, useEffect, createContext, useContext } from 'react';
+import { useState, useEffect, createContext, useContext, useCallback } from 'react';
 import { User as SupabaseUser, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
+import { Trip } from '@/services/tripService';
 
 interface UserProfile {
   id: string;
@@ -73,7 +74,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   
   // Phase 4: Prefetch trips as soon as session is available
-  const prefetchedTripsRef = useState<{ data: any[] | null; loading: boolean }>({ 
+  const prefetchedTripsRef = useState<{ data: Trip[] | null; loading: boolean }>({ 
     data: null, 
     loading: false 
   })[0];
@@ -100,7 +101,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   // Helper function to transform Supabase user to app User
-  const transformUser = async (supabaseUser: SupabaseUser, profile?: UserProfile | null): Promise<User> => {
+  const transformUser = useCallback(async (supabaseUser: SupabaseUser, profile?: UserProfile | null): Promise<User> => {
     // CRITICAL: Validate that we have a valid user ID before proceeding
     if (!supabaseUser || !supabaseUser.id) {
       console.error('[transformUser] Invalid Supabase user - missing ID', { supabaseUser });
@@ -116,8 +117,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       .eq('user_id', supabaseUser.id);
     
     const roles = userRoles?.map(r => r.role) || [];
-    const isPro = roles.includes('pro' as any);
-    const isSystemAdmin = roles.includes('admin' as any);
+    const isPro = roles.includes('pro');
+    const isSystemAdmin = roles.includes('admin');
     
     // Map roles to permissions - only grant what user actually has
     const permissions: string[] = ['read'];
@@ -166,7 +167,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         push: false
       }
     };
-  };
+  }, []);
 
   // Initialize auth state
   useEffect(() => {
@@ -238,7 +239,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, []);
+  }, [transformUser]);
 
   const signIn = async (email: string, password: string): Promise<{ error?: string }> => {
     try {

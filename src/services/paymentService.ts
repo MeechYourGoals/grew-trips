@@ -3,6 +3,22 @@ import { PaymentMethod, PaymentMessage, PaymentSplit } from '../types/payments';
 import { demoModeService } from './demoModeService';
 import { mockPayments } from '@/mockData/payments';
 
+interface MockPayment {
+  id: string;
+  trip_id: string;
+  amount: number;
+  currency: string;
+  description: string;
+  split_count: number;
+  split_participants: string[];
+  payment_methods: string[];
+  created_by: string;
+  is_settled: boolean;
+  created_at: string;
+  updated_at: string;
+  version: number;
+}
+
 export const paymentService = {
   // User Payment Methods
   async getUserPaymentMethods(userId: string): Promise<PaymentMethod[]> {
@@ -123,7 +139,7 @@ export const paymentService = {
       // Check if demo mode is enabled
       const isDemoMode = await demoModeService.isDemoModeEnabled();
       if (isDemoMode) {
-        return mockPayments.filter(p => p.trip_id === tripId).map((payment: any) => ({
+        return mockPayments.filter(p => p.trip_id === tripId).map((payment: MockPayment) => ({
           id: payment.id,
           tripId: payment.trip_id,
           messageId: null,
@@ -238,7 +254,7 @@ export const paymentService = {
         userBalances[payment.createdBy] += payment.amount;
       });
 
-      splits.forEach((split: any) => {
+      splits.forEach((split: PaymentSplit) => {
         // Debtors get negative balance
         if (!userBalances[split.debtor_user_id]) {
           userBalances[split.debtor_user_id] = 0;

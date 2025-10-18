@@ -1,7 +1,7 @@
 import React from 'react';
 import { Filter, X } from 'lucide-react';
 import { Button } from '../ui/button';
-import { TaskStatus, TaskSortBy } from '../../hooks/useTaskFilters';
+import { TaskStatus, TaskSortBy } from '../../hooks/useTripTasks';
 
 interface TaskFiltersProps {
   status: TaskStatus;

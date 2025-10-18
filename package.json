@@ -19,7 +19,6 @@
     "ios:run": "npm run build && npx cap sync ios && npx cap run ios"
   },
   "dependencies": {
-    "@11labs/react": "^0.1.4",
     "@capacitor/android": "^7.4.2",
     "@capacitor/camera": "^7.0.1",
     "@capacitor/cli": "^7.4.2",

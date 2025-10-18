@@ -5,6 +5,35 @@ import { useToast } from './use-toast';
 import { taskStorageService } from '../services/taskStorageService';
 import { useDemoMode } from './useDemoMode';
 import { useAuth } from './useAuth';
+import { useState, useCallback, useMemo } from 'react';
+import { toast } from 'sonner';
+
+// Task form management types
+export interface TaskFormData {
+  title: string;
+  description: string;
+  dueDate?: Date;
+  taskMode: 'solo' | 'poll';
+  assignedMembers: string[];
+}
+
+// Task filtering types
+export type TaskStatus = 'all' | 'open' | 'completed';
+export type TaskSortBy = 'dueDate' | 'created' | 'priority';
+
+export interface TaskFilters {
+  status: TaskStatus;
+  assignee?: string;
+  dateRange: { start?: Date; end?: Date };
+  sortBy: TaskSortBy;
+}
+
+// Task assignment types
+export interface AssignmentOptions {
+  taskId: string;
+  userIds: string[];
+  autoAssignByRole?: boolean;
+}
 
 const generateSeedTasks = (tripId: string): TripTask[] => {
   const consumerTripIds = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12'];
@@ -92,11 +121,147 @@ const generateSeedTasks = (tripId: string): TripTask[] => {
   return taskTemplates[tripId] || [];
 };
 
-export const useTripTasks = (tripId: string) => {
+export const useTripTasks = (tripId: string, options?: {
+  filters?: TaskFilters;
+  category?: string;
+  assignmentOptions?: AssignmentOptions;
+}) => {
   const { isDemoMode } = useDemoMode();
   const { user } = useAuth();
   
-  return useQuery({
+  // Task form management state
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [dueDate, setDueDate] = useState<Date | undefined>();
+  const [taskMode, setTaskMode] = useState<'solo' | 'poll'>('solo');
+  const [assignedMembers, setAssignedMembers] = useState<string[]>([]);
+
+  // Task filtering state
+  const [status, setStatus] = useState<TaskStatus>('all');
+  const [assignee, setAssignee] = useState<string | undefined>();
+  const [dateRange, setDateRange] = useState<{ start?: Date; end?: Date }>({});
+  const [sortBy, setSortBy] = useState<TaskSortBy>('dueDate');
+
+  // Task form validation
+  const validateTask = useCallback((): { isValid: boolean; error?: string } => {
+    if (!title.trim()) {
+      return { isValid: false, error: 'Task title is required' };
+    }
+    if (title.length > 140) {
+      return { isValid: false, error: 'Task title must be 140 characters or less' };
+    }
+    return { isValid: true };
+  }, [title]);
+
+  const getTaskData = useCallback((): CreateTaskRequest | null => {
+    const validation = validateTask();
+    if (!validation.isValid) return null;
+
+    return {
+      title: title.trim(),
+      description: description.trim() || undefined,
+      due_at: dueDate?.toISOString(),
+      is_poll: taskMode === 'poll',
+      assignedTo: assignedMembers.length > 0 ? assignedMembers : undefined
+    };
+  }, [title, description, dueDate, taskMode, assignedMembers, validateTask]);
+
+  const resetForm = useCallback(() => {
+    setTitle('');
+    setDescription('');
+    setDueDate(undefined);
+    setTaskMode('solo');
+    setAssignedMembers([]);
+  }, []);
+
+  // Task assignment functions
+  const assignTask = useCallback(async (taskId: string, userId: string): Promise<boolean> => {
+    try {
+      console.log('Assigning task', taskId, 'to user', userId);
+      return true;
+    } catch (error) {
+      console.error('Failed to assign task:', error);
+      toast.error('Failed to assign task');
+      return false;
+    }
+  }, []);
+
+  const bulkAssign = useCallback(async (assignmentOptions: AssignmentOptions): Promise<boolean> => {
+    try {
+      const { taskId, userIds } = assignmentOptions;
+      console.log('Bulk assigning task', taskId, 'to users', userIds);
+      toast.success(`Assigned to ${userIds.length} members`);
+      return true;
+    } catch (error) {
+      console.error('Failed to bulk assign:', error);
+      toast.error('Failed to assign task to members');
+      return false;
+    }
+  }, []);
+
+  // Task filtering functions
+  const applyFilters = useCallback((tasks: TripTask[]): TripTask[] => {
+    let filtered = tasks.filter(task => {
+      // Status filter
+      const isCompleted = task.is_poll 
+        ? (task.task_status?.filter(s => s.completed).length || 0) >= (task.task_status?.length || 1)
+        : task.task_status?.[0]?.completed || false;
+
+      if (status === 'open' && isCompleted) return false;
+      if (status === 'completed' && !isCompleted) return false;
+
+      // Assignee filter
+      if (assignee) {
+        const hasAssignee = task.task_status?.some(s => s.user_id === assignee);
+        if (!hasAssignee) return false;
+      }
+
+      // Date range filter
+      if (task.due_at) {
+        const dueDate = new Date(task.due_at);
+        if (dateRange.start && dueDate < dateRange.start) return false;
+        if (dateRange.end && dueDate > dateRange.end) return false;
+      }
+
+      return true;
+    });
+
+    // Apply sorting
+    filtered.sort((a, b) => {
+      switch (sortBy) {
+        case 'dueDate':
+          if (!a.due_at) return 1;
+          if (!b.due_at) return -1;
+          return new Date(a.due_at).getTime() - new Date(b.due_at).getTime();
+        case 'created':
+          return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+        case 'priority':
+          const aPriority = a.due_at ? 1 : 0;
+          const bPriority = b.due_at ? 1 : 0;
+          return bPriority - aPriority;
+        default:
+          return 0;
+      }
+    });
+
+    return filtered;
+  }, [status, assignee, dateRange, sortBy]);
+
+  const clearFilters = useCallback(() => {
+    setStatus('all');
+    setAssignee(undefined);
+    setDateRange({});
+    setSortBy('dueDate');
+  }, []);
+
+  const hasActiveFilters = useMemo(() => {
+    return status !== 'all' || 
+           assignee !== undefined ||
+           dateRange.start !== undefined ||
+           dateRange.end !== undefined;
+  }, [status, assignee, dateRange]);
+
+  const tasksQuery = useQuery({
     queryKey: ['tripTasks', tripId, isDemoMode],
     queryFn: async (): Promise<TripTask[]> => {
       // Demo mode: use localStorage
@@ -344,6 +509,54 @@ export const useTaskMutations = (tripId: string) => {
   });
 
   return {
+    // Query data
+    tasks: tasksQuery.data || [],
+    isLoading: tasksQuery.isLoading,
+    error: tasksQuery.error,
+    
+    // Task form management
+    title,
+    description,
+    dueDate,
+    taskMode,
+    assignedMembers,
+    isValid: validateTask().isValid,
+    characterCount: title.length,
+    maxCharacters: 140,
+    setTitle,
+    setDescription,
+    setDueDate,
+    setTaskMode,
+    updateAssignedMembers: setAssignedMembers,
+    toggleMember: (memberId: string) => {
+      setAssignedMembers(prev => 
+        prev.includes(memberId) 
+          ? prev.filter(id => id !== memberId)
+          : [...prev, memberId]
+      );
+    },
+    validateTask,
+    getTaskData,
+    resetForm,
+    
+    // Task filtering
+    status,
+    assignee,
+    dateRange,
+    sortBy,
+    hasActiveFilters,
+    setStatus,
+    setAssignee,
+    setDateRange,
+    setSortBy,
+    applyFilters,
+    clearFilters,
+    
+    // Task assignment
+    assignTask,
+    bulkAssign,
+    
+    // Mutations
     createTaskMutation,
     toggleTaskMutation
   };

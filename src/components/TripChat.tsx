@@ -92,7 +92,7 @@ export const TripChat = ({
     }));
   }, [liveMessages, shouldUseDemoData]);
 
-  const handleSendMessage = async (isBroadcast = false, isPayment = false, paymentData?: any) => {
+  const handleSendMessage = async (isBroadcast = false, isPayment = false, paymentData?: { amount: number; currency: string; description: string; splitCount: number }) => {
     const message = await sendMessage({
       isBroadcast, 
       isPayment, 

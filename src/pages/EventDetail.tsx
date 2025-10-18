@@ -10,6 +10,7 @@ import { useAuth } from '../hooks/useAuth';
 import { eventsMockData } from '../data/eventsMockData';
 import { ProTripNotFound } from '../components/pro/ProTripNotFound';
 import { TripContext } from '../types/tripContext';
+import { Message } from '../types/messages';
 
 
 const EventDetail = () => {
@@ -73,7 +74,7 @@ const EventDetail = () => {
   };
 
   // Messages are now handled by unified messaging service
-  const tripMessages: any[] = [];
+  const tripMessages: Message[] = [];
 
   // Mock data for Event context - same structure as standard trips
   const mockBroadcasts = [

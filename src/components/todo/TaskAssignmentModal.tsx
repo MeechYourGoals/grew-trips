@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
 import { Button } from '../ui/button';
 import { Label } from '../ui/label';
-import { useTaskAssignment } from '../../hooks/useTaskAssignment';
+import { useTripTasks } from '../../hooks/useTripTasks';
 import { Users, User } from 'lucide-react';
 
 interface TaskAssignmentModalProps {
@@ -16,7 +16,7 @@ export const TaskAssignmentModal = ({ taskId, tripId, onClose }: TaskAssignmentM
   const [assignmentMode, setAssignmentMode] = useState<'individual' | 'role'>('individual');
   const [selectedRole, setSelectedRole] = useState<string>('');
   
-  const { bulkAssign, autoAssignByRole } = useTaskAssignment();
+  const { bulkAssign } = useTripTasks(tripId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -8,6 +8,8 @@ import { TripDetailContent } from '../components/trip/TripDetailContent';
 import { TripDetailModals } from '../components/trip/TripDetailModals';
 import { useAuth } from '../hooks/useAuth';
 import { getTripById, generateTripMockData } from '../data/tripsData';
+import { Trip } from '../services/tripService';
+import { Message } from '../types/messages';
 import { useNavigate } from 'react-router-dom';
 import { useIsMobile } from '../hooks/use-mobile';
 import { MobileTripDetail } from './MobileTripDetail';
@@ -43,7 +45,7 @@ const TripDetail = () => {
   }, [trip, tripDescription]);
 
   // Handle trip updates from edit modal
-  const handleTripUpdate = (updates: any) => {
+  const handleTripUpdate = (updates: Partial<Trip>) => {
     setTripData(prev => ({ ...prev, ...updates }));
     
     // Update specific states for backward compatibility
@@ -83,7 +85,7 @@ const TripDetail = () => {
   const basecamp = mockData.basecamp;
 
   // Messages are now handled by unified messaging service
-  const tripMessages: any[] = [];
+  const tripMessages: Message[] = [];
 
   // Use generated mock data
   const mockBroadcasts = mockData.broadcasts;
