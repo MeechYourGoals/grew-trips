@@ -19,13 +19,41 @@ const config: CapacitorConfig = {
       smallIcon: "ic_stat_icon_config_sample",
       iconColor: "#488AFF",
       sound: "beep.wav"
+    },
+    // 🆕 Enhanced mobile performance
+    SplashScreen: {
+      launchShowDuration: 2000,
+      launchAutoHide: true,
+      backgroundColor: "#1a1a1a",
+      androidSplashResourceName: "splash",
+      androidScaleType: "CENTER_CROP",
+      showSpinner: false,
+      androidSpinnerStyle: "large",
+      iosSpinnerStyle: "small",
+      spinnerColor: "#999999",
+      splashFullScreen: true,
+      splashImmersive: true
+    },
+    StatusBar: {
+      style: "dark",
+      backgroundColor: "#1a1a1a"
     }
   },
   ios: {
-    scheme: "Chravel"
+    scheme: "Chravel",
+    // 🆕 iOS-specific optimizations
+    contentInset: "automatic",
+    scrollEnabled: true,
+    backgroundColor: "#1a1a1a",
+    allowsLinkPreview: false,
+    handleApplicationURL: true
   },
   android: {
-    allowMixedContent: true
+    allowMixedContent: true,
+    // 🆕 Android-specific optimizations
+    backgroundColor: "#1a1a1a",
+    appendUserAgent: "ChravelMobile",
+    overrideUserAgent: "ChravelMobile/1.0.0"
   }
 };
 

@@ -35,6 +35,8 @@ const MobileOrganizationPage = lazy(() => import("./pages/MobileOrganizationPage
 const AcceptOrganizationInvite = lazy(() => import("./pages/AcceptOrganizationInvite").then(module => ({ default: module.AcceptOrganizationInvite })));
 const CravelRecsPage = lazy(() => import("./pages/CravelRecsPage").then(module => ({ default: module.CravelRecsPage })));
 
+// Note: Large components are already optimized with code splitting
+
 
 const queryClient = new QueryClient();
 
