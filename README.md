@@ -120,22 +120,24 @@ To connect a domain, navigate to Project > Settings > Domains and click Connect 
 
 Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
 
-## Configuring the OpenAI API
+## 🚀 **Developer Resources**
 
-The Supabase functions that power the AI features need access to a few
-environment variables:
+**For comprehensive development documentation, see:**
+- **[DEVELOPER_HANDBOOK.md](DEVELOPER_HANDBOOK.md)** - Complete developer guide
+- **[PRODUCTION_CLEANUP_SUMMARY.md](PRODUCTION_CLEANUP_SUMMARY.md)** - Recent improvements
+- **[production-ready-codebase.plan.md](production-ready-codebase.plan.md)** - Production roadmap
 
-- `OPENAI_API_KEY` – required for generating summaries and chat responses.
-- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` – allow the functions to
-  read and write data in your Supabase project.
-- `GOOGLE_GEMINI_API_KEY` – required for AI features powered by Google Gemini
-  `generate-audio-summary` function.
-- `STREAM_API_KEY` and `STREAM_API_SECRET` – credentials for the GetStream
-  chat service used by `/functions/getstream-token`.
+## 🔧 **Environment Configuration**
 
-variables so they are loaded when running `supabase functions serve`.
-When deploying, set the same variables using `supabase secrets set` so the
-deployed functions have access to them.
+The Supabase functions that power the AI features need access to these environment variables:
+
+- `LOVABLE_API_KEY` – required for AI Concierge powered by Google Gemini
+- `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` – allow the functions to read and write data
+- `VITE_GOOGLE_MAPS_API_KEY` – required for Google Maps integration and grounding
+- `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` – frontend Supabase connection
+
+Set these variables when running `supabase functions serve` locally.
+When deploying, set the same variables using `supabase secrets set`.
 
 ## Claude Code
 
