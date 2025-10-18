@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound, MessageCircle, Download } from 'lucide-react';
+import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound, MessageCircle, Download, Star } from 'lucide-react';
 import { ProParticipant } from '../../types/pro';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 import { EditMemberRoleModal } from './EditMemberRoleModal';
@@ -8,6 +8,7 @@ import { BulkRoleAssignmentModal } from './BulkRoleAssignmentModal';
 import { QuickContactMenu } from './QuickContactMenu';
 import { RoleContactSheet } from './RoleContactSheet';
 import { ExportTeamDirectoryModal } from './ExportTeamDirectoryModal';
+import { RoleTemplateManager } from './RoleTemplateManager';
 import { extractUniqueRoles, getRoleColorClass } from '../../utils/roleUtils';
 import { Button } from '../ui/button';
 
@@ -27,6 +28,7 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [showBulkModal, setShowBulkModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
+  const [showTemplateManager, setShowTemplateManager] = useState(false);
   const [roleContactSheet, setRoleContactSheet] = useState<{ role: string; members: ProParticipant[] } | null>(null);
 
   const { terminology: { teamLabel }, roles: categoryRoles } = getCategoryConfig(category);
@@ -103,6 +105,17 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
           <div className="flex items-center gap-3">
             <span className="text-gray-400">{roster.length} total members</span>
             
+            {/* Templates Button */}
+            <Button
+              onClick={() => setShowTemplateManager(true)}
+              variant="outline"
+              className="border-gray-600"
+              title="Save or load role templates"
+            >
+              <Star size={16} className="mr-2" />
+              Templates
+            </Button>
+
             {/* Export Button */}
             <Button
               onClick={() => setShowExportModal(true)}
@@ -338,6 +351,22 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
         category={category}
         existingRoles={existingRoles}
       />
+
+      {/* Role Template Manager */}
+      {onUpdateMemberRole && (
+        <RoleTemplateManager
+          isOpen={showTemplateManager}
+          onClose={() => setShowTemplateManager(false)}
+          roster={roster}
+          category={category}
+          onApplyTemplate={async (assignments) => {
+            // Apply template assignments
+            for (const [memberId, role] of assignments.entries()) {
+              await onUpdateMemberRole(memberId, role);
+            }
+          }}
+        />
+      )}
     </div>
   );
 };
