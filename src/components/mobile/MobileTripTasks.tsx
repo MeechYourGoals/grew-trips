@@ -26,13 +26,15 @@ export const MobileTripTasks = ({ tripId }: MobileTripTasksProps) => {
   const [showCompleted, setShowCompleted] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [swipedTaskId, setSwipedTaskId] = useState<string | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   const { isPulling, isRefreshing, pullDistance } = usePullToRefresh({
     onRefresh: async () => {
       setIsLoading(true);
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsLoading(false);
-    }
+    },
+    scrollContainer: () => scrollContainerRef.current
   });
 
   useEffect(() => {
@@ -85,7 +87,7 @@ export const MobileTripTasks = ({ tripId }: MobileTripTasksProps) => {
       </div>
 
       {/* Active Tasks */}
-      <div className="flex-1 overflow-y-auto">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
         {isLoading ? (
           <TaskSkeleton />
         ) : (

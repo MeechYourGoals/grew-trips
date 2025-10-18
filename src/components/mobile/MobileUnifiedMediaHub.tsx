@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Camera, Upload, Image as ImageIcon, Film } from 'lucide-react';
 import { usePullToRefresh } from '../../hooks/usePullToRefresh';
 import { PullToRefreshIndicator } from './PullToRefreshIndicator';
@@ -27,10 +27,13 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
   const { mediaItems: realMediaItems, loading, refetch } = useMediaManagement(tripId);
   const [selectedTab, setSelectedTab] = useState<'all' | 'photos' | 'videos'>('all');
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const { isPulling, isRefreshing, pullDistance } = usePullToRefresh({
     onRefresh: async () => {
       await refetch();
-    }
+    },
+    scrollContainer: () => scrollContainerRef.current
   });
 
   // Convert media items to unified format
@@ -134,9 +137,10 @@ export const MobileUnifiedMediaHub = ({ tripId }: MobileUnifiedMediaHubProps) =>
       </div>
 
       {/* Media Grid */}
-      <div 
+      <div
+        ref={scrollContainerRef}
         className="flex-1 overflow-y-auto px-2 py-2 native-scroll safe-container-bottom"
-        style={{ 
+        style={{
           WebkitOverflowScrolling: 'touch',
           overscrollBehavior: 'contain'
         }}

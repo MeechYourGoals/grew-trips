@@ -5,12 +5,16 @@ interface PullToRefreshOptions {
   onRefresh: () => Promise<void>;
   threshold?: number;
   maxPullDistance?: number;
+  enabled?: boolean;
+  scrollContainer?: () => HTMLElement | null;
 }
 
 export const usePullToRefresh = ({
   onRefresh,
   threshold = 80,
-  maxPullDistance = 120
+  maxPullDistance = 120,
+  enabled = true,
+  scrollContainer
 }: PullToRefreshOptions) => {
   const [isPulling, setIsPulling] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
@@ -19,11 +23,38 @@ export const usePullToRefresh = ({
   const currentY = useRef(0);
 
   useEffect(() => {
-    let rafId: number;
+    if (!enabled) {
+      setIsPulling(false);
+      setIsRefreshing(false);
+      setPullDistance(0);
+      return;
+    }
+
+    let rafId = 0;
+
+    const getScrollContainer = () => scrollContainer?.() ?? null;
+    const getScrollTop = () => {
+      const container = getScrollContainer();
+      if (container) {
+        return container.scrollTop;
+      }
+
+      return window.scrollY || document.documentElement.scrollTop;
+    };
+
+    const isEventWithinContainer = (event: TouchEvent) => {
+      const container = getScrollContainer();
+      if (!container) return true;
+
+      const target = event.target as Node | null;
+      return !!(target && container.contains(target));
+    };
 
     const handleTouchStart = (e: TouchEvent) => {
-      const scrollTop = window.scrollY || document.documentElement.scrollTop;
-      if (scrollTop === 0) {
+      if (!isEventWithinContainer(e)) return;
+
+      const scrollTop = getScrollTop();
+      if (scrollTop <= 0) {
         startY.current = e.touches[0].clientY;
         setIsPulling(true);
       }
@@ -32,18 +63,23 @@ export const usePullToRefresh = ({
     const handleTouchMove = (e: TouchEvent) => {
       if (!isPulling || isRefreshing) return;
 
+      if (!isEventWithinContainer(e)) return;
+
       currentY.current = e.touches[0].clientY;
       const distance = currentY.current - startY.current;
 
       if (distance > 0) {
         e.preventDefault();
         const cappedDistance = Math.min(distance * 0.5, maxPullDistance);
-        setPullDistance(cappedDistance);
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          setPullDistance(cappedDistance);
 
-        // Haptic feedback at threshold
-        if (cappedDistance >= threshold && pullDistance < threshold) {
-          hapticService.medium();
-        }
+          // Haptic feedback at threshold
+          if (cappedDistance >= threshold && pullDistance < threshold) {
+            hapticService.medium();
+          }
+        });
       }
     };
 
@@ -65,22 +101,24 @@ export const usePullToRefresh = ({
       setPullDistance(0);
     };
 
-    document.addEventListener('touchstart', handleTouchStart, { passive: true });
-    document.addEventListener('touchmove', handleTouchMove, { passive: false });
-    document.addEventListener('touchend', handleTouchEnd);
+    const target = getScrollContainer() ?? document;
+
+    target.addEventListener('touchstart', handleTouchStart, { passive: true });
+    target.addEventListener('touchmove', handleTouchMove, { passive: false });
+    target.addEventListener('touchend', handleTouchEnd);
 
     return () => {
-      document.removeEventListener('touchstart', handleTouchStart);
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
+      target.removeEventListener('touchstart', handleTouchStart as EventListener);
+      target.removeEventListener('touchmove', handleTouchMove as EventListener);
+      target.removeEventListener('touchend', handleTouchEnd as EventListener);
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [isPulling, isRefreshing, pullDistance, threshold, maxPullDistance, onRefresh]);
+  }, [enabled, isPulling, isRefreshing, pullDistance, threshold, maxPullDistance, onRefresh, scrollContainer]);
 
   return {
-    isPulling,
-    isRefreshing,
-    pullDistance,
-    shouldTrigger: pullDistance >= threshold
+    isPulling: enabled && isPulling,
+    isRefreshing: enabled && isRefreshing,
+    pullDistance: enabled ? pullDistance : 0,
+    shouldTrigger: enabled && pullDistance >= threshold
   };
 };

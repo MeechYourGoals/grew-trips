@@ -40,7 +40,8 @@ export const MobileTripChat = ({ tripId, isEvent = false }: MobileTripChatProps)
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsLoading(false);
     },
-    threshold: 80
+    threshold: 80,
+    scrollContainer: () => containerRef.current
   });
 
   // Handle keyboard visibility for better UX

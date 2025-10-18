@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Plus, MapPin, Clock, Users } from 'lucide-react';
 import { usePullToRefresh } from '../../hooks/usePullToRefresh';
 import { PullToRefreshIndicator } from './PullToRefreshIndicator';
@@ -44,12 +44,15 @@ export const MobileGroupCalendar = ({ tripId }: MobileGroupCalendarProps) => {
     }
   ]);
 
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
   const { isPulling, isRefreshing, pullDistance } = usePullToRefresh({
     onRefresh: async () => {
       setIsLoading(true);
       await new Promise(resolve => setTimeout(resolve, 1000));
       setIsLoading(false);
-    }
+    },
+    scrollContainer: () => scrollContainerRef.current
   });
 
   useEffect(() => {
@@ -115,7 +118,7 @@ export const MobileGroupCalendar = ({ tripId }: MobileGroupCalendarProps) => {
       </div>
 
       {/* Events List */}
-      <div className="flex-1 overflow-y-auto px-4 py-4">
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto px-4 py-4">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-white">
             {format(selectedDate, 'MMMM d, yyyy')}
