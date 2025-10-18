@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useTripTasks, useTaskMutations } from '@/hooks/useTripTasks';
+import { useTripTasks } from '@/hooks/useTripTasks';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
@@ -13,8 +13,7 @@ interface TripTasksUpdatedProps {
 
 export const TripTasksUpdated = ({ tripId }: TripTasksUpdatedProps) => {
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const { data: tasks = [], isLoading } = useTripTasks(tripId);
-  const { createTaskMutation, toggleTaskMutation } = useTaskMutations(tripId);
+  const { tasks, isLoading, createTaskMutation, toggleTaskMutation } = useTripTasks(tripId);
 
   if (isLoading) {
     return (

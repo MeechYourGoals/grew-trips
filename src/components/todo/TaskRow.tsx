@@ -5,7 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { CompletionDrawer } from './CompletionDrawer';
-import { useTaskMutations } from '../../hooks/useTripTasks';
+import { useTripTasks } from '../../hooks/useTripTasks';
 import { formatDistanceToNow, isAfter } from 'date-fns';
 import { TripTask } from '../../types/tasks';
 import { hapticService } from '../../services/hapticService';
@@ -21,7 +21,7 @@ interface TaskRowProps {
 export const TaskRow = ({ task, tripId }: TaskRowProps) => {
   const [showCompletionDrawer, setShowCompletionDrawer] = useState(false);
   const [justCompleted, setJustCompleted] = useState(false);
-  const { toggleTaskMutation } = useTaskMutations(tripId);
+  const { toggleTaskMutation } = useTripTasks(tripId);
 
   const isCompleted = task.is_poll 
     ? (task.task_status?.filter(s => s.completed).length || 0) >= (task.task_status?.length || 1)

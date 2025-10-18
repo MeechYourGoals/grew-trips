@@ -1,9 +1,9 @@
-import { useTaskMutations } from './useTripTasks';
+import { useTripTasks } from './useTripTasks';
 import { useCategoryAssignments } from './useCategoryAssignments';
 import { CATEGORIES } from '../types/categoryAssignments';
 
 export const useCategoryTasks = (tripId: string) => {
-  const { createTaskMutation } = useTaskMutations(tripId);
+  const { createTaskMutation } = useTripTasks(tripId);
   const { upsertAssignment, deleteAssignment, assignments } = useCategoryAssignments(tripId);
 
   const createOrUpdateCategoryTask = async (

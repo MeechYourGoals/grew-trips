@@ -8,7 +8,7 @@ import { Label } from '../ui/label';
 import { RadioGroup, RadioGroupItem } from '../ui/radio-group';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
 import { Calendar as CalendarComponent } from '../ui/calendar';
-import { useTaskMutations } from '../../hooks/useTripTasks';
+import { useTripTasks } from '../../hooks/useTripTasks';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 import { CollaboratorSelector } from './CollaboratorSelector';
 import { format } from 'date-fns';
@@ -26,7 +26,7 @@ export const TaskCreateModal = ({ tripId, onClose }: TaskCreateModalProps) => {
   const [showCalendar, setShowCalendar] = useState(false);
   const [assignedMembers, setAssignedMembers] = useState<string[]>([]);
   
-  const { createTaskMutation } = useTaskMutations(tripId);
+  const { createTaskMutation } = useTripTasks(tripId);
   const { accentColors } = useTripVariant();
 
   const handleSubmit = (e: React.FormEvent) => {

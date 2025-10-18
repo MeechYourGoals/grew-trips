@@ -6,7 +6,6 @@ import { taskStorageService } from '../services/taskStorageService';
 import { useDemoMode } from './useDemoMode';
 import { useAuth } from './useAuth';
 import { useState, useCallback, useMemo } from 'react';
-import { toast } from 'sonner';
 
 // Task form management types
 export interface TaskFormData {
@@ -128,6 +127,8 @@ export const useTripTasks = (tripId: string, options?: {
 }) => {
   const { isDemoMode } = useDemoMode();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   
   // Task form management state
   const [title, setTitle] = useState('');
@@ -181,23 +182,23 @@ export const useTripTasks = (tripId: string, options?: {
       return true;
     } catch (error) {
       console.error('Failed to assign task:', error);
-      toast.error('Failed to assign task');
+      toast({ title: 'Failed to assign task', variant: 'destructive' });
       return false;
     }
-  }, []);
+  }, [toast]);
 
   const bulkAssign = useCallback(async (assignmentOptions: AssignmentOptions): Promise<boolean> => {
     try {
       const { taskId, userIds } = assignmentOptions;
       console.log('Bulk assigning task', taskId, 'to users', userIds);
-      toast.success(`Assigned to ${userIds.length} members`);
+      toast({ title: `Assigned to ${userIds.length} members` });
       return true;
     } catch (error) {
       console.error('Failed to bulk assign:', error);
-      toast.error('Failed to assign task to members');
+      toast({ title: 'Failed to assign task to members', variant: 'destructive' });
       return false;
     }
-  }, []);
+  }, [toast]);
 
   // Task filtering functions
   const applyFilters = useCallback((tasks: TripTask[]): TripTask[] => {
@@ -318,14 +319,8 @@ export const useTripTasks = (tripId: string, options?: {
     },
     enabled: !!tripId
   });
-};
 
-export const useTaskMutations = (tripId: string) => {
-  const queryClient = useQueryClient();
-  const { toast } = useToast();
-  const { isDemoMode } = useDemoMode();
-  const { user } = useAuth();
-
+  // Task mutations
   const createTaskMutation = useMutation({
     mutationFn: async (task: CreateTaskRequest & { assignedTo?: string[] }) => {
       // Demo mode: use localStorage
