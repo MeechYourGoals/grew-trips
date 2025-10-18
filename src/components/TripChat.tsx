@@ -7,16 +7,20 @@ import { ChatInput } from './chat/ChatInput';
 import { MessageList } from './chat/MessageList';
 import { MessageFilters } from './chat/MessageFilters';
 import { InlineReplyComponent } from './chat/InlineReplyComponent';
+import { ChannelSwitcher } from './chat/ChannelSwitcher';
 import { getMockAvatar } from '../utils/mockAvatars';
 import { useTripMembers } from '../hooks/useTripMembers';
 import { useTripChat } from '@/hooks/useTripChat';
 import { useAuth } from '@/hooks/useAuth';
+import { useRoleChannels } from '@/hooks/useRoleChannels';
 
 interface TripChatProps {
   enableGroupChat?: boolean;
   showBroadcasts?: boolean;
   isEvent?: boolean;
   tripId?: string;
+  isPro?: boolean; // 🆕 Flag to enable role channels for enterprise trips
+  userRole?: string; // 🆕 User's role for channel access
 }
 
 interface MockMessage {
@@ -41,7 +45,9 @@ export const TripChat = ({
   enableGroupChat = true,
   showBroadcasts = true,
   isEvent = false,
-  tripId: tripIdProp
+  tripId: tripIdProp,
+  isPro = false,
+  userRole = 'member'
 }: TripChatProps) => {
   const [demoMessages, setDemoMessages] = useState<MockMessage[]>([]);
   const [demoLoading, setDemoLoading] = useState(true);
@@ -60,6 +66,13 @@ export const TripChat = ({
     sendMessageAsync: sendTripMessage,
     isCreating: isSendingMessage
   } = useTripChat(resolvedTripId);
+
+  // 🆕 Role channels for enterprise trips
+  const {
+    availableChannels,
+    activeChannel,
+    setActiveChannel
+  } = useRoleChannels(resolvedTripId, userRole);
 
   const {
     inputMessage,
@@ -227,6 +240,34 @@ export const TripChat = ({
 
   return (
     <div className="flex flex-col h-full">
+      {/* Channel Switcher for Enterprise Trips */}
+      {isPro && availableChannels.length > 0 && (
+        <div className="p-4 border-b border-gray-700">
+          <div className="flex items-center gap-3 mb-3">
+            <ChannelSwitcher
+              activeChannel={activeChannel?.id || 'main'}
+              roleChannels={availableChannels}
+              onChannelChange={(channelId) => {
+                if (channelId === 'main') {
+                  setActiveChannel(null);
+                } else {
+                  const channel = availableChannels.find(ch => ch.id === channelId);
+                  if (channel) setActiveChannel(channel);
+                }
+              }}
+              className="flex-1"
+            />
+            {activeChannel && (
+              <div className="bg-purple-500/10 border border-purple-500/20 rounded px-3 py-1.5">
+                <p className="text-xs text-purple-400 font-medium">
+                  Private channel - Only {activeChannel.roleName} members
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+      
       {filteredMessages.length > 0 && (
         <div className="p-4 border-b border-gray-700">
           <MessageFilters

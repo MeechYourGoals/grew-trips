@@ -60,7 +60,7 @@ export const ProTabContent = ({
   const renderTabContent = () => {
     switch (activeTab) {
       case 'chat':
-        return <TripChat enableGroupChat={true} showBroadcasts={true} tripId={tripId} />;
+        return <TripChat enableGroupChat={true} showBroadcasts={true} tripId={tripId} isPro={true} userRole={userRole} />;
       case 'calendar':
         return <GroupCalendar tripId={tripId} />;
       case 'tasks':
@@ -80,6 +80,7 @@ export const ProTabContent = ({
             userRole={userRole}
             isReadOnly={isReadOnly}
             category={category}
+            tripId={tripId}
             onUpdateMemberRole={onUpdateMemberRole}
           />
         );
