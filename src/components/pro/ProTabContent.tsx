@@ -7,6 +7,8 @@ import { CommentsWall } from '../CommentsWall';
 import { TripChat } from '../TripChat';
 import { AIConciergeChat } from '../AIConciergeChat';
 import { GroupCalendar } from '../GroupCalendar';
+import { UnifiedMediaHub } from '../UnifiedMediaHub';
+import { PaymentsTab } from '../payments/PaymentsTab';
 
 import { TeamTab } from './TeamTab';
 import { TripTasksTab } from '../todo/TripTasksTab';
@@ -65,6 +67,10 @@ export const ProTabContent = ({
         return <TripTasksTab tripId={tripId} />;
       case 'polls':
         return <CommentsWall tripId={tripId} />;
+      case 'media':
+        return <UnifiedMediaHub tripId={tripId} />;
+      case 'payments':
+        return <PaymentsTab tripId={tripId} />;
       case 'places':
         return <PlacesSection />;
       case 'team':

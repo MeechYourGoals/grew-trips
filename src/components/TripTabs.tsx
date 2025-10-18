@@ -50,15 +50,16 @@ export const TripTabs = ({
   const { accentColors } = useTripVariant();
   const features = useFeatureToggle(tripData || {});
 
+  // 🆕 Updated tab order: Chat, Calendar, Concierge, Media, Payments, Places, Polls, Tasks
   const tabs = [
     { id: 'chat', label: 'Chat', icon: MessageCircle, enabled: features.showChat },
     { id: 'calendar', label: 'Calendar', icon: Calendar, enabled: features.showCalendar },
-    { id: 'tasks', label: 'Tasks', icon: ClipboardList, enabled: features.showTasks },
-    { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
+    { id: 'concierge', label: 'Concierge', icon: Sparkles, enabled: showConcierge },
     { id: 'media', label: 'Media', icon: Camera, enabled: features.showMedia },
     { id: 'payments', label: 'Payments', icon: DollarSign, enabled: true },
     { id: 'places', label: 'Places', icon: MapPin, enabled: showPlaces },
-    { id: 'concierge', label: 'Concierge', icon: Sparkles, enabled: showConcierge }
+    { id: 'polls', label: 'Polls', icon: BarChart3, enabled: features.showPolls },
+    { id: 'tasks', label: 'Tasks', icon: ClipboardList, enabled: features.showTasks }
   ];
 
   const handleTabChange = (tab: string, enabled: boolean) => {

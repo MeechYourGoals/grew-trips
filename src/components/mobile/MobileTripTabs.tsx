@@ -30,15 +30,16 @@ export const MobileTripTabs = ({
   const contentRef = useRef<HTMLDivElement>(null);
   const tabsContainerRef = useRef<HTMLDivElement>(null);
 
+  // 🆕 Updated tab order: Chat, Calendar, Concierge, Media, Payments, Places, Polls, Tasks
   const tabs = [
     { id: 'chat', label: 'Chat', icon: MessageCircle },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
-    { id: 'tasks', label: 'Tasks', icon: ClipboardList },
-    { id: 'polls', label: 'Polls', icon: BarChart3 },
+    { id: 'concierge', label: 'Concierge', icon: Sparkles },
     { id: 'media', label: 'Media', icon: Camera },
-    { id: 'places', label: 'Places', icon: MapPin },
     { id: 'payments', label: 'Payments', icon: CreditCard },
-    { id: 'concierge', label: 'Concierge', icon: Sparkles }
+    { id: 'places', label: 'Places', icon: MapPin },
+    { id: 'polls', label: 'Polls', icon: BarChart3 },
+    { id: 'tasks', label: 'Tasks', icon: ClipboardList }
   ];
 
   // Scroll active tab into view

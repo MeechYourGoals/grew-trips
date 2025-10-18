@@ -1,9 +1,13 @@
 
 import React from 'react';
-import { Sparkles, Users, Calendar, ClipboardList, MessageCircle, MessageSquare } from 'lucide-react';
+import { Sparkles, Users, Calendar, ClipboardList, MessageCircle, MessageSquare, Camera, DollarSign, MapPin, BarChart3 } from 'lucide-react';
 import { TripChat } from '../TripChat';
 import { AIConciergeChat } from '../AIConciergeChat';
 import { GroupCalendar } from '../GroupCalendar';
+import { UnifiedMediaHub } from '../UnifiedMediaHub';
+import { PaymentsTab } from '../payments/PaymentsTab';
+import { PlacesSection } from '../PlacesSection';
+import { CommentsWall } from '../CommentsWall';
 
 import { AgendaBuilder } from './AgendaBuilder';
 import { SpeakerDirectory } from './SpeakerDirectory';
@@ -35,14 +39,19 @@ export const EventDetailContent = ({
 }: EventDetailContentProps) => {
   const { accentColors } = useTripVariant();
 
+  // 🆕 Updated tab order: Chat, Calendar, Concierge, Media, Payments, Places, Polls, Tasks, [Event-specific tabs]
   const tabs = [
     { id: 'chat', label: 'Chat', icon: MessageCircle },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
+    { id: 'ai-chat', label: 'Concierge', icon: Sparkles },
+    { id: 'media', label: 'Media', icon: Camera },
+    { id: 'payments', label: 'Payments', icon: DollarSign },
+    { id: 'places', label: 'Places', icon: MapPin },
+    { id: 'polls', label: 'Polls', icon: BarChart3 },
     { id: 'todo', label: 'Tasks', icon: ClipboardList },
     { id: 'agenda', label: 'Agenda', icon: Calendar, eventOnly: true },
     { id: 'speakers', label: 'Speakers', icon: Users, eventOnly: true },
-    { id: 'live-qa', label: 'Live Q&A', icon: MessageSquare, eventOnly: true },
-    { id: 'ai-chat', label: 'Concierge', icon: Sparkles }
+    { id: 'live-qa', label: 'Live Q&A', icon: MessageSquare, eventOnly: true }
   ];
 
   const visibleTabs = tabs;
@@ -55,6 +64,14 @@ export const EventDetailContent = ({
         return <GroupCalendar tripId={tripId} />;
       case 'todo':
         return <TripTasksTab tripId={tripId} />;
+      case 'media':
+        return <UnifiedMediaHub tripId={tripId} />;
+      case 'payments':
+        return <PaymentsTab tripId={tripId} />;
+      case 'places':
+        return <PlacesSection tripId={tripId} />;
+      case 'polls':
+        return <CommentsWall tripId={tripId} />;
       case 'agenda':
         return (
           <AgendaBuilder
