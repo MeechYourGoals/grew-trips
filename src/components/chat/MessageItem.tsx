@@ -1,5 +1,6 @@
 import React from 'react';
 import { ChatMessage } from '@/hooks/useChatComposer';
+import { ChatMessageWithGrounding } from '@/types/grounding';
 import { MessageBubble } from './MessageBubble';
 
 interface MessageItemProps {
@@ -9,6 +10,8 @@ interface MessageItemProps {
 }
 
 export const MessageItem = ({ message, reactions, onReaction }: MessageItemProps) => {
+  const messageWithGrounding = message as ChatMessageWithGrounding;
+  
   return (
     <MessageBubble
       id={message.id}
@@ -20,6 +23,11 @@ export const MessageItem = ({ message, reactions, onReaction }: MessageItemProps
       isPayment={message.isPayment || message.tags?.includes('payment')}
       reactions={reactions}
       onReaction={onReaction}
+      // 🆕 Pass grounding data
+      grounding={messageWithGrounding.sources || messageWithGrounding.googleMapsWidget ? {
+        sources: messageWithGrounding.sources,
+        googleMapsWidget: messageWithGrounding.googleMapsWidget
+      } : undefined}
     />
   );
 };

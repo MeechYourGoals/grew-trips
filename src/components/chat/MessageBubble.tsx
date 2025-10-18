@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { getMockAvatar } from '@/utils/mockAvatars';
 import { MessageReactionBar } from './MessageReactionBar';
+import { GoogleMapsWidget } from './GoogleMapsWidget';
+import { ChatMessageWithGrounding } from '@/types/grounding';
+import { ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface MessageBubbleProps {
@@ -13,6 +16,11 @@ export interface MessageBubbleProps {
   isPayment?: boolean;
   reactions?: Record<string, { count: number; userReacted: boolean }>;
   onReaction: (messageId: string, reactionType: string) => void;
+  // 🆕 Grounding support
+  grounding?: {
+    sources?: Array<{ id: string; title: string; url: string; snippet: string; source: string }>;
+    googleMapsWidget?: string;
+  };
 }
 
 export const MessageBubble = ({
@@ -24,7 +32,8 @@ export const MessageBubble = ({
   isBroadcast,
   isPayment,
   reactions,
-  onReaction
+  onReaction,
+  grounding
 }: MessageBubbleProps) => {
   const [showReactions, setShowReactions] = useState(false);
 
@@ -78,6 +87,41 @@ export const MessageBubble = ({
           </div>
           <p className={cn('text-sm leading-relaxed', getTextColorClass())}>{text}</p>
         </div>
+        
+        {/* 🆕 Google Maps Widget */}
+        {grounding?.googleMapsWidget && (
+          <div className="mt-3">
+            <GoogleMapsWidget widgetToken={grounding.googleMapsWidget} height={250} />
+          </div>
+        )}
+        
+        {/* 🆕 Grounding Sources */}
+        {grounding?.sources && grounding.sources.length > 0 && (
+          <div className="mt-3 space-y-2">
+            <div className="text-xs font-medium text-muted-foreground flex items-center gap-2">
+              <span>Sources:</span>
+              {grounding.sources.some(s => s.source === 'google_maps_grounding') && (
+                <span className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded text-[10px]">
+                  Verified by Google Maps
+                </span>
+              )}
+            </div>
+            <div className="space-y-1">
+              {grounding.sources.map((source, idx) => (
+                <a
+                  key={source.id || idx}
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1 p-2 bg-blue-500/10 rounded-lg transition-colors"
+                >
+                  <ExternalLink size={10} />
+                  <span className="truncate">{source.title}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
         
         <div className={cn('mt-2 transition-opacity', showReactions ? 'opacity-100' : 'opacity-0')}>
           <MessageReactionBar messageId={id} reactions={reactions} onReaction={onReaction} />
