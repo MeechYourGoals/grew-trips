@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Sparkles, CheckCircle, Search } from 'lucide-react';
+import { Sparkles, CheckCircle, Search, AlertCircle } from 'lucide-react';
 import { useConsumerSubscription } from '../hooks/useConsumerSubscription';
 import { TripPreferences } from '../types/consumer';
 import { TripContextService } from '../services/tripContextService';
@@ -9,12 +9,15 @@ import { useBasecamp } from '../contexts/BasecampContext';
 import { ChatMessages } from './chat/ChatMessages';
 import { AiChatInput } from './chat/AiChatInput';
 import { supabase } from '@/integrations/supabase/client';
+import { conciergeRateLimitService } from '../services/conciergeRateLimitService';
+import { useAuth } from '../hooks/useAuth';
 
 interface AIConciergeChatProps {
   tripId: string;
   basecamp?: { name: string; address: string };
   preferences?: TripPreferences;
   isDemoMode?: boolean;
+  isEvent?: boolean; // 🆕 Flag for event-specific rate limiting
 }
 
 interface ChatMessage {
@@ -36,16 +39,43 @@ interface ChatMessage {
   googleMapsWidget?: string; // 🆕 Widget context token
 }
 
-export const AIConciergeChat = ({ tripId, basecamp, preferences, isDemoMode = false }: AIConciergeChatProps) => {
+export const AIConciergeChat = ({ tripId, basecamp, preferences, isDemoMode = false, isEvent = false }: AIConciergeChatProps) => {
   const { isPlus } = useConsumerSubscription();
   const { basecamp: globalBasecamp } = useBasecamp();
+  const { user } = useAuth();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [aiStatus, setAiStatus] = useState<'checking' | 'connected' | 'limited' | 'error' | 'thinking'>('connected');
+  const [remainingQueries, setRemainingQueries] = useState<number>(Infinity);
+
+  // Initialize remaining queries for events
+  useEffect(() => {
+    if (isEvent && user) {
+      const remaining = conciergeRateLimitService.getRemainingQueries(user.id, tripId, isPlus);
+      setRemainingQueries(remaining);
+    }
+  }, [isEvent, user, tripId, isPlus]);
 
   const handleSendMessage = async () => {
     if (!inputMessage.trim() || isTyping) return;
+
+    // 🆕 Rate limit check for events
+    if (isEvent && user) {
+      const canQuery = conciergeRateLimitService.canQuery(user.id, tripId, isPlus);
+      if (!canQuery) {
+        const remaining = conciergeRateLimitService.getRemainingQueries(user.id, tripId, isPlus);
+        const resetTime = conciergeRateLimitService.getTimeUntilReset(user.id, tripId, isPlus);
+        
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(),
+          type: 'assistant',
+          content: `⚠️ You've reached your daily limit of 5 AI Concierge queries for this event. Your limit will reset in ${resetTime}.\n\n💎 Upgrade to Chravel+ for unlimited AI assistance!`,
+          timestamp: new Date().toISOString()
+        }]);
+        return;
+      }
+    }
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -118,6 +148,16 @@ export const AIConciergeChat = ({ tripId, basecamp, preferences, isDemoMode = fa
 
       setAiStatus('connected');
 
+      // 🆕 Increment usage for events
+      if (isEvent && user) {
+        try {
+          const usage = conciergeRateLimitService.incrementUsage(user.id, tripId, isPlus);
+          setRemainingQueries(conciergeRateLimitService.getRemainingQueries(user.id, tripId, isPlus));
+        } catch (error) {
+          console.error('Failed to increment usage:', error);
+        }
+      }
+
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
@@ -167,6 +207,15 @@ export const AIConciergeChat = ({ tripId, basecamp, preferences, isDemoMode = fa
               <CheckCircle size={16} className="text-green-400" />
               <span className="text-xs text-green-400">Ready with Web Search</span>
             </div>
+            {/* Rate limit indicator for events */}
+            {isEvent && !isPlus && user && remainingQueries !== Infinity && (
+              <div className="flex items-center gap-1 ml-2">
+                <AlertCircle size={16} className={remainingQueries <= 2 ? 'text-orange-400' : 'text-blue-400'} />
+                <span className={`text-xs ${remainingQueries <= 2 ? 'text-orange-400' : 'text-blue-400'}`}>
+                  {remainingQueries} {remainingQueries === 1 ? 'query' : 'queries'} left today
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

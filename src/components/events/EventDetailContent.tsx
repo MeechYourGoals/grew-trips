@@ -34,18 +34,19 @@ export const EventDetailContent = ({
 }: EventDetailContentProps) => {
   const { accentColors } = useTripVariant();
 
-  // 🆕 Updated Events tab order: Chat, Calendar, Concierge, Media, Performers, Polls, Agenda
+  // 🆕 Updated Events tab order (Alphabetical): Agenda, Calendar, Chat, Concierge, Media, Performers, Polls
   const tabs = [
-    { id: 'chat', label: 'Chat', icon: MessageCircle },
-    { id: 'calendar', label: 'Calendar', icon: Calendar },
-    { id: 'ai-chat', label: 'Concierge', icon: Sparkles },
-    { id: 'media', label: 'Media', icon: Camera },
-    { id: 'performers', label: 'Performers', icon: Users },
-    { id: 'polls', label: 'Polls', icon: BarChart3 },
-    { id: 'agenda', label: 'Agenda', icon: Calendar }
+    { id: 'agenda', label: 'Agenda', icon: Calendar, enabled: true },
+    { id: 'calendar', label: 'Calendar', icon: Calendar, enabled: true },
+    { id: 'chat', label: 'Chat', icon: MessageCircle, enabled: eventData.chatEnabled !== false },
+    { id: 'ai-chat', label: 'Concierge', icon: Sparkles, enabled: eventData.conciergeEnabled === true },
+    { id: 'media', label: 'Media', icon: Camera, enabled: eventData.mediaUploadEnabled !== false },
+    { id: 'performers', label: 'Performers', icon: Users, enabled: true },
+    { id: 'polls', label: 'Polls', icon: BarChart3, enabled: eventData.pollsEnabled !== false }
   ];
 
-  const visibleTabs = tabs;
+  // Filter tabs based on enabled settings
+  const visibleTabs = tabs.filter(tab => tab.enabled);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -77,6 +78,7 @@ export const EventDetailContent = ({
           <AIConciergeChat 
             tripId={tripId}
             basecamp={basecamp}
+            isEvent={true}
           />
         );
       default:

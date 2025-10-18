@@ -83,10 +83,13 @@ export interface EventData {
   attendanceExpected: number;
   groupChatEnabled: boolean;
   archived?: boolean;
-  // 🆕 Agenda features
+  // 🆕 Event feature toggles (organizer controls)
+  chatEnabled?: boolean; // Default: true
+  pollsEnabled?: boolean; // Default: true
+  conciergeEnabled?: boolean; // Default: false (Chravel+ only)
+  mediaUploadEnabled?: boolean; // Default: true
+  mediaUploadPermissions?: 'everyone' | 'organizers' | 'cohosts'; // Default: 'everyone'
   pdfScheduleUrl?: string;
-  mediaUploadEnabled?: boolean; // Toggle for media tab
-  mediaUploadPermissions?: 'everyone' | 'organizers' | 'cohosts';
   
   // Media content for events
   photos?: Array<{
