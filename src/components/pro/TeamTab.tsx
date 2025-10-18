@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound, MessageCircle, Download, Star, Megaphone } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound, MessageCircle, Download, Star, Megaphone, Grid3x3, Network } from 'lucide-react';
 import { ProParticipant } from '../../types/pro';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 import { EditMemberRoleModal } from './EditMemberRoleModal';
@@ -10,6 +10,7 @@ import { RoleContactSheet } from './RoleContactSheet';
 import { ExportTeamDirectoryModal } from './ExportTeamDirectoryModal';
 import { RoleTemplateManager } from './RoleTemplateManager';
 import { RoleBroadcastModal } from './RoleBroadcastModal';
+import { TeamOrgChart } from './TeamOrgChart';
 import { extractUniqueRoles, getRoleColorClass } from '../../utils/roleUtils';
 import { Button } from '../ui/button';
 
@@ -34,6 +35,20 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, tripId
   const [showBroadcastModal, setShowBroadcastModal] = useState(false);
   const [broadcastRole, setBroadcastRole] = useState<string | undefined>();
   const [roleContactSheet, setRoleContactSheet] = useState<{ role: string; members: ProParticipant[] } | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'orgchart'>('grid');
+
+  // Load view preference from localStorage
+  useEffect(() => {
+    const savedView = localStorage.getItem('team-view-mode') as 'grid' | 'orgchart' | null;
+    if (savedView) {
+      setViewMode(savedView);
+    }
+  }, []);
+
+  const handleViewModeChange = (mode: 'grid' | 'orgchart') => {
+    setViewMode(mode);
+    localStorage.setItem('team-view-mode', mode);
+  };
 
   const { terminology: { teamLabel }, roles: categoryRoles } = getCategoryConfig(category);
 
@@ -108,6 +123,34 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, tripId
           </div>
           <div className="flex items-center gap-3">
             <span className="text-gray-400">{roster.length} total members</span>
+            
+            {/* View Mode Toggle */}
+            <div className="flex items-center gap-1 bg-gray-800 rounded-lg p-1">
+              <button
+                onClick={() => handleViewModeChange('grid')}
+                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
+                  viewMode === 'grid'
+                    ? 'bg-red-600 text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+                title="Grid view"
+              >
+                <Grid3x3 size={14} />
+                Grid
+              </button>
+              <button
+                onClick={() => handleViewModeChange('orgchart')}
+                className={`px-3 py-1.5 rounded text-sm font-medium transition-colors flex items-center gap-1 ${
+                  viewMode === 'orgchart'
+                    ? 'bg-red-600 text-white'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+                title="Org chart view"
+              >
+                <Network size={14} />
+                Org Chart
+              </button>
+            </div>
             
             {/* Broadcast Button */}
             {tripId && (
@@ -256,9 +299,23 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, tripId
         )}
       </div>
 
-      {/* Team Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-        {filteredRoster.map((member) => (
+      {/* Org Chart View */}
+      {viewMode === 'orgchart' ? (
+        <TeamOrgChart
+          roster={roster}
+          category={category}
+          onMemberClick={(memberId) => {
+            const member = roster.find(m => m.id === memberId);
+            if (member) {
+              setEditingMember(member);
+            }
+          }}
+        />
+      ) : (
+        /* Team Grid View */
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+            {filteredRoster.map((member) => (
           <div key={member.id} className="bg-white/5 backdrop-blur-sm border border-gray-700 rounded-xl p-4">
             <div className="flex items-start gap-3">
               <img
@@ -334,14 +391,16 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, tripId
               </div>
             )}
           </div>
-        ))}
-      </div>
+            ))}
+          </div>
 
-      {filteredRoster.length === 0 && (
-        <div className="text-center py-12">
-          <Users size={48} className="text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400">No team members found for the selected role.</p>
-        </div>
+          {filteredRoster.length === 0 && (
+            <div className="text-center py-12">
+              <Users size={48} className="text-gray-600 mx-auto mb-4" />
+              <p className="text-gray-400">No team members found for the selected role.</p>
+            </div>
+          )}
+        </>
       )}
 
       {/* Role Edit Modal */}
