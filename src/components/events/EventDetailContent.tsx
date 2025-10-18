@@ -6,7 +6,7 @@ import { AIConciergeChat } from '../AIConciergeChat';
 import { GroupCalendar } from '../GroupCalendar';
 import { UnifiedMediaHub } from '../UnifiedMediaHub';
 import { CommentsWall } from '../CommentsWall';
-import { AgendaBuilder } from './AgendaBuilder';
+import { EnhancedAgendaTab } from './EnhancedAgendaTab';
 import { SpeakerDirectory } from './SpeakerDirectory';
 
 import { EventData } from '../../types/events';
@@ -66,11 +66,10 @@ export const EventDetailContent = ({
         return <CommentsWall tripId={tripId} />;
       case 'agenda':
         return (
-          <AgendaBuilder
-            tracks={eventData.tracks || []}
-            sessions={eventData.sessions || []}
-            speakers={eventData.speakers || []}
+          <EnhancedAgendaTab
+            eventId={tripId}
             userRole={eventData.userRole || 'attendee'}
+            pdfScheduleUrl={eventData.pdfScheduleUrl}
           />
         );
       case 'ai-chat':

@@ -83,6 +83,10 @@ export interface EventData {
   attendanceExpected: number;
   groupChatEnabled: boolean;
   archived?: boolean;
+  // 🆕 Agenda features
+  pdfScheduleUrl?: string;
+  mediaUploadEnabled?: boolean; // Toggle for media tab
+  mediaUploadPermissions?: 'everyone' | 'organizers' | 'cohosts';
   
   // Media content for events
   photos?: Array<{
