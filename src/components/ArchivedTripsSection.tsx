@@ -22,7 +22,7 @@ export const ArchivedTripsSection = () => {
   });
   
   const { toast } = useToast();
-  const [archivedTrips, setArchivedTrips] = useState<any>({ consumer: [], pro: [], events: [], total: 0 });
+  const [archivedTrips, setArchivedTrips] = useState<{ consumer: any[]; pro: any[]; events: any[]; total: number }>({ consumer: [], pro: [], events: [], total: 0 });
 
   useEffect(() => {
     const loadArchivedTrips = async () => {

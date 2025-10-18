@@ -30,7 +30,7 @@ interface ResolvedPlace {
   formatted_address: string;
   rating?: number;
   price_level?: number;
-  photos?: any[];
+  photos?: { photo_reference: string; height: number; width: number }[];
   types: string[];
   place_id: string;
   website?: string;

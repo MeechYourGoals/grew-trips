@@ -31,8 +31,8 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
   const [useAiSorting, setUseAiSorting] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [selectedPlace, setSelectedPlace] = useState<any>(null);
+  const [searchResults, setSearchResults] = useState<{ name: string; address: string; coordinates: { lat: number; lng: number } }[]>([]);
+  const [selectedPlace, setSelectedPlace] = useState<{ name: string; address: string; coordinates: { lat: number; lng: number } } | null>(null);
   const [inputType, setInputType] = useState<'url' | 'place_name' | null>(null);
   
   const { resolvePlaceName, categorizePlaceType, isLoading: placeLoading } = usePlaceResolution();
@@ -76,7 +76,7 @@ export const AddPlaceModal = ({ isOpen, onClose, onPlaceAdded, basecamp }: AddPl
 
       return () => clearTimeout(timeoutId);
     }
-  }, [smartInput, resolvePlaceName, categorizePlaceType, useAiSorting]);
+  }, [smartInput, resolvePlaceName, categorizePlaceType, useAiSorting, category, placeName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

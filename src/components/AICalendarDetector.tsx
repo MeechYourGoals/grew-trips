@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Calendar, Check, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { Button } from './ui/button';
@@ -21,7 +21,7 @@ interface DetectedEvent {
 
 interface AICalendarDetectorProps {
   messageText?: string;
-  fileContent?: any;
+  fileContent?: string;
   onEventAdded?: (eventData: AddToCalendarData) => void;
   onDismiss?: () => void;
 }
@@ -41,9 +41,9 @@ export const AICalendarDetector = ({
     if (messageText || fileContent) {
       detectEvents();
     }
-  }, [messageText, fileContent]);
+  }, [messageText, fileContent, detectEvents]);
 
-  const detectEvents = async () => {
+  const detectEvents = useCallback(async () => {
     setIsLoading(true);
     try {
       // Simulate AI detection - in real app, this would call your AI service
@@ -54,7 +54,7 @@ export const AICalendarDetector = ({
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [messageText, fileContent]);
 
   const simulateAIDetection = async (text: string): Promise<DetectedEvent[]> => {
     // Mock AI detection logic

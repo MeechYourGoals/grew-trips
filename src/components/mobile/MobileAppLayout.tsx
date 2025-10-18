@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import { MobileBottomNav } from './MobileBottomNav';
 import { useIsMobile } from '../../hooks/use-mobile';
 import { MobileOptimizationService } from '../../services/mobileOptimizationService';
+import { NativeMobileService } from '../../services/nativeMobileService';
 import { cn } from '@/lib/utils';
 
 interface MobileAppLayoutProps {
@@ -18,6 +19,10 @@ export const MobileAppLayout = ({ children, className }: MobileAppLayoutProps) =
     if (isMobile) {
       MobileOptimizationService.initializeMobileOptimizations();
       MobileOptimizationService.trackMobilePerformance();
+      
+      // Initialize native features
+      NativeMobileService.initialize();
+      NativeMobileService.trackNativePerformance();
     }
   }, [isMobile]);
 
