@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound, MessageCircle, Download, Star } from 'lucide-react';
+import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound, MessageCircle, Download, Star, Megaphone } from 'lucide-react';
 import { ProParticipant } from '../../types/pro';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 import { EditMemberRoleModal } from './EditMemberRoleModal';
@@ -9,6 +9,7 @@ import { QuickContactMenu } from './QuickContactMenu';
 import { RoleContactSheet } from './RoleContactSheet';
 import { ExportTeamDirectoryModal } from './ExportTeamDirectoryModal';
 import { RoleTemplateManager } from './RoleTemplateManager';
+import { RoleBroadcastModal } from './RoleBroadcastModal';
 import { extractUniqueRoles, getRoleColorClass } from '../../utils/roleUtils';
 import { Button } from '../ui/button';
 
@@ -17,10 +18,11 @@ interface TeamTabProps {
   userRole: string;
   isReadOnly?: boolean;
   category: ProTripCategory;
+  tripId?: string;
   onUpdateMemberRole?: (memberId: string, newRole: string) => Promise<void>;
 }
 
-export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpdateMemberRole }: TeamTabProps) => {
+export const TeamTab = ({ roster, userRole, isReadOnly = false, category, tripId, onUpdateMemberRole }: TeamTabProps) => {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [showCredentials, setShowCredentials] = useState(false);
   const [showEmergencyContacts, setShowEmergencyContacts] = useState(false);
@@ -29,6 +31,8 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
   const [showBulkModal, setShowBulkModal] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showTemplateManager, setShowTemplateManager] = useState(false);
+  const [showBroadcastModal, setShowBroadcastModal] = useState(false);
+  const [broadcastRole, setBroadcastRole] = useState<string | undefined>();
   const [roleContactSheet, setRoleContactSheet] = useState<{ role: string; members: ProParticipant[] } | null>(null);
 
   const { terminology: { teamLabel }, roles: categoryRoles } = getCategoryConfig(category);
@@ -104,6 +108,22 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
           </div>
           <div className="flex items-center gap-3">
             <span className="text-gray-400">{roster.length} total members</span>
+            
+            {/* Broadcast Button */}
+            {tripId && (
+              <Button
+                onClick={() => {
+                  setBroadcastRole(undefined);
+                  setShowBroadcastModal(true);
+                }}
+                variant="outline"
+                className="border-gray-600"
+                title="Send announcement to team roles"
+              >
+                <Megaphone size={16} className="mr-2" />
+                Broadcast
+              </Button>
+            )}
             
             {/* Templates Button */}
             <Button
@@ -200,13 +220,27 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
                   </button>
                   {/* Contact All Button for specific roles */}
                   {role !== 'all' && roleMembers.length > 0 && (
-                    <button
-                      onClick={() => setRoleContactSheet({ role, members: roleMembers })}
-                      className="p-1 hover:bg-white/10 rounded transition-colors"
-                      title={`Contact all ${role}`}
-                    >
-                      <MessageCircle size={14} className="text-blue-400" />
-                    </button>
+                    <>
+                      <button
+                        onClick={() => setRoleContactSheet({ role, members: roleMembers })}
+                        className="p-1 hover:bg-white/10 rounded transition-colors"
+                        title={`Contact all ${role}`}
+                      >
+                        <MessageCircle size={14} className="text-blue-400" />
+                      </button>
+                      {tripId && (
+                        <button
+                          onClick={() => {
+                            setBroadcastRole(role);
+                            setShowBroadcastModal(true);
+                          }}
+                          className="p-1 hover:bg-white/10 rounded transition-colors"
+                          title={`Broadcast to all ${role}`}
+                        >
+                          <Megaphone size={14} className="text-purple-400" />
+                        </button>
+                      )}
+                    </>
                   )}
                 </div>
               );
@@ -365,6 +399,22 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
               await onUpdateMemberRole(memberId, role);
             }
           }}
+        />
+      )}
+
+      {/* Role Broadcast Modal */}
+      {tripId && (
+        <RoleBroadcastModal
+          isOpen={showBroadcastModal}
+          onClose={() => {
+            setShowBroadcastModal(false);
+            setBroadcastRole(undefined);
+          }}
+          tripId={tripId}
+          roster={roster}
+          category={category}
+          availableRoles={existingRoles}
+          preselectedRole={broadcastRole}
         />
       )}
     </div>
