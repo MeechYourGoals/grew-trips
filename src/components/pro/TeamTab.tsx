@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { Users, Shield, Settings, UserCheck, AlertTriangle } from 'lucide-react';
+import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound } from 'lucide-react';
 import { ProParticipant } from '../../types/pro';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 import { EditMemberRoleModal } from './EditMemberRoleModal';
+import { TeamOnboardingBanner } from './TeamOnboardingBanner';
+import { BulkRoleAssignmentModal } from './BulkRoleAssignmentModal';
 import { extractUniqueRoles, getRoleColorClass } from '../../utils/roleUtils';
+import { Button } from '../ui/button';
 
 interface TeamTabProps {
   roster: ProParticipant[];
@@ -17,12 +20,19 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [showCredentials, setShowCredentials] = useState(false);
   const [editingMember, setEditingMember] = useState<ProParticipant | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showBulkModal, setShowBulkModal] = useState(false);
 
   const { terminology: { teamLabel }, roles: categoryRoles } = getCategoryConfig(category);
 
   // Use category-specific roles or allow all for manual input
   const roles = categoryRoles.length > 0 ? ['all', ...categoryRoles] : ['all'];
   const existingRoles = extractUniqueRoles(roster);
+  
+  // Check if there are unassigned roles (members with default/empty roles)
+  const hasUnassignedRoles = roster.some(member => 
+    !member.role || member.role === '' || member.role === 'Member' || member.role === 'Participant'
+  );
   
   const filteredRoster = selectedRole === 'all' 
     ? roster 
@@ -48,8 +58,28 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
     }
   };
 
+  const handleAssignRolesClick = () => {
+    // Find first member without proper role and open edit modal
+    const firstUnassigned = roster.find(member => 
+      !member.role || member.role === '' || member.role === 'Member' || member.role === 'Participant'
+    );
+    if (firstUnassigned) {
+      setEditingMember(firstUnassigned);
+    }
+    setShowOnboarding(false);
+  };
+
   return (
     <div className="space-y-6">
+      {/* Onboarding Banner */}
+      {showOnboarding && hasUnassignedRoles && !isReadOnly && (
+        <TeamOnboardingBanner
+          hasUnassignedRoles={hasUnassignedRoles}
+          onAssignRoles={handleAssignRolesClick}
+          onDismiss={() => setShowOnboarding(false)}
+        />
+      )}
+
       {/* Read-only notice */}
       {isReadOnly && (
         <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-3">
@@ -64,11 +94,38 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
             <Users className="text-red-400" size={24} />
             <h2 className="text-xl font-bold text-white">{teamLabel}</h2>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
             <span className="text-gray-400">{roster.length} total members</span>
+            
+            {/* Bulk Edit Button */}
+            {!isReadOnly && onUpdateMemberRole && (
+              <Button
+                onClick={() => setShowBulkModal(true)}
+                variant="outline"
+                className="border-gray-600"
+                title="Assign roles to multiple members at once"
+              >
+                <UsersRound size={16} className="mr-2" />
+                Bulk Edit
+              </Button>
+            )}
+            
+            {/* Quick Assign Roles Button */}
+            {hasUnassignedRoles && !isReadOnly && (
+              <Button
+                onClick={handleAssignRolesClick}
+                className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white"
+                title="Assign roles to team members"
+              >
+                <UserPlus size={16} className="mr-2" />
+                Assign Roles
+              </Button>
+            )}
+            
             <button
               onClick={() => setShowCredentials(!showCredentials)}
               className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+              title={showCredentials ? 'Hide credential levels' : 'Show credential levels'}
             >
               <Shield size={16} />
               {showCredentials ? 'Hide Credentials' : 'Show Credentials'}
@@ -135,10 +192,13 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
               {userRole === 'admin' && !isReadOnly && onUpdateMemberRole && (
                 <button 
                   onClick={() => handleEditMember(member)}
-                  className="text-gray-400 hover:text-white transition-colors p-1 rounded hover:bg-white/10"
-                  title="Edit member role"
+                  className="text-gray-400 hover:text-white transition-colors p-1 rounded hover:bg-white/10 group relative"
+                  title="Click to edit member role"
                 >
                   <Settings size={16} />
+                  <span className="absolute -top-8 right-0 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                    Edit Role
+                  </span>
                 </button>
               )}
             </div>
@@ -192,6 +252,18 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
         existingRoles={existingRoles}
         onUpdateRole={handleUpdateRole}
       />
+
+      {/* Bulk Role Assignment Modal */}
+      {onUpdateMemberRole && (
+        <BulkRoleAssignmentModal
+          isOpen={showBulkModal}
+          onClose={() => setShowBulkModal(false)}
+          roster={roster}
+          category={category}
+          existingRoles={existingRoles}
+          onUpdateMemberRole={onUpdateMemberRole}
+        />
+      )}
     </div>
   );
 };
