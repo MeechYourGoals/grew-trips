@@ -2,6 +2,7 @@ import { supabase } from '../integrations/supabase/client';
 import { TripContext } from '../types/tripContext';
 import { MockKnowledgeService } from './mockKnowledgeService';
 import { demoModeService } from './demoModeService';
+import { EnhancedTripContextService } from './enhancedTripContextService';
 
 export interface SearchResult {
   id: string;
@@ -172,12 +173,15 @@ export class UniversalConciergeService {
         };
       }
 
+      // 🆕 Enhanced: Get full trip context for AI Concierge
+      const enhancedTripContext = await EnhancedTripContextService.getEnhancedTripContext(tripContext.tripId);
+      
       // For non-search queries, use the Google Gemini-powered concierge service
       const { data, error } = await supabase.functions.invoke('lovable-concierge', {
         body: {
           message: message,
-          tripContext: tripContext,
-          chatHistory: [] // TODO: Pass actual chat history if available
+          tripContext: enhancedTripContext,
+          chatHistory: enhancedTripContext.chatHistory || []
         }
       });
 

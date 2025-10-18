@@ -117,6 +117,11 @@ export class EnhancedTripContextService {
     const receipts = await this.getTripReceipts(context.tripId);
     const preferences = await this.getTripPreferences(context.tripId);
     
+    // 🆕 Enhanced contextual data for AI Concierge
+    const tasks = await this.getTripTasks(context.tripId);
+    const payments = await this.getTripPayments(context.tripId);
+    const calendar = await this.getTripCalendar(context.tripId);
+    
     // 🆕 Geocode basecamp if it doesn't have coordinates
     if (context.basecamp && typeof context.basecamp === 'object') {
       const basecamp = context.basecamp as any;
@@ -151,7 +156,11 @@ export class EnhancedTripContextService {
       spendingPatterns,
       groupDynamics,
       visitedPlaces,
-      weatherContext
+      weatherContext,
+      // 🆕 Enhanced context for AI Concierge
+      tasks,
+      payments,
+      calendar
     };
   }
 
@@ -498,5 +507,54 @@ export class EnhancedTripContextService {
         })) || []
       )
       .slice(0, 5);
+  }
+
+  // 🆕 Enhanced data fetching methods for AI Concierge
+  private static async getTripTasks(tripId: string): Promise<any[]> {
+    try {
+      const { data, error } = await supabase
+        .from('trip_tasks')
+        .select('*')
+        .eq('trip_id', tripId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching trip tasks:', error);
+      return [];
+    }
+  }
+
+  private static async getTripPayments(tripId: string): Promise<any[]> {
+    try {
+      const { data, error } = await supabase
+        .from('trip_payments')
+        .select('*')
+        .eq('trip_id', tripId)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching trip payments:', error);
+      return [];
+    }
+  }
+
+  private static async getTripCalendar(tripId: string): Promise<any[]> {
+    try {
+      const { data, error } = await supabase
+        .from('trip_events')
+        .select('*')
+        .eq('trip_id', tripId)
+        .order('start_date', { ascending: true });
+
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.error('Error fetching trip calendar:', error);
+      return [];
+    }
   }
 }
