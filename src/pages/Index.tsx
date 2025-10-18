@@ -1,9 +1,11 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { MobileHeader } from '../components/MobileHeader';
+import { AuthPromptBanner } from '../components/mobile/AuthPromptBanner';
 import { CreateTripModal } from '../components/CreateTripModal';
 import { UpgradeModal } from '../components/UpgradeModal';
 import { SettingsMenu } from '../components/SettingsMenu';
+import { AuthModal } from '../components/AuthModal';
 import { TripStatsOverview } from '../components/home/TripStatsOverview';
 import { TripViewToggle } from '../components/home/TripViewToggle';
 import { DesktopHeader } from '../components/home/DesktopHeader';
@@ -31,6 +33,7 @@ const Index = () => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [isDemoModalOpen, setIsDemoModalOpen] = useState(false);
   const [showPricingModal, setShowPricingModal] = useState(false);
   const [isPricingSectionVisible, setIsPricingSectionVisible] = useState(false);
@@ -167,6 +170,14 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background font-outfit">
+      {/* Auth Prompt Banner - iOS style persistent banner */}
+      {!user && !isDemoMode && (
+        <AuthPromptBanner 
+          onSignIn={() => setIsAuthModalOpen(true)}
+          onSignUp={() => setIsAuthModalOpen(true)}
+        />
+      )}
+
       {/* Animated background elements */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/5 rounded-full blur-3xl animate-float"></div>
@@ -181,6 +192,7 @@ const Index = () => {
           onUpgradeToProo={() => setIsUpgradeModalOpen(true)}
           onSettings={() => setIsSettingsOpen(true)}
           onProDashboard={() => {}} // Empty function since Pro Dashboard was removed
+          onAuth={() => setIsAuthModalOpen(true)}
           viewMode={viewMode}
         />
 
@@ -295,6 +307,11 @@ const Index = () => {
         isOpen={isDemoModalOpen}
         onClose={() => setIsDemoModalOpen(false)}
         demoType={viewMode === 'events' ? 'events' : 'pro'}
+      />
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
       />
     </div>
   );

@@ -8,6 +8,7 @@ import { Checkbox } from './ui/checkbox';
 import { DEFAULT_FEATURES } from '../hooks/useFeatureToggle';
 import { useTrips } from '../hooks/useTrips';
 import { useOrganization } from '../hooks/useOrganization';
+import { useAuth } from '../hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { PrivacyModeSelector } from './PrivacyModeSelector';
@@ -19,6 +20,7 @@ interface CreateTripModalProps {
 }
 
 export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
+  const { user } = useAuth();
   const [tripType, setTripType] = useState<'consumer' | 'pro' | 'event'>('consumer');
   const [privacyMode, setPrivacyMode] = useState<PrivacyMode>(() => getDefaultPrivacyMode('consumer'));
   const [selectedOrganization, setSelectedOrganization] = useState<string>('');
@@ -54,6 +56,14 @@ export const CreateTripModal = ({ isOpen, onClose }: CreateTripModalProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Check authentication first
+    if (!user) {
+      toast.error('Please sign in to create a trip');
+      onClose();
+      return;
+    }
+    
     setIsLoading(true);
     
     try {

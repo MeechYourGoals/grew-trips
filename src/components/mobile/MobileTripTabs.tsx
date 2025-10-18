@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { MessageCircle, Calendar, ClipboardList, BarChart3, Camera, MapPin, Sparkles } from 'lucide-react';
+import { MessageCircle, Calendar, ClipboardList, BarChart3, Camera, MapPin, Sparkles, CreditCard } from 'lucide-react';
 import { MobileTripChat } from './MobileTripChat';
 import { MobileGroupCalendar } from './MobileGroupCalendar';
 import { MobileTripTasks } from './MobileTripTasks';
@@ -7,6 +7,7 @@ import { CommentsWall } from '../CommentsWall';
 import { MobileUnifiedMediaHub } from './MobileUnifiedMediaHub';
 import { PlacesSection } from '../PlacesSection';
 import { AIConciergeChat } from '../AIConciergeChat';
+import { MobileTripPayments } from './MobileTripPayments';
 import { hapticService } from '../../services/hapticService';
 import { useTripVariant } from '../../contexts/TripVariantContext';
 import { useDemoMode } from '../../hooks/useDemoMode';
@@ -36,6 +37,7 @@ export const MobileTripTabs = ({
     { id: 'polls', label: 'Polls', icon: BarChart3 },
     { id: 'media', label: 'Media', icon: Camera },
     { id: 'places', label: 'Places', icon: MapPin },
+    { id: 'payments', label: 'Payments', icon: CreditCard },
     { id: 'concierge', label: 'Concierge', icon: Sparkles }
   ];
 
@@ -68,6 +70,8 @@ export const MobileTripTabs = ({
         return <MobileUnifiedMediaHub tripId={tripId} />;
       case 'places':
         return <PlacesSection tripId={tripId} />;
+      case 'payments':
+        return <MobileTripPayments tripId={tripId} />;
       case 'concierge':
         return (
           <AIConciergeChat 
@@ -101,7 +105,7 @@ export const MobileTripTabs = ({
                 onClick={() => handleTabPress(tab.id)}
                 className={`
                   flex items-center justify-center gap-2 
-                  px-4 py-2.5 min-w-max
+                  px-4 py-2.5 min-w-max min-h-[44px]
                   rounded-lg font-medium text-sm
                   transition-all duration-200
                   flex-shrink-0

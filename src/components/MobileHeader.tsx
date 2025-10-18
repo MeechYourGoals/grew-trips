@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { Plus, Crown, Settings, Menu, X } from 'lucide-react';
+import { Plus, Crown, Settings, Menu, X, LogIn } from 'lucide-react';
 import { useIsMobile } from '../hooks/use-mobile';
+import { useAuth } from '../hooks/useAuth';
 import { NotificationBell } from './NotificationBell';
 import { DemoModeToggle } from './DemoModeToggle';
 
@@ -10,6 +11,7 @@ interface MobileHeaderProps {
   onUpgradeToProo: () => void;
   onSettings: () => void;
   onProDashboard: () => void;
+  onAuth?: () => void;
   viewMode: string;
 }
 
@@ -17,11 +19,13 @@ export const MobileHeader = ({
   onCreateTrip, 
   onUpgradeToProo, 
   onSettings, 
-  onProDashboard, 
+  onProDashboard,
+  onAuth,
   viewMode 
 }: MobileHeaderProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isMobile = useIsMobile();
+  const { user } = useAuth();
 
   if (!isMobile) return null;
 
@@ -76,7 +80,20 @@ export const MobileHeader = ({
             </button>
           )}
           
-          <NotificationBell />
+          {/* Auth CTA or Notification Bell */}
+          {!user && onAuth ? (
+            <button
+              onClick={onAuth}
+              className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white px-4 py-2.5 rounded-xl transition-all duration-300 shadow-lg text-sm font-medium min-h-[44px]"
+              title="Sign In"
+            >
+              <LogIn size={18} />
+              <span className="hidden xs:inline">Sign In</span>
+            </button>
+          ) : (
+            <NotificationBell />
+          )}
+          
           <button
             onClick={() => setIsMenuOpen(true)}
             className="bg-gray-800/80 backdrop-blur-md border border-gray-700 hover:bg-gray-700/80 text-white p-3 rounded-xl transition-all duration-300"

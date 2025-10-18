@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useOrientation } from '../../hooks/useOrientation';
 import { ChatInput } from '../chat/ChatInput';
 import { MessageList } from '../chat/MessageList';
 import { InlineReplyComponent } from '../chat/InlineReplyComponent';
@@ -16,6 +17,7 @@ interface MobileTripChatProps {
 }
 
 export const MobileTripChat = ({ tripId, isEvent = false }: MobileTripChatProps) => {
+  const orientation = useOrientation();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -98,14 +100,14 @@ export const MobileTripChat = ({ tripId, isEvent = false }: MobileTripChatProps)
         threshold={80}
       />
 
-      {/* Messages Container - Scrollable */}
+      {/* Messages Container - Scrollable with orientation awareness */}
       <div 
         ref={containerRef}
-        className="flex-1 overflow-y-auto px-4 py-4"
+        className="flex-1 overflow-y-auto px-4 py-4 native-scroll"
         style={{
           maxHeight: isKeyboardVisible 
-            ? 'calc(100vh - 300px)' 
-            : 'calc(100vh - 280px)'
+            ? orientation === 'portrait' ? 'calc(100dvh - 300px)' : 'calc(100dvh - 240px)'
+            : orientation === 'portrait' ? 'calc(100dvh - 280px)' : 'calc(100dvh - 220px)'
         }}
       >
         {isLoading ? (

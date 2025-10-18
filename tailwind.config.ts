@@ -20,12 +20,13 @@ export default {
 			}
 		},
 		screens: {
-			// Mobile-first breakpoints for native app experience
-			'xs': '480px',  // small phones
-			'sm': '600px',  // large phones  
-			'md': '900px',  // tablets
-			'lg': '1200px', // desktop
-			'xl': '1400px', // large desktop
+			// iOS-specific breakpoints for native app experience
+			'xs': '375px',  // iPhone SE, 12/13 mini
+			'sm': '390px',  // iPhone 12/13/14 Pro
+			'md': '428px',  // iPhone 12/13/14 Pro Max
+			'tablet': '768px', // iPad mini
+			'lg': '1024px', // iPad Pro
+			'xl': '1280px', // Desktop
 			'2xl': '1600px',
 		},
 		extend: {
