@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound, MessageCircle, Download, Star, Megaphone, Grid3x3, Network } from 'lucide-react';
+import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound, MessageCircle, Download, Star, Megaphone, Grid3x3, Network, MessageSquare } from 'lucide-react';
 import { ProParticipant } from '../../types/pro';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 import { EditMemberRoleModal } from './EditMemberRoleModal';
@@ -11,6 +11,7 @@ import { ExportTeamDirectoryModal } from './ExportTeamDirectoryModal';
 import { RoleTemplateManager } from './RoleTemplateManager';
 import { RoleBroadcastModal } from './RoleBroadcastModal';
 import { TeamOrgChart } from './TeamOrgChart';
+import { RoleChannelManager } from './RoleChannelManager';
 import { extractUniqueRoles, getRoleColorClass } from '../../utils/roleUtils';
 import { Button } from '../ui/button';
 
@@ -36,6 +37,7 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, tripId
   const [broadcastRole, setBroadcastRole] = useState<string | undefined>();
   const [roleContactSheet, setRoleContactSheet] = useState<{ role: string; members: ProParticipant[] } | null>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'orgchart'>('grid');
+  const [showChannelManager, setShowChannelManager] = useState(false);
 
   // Load view preference from localStorage
   useEffect(() => {
@@ -152,6 +154,19 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, tripId
               </button>
             </div>
             
+            {/* Channels Button */}
+            {tripId && (
+              <Button
+                onClick={() => setShowChannelManager(true)}
+                variant="outline"
+                className="border-gray-600"
+                title="Manage role-based chat channels"
+              >
+                <MessageSquare size={16} className="mr-2" />
+                Channels
+              </Button>
+            )}
+
             {/* Broadcast Button */}
             {tripId && (
               <Button
@@ -474,6 +489,18 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, tripId
           category={category}
           availableRoles={existingRoles}
           preselectedRole={broadcastRole}
+        />
+      )}
+
+      {/* Role Channel Manager */}
+      {tripId && (
+        <RoleChannelManager
+          isOpen={showChannelManager}
+          onClose={() => setShowChannelManager(false)}
+          tripId={tripId}
+          roster={roster}
+          userRole={userRole}
+          existingRoles={existingRoles}
         />
       )}
     </div>
