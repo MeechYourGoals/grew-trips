@@ -132,6 +132,41 @@ serve(async (req) => {
         return addSecurityHeaders(result);
       }
 
+      case 'text-search': {
+        const validation = validateAndSanitizeInput(data);
+        
+        if (!validation.isValid) {
+          throw new Error(validation.error || 'Invalid input');
+        }
+        
+        const { query, location } = validation.sanitized!;
+        if (!query) {
+          throw new Error('Query parameter is required');
+        }
+
+        console.log('Text Search request for:', query, location ? `near ${location}` : '');
+        
+        // Use Places API Text Search (supports natural language)
+        let apiUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${apiKey}`;
+        
+        // Optional: Add location bias if provided (e.g., basecamp coords)
+        if (location) {
+          apiUrl += `&location=${location}&radius=50000`; // 50km radius
+        }
+        
+        const apiResponse = await fetch(apiUrl);
+        const apiData = await apiResponse.json();
+        
+        console.log('Text Search API response:', apiData);
+        
+        const result = new Response(
+          JSON.stringify(apiData),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+        
+        return addSecurityHeaders(result);
+      }
+
       case 'places-search': {
         const validation = validateAndSanitizeInput(data);
         

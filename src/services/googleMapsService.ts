@@ -188,4 +188,38 @@ export class GoogleMapsService {
       return [];
     }
   }
+
+  // New: Text Search for natural language queries
+  static async searchPlacesByText(query: string, location?: string): Promise<any> {
+    try {
+      return await this.callProxy('text-search', { 
+        query,
+        ...(location && { location })
+      });
+    } catch (error) {
+      console.error('Text search error:', error);
+      return { results: [], status: 'ZERO_RESULTS' };
+    }
+  }
+
+  // New: Query type detection
+  static detectQueryType(query: string): 'venue' | 'address' | 'region' {
+    // Address pattern: number + street name
+    if (/\d+\s+\w+\s+(st|street|ave|avenue|blvd|road|rd|drive|dr|lane|ln|way|court|ct)/i.test(query)) {
+      return 'address';
+    }
+    
+    // Region pattern: city/country keywords
+    if (/(city|town|village|region|state|country|province)/i.test(query)) {
+      return 'region';
+    }
+    
+    // Venue pattern: no numbers, or has business keywords
+    if (!/\d/.test(query) || /(restaurant|hotel|bar|cafe|club|lounge|stadium|arena|theater|museum|scandallo|scandalo)/i.test(query)) {
+      return 'venue';
+    }
+    
+    // Default: venue (most common for basecamp use case)
+    return 'venue';
+  }
 }

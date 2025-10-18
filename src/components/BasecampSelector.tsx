@@ -26,14 +26,13 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Enhanced address input with dual-source autocomplete (Google + OSM fallback)
+  // Enhanced address input with hybrid autocomplete strategy (Google Autocomplete + Text Search + OSM fallback)
   const handleAddressChange = async (value: string) => {
     setAddress(value);
     setSelectedSuggestionIndex(-1);
     setSelectedPlaceId(null);
     setSelectedCoords(null);
     
-    // Debounce the API calls
     if (debounceTimerRef.current) {
       clearTimeout(debounceTimerRef.current);
     }
@@ -44,27 +43,60 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
       
       debounceTimerRef.current = setTimeout(async () => {
         try {
-          // Try Google first
-          const response = await GoogleMapsService.getPlaceAutocomplete(value);
+          // Detect query type for smarter API selection
+          const queryType = GoogleMapsService.detectQueryType(value);
+          console.log(`Detected query type: ${queryType} for "${value}"`);
           
-          if (response && response.predictions && response.predictions.length > 0) {
-            setSuggestions(response.predictions);
-          } else {
-            // Fallback to OpenStreetMap Nominatim
-            console.log('Google returned no predictions, trying OSM fallback...');
+          let foundSuggestions = false;
+          
+          // Strategy 1: Try standard Autocomplete first (fast, cheap)
+          if (queryType !== 'venue') {
+            const response = await GoogleMapsService.getPlaceAutocomplete(value);
+            if (response?.predictions?.length > 0) {
+              setSuggestions(response.predictions);
+              foundSuggestions = true;
+            }
+          }
+          
+          // Strategy 2: If venue query OR autocomplete failed, try Text Search
+          if (!foundSuggestions) {
+            console.log('Autocomplete returned no results, trying Text Search...');
+            const textSearchResponse = await GoogleMapsService.searchPlacesByText(value);
+            
+            if (textSearchResponse?.results?.length > 0) {
+              // Transform Text Search results to autocomplete format
+              const textSuggestions = textSearchResponse.results.slice(0, 8).map((place: any) => ({
+                place_id: place.place_id,
+                description: `${place.name} - ${place.formatted_address || place.vicinity}`,
+                name: place.name,
+                geometry: place.geometry,
+                source: 'text-search',
+                types: place.types || ['establishment'],
+                structured_formatting: {
+                  main_text: place.name,
+                  secondary_text: place.formatted_address || place.vicinity
+                }
+              }));
+              
+              setSuggestions(textSuggestions);
+              foundSuggestions = true;
+              console.log(`✓ Found ${textSuggestions.length} results via Text Search`);
+            }
+          }
+          
+          // Strategy 3: OSM fallback (final resort)
+          if (!foundSuggestions) {
+            console.log('Text Search failed, trying OSM fallback...');
             const osmSuggestions = await GoogleMapsService.fallbackSuggestNominatim(value);
             setSuggestions(osmSuggestions);
+            if (osmSuggestions.length > 0) {
+              console.log(`✓ Found ${osmSuggestions.length} results via OSM`);
+            }
           }
+          
         } catch (error) {
-          console.error('Error fetching Google autocomplete, trying OSM fallback:', error);
-          // On error, try OSM fallback
-          try {
-            const osmSuggestions = await GoogleMapsService.fallbackSuggestNominatim(value);
-            setSuggestions(osmSuggestions);
-          } catch (osmError) {
-            console.error('OSM fallback also failed:', osmError);
-            setSuggestions([]);
-          }
+          console.error('Error in autocomplete cascade:', error);
+          setSuggestions([]);
         } finally {
           setIsLoadingSuggestions(false);
         }
@@ -81,38 +113,48 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
     setShowSuggestions(false);
     setSuggestions([]);
     
-    // Check if this is an OSM suggestion or Google suggestion
+    // Handle Text Search results (already have geometry)
+    if (suggestion.source === 'text-search' && suggestion.geometry?.location) {
+      setSelectedCoords({
+        lat: suggestion.geometry.location.lat,
+        lng: suggestion.geometry.location.lng
+      });
+      setSelectedPlaceId(suggestion.place_id); // Store for potential detail fetch
+      if (suggestion.name && !name) {
+        setName(suggestion.name);
+      }
+      console.log('Selected Text Search result with coords:', suggestion.geometry.location);
+      return;
+    }
+    
+    // Handle OSM suggestions
     if (suggestion.source === 'osm') {
-      // OSM suggestion - store coordinates directly
       setSelectedCoords({ lat: suggestion.osm_lat, lng: suggestion.osm_lng });
       setSelectedPlaceId(null);
       console.log('Selected OSM suggestion with coords:', { lat: suggestion.osm_lat, lng: suggestion.osm_lng });
-    } else {
-      // Google suggestion - store place_id for later detail fetch
-      setSelectedPlaceId(suggestion.place_id);
-      setSelectedCoords(null);
-      
-      // Try to get place details to populate name field
-      try {
-        const details = await GoogleMapsService.getPlaceDetails(suggestion.place_id);
-        if (details?.result?.name && !name) {
-          setName(details.result.name);
-        }
-        
-        // Set type based on place types if not already set
-        if (details?.result?.types && !type) {
-          const placeTypes = details.result.types;
-          if (placeTypes.includes('lodging') || placeTypes.includes('hotel')) {
-            setType('hotel');
-          } else if (placeTypes.includes('airport')) {
-            setType('other');
-          } else if (placeTypes.includes('point_of_interest') || placeTypes.includes('establishment')) {
-            setType('other');
-          }
-        }
-      } catch (error) {
-        console.error('Error fetching place details:', error);
+      return;
+    }
+    
+    // Handle Google Autocomplete suggestions
+    setSelectedPlaceId(suggestion.place_id);
+    setSelectedCoords(null);
+    
+    try {
+      const details = await GoogleMapsService.getPlaceDetails(suggestion.place_id);
+      if (details?.result?.name && !name) {
+        setName(details.result.name);
       }
+      
+      if (details?.result?.types && !type) {
+        const placeTypes = details.result.types;
+        if (placeTypes.includes('lodging') || placeTypes.includes('hotel')) {
+          setType('hotel');
+        } else if (placeTypes.includes('airport') || placeTypes.includes('point_of_interest')) {
+          setType('other');
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching place details:', error);
     }
   };
 
@@ -188,6 +230,30 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
         console.log('✓ Got coords from OSM suggestion');
       }
       
+      // 🆕 Cascade 2.5: Google Text Search (NEW - handles venue names)
+      if (!coordinates) {
+        const queryType = GoogleMapsService.detectQueryType(address);
+        if (queryType === 'venue') {
+          console.log('Cascade 2.5: Attempting Google Text Search (venue query)...');
+          try {
+            const textSearchResult = await GoogleMapsService.searchPlacesByText(address);
+            if (textSearchResult?.results?.[0]?.geometry?.location) {
+              const topResult = textSearchResult.results[0];
+              coordinates = {
+                lat: topResult.geometry.location.lat,
+                lng: topResult.geometry.location.lng
+              };
+              if (!inferredName && topResult.name) {
+                inferredName = topResult.name;
+              }
+              console.log('✓ Cascade 2.5 success: Got coords from Text Search');
+            }
+          } catch (error) {
+            console.error('Cascade 2.5 failed:', error);
+          }
+        }
+      }
+      
       // Cascade 3: Try Google geocoding
       if (!coordinates) {
         console.log('Attempting Google geocoding...');
@@ -230,7 +296,19 @@ export const BasecampSelector = ({ isOpen, onClose, onBasecampSet, currentBaseca
         onBasecampSet(basecamp);
         onClose();
       } else {
-        alert('We couldn\'t find that location. Please try:\n• Adding more detail (e.g., "Sao Paulo, Brazil")\n• Selecting from the suggestions if available\n• Using a more specific address');
+        // Enhanced error message based on query type
+        const queryType = GoogleMapsService.detectQueryType(address);
+        let errorMsg = `We couldn't find "${address}". `;
+        
+        if (queryType === 'venue') {
+          errorMsg += `Please try:\n• Adding city/country (e.g., "${address}, [City], [Country]")\n• Checking spelling\n• Selecting from dropdown suggestions above`;
+        } else if (queryType === 'address') {
+          errorMsg += `Please add:\n• City and state/country\n• Or select from dropdown suggestions`;
+        } else {
+          errorMsg += `Please try:\n• Adding more detail\n• Selecting from suggestions\n• Using a more specific location`;
+        }
+        
+        alert(errorMsg);
       }
     } catch (error) {
       console.error('Error setting basecamp:', error);
