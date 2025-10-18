@@ -27,8 +27,8 @@ export const SpeakerDirectory = ({ speakers, userRole }: SpeakerDirectoryProps) 
       <div className="flex items-center gap-3 mb-6">
         <Users size={24} className="text-blue-400" />
         <div>
-          <h2 className="text-xl font-semibold text-white">Speaker Directory</h2>
-          <p className="text-gray-400 text-sm">Meet our speakers</p>
+          <h2 className="text-xl font-semibold text-white">Performers</h2>
+          <p className="text-gray-400 text-sm">Speakers, artists, and performers at this event</p>
         </div>
       </div>
 
@@ -37,7 +37,7 @@ export const SpeakerDirectory = ({ speakers, userRole }: SpeakerDirectoryProps) 
         <Search size={18} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         <Input
           type="text"
-          placeholder="Search speakers by name, company, or expertise..."
+          placeholder="Search by name, role, or company..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           className="pl-10 bg-gray-800 border-gray-700 text-white placeholder-gray-500"
@@ -56,8 +56,15 @@ export const SpeakerDirectory = ({ speakers, userRole }: SpeakerDirectoryProps) 
                   className="w-20 h-20 rounded-full mb-4"
                 />
                 <h3 className="text-white font-semibold text-lg mb-1">{speaker.name}</h3>
+                {speaker.performerType && (
+                  <span className="inline-block bg-purple-500/20 text-purple-400 text-xs px-2 py-1 rounded mb-2">
+                    {speaker.performerType.charAt(0).toUpperCase() + speaker.performerType.slice(1)}
+                  </span>
+                )}
                 <p className="text-gray-400 text-sm mb-1">{speaker.title}</p>
-                <p className="text-gray-500 text-sm mb-4">{speaker.company}</p>
+                {speaker.company && (
+                  <p className="text-gray-500 text-sm mb-4">{speaker.company}</p>
+                )}
 
                 <div className="flex items-center gap-1 text-yellow-400 mb-3">
                   <Star size={16} fill="currentColor" />

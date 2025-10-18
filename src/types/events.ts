@@ -14,6 +14,13 @@ export interface Speaker {
   bio: string;
   avatar: string;
   sessions: string[];
+  // 🆕 Performer type for versatility
+  performerType?: 'speaker' | 'comedian' | 'musician' | 'dj' | 'host' | 'panelist' | 'officiant' | 'other';
+  socialLinks?: {
+    instagram?: string;
+    twitter?: string;
+    website?: string;
+  };
 }
 
 export interface Session {

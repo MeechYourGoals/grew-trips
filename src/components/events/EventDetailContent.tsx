@@ -1,18 +1,13 @@
 
 import React from 'react';
-import { Sparkles, Users, Calendar, ClipboardList, MessageCircle, MessageSquare, Camera, DollarSign, MapPin, BarChart3 } from 'lucide-react';
+import { Sparkles, Users, Calendar, MessageCircle, Camera, BarChart3 } from 'lucide-react';
 import { TripChat } from '../TripChat';
 import { AIConciergeChat } from '../AIConciergeChat';
 import { GroupCalendar } from '../GroupCalendar';
 import { UnifiedMediaHub } from '../UnifiedMediaHub';
-import { PaymentsTab } from '../payments/PaymentsTab';
-import { PlacesSection } from '../PlacesSection';
 import { CommentsWall } from '../CommentsWall';
-
 import { AgendaBuilder } from './AgendaBuilder';
 import { SpeakerDirectory } from './SpeakerDirectory';
-import { LiveQAPanel } from './LiveQAPanel';
-import { TripTasksTab } from '../todo/TripTasksTab';
 
 import { EventData } from '../../types/events';
 import { TripContext } from '@/types';
@@ -39,19 +34,15 @@ export const EventDetailContent = ({
 }: EventDetailContentProps) => {
   const { accentColors } = useTripVariant();
 
-  // 🆕 Updated tab order: Chat, Calendar, Concierge, Media, Payments, Places, Polls, Tasks, [Event-specific tabs]
+  // 🆕 Updated Events tab order: Chat, Calendar, Concierge, Media, Performers, Polls, Agenda
   const tabs = [
     { id: 'chat', label: 'Chat', icon: MessageCircle },
     { id: 'calendar', label: 'Calendar', icon: Calendar },
     { id: 'ai-chat', label: 'Concierge', icon: Sparkles },
     { id: 'media', label: 'Media', icon: Camera },
-    { id: 'payments', label: 'Payments', icon: DollarSign },
-    { id: 'places', label: 'Places', icon: MapPin },
+    { id: 'performers', label: 'Performers', icon: Users },
     { id: 'polls', label: 'Polls', icon: BarChart3 },
-    { id: 'todo', label: 'Tasks', icon: ClipboardList },
-    { id: 'agenda', label: 'Agenda', icon: Calendar, eventOnly: true },
-    { id: 'speakers', label: 'Speakers', icon: Users, eventOnly: true },
-    { id: 'live-qa', label: 'Live Q&A', icon: MessageSquare, eventOnly: true }
+    { id: 'agenda', label: 'Agenda', icon: Calendar }
   ];
 
   const visibleTabs = tabs;
@@ -62,14 +53,15 @@ export const EventDetailContent = ({
         return <TripChat enableGroupChat={true} showBroadcasts={true} isEvent={true} tripId={tripId} />;
       case 'calendar':
         return <GroupCalendar tripId={tripId} />;
-      case 'todo':
-        return <TripTasksTab tripId={tripId} />;
       case 'media':
         return <UnifiedMediaHub tripId={tripId} />;
-      case 'payments':
-        return <PaymentsTab tripId={tripId} />;
-      case 'places':
-        return <PlacesSection tripId={tripId} />;
+      case 'performers':
+        return (
+          <SpeakerDirectory
+            speakers={eventData.speakers || []}
+            userRole={eventData.userRole || 'attendee'}
+          />
+        );
       case 'polls':
         return <CommentsWall tripId={tripId} />;
       case 'agenda':
@@ -79,21 +71,6 @@ export const EventDetailContent = ({
             sessions={eventData.sessions || []}
             speakers={eventData.speakers || []}
             userRole={eventData.userRole || 'attendee'}
-          />
-        );
-      case 'speakers':
-        return (
-          <SpeakerDirectory
-            speakers={eventData.speakers || []}
-            userRole={eventData.userRole || 'attendee'}
-          />
-        );
-      case 'live-qa':
-        return (
-          <LiveQAPanel
-            sessionId="current-session"
-            eventId={tripId}
-            userRole={(eventData.userRole === 'exhibitor' ? 'attendee' : eventData.userRole) || 'attendee'}
           />
         );
       case 'ai-chat':
