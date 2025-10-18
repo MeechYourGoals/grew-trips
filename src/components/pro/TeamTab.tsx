@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound } from 'lucide-react';
+import { Users, Shield, Settings, UserCheck, AlertTriangle, UserPlus, UsersRound, MessageCircle } from 'lucide-react';
 import { ProParticipant } from '../../types/pro';
 import { ProTripCategory, getCategoryConfig } from '../../types/proCategories';
 import { EditMemberRoleModal } from './EditMemberRoleModal';
 import { TeamOnboardingBanner } from './TeamOnboardingBanner';
 import { BulkRoleAssignmentModal } from './BulkRoleAssignmentModal';
+import { QuickContactMenu } from './QuickContactMenu';
+import { RoleContactSheet } from './RoleContactSheet';
 import { extractUniqueRoles, getRoleColorClass } from '../../utils/roleUtils';
 import { Button } from '../ui/button';
 
@@ -19,9 +21,11 @@ interface TeamTabProps {
 export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpdateMemberRole }: TeamTabProps) => {
   const [selectedRole, setSelectedRole] = useState<string>('all');
   const [showCredentials, setShowCredentials] = useState(false);
+  const [showEmergencyContacts, setShowEmergencyContacts] = useState(false);
   const [editingMember, setEditingMember] = useState<ProParticipant | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(true);
   const [showBulkModal, setShowBulkModal] = useState(false);
+  const [roleContactSheet, setRoleContactSheet] = useState<{ role: string; members: ProParticipant[] } | null>(null);
 
   const { terminology: { teamLabel }, roles: categoryRoles } = getCategoryConfig(category);
 
@@ -130,30 +134,57 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
               <Shield size={16} />
               {showCredentials ? 'Hide Credentials' : 'Show Credentials'}
             </button>
+            
+            <button
+              onClick={() => setShowEmergencyContacts(!showEmergencyContacts)}
+              className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
+                showEmergencyContacts
+                  ? 'bg-orange-600 hover:bg-orange-700 text-white'
+                  : 'bg-gray-700 hover:bg-gray-600 text-gray-300'
+              }`}
+              title={showEmergencyContacts ? 'Hide emergency contacts' : 'Show emergency contacts'}
+            >
+              <AlertTriangle size={16} />
+              Emergency
+            </button>
           </div>
         </div>
 
         {/* Role Filter Chips - Only show if category has predefined roles */}
         {categoryRoles.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {roles.map((role) => (
-              <button
-                key={role}
-                onClick={() => setSelectedRole(role)}
-                className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                  selectedRole === role
-                    ? 'bg-red-600 text-white'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                {role === 'all' ? 'All Roles' : role}
-                {role !== 'all' && (
-                  <span className="ml-1 text-xs">
-                    ({roster.filter(m => m.role === role).length})
-                  </span>
-                )}
-              </button>
-            ))}
+            {roles.map((role) => {
+              const roleMembers = roster.filter(m => m.role === role);
+              return (
+                <div key={role} className="flex items-center gap-1">
+                  <button
+                    onClick={() => setSelectedRole(role)}
+                    className={`px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                      selectedRole === role
+                        ? 'bg-red-600 text-white'
+                        : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                    }`}
+                  >
+                    {role === 'all' ? 'All Roles' : role}
+                    {role !== 'all' && (
+                      <span className="ml-1 text-xs">
+                        ({roleMembers.length})
+                      </span>
+                    )}
+                  </button>
+                  {/* Contact All Button for specific roles */}
+                  {role !== 'all' && roleMembers.length > 0 && (
+                    <button
+                      onClick={() => setRoleContactSheet({ role, members: roleMembers })}
+                      className="p-1 hover:bg-white/10 rounded transition-colors"
+                      title={`Contact all ${role}`}
+                    >
+                      <MessageCircle size={14} className="text-blue-400" />
+                    </button>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
         
@@ -176,8 +207,18 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
                 className="w-12 h-12 rounded-full border-2 border-gray-600"
               />
               <div className="flex-1 min-w-0">
-                <h3 className="text-white font-medium truncate">{member.name}</h3>
+                <QuickContactMenu
+                  member={member}
+                  showEmergencyContacts={showEmergencyContacts}
+                >
+                  <h3 className="text-white font-medium truncate cursor-pointer hover:text-blue-400 transition-colors">
+                    {member.name}
+                  </h3>
+                </QuickContactMenu>
                 <p className="text-gray-400 text-sm">{member.email}</p>
+                {member.phone && (
+                  <p className="text-gray-500 text-xs">{member.phone}</p>
+                )}
                 <div className="flex items-center gap-2 mt-2">
                   <span className={`${getRoleColorClass(member.role, category)} px-2 py-1 rounded text-xs font-medium`}>
                     {member.role}
@@ -262,6 +303,17 @@ export const TeamTab = ({ roster, userRole, isReadOnly = false, category, onUpda
           category={category}
           existingRoles={existingRoles}
           onUpdateMemberRole={onUpdateMemberRole}
+        />
+      )}
+
+      {/* Role Contact Sheet */}
+      {roleContactSheet && (
+        <RoleContactSheet
+          isOpen={true}
+          onClose={() => setRoleContactSheet(null)}
+          role={roleContactSheet.role}
+          members={roleContactSheet.members}
+          category={category}
         />
       )}
     </div>

@@ -66,6 +66,17 @@ export interface ProParticipant {
   roomPreferences?: string[];
   dietaryRestrictions?: string[];
   medicalNotes?: string;
+  // 🆕 Contact information for hierarchy feature
+  phone?: string;
+  emergencyContact?: {
+    name: string;
+    phone: string;
+    relationship: string;
+  };
+  // 🆕 Org chart support
+  reportsTo?: string; // ID of manager
+  directReports?: string[]; // IDs of direct reports
+  hierarchyLevel?: number; // 0 = top, 1 = reports to top, etc.
 }
 
 export interface RoomAssignment {
