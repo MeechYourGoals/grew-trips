@@ -91,11 +91,11 @@ export const TripCoverPhotoUpload = ({
 
   if (currentPhoto) {
     return (
-      <div className={`relative group ${className}`}>
+      <div className={`relative group overflow-hidden rounded-2xl ${className}`}>
         <img 
           src={currentPhoto} 
           alt={`Cover photo for trip ${tripId}`}
-          className="w-full h-64 object-cover rounded-2xl"
+          className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl flex items-center justify-center">
           <div
@@ -131,7 +131,7 @@ export const TripCoverPhotoUpload = ({
   return (
     <div
       {...getRootProps()}
-      className={`border-2 border-dashed border-white/30 rounded-2xl p-8 text-center cursor-pointer transition-all hover:border-white/50 hover:bg-white/5 ${isDragActive ? 'border-blue-400 bg-blue-400/10' : ''} ${className}`}
+      className={`border-2 border-dashed border-white/30 rounded-2xl p-8 text-center cursor-pointer transition-all hover:border-white/50 hover:bg-white/5 min-h-[192px] ${isDragActive ? 'border-blue-400 bg-blue-400/10' : ''} ${className}`}
       onClick={handleAuthPrompt}
     >
       <input {...getInputProps()} />

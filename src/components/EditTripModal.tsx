@@ -142,9 +142,9 @@ export const EditTripModal = ({ isOpen, onClose, trip, onUpdate }: EditTripModal
         </div>
 
         {/* Form */}
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* Cover Photo */}
-          <div className="mb-6">
+          <div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
               <ImageIcon size={16} />
               Cover Photo
@@ -158,7 +158,7 @@ export const EditTripModal = ({ isOpen, onClose, trip, onUpdate }: EditTripModal
           </div>
 
           {/* Trip Name */}
-          <div className="mt-6">
+          <div>
             <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
               <Type size={16} />
               Trip Name
