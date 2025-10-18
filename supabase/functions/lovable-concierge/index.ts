@@ -84,7 +84,15 @@ serve(async (req) => {
       { role: 'user', content: message }
     ]
 
-    // Call Lovable AI Gateway
+    // 🆕 Smart grounding detection - only enable for location queries
+    const isLocationQuery = message.toLowerCase().match(
+      /\b(where|restaurant|hotel|cafe|bar|attraction|place|location|near|around|close|best|find|suggest|recommend|visit|directions|route|food|eat|drink|stay|sushi|pizza|beach|museum|park)\b/i
+    );
+
+    const hasLocationContext = tripContext?.basecamp?.lat && tripContext?.basecamp?.lng;
+    const enableGrounding = isLocationQuery && hasLocationContext;
+
+    // Call Lovable AI Gateway with optional grounding
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -96,7 +104,19 @@ serve(async (req) => {
         messages,
         temperature: config.temperature || 0.7,
         max_tokens: config.maxTokens || 2048,
-        stream: false
+        stream: false,
+        // 🆕 Enable Google Maps grounding for location queries
+        ...(enableGrounding && {
+          tools: [{ googleMaps: { enableWidget: true } }],
+          toolConfig: {
+            retrievalConfig: {
+              latLng: {
+                latitude: tripContext.basecamp.lat,
+                longitude: tripContext.basecamp.lng
+              }
+            }
+          }
+        })
       }),
     })
 
@@ -149,16 +169,34 @@ serve(async (req) => {
     const aiResponse = data.choices[0].message.content
     const usage = data.usage
 
+    // 🆕 Extract grounding metadata from response
+    const groundingMetadata = data.choices[0]?.groundingMetadata || null
+    const groundingChunks = groundingMetadata?.groundingChunks || []
+    const googleMapsWidget = groundingMetadata?.googleMapsWidgetContextToken || null
+
+    // Transform grounding chunks into citation-friendly format
+    const citations = groundingChunks.map((chunk: any, index: number) => ({
+      id: `citation_${index}`,
+      title: chunk.web?.title || 'Google Maps',
+      url: chunk.web?.uri || '#',
+      snippet: chunk.web?.snippet || '',
+      source: 'google_maps_grounding'
+    }))
+
     // Store conversation in database for context awareness
     if (tripContext?.id) {
-      await storeConversation(supabase, tripContext.id, message, aiResponse, 'chat')
+      await storeConversation(supabase, tripContext.id, message, aiResponse, 'chat', {
+        grounding_sources: citations.length,
+        has_map_widget: !!googleMapsWidget
+      })
     }
 
     return new Response(
       JSON.stringify({ 
         response: aiResponse,
         usage,
-        sources: [],
+        sources: citations,
+        googleMapsWidget, // 🆕 Widget token for frontend
         success: true,
         model: config.model || 'google/gemini-2.5-flash'
       }),
@@ -300,7 +338,7 @@ function buildSystemPrompt(tripContext: any, customPrompt?: string): string {
   return basePrompt
 }
 
-async function storeConversation(supabase: any, tripId: string, userMessage: string, aiResponse: string, type: string) {
+async function storeConversation(supabase: any, tripId: string, userMessage: string, aiResponse: string, type: string, metadata?: any) {
   try {
     // Get user_id from auth context if available
     const { data: { user } } = await supabase.auth.getUser();
@@ -312,7 +350,7 @@ async function storeConversation(supabase: any, tripId: string, userMessage: str
         user_id: user?.id || null,
         query_text: userMessage,
         response_text: aiResponse,
-        source_count: 0,
+        source_count: metadata?.grounding_sources || 0,
         created_at: new Date().toISOString()
       })
   } catch (error) {

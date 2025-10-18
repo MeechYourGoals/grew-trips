@@ -31,7 +31,9 @@ interface ChatMessage {
     title: string;
     url: string;
     snippet: string;
+    source?: string; // 🆕 Track if from Google Maps grounding
   }>;
+  googleMapsWidget?: string; // 🆕 Widget context token
 }
 
 export const AIConciergeChat = ({ tripId, basecamp, preferences, isDemoMode = false }: AIConciergeChatProps) => {
@@ -122,7 +124,8 @@ export const AIConciergeChat = ({ tripId, basecamp, preferences, isDemoMode = fa
         content: data.response || 'Sorry, I encountered an error processing your request.',
         timestamp: new Date().toISOString(),
         usage: data.usage,
-        sources: data.sources || data.citations
+        sources: data.sources || data.citations,
+        googleMapsWidget: data.googleMapsWidget // 🆕 Pass widget token
       };
       
       setMessages(prev => [...prev, assistantMessage]);
@@ -189,7 +192,11 @@ export const AIConciergeChat = ({ tripId, basecamp, preferences, isDemoMode = fa
 
       {/* Chat Messages */}
       <div className="space-y-4 mb-6 max-h-80 overflow-y-auto">
-        <ChatMessages messages={messages} isTyping={isTyping} />
+        <ChatMessages 
+          messages={messages} 
+          isTyping={isTyping}
+          showMapWidgets={true} // 🆕 Enable map widget rendering
+        />
       </div>
 
       {/* Input */}

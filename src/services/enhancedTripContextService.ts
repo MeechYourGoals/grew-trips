@@ -117,6 +117,22 @@ export class EnhancedTripContextService {
     const receipts = await this.getTripReceipts(context.tripId);
     const preferences = await this.getTripPreferences(context.tripId);
     
+    // 🆕 Geocode basecamp if it doesn't have coordinates
+    if (context.basecamp && typeof context.basecamp === 'object') {
+      const basecamp = context.basecamp as any;
+      if (basecamp.address && !basecamp.lat && !basecamp.lng) {
+        try {
+          const coords = await this.geocodeAddress(basecamp.address);
+          if (coords) {
+            basecamp.lat = coords.lat;
+            basecamp.lng = coords.lng;
+          }
+        } catch (error) {
+          console.warn('Failed to geocode basecamp:', error);
+        }
+      }
+    }
+    
     // Analyze patterns
     const spendingPatterns = this.analyzeSpendingPatterns(receipts);
     const groupDynamics = this.analyzeGroupDynamics(chatHistory, polls);
@@ -137,6 +153,32 @@ export class EnhancedTripContextService {
       visitedPlaces,
       weatherContext
     };
+  }
+
+  // 🆕 Geocoding helper method
+  private static async geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
+    try {
+      const { data, error } = await supabase.functions.invoke('google-maps-proxy', {
+        body: {
+          action: 'geocode',
+          address
+        }
+      });
+
+      if (error || !data?.results?.[0]) {
+        console.warn('Geocoding failed:', error);
+        return null;
+      }
+
+      const location = data.results[0].geometry.location;
+      return {
+        lat: location.lat,
+        lng: location.lng
+      };
+    } catch (error) {
+      console.warn('Geocoding error:', error);
+      return null;
+    }
   }
 
   private static async getTripFiles(tripId: string): Promise<TripFile[]> {

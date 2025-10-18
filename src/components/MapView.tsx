@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
-import { MapPin, Navigation, Clock } from 'lucide-react';
+import { MapPin, Navigation, Clock, CheckCircle, ExternalLink } from 'lucide-react';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -22,6 +22,9 @@ interface Place {
   priceLevel?: number;
   description?: string;
   visitTime?: string;
+  enrichedInfo?: string; // 🆕 AI-enriched description from grounding
+  googleMapsUrl?: string; // 🆕 Google Maps URL
+  verification?: 'verified_by_google' | 'unverified'; // 🆕 Verification status
 }
 
 interface MapViewProps {
@@ -79,17 +82,46 @@ export const MapView = ({
               }}
             >
               <Popup>
-                <div className="p-2">
+                <div className="p-2 min-w-[200px]">
                   <h3 className="font-semibold text-gray-900">{place.name}</h3>
                   <p className="text-sm text-gray-600 capitalize">{place.type}</p>
+                  
+                  {/* 🆕 Verification badge */}
+                  {place.verification === 'verified_by_google' && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <CheckCircle size={12} className="text-green-600" />
+                      <span className="text-[10px] text-green-600">Verified by Google Maps</span>
+                    </div>
+                  )}
+                  
                   {place.rating && (
-                    <p className="text-sm text-yellow-600">★ {place.rating}</p>
+                    <p className="text-sm text-yellow-600 mt-1">★ {place.rating}</p>
                   )}
                   {place.visitTime && (
                     <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
                       <Clock size={12} />
                       {place.visitTime}
                     </p>
+                  )}
+                  
+                  {/* 🆕 Enriched info from grounding */}
+                  {place.enrichedInfo && (
+                    <p className="text-xs text-gray-700 mt-2 border-t pt-2">
+                      {place.enrichedInfo.slice(0, 150)}...
+                    </p>
+                  )}
+                  
+                  {/* 🆕 Google Maps link */}
+                  {place.googleMapsUrl && (
+                    <a
+                      href={place.googleMapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1 mt-2"
+                    >
+                      <ExternalLink size={10} />
+                      View on Google Maps
+                    </a>
                   )}
                 </div>
               </Popup>

@@ -1,14 +1,16 @@
-
 import React from 'react';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, ExternalLink } from 'lucide-react';
 import { ChatMessage } from './types';
+import { GoogleMapsWidget } from './GoogleMapsWidget';
+import { ChatMessageWithGrounding } from '@/types/grounding';
 
 interface ChatMessagesProps {
-  messages: ChatMessage[];
+  messages: (ChatMessage | ChatMessageWithGrounding)[];
   isTyping: boolean;
+  showMapWidgets?: boolean;
 }
 
-export const ChatMessages = ({ messages, isTyping }: ChatMessagesProps) => {
+export const ChatMessages = ({ messages, isTyping, showMapWidgets = false }: ChatMessagesProps) => {
   if (messages.length === 0) {
     return (
       <div className="text-center py-8">
@@ -21,17 +23,55 @@ export const ChatMessages = ({ messages, isTyping }: ChatMessagesProps) => {
 
   return (
     <>
-      {messages.map((message) => (
-        <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
-          <div className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
-            message.type === 'user'
-              ? 'bg-gray-800 text-white'
-              : 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-gray-300 border border-blue-500/20'
-          }`}>
-            <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+      {messages.map((message) => {
+        const messageWithGrounding = message as ChatMessageWithGrounding;
+        return (
+          <div key={message.id} className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+            <div className={`max-w-xs lg:max-w-md ${
+              message.type === 'user' ? '' : 'w-full max-w-lg'
+            }`}>
+              <div className={`px-4 py-3 rounded-2xl ${
+                message.type === 'user'
+                  ? 'bg-gray-800 text-white'
+                  : 'bg-gradient-to-r from-blue-600/20 to-purple-600/20 text-gray-300 border border-blue-500/20'
+              }`}>
+                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              </div>
+
+              {/* 🆕 Render Google Maps widget if available */}
+              {showMapWidgets && message.type === 'assistant' && messageWithGrounding.googleMapsWidget && (
+                <GoogleMapsWidget widgetToken={messageWithGrounding.googleMapsWidget} />
+              )}
+
+              {/* 🆕 Enhanced: Show grounding sources with badge */}
+              {messageWithGrounding.sources && messageWithGrounding.sources.length > 0 && (
+                <div className="mt-2 space-y-1 px-2">
+                  <div className="text-xs font-medium text-gray-400 flex items-center gap-2">
+                    <span>Sources:</span>
+                    {messageWithGrounding.sources.some(s => s.source === 'google_maps_grounding') && (
+                      <span className="bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded text-[10px]">
+                        Verified by Google Maps
+                      </span>
+                    )}
+                  </div>
+                  {messageWithGrounding.sources.map((source, idx) => (
+                    <a
+                      key={idx}
+                      href={source.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                    >
+                      <ExternalLink size={10} />
+                      {source.title}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
       {isTyping && (
         <div className="flex justify-start">
           <div className="bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl p-4 border border-blue-500/20">
